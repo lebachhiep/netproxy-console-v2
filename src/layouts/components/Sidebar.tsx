@@ -33,13 +33,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
       ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[272px]'}`}
     >
       {/* Nút collapse */}
-      <button onClick={toggle} className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
+      <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
         {collapsed ? (
-          <IconButton className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
+          <IconButton onClick={toggle} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
         ) : (
-          <IconButton icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
+          <IconButton onClick={toggle} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
         )}
-      </button>
+      </div>
       {/* Logo */}
 
       {collapsed ? (

@@ -17,6 +17,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "@types/node": "^24.5.2",
     "@vitejs/plugin-react": "^2.2.0",
+    "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "env-cmd": "^10.1.0",

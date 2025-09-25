@@ -10,6 +10,7 @@ const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const LoginPage = lazy(() => import('@/pages/login/LoginPage').then((m) => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('@/pages/register/RegisterPage').then((m) => ({ default: m.RegisterPage })));
+const ForgotPasswordPage = lazy(() => import('@/pages/forgot-password/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })));
 const PurchasePage = lazy(() => import('@/pages/purchase/PurchasePage'));
 const WalletPage = lazy(() => import('@/pages/wallet/WalletPage'));
 
@@ -83,6 +84,11 @@ const routes: Route[] = [
     name: '/register',
     element: <RegisterPage />,
     path: '/register'
+  },
+  {
+    name: '/forgot-password',
+    element: <ForgotPasswordPage />,
+    path: '/forgot-password'
   },
   {
     element: <NotFoundPage />,

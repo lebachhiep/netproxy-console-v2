@@ -1,0 +1,143 @@
+/* Thin */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Thin Italic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ExtraLight */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Extra Thin.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Extra Thin Italic.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Light Italic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Regular */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Regular Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Medium Italic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* SemiBold */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic SemiBold Italic.otf') format('opentype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Bold Italic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ExtraBold */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic ExtraBold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic ExtraBold Italic.otf') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Black */
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Averta CY';
+  src: url('/fonts/Averta_Cyrillic/Averta Cyrillic Black Italic.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}

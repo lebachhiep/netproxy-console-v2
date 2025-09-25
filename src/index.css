@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .transition-smooth {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.04, 0.88, 0.66, 0.69);
+    transition-duration: 100ms;
+  }
+}
+
+@layer base {
+  /* Title */
+  h1 {
+    @apply text-[48px] not-italic font-medium leading-[120%] tracking-[-1.44px];
+  }
+  h2 {
+    @apply text-[33px] not-italic font-medium leading-[120%] tracking-[-0.66px];
+  }
+  h3 {
+    @apply text-[24px] not-italic font-medium leading-[120%] tracking-[-0.48px];
+  }
+  h4 {
+    @apply text-[20px] not-italic font-medium leading-[120%] tracking-[-0.3px];
+  }
+
+  /* Nav */
+  nav {
+    @apply text-sm font-medium tracking-wide;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box !important;
+}
+/* 2. Remove default margin */
+* {
+  margin: 0;
+}
+
+body {
+  box-sizing: border-box !important;
+  margin: 0;
+  font-family: 'Inter', sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.font-ibm-plex-mono {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.shadow-test {
+  box-shadow:
+    0 20px 24px -4px rgba(0, 0, 0, 0.08),
+    0 8px 8px -4px rgba(0, 0, 0, 0.03);
+}
+
+.fixed-right-shadow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -1px; /* dịch ra ngoài chút */
+  width: 1px;
+  height: 100%;
+  pointer-events: none;
+  box-shadow:
+    -1px 0 0 0 #ffffff,
+    -1px 0 3px 0 rgba(0, 0, 0, 0.1),
+    -1px 0 2px 0 rgba(0, 0, 0, 0.06); /* bóng về bên trái */
+}
+
+.dark .fixed-right-shadow::before {
+  box-shadow:
+    -1px 0 0 0 #2e4560,
+    -1px 0 3px 0 rgba(0, 0, 0, 0.1),
+    -1px 0 2px 0 rgba(0, 0, 0, 0.06);
+}

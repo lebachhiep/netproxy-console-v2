@@ -1,0 +1,240 @@
+import { CaretLeft, CaretRight } from '../icons';
+import { Select } from '../select/Select';
+
+export interface PaginationProps {
+  current: number;
+  total: number;
+  pageSize: number;
+  showSizeChanger?: boolean;
+  pageSizeOptions?: number[];
+  showQuickJumper?: boolean;
+  showTotal?: boolean;
+  onChange?: (page: number, pageSize: number) => void;
+  type?: 'pagination' | 'loadmore';
+  className?: string;
+  // Load more specific props
+  onLoadMore?: () => void;
+  loading?: boolean;
+  hasMore?: boolean;
+}
+
+export function Pagination({
+  current,
+  total,
+  pageSize,
+  showSizeChanger = true,
+  pageSizeOptions = [10, 20, 50, 100],
+  onChange,
+  type = 'pagination',
+  className = '',
+  onLoadMore,
+  loading = false,
+  hasMore = true
+}: PaginationProps) {
+  const totalPages = Math.ceil(total / pageSize);
+  const startItem = Math.min((current - 1) * pageSize + 1, total);
+  const endItem = Math.min(current * pageSize, total);
+
+  // Nếu pageSize hiện tại không có trong options, thêm nó vào
+  const sizeOptionsWithCurrent = pageSizeOptions.includes(pageSize) ? pageSizeOptions : [...pageSizeOptions, pageSize];
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages && page !== current) {
+      onChange?.(page, pageSize);
+    }
+  };
+
+  const handleSizeChange = (newSize: number) => {
+    onChange?.(1, newSize);
+  };
+
+  const generatePageNumbers = () => {
+    const pages = [];
+    const showPages = 7;
+
+    if (totalPages <= showPages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (current >= totalPages - 3) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = current - 1; i <= current + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  if (type === 'loadmore') {
+    return (
+      <div
+        className={`bg-bg-primary dark:bg-bg-primary-dark px-4 py-2 shadow-md rounded-lg w-fit border-2 border-border-element dark:border-border-element-dark ${className}`}
+      >
+        <div className="flex items-center justify-center gap-4">
+          {/* Left side - Show info and page size */}
+          <div className="flex items-center text-sm  space-x-4">
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-text-me dark:text-text-me-dark">Hiển thị</span>
+              {showSizeChanger && (
+                // <select
+                //   className="border shadow-md border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                //   value={pageSize}
+                //   onChange={(e) => handleSizeChange(parseInt(e.target.value))}
+                // >
+                //   {pageSizeOptions.map((size) => (
+                //     <option key={size} value={size}>
+                //       {size}
+                //     </option>
+                //   ))}
+                // </select>
+                <>
+                  <Select
+                    options={sizeOptionsWithCurrent.map((size) => {
+                      return {
+                        label: <div>{size}</div>,
+                        value: size
+                      };
+                    })}
+                    className="h-6 rounded px-2 shadow-xs border-border w-12 hover:font-normal"
+                    value={pageSize}
+                    onChange={(value) => handleSizeChange(value as number)}
+                    placement="top"
+                  />
+                </>
+              )}
+              <div className="text-text-me dark:text-text-me-dark font-normal">
+                trong <span className="text-text-hi dark:text-text-hi-dark font-bold">{total}</span> kết quả
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Load more button */}
+          <div className="flex items-center space-x-4">
+            {hasMore && (
+              <button
+                onClick={onLoadMore}
+                disabled={loading}
+                className="inline-flex items-center bg-blue-600 text-blue text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? (
+                  <>
+                    <div className="border-2 border-border dark:border-border-dark rounded-[4px] shadow-xs px-2 h-7 py-1 font-bold underline">
+                      Đang tải...
+                    </div>
+                  </>
+                ) : (
+                  <div className="border-2 border-border dark:border-border-dark rounded-[4px] shadow-xs px-2 h-7 py-1 font-bold underline">
+                    Tải thêm
+                  </div>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`px-5 ${className}`}>
+      <div className="flex items-center justify-between bg-bg-primary dark:bg-bg-primary-dark">
+        {/* Left side - Page info and size changer */}
+        <div className="flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
+          <div>
+            <span className="text-text-hi dark:text-text-hi-dark">
+              {startItem}-{endItem}{' '}
+            </span>
+            trong <span className="text-text-hi dark:text-text-hi-dark">{total}</span> mục
+          </div>
+        </div>
+
+        {/* Right side - Page navigation */}
+        <div className="flex items-center gap-2">
+          {/* Previous button */}
+          <button
+            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-border-dark rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            disabled={current <= 1}
+            onClick={() => handlePageChange(current - 1)}
+            title="Trang trước"
+          >
+            <CaretLeft className="" />
+          </button>
+
+          {/* Page numbers */}
+          <div className="flex items-center gap-2">
+            {generatePageNumbers().map((page, index) => {
+              if (page === '...') {
+                return (
+                  <span key={`ellipsis-${index}`} className="px-2 py-2 text-text-me text-sm">
+                    ...
+                  </span>
+                );
+              }
+
+              const isCurrentPage = page === current;
+              return (
+                <button
+                  key={page}
+                  className={`border-2 min-h-8 min-w-8 flex items-center justify-center text-sm rounded-lg font-medium transition-all ${
+                    isCurrentPage
+                      ? 'text-primary dark:text-primary-dark border border-primary dark:border-primary-dark'
+                      : 'text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark border-2 border-border dark:border-border-dark'
+                  }`}
+                  onClick={() => handlePageChange(page as number)}
+                >
+                  {page}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Next button */}
+          <button
+            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            disabled={current >= totalPages}
+            onClick={() => handlePageChange(current + 1)}
+            title="Trang sau"
+          >
+            <CaretRight className="" />
+          </button>
+
+          {showSizeChanger && (
+            <div className="flex items-center">
+              <Select
+                options={pageSizeOptions.map((size) => {
+                  return {
+                    label: <div>{size} / trang</div>,
+                    value: size
+                  };
+                })}
+                className="shadow-none h-8 rounded-lg border-border dark:border-border-dark w-[118px] font-medium hover:font-bold"
+                labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
+                value={pageSize}
+                onChange={(value) => handleSizeChange(value as number)}
+                placement="top"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

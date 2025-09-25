@@ -1,0 +1,79 @@
+import React from 'react';
+import { Button } from '../button/Button';
+import { Divider } from '../divider/Divider';
+
+interface Feature {
+  icon?: React.ReactNode;
+  label: React.ReactNode;
+}
+
+interface Tag {
+  text: string;
+  icon?: React.ReactNode;
+}
+
+interface PricingCardProps {
+  title: string;
+  price: string;
+  description?: string;
+  features: Feature[];
+  buttonText: string;
+  onClick?: () => void;
+  tag?: Tag; // label góc trên (có thể có icon)
+}
+
+export const PricingCard: React.FC<PricingCardProps> = ({ title, price, description, features, buttonText, onClick, tag }) => {
+  return (
+    <div className="group relative w-full max-w-[356px] rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-1 transition-all hover:border-primary hover:dark:border-primary-dark">
+      {/* Tag */}
+      {tag && (
+        <span className="absolute -top-3 -left-[2px] flex items-center gap-1 bg-primary dark:bg-primary-dark text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
+          {tag.icon && <span className="text-sm">{tag.icon}</span>}
+          {tag.text}
+        </span>
+      )}
+
+      <div className="flex flex-col gap-4 text-text-me dark:text-text-me-dark group-hover:text-text-hi group-hover:dark:text-text-hi-dark">
+        <div className="flex justify-between items-start">
+          <h3 className="text-lg font-semibold font-averta">{title}</h3>
+          <div className="flex items-start gap-[2px] font-averta">
+            <span className="text-green font-semibold text-[12px] tracking-[-0.66px]">$</span>
+            <span className="text-blue dark:text-blue-dark font-semibold text-lg">{price}</span>
+          </div>
+        </div>
+
+        <Divider />
+
+        {description && (
+          <>
+            <p className="text-sm text-text-me dark:text-text-me-dark line-clamp-2">{description}</p>
+            <Divider />
+          </>
+        )}
+
+        {/* Features */}
+        <ul className="flex flex-col gap-4 text-sm">
+          {features.map((f, idx) => (
+            <li key={idx} className="flex items-center gap-2">
+              {f.icon}
+              <span>{f.label}</span>
+            </li>
+          ))}
+        </ul>
+
+        <Divider />
+
+        {/* Button */}
+        <Button
+          onClick={onClick}
+          className="h-10 group-hover:bg-primary group-hover:dark:bg-primary-dark group-hover:border-primary-border group-hover:dark:border-primary-border-dark group-hover:text-white"
+          variant="default"
+        >
+          {buttonText}
+        </Button>
+      </div>
+
+      <p className="text-xs text-center text-text-muted">Terms & conditions apply</p>
+    </div>
+  );
+};

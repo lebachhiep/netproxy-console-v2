@@ -1,0 +1,13 @@
+.login-page {
+  min-height: 100vh;
+  background: #f2f2f7;
+  display: flex;
+  justify-content: center;
+}
+.login-page .login-container {
+  width: 450px;
+  box-shadow: rgba(16, 25, 40, 0.08) 0px 4px 8px 0px;
+  padding: 24px 40px;
+  background-color: #fff;
+  border-radius: 5px;
+} /*# sourceMappingURL=LoginPage.css.map */

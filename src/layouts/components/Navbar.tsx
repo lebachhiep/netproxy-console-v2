@@ -6,6 +6,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from 'router';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { AUTH_MESSAGES } from '@/utils/constants';
 
 interface Breadcrumb {
   title: string;
@@ -22,6 +25,17 @@ export const Navbar: React.FC = () => {
   const [canGoBack, setCanGoBack] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success(AUTH_MESSAGES.LOGOUT_SUCCESS);
+      navigate('/login');
+    } catch (error) {
+      toast.error('Đăng xuất thất bại');
+    }
+  };
 
   // Đóng khi click ngoài
   useEffect(() => {
@@ -149,9 +163,11 @@ export const Navbar: React.FC = () => {
             onClick={() => setMenuOpen((prev) => !prev)}
           >
             <div className="flex items-center gap-2">
-              <img src={settings.defaultAvatar} className="w-9 h-9" />
+              <img src={user?.photoURL || settings.defaultAvatar} className="w-9 h-9 rounded-full" />
               <div className="hidden md:flex flex-col items-start">
-                <span className="text-xs font-medium text-text-me dark:text-text-me-dark">Bạch Hiệp</span>
+                <span className="text-xs font-medium text-text-me dark:text-text-me-dark">
+                  {user?.displayName || user?.email?.split('@')[0] || 'User'}
+                </span>
                 <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$ 825.97</span>
               </div>
             </div>
@@ -169,7 +185,9 @@ export const Navbar: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Person className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
                     <div>
-                      Xem hồ sơ <span className="text-sm text-blue-hi dark:text-blue-hi-dark">Bạch Hiệp</span>
+                      Xem hồ sơ <span className="text-sm text-blue-hi dark:text-blue-hi-dark">
+                        {user?.displayName || user?.email?.split('@')[0] || 'User'}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -185,15 +203,15 @@ export const Navbar: React.FC = () => {
                     </div>
                   </div>
                 </Link>
-                <Link
-                  to="/login"
-                  className="block rounded-lg px-2 py-1 text-sm text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left block rounded-lg px-2 py-1 text-sm text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
                 >
                   <div className="flex items-center gap-2">
                     <SignOut className="w-5 h-5 text-red dark:text-red-dark" />
                     <div>Đăng xuất</div>
                   </div>
-                </Link>
+                </button>
               </div>
             </div>
           )}

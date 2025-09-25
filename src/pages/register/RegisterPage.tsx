@@ -1,17 +1,16 @@
 import { AuthFormWrapper } from '@/components/AuthFormWrapper';
 import { Button } from '@/components/button/Button';
-import { Checkbox } from '@/components/checkbox/Checkbox';
-import { EmojiLaugh, Google, LockClosed } from '@/components/icons';
+import { EmojiLaugh, Google, Lock, LockClosed, Person } from '@/components/icons';
 import { InputField } from '@/components/input/InputField';
 import { AuthLayout } from '@/layouts/AuthLayout';
-import { useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, LoginFormData } from '@/services/auth/auth.schemas';
+import { registerSchema, RegisterFormData } from '@/services/auth/auth.schemas';
 import { useAuth } from '@/hooks/useAuth';
 import { mapFirebaseError } from '@/utils/errors';
-import { AUTH_MESSAGES, AUTH_ROUTES, PROTECTED_ROUTES } from '@/utils/constants';
+import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { AuthShowcase } from './components/AuthShowCase';
 import bgAuth from '@/assets/images/bg_auth.png';
@@ -20,49 +19,49 @@ import img9 from '@/assets/images/image-9.png';
 import productCardImg from '@/assets/images/product-card.png';
 import pcImg from '@/assets/images/pc.png';
 
-interface LocationState {
-  from?: string;
-}
-
-export const LoginPage: React.FC = () => {
+export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const locationState = location.state as LocationState;
-  const { login, loginWithGoogle, isAuthenticated, clearError } = useAuth();
+  const { register, loginWithGoogle, isAuthenticated, clearError } = useAuth();
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema) as any,
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      fullName: '',
       email: '',
       password: '',
-      remember: false
+      confirmPassword: ''
     }
   });
+
+  // Watch password for strength indicator (if needed in future)
+  // const password = watch('password');
 
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      const from = locationState?.from || PROTECTED_ROUTES.HOME;
-      navigate(from, { replace: true });
+      navigate(AUTH_ROUTES.LOGIN, { replace: true });
     }
-  }, [isAuthenticated, navigate, locationState]);
+  }, [isAuthenticated, navigate]);
 
   // Clear errors on unmount
   useEffect(() => {
     return () => clearError();
   }, [clearError]);
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      await login(data.email, data.password, data.remember || false);
-      toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
-      const from = locationState?.from || PROTECTED_ROUTES.HOME;
-      navigate(from, { replace: true });
+      await register({
+        email: data.email,
+        password: data.password,
+        fullName: data.fullName
+      });
+      toast.success(AUTH_MESSAGES.REGISTER_SUCCESS);
+      navigate(AUTH_ROUTES.LOGIN, { replace: true });
     } catch (error) {
       const errorMessage = mapFirebaseError(error);
       toast.error(errorMessage);
@@ -70,12 +69,11 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleRegister = async () => {
     try {
       await loginWithGoogle();
       toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
-      const from = locationState?.from || PROTECTED_ROUTES.HOME;
-      navigate(from, { replace: true });
+      navigate('/', { replace: true });
     } catch (error) {
       const errorMessage = mapFirebaseError(error);
       toast.error(errorMessage);
@@ -85,10 +83,29 @@ export const LoginPage: React.FC = () => {
   return (
     <AuthLayout
       left={
-        <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại!">
+        <AuthFormWrapper title="Đăng Ký" subtitle="Tạo tài khoản mới">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
+                <Controller
+                  name="fullName"
+                  control={control}
+                  render={({ field }) => (
+                    <div>
+                      <InputField
+                        {...field}
+                        type="text"
+                        placeholder="Nhập họ và tên"
+                        icon={<Person className="text-blue" />}
+                        disabled={isSubmitting}
+                      />
+                      {errors.fullName && (
+                        <span className="text-red-500 text-sm mt-1">{errors.fullName.message}</span>
+                      )}
+                    </div>
+                  )}
+                />
+
                 <Controller
                   name="email"
                   control={control}
@@ -128,30 +145,26 @@ export const LoginPage: React.FC = () => {
                   )}
                 />
 
-                <Link
-                  to={AUTH_ROUTES.FORGOT_PASSWORD}
-                  className="text-blue text-sm underline text-end font-medium"
-                >
-                  Quên mật khẩu?
-                </Link>
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  render={({ field }) => (
+                    <div>
+                      <InputField
+                        {...field}
+                        type="password"
+                        placeholder="Xác nhận mật khẩu"
+                        icon={<Lock className="text-primary" />}
+                        showPasswordToggle
+                        disabled={isSubmitting}
+                      />
+                      {errors.confirmPassword && (
+                        <span className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</span>
+                      )}
+                    </div>
+                  )}
+                />
               </div>
-
-              <Controller
-                name="remember"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <label className="flex items-center gap-2 w-fit">
-                    <Checkbox
-                      checked={value}
-                      onChange={onChange}
-                      disabled={isSubmitting}
-                    />
-                    <span className="font-normal text-sm text-text-hi">
-                      Lưu trạng thái đăng nhập
-                    </span>
-                  </label>
-                )}
-              />
 
               {errors.root && (
                 <div className="text-red-500 text-sm text-center">
@@ -166,7 +179,7 @@ export const LoginPage: React.FC = () => {
                   disabled={isSubmitting}
                   className="w-full"
                 >
-                  {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
+                  {isSubmitting ? 'Đang đăng ký...' : 'ĐĂNG KÝ'}
                 </Button>
 
                 {/* Divider */}
@@ -179,7 +192,7 @@ export const LoginPage: React.FC = () => {
                 {/* Google Button */}
                 <button
                   type="button"
-                  onClick={handleGoogleLogin}
+                  onClick={handleGoogleRegister}
                   disabled={isSubmitting}
                   className="flex items-center justify-center gap-3 w-full py-3 px-5 border-2 rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -191,9 +204,9 @@ export const LoginPage: React.FC = () => {
           </form>
 
           <p className="text-center text-sm">
-            Bạn chưa có tài khoản?{' '}
-            <Link to={AUTH_ROUTES.REGISTER} className="text-blue hover:underline">
-              Đăng ký
+            Bạn đã có tài khoản?{' '}
+            <Link to={AUTH_ROUTES.LOGIN} className="text-blue hover:underline">
+              Đăng nhập
             </Link>
           </p>
         </AuthFormWrapper>

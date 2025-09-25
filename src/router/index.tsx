@@ -2,12 +2,14 @@ import React, { lazy } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { navigationSections, NavigationRoute } from '@/config/navigation';
 import { AdminLayout } from '../layouts/AdminLayout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import HistoryPage from '@/pages/history/HistoryPage';
 
 const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const LoginPage = lazy(() => import('@/pages/login/LoginPage').then((m) => ({ default: m.LoginPage })));
+const RegisterPage = lazy(() => import('@/pages/register/RegisterPage').then((m) => ({ default: m.RegisterPage })));
 const PurchasePage = lazy(() => import('@/pages/purchase/PurchasePage'));
 const WalletPage = lazy(() => import('@/pages/wallet/WalletPage'));
 
@@ -59,7 +61,11 @@ const routes: Route[] = [
   {
     path: '/',
     name: '/',
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true, // Route mặc định khi vào /
@@ -72,6 +78,11 @@ const routes: Route[] = [
     name: '/login',
     element: <LoginPage />,
     path: '/login'
+  },
+  {
+    name: '/register',
+    element: <RegisterPage />,
+    path: '/register'
   },
   {
     element: <NotFoundPage />,

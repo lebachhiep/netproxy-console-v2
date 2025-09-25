@@ -1,12 +1,16 @@
 import { AppLoading } from 'components/app/AppLoading';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const navigation = useNavigate();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { isInitialized } = useAuth();
 
-  if (!isLoaded) {
+  // Initialize auth listener on mount
+  useEffect(() => {
+    // Auth listener is initialized in the store automatically
+  }, []);
+
+  if (!isInitialized) {
     return <AppLoading />;
   }
 

@@ -345,7 +345,12 @@ const ComponentPage = () => {
               features={[
                 {
                   icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                  label: <div className="font-bold text-base">Hỗ trợ HTTPs</div>
+                  label: (
+                    <div className="text-base">
+                      <label htmlFor="">Hỗ trợ: </label>
+                      <span className="font-bold">HTTP/HTTPS</span>
+                    </div>
+                  )
                 },
                 {
                   icon: <Clock className="w-6 h-6 text-yellow" />,

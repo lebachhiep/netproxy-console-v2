@@ -268,7 +268,18 @@ const DashboardPage = () => {
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
               </div>
             }
-            subInfo={[{ label: 'Lưu lượng đã sử dụng', value: '256 GB' }]}
+            subInfo={[
+              {
+                label: 'Proxy khả dụng:',
+                value: (
+                  <div className="">
+                    <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
+                    <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
+                  </div>
+                )
+              }
+            ]}
+            //subInfo={[{ label: 'Cổng proxy khả dụng', value: '10.153 Ports' }]}
           />
 
           <OverViewCard
@@ -288,7 +299,7 @@ const DashboardPage = () => {
             }
             subInfo={[
               {
-                label: 'IP có trong pool:',
+                label: 'Tổng số IP:',
                 value: (
                   <div className="">
                     <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>

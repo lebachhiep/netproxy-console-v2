@@ -261,7 +261,7 @@ const DashboardPage = () => {
                 <TopSpeed />
               </div>
             }
-            title="Hiệu suất & sử dụng"
+            title="Hiệu suất & khả dụng"
             mainContent={
               <div className="">
                 <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>

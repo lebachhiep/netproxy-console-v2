@@ -16,16 +16,16 @@
 @layer base {
   /* Title */
   h1 {
-    @apply text-[48px] not-italic font-medium leading-[120%] tracking-[-1.44px];
+    @apply text-[48px] font-averta not-italic font-semibold leading-[120%] tracking-[-1.44px];
   }
   h2 {
-    @apply text-[33px] not-italic font-medium leading-[120%] tracking-[-0.66px];
+    @apply text-[33px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.66px];
   }
   h3 {
-    @apply text-[24px] not-italic font-medium leading-[120%] tracking-[-0.48px];
+    @apply text-[24px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.48px];
   }
   h4 {
-    @apply text-[20px] not-italic font-medium leading-[120%] tracking-[-0.3px];
+    @apply text-[20px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.3px];
   }
 
   /* Nav */

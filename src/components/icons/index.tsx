@@ -1,6 +1,7 @@
 import { ReactComponent as Person } from '@/assets/icons/person.svg';
 import { ReactComponent as Lock } from '@/assets/icons/lock.svg';
 import { ReactComponent as Eye } from '@/assets/icons/eye.svg';
+import { ReactComponent as EyeOff } from '@/assets/icons/eye_off.svg';
 import { ReactComponent as AppsBreadcrumb } from '@/assets/icons/apps_breadcrumb.svg';
 import { ReactComponent as Apps } from '@/assets/icons/apps.svg';
 import { ReactComponent as CartOutlined } from '@/assets/icons/cart_outlined.svg';
@@ -76,11 +77,13 @@ import { ReactComponent as ArrowRight } from '@/assets/icons/arrow_right.svg';
 import { ReactComponent as CloudSwapFilled } from '@/assets/icons/cloud_swap_filled.svg';
 import { ReactComponent as Storage } from '@/assets/icons/storage.svg';
 import { ReactComponent as CalendarPlus } from '@/assets/icons/calendar_plus.svg';
+import { ReactComponent as AddCircle } from '@/assets/icons/add_circle.svg';
 
 export {
   Person,
   Lock,
   Eye,
+  EyeOff,
   Apps,
   AppsBreadcrumb,
   CartOutlined,
@@ -155,5 +158,6 @@ export {
   DocumentSyncFilled,
   SettingsFilled,
   Storage,
-  CalendarPlus
+  CalendarPlus,
+  AddCircle
 };

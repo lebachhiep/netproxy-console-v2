@@ -10,6 +10,13 @@ export interface UserProfile {
   balance: number;
   is_banned: boolean;
   ban_reason?: string;
+
+  // Bổ sung
+  address?: string;
+  country?: string;
+  zip?: string;
+  company?: string;
+  vatId?: string;
 }
 
 // Update profile request

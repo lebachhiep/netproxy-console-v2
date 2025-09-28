@@ -4,15 +4,19 @@ import { navigationSections, NavigationRoute } from '@/config/navigation';
 import { AdminLayout } from '../layouts/AdminLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import HistoryPage from '@/pages/history/HistoryPage';
+import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
 
 const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
 const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
 const LoginPage = lazy(() => import('@/pages/login/LoginPage').then((m) => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('@/pages/register/RegisterPage').then((m) => ({ default: m.RegisterPage })));
-const ForgotPasswordPage = lazy(() => import('@/pages/forgot-password/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })));
+const ForgotPasswordPage = lazy(() =>
+  import('@/pages/forgot-password/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+);
 const PurchasePage = lazy(() => import('@/pages/purchase/PurchasePage'));
 const WalletPage = lazy(() => import('@/pages/wallet/WalletPage'));
+const SupportSoftwarePage = lazy(() => import('@/pages/support-software/SupportSoftwarePage'));
 
 // Extend NavigationRoute với RouteObject properties
 export interface Route extends NavigationRoute, RouteObject {
@@ -40,6 +44,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
         break;
       case '/components':
         element = <ComponentPage />;
+        break;
+      case '/support-software':
+        element = <SupportSoftwarePage />;
         break;
       default:
         element = <></>;
@@ -89,6 +96,11 @@ const routes: Route[] = [
     name: '/forgot-password',
     element: <ForgotPasswordPage />,
     path: '/forgot-password'
+  },
+  {
+    name: '/reset-password',
+    element: <ResetPasswordPage />,
+    path: '/reset-password'
   },
   {
     element: <NotFoundPage />,

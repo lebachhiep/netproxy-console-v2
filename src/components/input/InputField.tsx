@@ -1,6 +1,6 @@
 import React, { useState, forwardRef } from 'react';
 import { IoEyeOff } from 'react-icons/io5';
-import { Eye } from '../icons';
+import { Eye, EyeOff } from '../icons';
 import { twMerge } from 'tailwind-merge';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -14,6 +14,11 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
    * @default "left"
    */
   iconPosition?: 'left' | 'right';
+
+  /**
+   * Label hiển thị phía trên input.
+   */
+  label?: string;
 
   /**
    * Nếu true và type="password", sẽ hiển thị nút toggle để show/hide mật khẩu.
@@ -60,63 +65,67 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
  *
  */
 export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
-  ({ icon, iconPosition = 'left', type, showPasswordToggle = false, wrapperClassName, inputClassName, ...props }, ref) => {
+  ({ icon, iconPosition = 'left', type, showPasswordToggle = false, wrapperClassName, label, inputClassName, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const inputType = type === 'password' && showPassword ? 'text' : type;
 
     return (
-      <div
-        className={twMerge(
-          'group flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
-          'focus-within:border-primary dark:focus-within:border-primary-dark',
-          wrapperClassName
-        )}
-      >
-        {/* Icon Left */}
-        {icon && iconPosition === 'left' && (
-          <div
-            className={twMerge(
-              'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-r-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-              'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
-            )}
-          >
-            {icon}
-          </div>
-        )}
-
-        {/* Input */}
-        <input
-          ref={ref} // <-- thêm ref
-          type={inputType}
+      <div className="flex flex-col gap-1 w-full">
+        {/* Label */}
+        {label && <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">{label}</label>}
+        <div
           className={twMerge(
-            'flex-1 px-3 h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
-            inputClassName
+            'group flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
+            'focus-within:border-primary dark:focus-within:border-primary-dark',
+            wrapperClassName
           )}
-          {...props}
-        />
+        >
+          {/* Icon Left */}
+          {icon && iconPosition === 'left' && (
+            <div
+              className={twMerge(
+                'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-r-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
+                'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+              )}
+            >
+              {icon}
+            </div>
+          )}
 
-        {/* Icon Right */}
-        {icon && iconPosition === 'right' && !showPasswordToggle && (
-          <div
+          {/* Input */}
+          <input
+            ref={ref} // <-- thêm ref
+            type={inputType}
             className={twMerge(
-              'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-              'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+              'flex-1 px-3 h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+              inputClassName
             )}
-          >
-            {icon}
-          </div>
-        )}
+            {...props}
+          />
 
-        {/* Toggle Password */}
-        {showPasswordToggle && (
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="px-3 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
-          >
-            {showPassword ? <IoEyeOff /> : <Eye />}
-          </button>
-        )}
+          {/* Icon Right */}
+          {icon && iconPosition === 'right' && !showPasswordToggle && (
+            <div
+              className={twMerge(
+                'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
+                'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+              )}
+            >
+              {icon}
+            </div>
+          )}
+
+          {/* Toggle Password */}
+          {showPasswordToggle && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="px-3 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          )}
+        </div>
       </div>
     );
   }

@@ -17,7 +17,7 @@ export const ApiInput: React.FC<ApiInputProps> = ({ label = 'API: ', value, acti
   return (
     <div
       className={twMerge(
-        'flex items-center h-12 w-full bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
+        'flex items-center h-10 w-full bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
         className
       )}
     >

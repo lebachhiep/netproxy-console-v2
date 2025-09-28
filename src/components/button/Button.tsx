@@ -99,7 +99,7 @@ export const Button: FC<ButtonProps> = ({
   return (
     <button className={twMerge(baseClasses, variants[variant], sizes[size], className)} disabled={isDisabled} {...props}>
       {iconPosition === 'left' && iconElement}
-      {children}
+      <div className="leading-[140%]">{children}</div>
       {iconPosition === 'right' && iconElement}
     </button>
   );

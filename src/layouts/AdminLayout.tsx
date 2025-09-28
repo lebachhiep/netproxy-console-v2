@@ -22,7 +22,7 @@ export const AdminLayout: React.FC = () => {
         {/* Navbar cố định */}
         <div
           className={clsx(
-            'fixed top-5 right-0 h-16 z-10 transition-all duration-300',
+            'fixed top-5 right-0 h-16 z-50 transition-all duration-300',
             collapsed ? 'left-[88px]' : 'left-[calc(272px+20px)]'
           )}
         >

@@ -105,7 +105,10 @@ export const Modal: React.FC<ModalProps> = ({
       >
         {/* Header */}
         <div
-          className={`flex items-center justify-between p-5 border-b-2 border-border-element dark:border-border-element-dark ${headerClassName}`}
+          className={twMerge(
+            `flex items-center justify-between p-5 border-b-2 border-border-element dark:border-border-element-dark`,
+            headerClassName
+          )}
         >
           <div className="text-text-hi dark:text-text-hi-dark text-xl font-semibold font-averta">{title}</div>
           <button onClick={onClose} className={`rounded-full flex items-center justify-center ${closeButtonClassName}`}>
@@ -119,7 +122,10 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Footer */}
         {(cancelButton || actions.length > 0) && (
           <div
-            className={`flex items-center justify-between p-3 border-t-2 border-border-element dark:border-border-element-dark ${footerClassName}`}
+            className={twMerge(
+              `flex items-center justify-between p-3 border-t-2 border-border-element dark:border-border-element-dark`,
+              footerClassName
+            )}
           >
             <div>{cancelButton}</div>
             <div className="flex items-center gap-2">{actions}</div>

@@ -7,13 +7,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { resetPasswordSchema, ResetPasswordFormData } from '@/services/auth/auth.schemas';
+import { resetPasswordSchema, ResetPasswordFormData, ForgotPasswordFormData } from '@/services/auth/auth.schemas';
 import { useAuth } from '@/hooks/useAuth';
 import { mapFirebaseError } from '@/utils/errors';
 import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { AuthShowcase } from './components/AuthShowCase';
-import bgAuth from '@/assets/images/bg_auth.png';
+import bgAuth from '/images/bg_auth.png';
 import group7 from '@/assets/images/group-7.png';
 import img9 from '@/assets/images/image-9.png';
 import productCardImg from '@/assets/images/product-card.png';
@@ -30,7 +30,7 @@ export const ForgotPasswordPage: React.FC = () => {
     formState: { errors, isSubmitting },
     setError,
     reset
-  } = useForm<ResetPasswordFormData>({
+  } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema) as any,
     defaultValues: {
       email: ''
@@ -49,7 +49,8 @@ export const ForgotPasswordPage: React.FC = () => {
     return () => clearError();
   }, [clearError]);
 
-  const onSubmit = async (data: ResetPasswordFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
+    console.log({ data });
     try {
       await resetPassword(data.email);
       toast.success(AUTH_MESSAGES.PASSWORD_RESET_SENT);
@@ -63,13 +64,10 @@ export const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout
-      left={
-        <AuthFormWrapper
-          title="Quên Mật Khẩu"
-          subtitle="Nhập email của bạn để nhận liên kết đặt lại mật khẩu"
-        >
-          {!emailSent ? (
+    <div className="flex items-center justify-center min-h-screen bg-bg-primary">
+      {!emailSent ? (
+        <AuthFormWrapper title="Lấy lại mật khẩu" subtitle="Vui lòng nhập email đã đăng ký">
+          <div className="p-5 shadow-lg rounded-[20px] border border-border-element">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
@@ -82,73 +80,29 @@ export const ForgotPasswordPage: React.FC = () => {
                           {...field}
                           type="email"
                           placeholder="Nhập email"
-                          icon={<EmojiLaugh className="text-blue" />}
+                          // icon={<EmojiLaugh className="text-blue" />}
                           disabled={isSubmitting}
                         />
-                        {errors.email && (
-                          <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>
-                        )}
+                        {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>}
                       </div>
                     )}
                   />
                 </div>
 
-                {errors.root && (
-                  <div className="text-red-500 text-sm text-center">
-                    {errors.root.message}
-                  </div>
-                )}
+                {errors.root && <div className="text-red-500 text-sm text-center">{errors.root.message}</div>}
 
                 <div className="flex flex-col gap-3">
-                  <Button
-                    type="submit"
-                    loading={isSubmitting}
-                    disabled={isSubmitting}
-                    className="w-full"
-                  >
-                    {isSubmitting ? 'Đang gửi...' : 'GỬI EMAIL ĐẶT LẠI MẬT KHẨU'}
+                  <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
+                    {isSubmitting ? 'Đang gửi...' : 'XÁC THỰC'}
                   </Button>
 
-                  <Link
-                    to={AUTH_ROUTES.LOGIN}
-                    className="text-blue text-sm text-center hover:underline"
-                  >
+                  <Link to={AUTH_ROUTES.LOGIN} className="text-blue text-sm text-center hover:underline">
                     Quay lại đăng nhập
                   </Link>
                 </div>
               </div>
             </form>
-          ) : (
-            <div className="flex flex-col gap-4">
-              <div className="text-center">
-                <div className="text-green-600 text-lg font-medium mb-2">
-                  Email đã được gửi!
-                </div>
-                <p className="text-sm text-gray-600">
-                  Vui lòng kiểm tra hộp thư của bạn và làm theo hướng dẫn để đặt lại mật khẩu.
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  Nếu không nhận được email, vui lòng kiểm tra thư mục spam.
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <Button
-                  onClick={() => setEmailSent(false)}
-                  className="w-full"
-                >
-                  GỬI LẠI EMAIL
-                </Button>
-
-                <Link
-                  to={AUTH_ROUTES.LOGIN}
-                  className="text-blue text-sm text-center hover:underline"
-                >
-                  Quay lại đăng nhập
-                </Link>
-              </div>
-            </div>
-          )}
+          </div>
 
           <p className="text-center text-sm">
             Bạn chưa có tài khoản?{' '}
@@ -157,40 +111,39 @@ export const ForgotPasswordPage: React.FC = () => {
             </Link>
           </p>
         </AuthFormWrapper>
-      }
-      right={
-        <div className="w-[720px] justify-center items-center gap-1 p-5 hidden md:flex relative">
-          <AuthShowcase
-            bg={bgAuth}
-            images={[
-              {
-                src: group7,
-                className: 'absolute w-[119px] h-[141px] top-[15px] left-[516px] mix-blend-soft-light'
-              },
-              {
-                src: img9,
-                className: 'aspect-[91/60] w-[606px] h-[405px] top-[100px] left-[37px] absolute object-contain'
-              },
-              {
-                src: productCardImg,
-                className: 'aspect-[101/108] w-[180px] h-[193px] top-[360px] left-[479px] absolute object-contain'
-              },
-              {
-                src: pcImg,
-                className: 'absolute w-[132px] h-[154px] top-[274px] left-0 object-contain'
-              }
-            ]}
-            title="Proxy Tốc Độ Cao"
-            description={
-              <>
-                Giải pháp an toàn, tăng cường bảo mật
-                <br />
-                và tối ưu hiệu suất kết nối.
-              </>
-            }
-          />
+      ) : (
+        // <div className="flex flex-col gap-4">
+        //   <div className="text-center">
+        //     <div className="text-green-600 text-lg font-medium mb-2">Email đã được gửi!</div>
+        //     <p className="text-sm text-gray-600">Vui lòng kiểm tra hộp thư của bạn và làm theo hướng dẫn để đặt lại mật khẩu.</p>
+        //     <p className="text-xs text-gray-500 mt-2">Nếu không nhận được email, vui lòng kiểm tra thư mục spam.</p>
+        //   </div>
+
+        //   <div className="flex flex-col gap-3">
+        //     <Button onClick={() => setEmailSent(false)} className="w-full">
+        //       GỬI LẠI EMAIL
+        //     </Button>
+
+        //     <Link to={AUTH_ROUTES.LOGIN} className="text-blue text-sm text-center hover:underline">
+        //       Quay lại đăng nhập
+        //     </Link>
+        //   </div>
+        // </div>
+        <div className="flex flex-col gap-6 text-center">
+          <div className="flex flex-col gap-3">
+            <h3>Đã gởi mail</h3>
+            <p className="text-base text-text-hi dark:text-text-hi-dark">
+              Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu.
+            </p>
+          </div>
+          <div>
+            <Button className="px-8 uppercase" onClick={() => setEmailSent(false)}>
+              GỬI LẠI EMAIL
+            </Button>
+          </div>
         </div>
-      }
-    />
+      )}
+      <div className="absolute bottom-10 text-text-lo font-medium text-sm">© Netproxy</div>
+    </div>
   );
 };

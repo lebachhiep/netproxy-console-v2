@@ -25,24 +25,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to={redirectTo}
-        state={{ from: location.pathname }}
-        replace
-      />
-    );
+    return <Navigate to={redirectTo} state={{ from: location.pathname }} replace />;
   }
 
   // Check email verification if required
   if (requireEmailVerification && user && !user.emailVerified) {
-    return (
-      <Navigate
-        to={AUTH_ROUTES.VERIFY_EMAIL}
-        state={{ from: location.pathname }}
-        replace
-      />
-    );
+    return <Navigate to={AUTH_ROUTES.VERIFY_EMAIL} state={{ from: location.pathname }} replace />;
   }
 
   return <>{children}</>;

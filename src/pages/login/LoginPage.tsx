@@ -14,7 +14,7 @@ import { mapFirebaseError } from '@/utils/errors';
 import { AUTH_MESSAGES, AUTH_ROUTES, PROTECTED_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { AuthShowcase } from './components/AuthShowCase';
-import bgAuth from '@/assets/images/bg_auth.png';
+import bgAuth from '/images/bg_auth.png';
 import group7 from '@/assets/images/group-7.png';
 import img9 from '@/assets/images/image-9.png';
 import productCardImg from '@/assets/images/product-card.png';
@@ -86,6 +86,22 @@ export const LoginPage: React.FC = () => {
     <AuthLayout
       left={
         <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại!">
+          {/* Google Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isSubmitting}
+            className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Google />
+            <span className="font-medium text-gray-700">GOOGLE</span>
+          </button>
+          {/* Divider */}
+          <div className="flex items-center w-full">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="mx-3 text-gray-400 text-sm">Hoặc</span>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
@@ -101,9 +117,7 @@ export const LoginPage: React.FC = () => {
                         icon={<EmojiLaugh className="text-blue" />}
                         disabled={isSubmitting}
                       />
-                      {errors.email && (
-                        <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>
-                      )}
+                      {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
                     </div>
                   )}
                 />
@@ -121,17 +135,12 @@ export const LoginPage: React.FC = () => {
                         showPasswordToggle
                         disabled={isSubmitting}
                       />
-                      {errors.password && (
-                        <span className="text-red-500 text-sm mt-1">{errors.password.message}</span>
-                      )}
+                      {errors.password && <span className="text-red text-sm mt-1">{errors.password.message}</span>}
                     </div>
                   )}
                 />
 
-                <Link
-                  to={AUTH_ROUTES.FORGOT_PASSWORD}
-                  className="text-blue text-sm underline text-end font-medium"
-                >
+                <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm underline text-end font-medium">
                   Quên mật khẩu?
                 </Link>
               </div>
@@ -141,51 +150,18 @@ export const LoginPage: React.FC = () => {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <label className="flex items-center gap-2 w-fit">
-                    <Checkbox
-                      checked={value}
-                      onChange={onChange}
-                      disabled={isSubmitting}
-                    />
-                    <span className="font-normal text-sm text-text-hi">
-                      Lưu trạng thái đăng nhập
-                    </span>
+                    <Checkbox checked={value} onChange={onChange} disabled={isSubmitting} />
+                    <span className="font-normal text-sm text-text-hi">Lưu trạng thái đăng nhập</span>
                   </label>
                 )}
               />
 
-              {errors.root && (
-                <div className="text-red-500 text-sm text-center">
-                  {errors.root.message}
-                </div>
-              )}
+              {errors.root && <div className="text-red text-sm text-center">{errors.root.message}</div>}
 
               <div className="flex flex-col gap-5">
-                <Button
-                  type="submit"
-                  loading={isSubmitting}
-                  disabled={isSubmitting}
-                  className="w-full"
-                >
+                <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
                   {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
                 </Button>
-
-                {/* Divider */}
-                <div className="flex items-center w-full">
-                  <div className="flex-grow border-t border-gray-300"></div>
-                  <span className="mx-3 text-gray-400 text-sm">Hoặc</span>
-                  <div className="flex-grow border-t border-gray-300"></div>
-                </div>
-
-                {/* Google Button */}
-                <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  disabled={isSubmitting}
-                  className="flex items-center justify-center gap-3 w-full py-3 px-5 border-2 rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Google />
-                  <span className="font-medium text-gray-700">GOOGLE</span>
-                </button>
               </div>
             </div>
           </form>

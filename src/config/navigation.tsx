@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Apps,
+  ArrowCounter,
   CartFilled,
   ChatWarningFilled,
   ClockBillFilled,
@@ -61,9 +62,9 @@ export const navigationSections: NavigationSection[] = [
       },
       {
         title: 'Lịch sử',
-        icon: <ClockBillFilled />,
+        icon: <ArrowCounter />,
         iconClass: 'text-blue',
-        breadcrumbIcon: <ClockBillFilled width={32} height={32} className="text-blue" />,
+        breadcrumbIcon: <ArrowCounter width={32} height={32} className="text-blue" />,
         path: '/history',
         name: '/history',
         breadcrumb: 'Lịch sử'
@@ -118,18 +119,18 @@ export const navigationSections: NavigationSection[] = [
       {
         title: (
           <div className="flex items-center justify-between">
-            <span>Cấu hình</span>
-            <div className="text-xs w-6 flex items-center justify-center h-6 rounded-full font-medium bg-blue-bg dark:bg-blue-bg-dark text-blue dark:text-blue-dark">
+            <span>Phần mềm hỗ trợ</span>
+            {/* <div className="text-xs w-6 flex items-center justify-center h-6 rounded-full font-medium bg-blue-bg dark:bg-blue-bg-dark text-blue dark:text-blue-dark">
               4
-            </div>
+            </div> */}
           </div>
         ),
-        icon: <SettingsFilled />,
-        iconClass: 'text-pink',
-        breadcrumbIcon: <SettingsFilled width={32} height={32} className="text-pink" />,
-        path: '/settings',
-        name: '/settings',
-        breadcrumb: 'Cấu hình'
+        icon: <Apps />,
+        iconClass: 'text-yellow',
+        breadcrumbIcon: <Apps width={32} height={32} className="text-yellow" />,
+        path: '/support-software',
+        name: '/support-software',
+        breadcrumb: 'Phần mềm hỗ trợ'
       }
     ]
   }

@@ -3,18 +3,24 @@ import {
   Apps,
   ArrowCounter,
   CartFilled,
+  CartOutlined,
+  ChatWarning,
   ChatWarningFilled,
   ClockBillFilled,
   CloudSwapFilled,
   DashboardFilled,
+  DashboardOutlined,
+  DocumentSync,
   DocumentSyncFilled,
   SettingsFilled,
-  WalletCreditCardFilled
+  WalletCreditCardFilled,
+  WalletCreditCardOutlined
 } from '@/components/icons';
 
 export interface NavigationRoute {
   title?: any;
   icon?: React.ReactNode;
+  collapsedIcon?: React.ReactNode;
   iconClass?: string;
   breadcrumbIcon?: React.ReactNode;
   breadcrumb?: string;
@@ -36,6 +42,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Trang chủ',
         icon: <DashboardFilled />,
+        collapsedIcon: <DashboardOutlined />,
         iconClass: 'text-primary',
         breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
         path: '/home',
@@ -45,6 +52,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Mua hàng',
         icon: <CartFilled />,
+        collapsedIcon: <CartOutlined />,
         iconClass: 'text-yellow',
         breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />,
         path: '/buy',
@@ -54,6 +62,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Xem ví',
         icon: <WalletCreditCardFilled />,
+        collapsedIcon: <WalletCreditCardOutlined />,
         iconClass: 'text-green',
         breadcrumbIcon: <WalletCreditCardFilled width={32} height={32} className="text-green" />,
         path: '/wallet',
@@ -63,6 +72,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Lịch sử',
         icon: <ArrowCounter />,
+        collapsedIcon: <ArrowCounter />,
         iconClass: 'text-blue',
         breadcrumbIcon: <ArrowCounter width={32} height={32} className="text-blue" />,
         path: '/history',
@@ -96,6 +106,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Tài liệu API',
         icon: <DocumentSyncFilled />,
+        collapsedIcon: <DocumentSync />,
         iconClass: 'text-primary',
         breadcrumbIcon: <DocumentSyncFilled width={32} height={32} className="text-primary" />,
         path: '/api-docs',
@@ -110,6 +121,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Trợ giúp',
         icon: <ChatWarningFilled />,
+        collapsedIcon: <ChatWarning />,
         iconClass: 'text-blue',
         breadcrumbIcon: <ChatWarningFilled width={32} height={32} className="text-blue" />,
         path: '/help',

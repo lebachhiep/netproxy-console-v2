@@ -27,13 +27,13 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
     return (
       <div
         className={twMerge(
-          'group shadow-xs flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
-          'focus-within:border-primary dark:focus-within:border-primary-dark',
+          'group shadow-xs flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden transition-colors duration-300',
+          'focus-within:border-blue dark:focus-within:border-blue-dark hover:border-blue dark:hover:border-blue-dark',
           wrapperClassName
         )}
       >
         <div className={twMerge('flex items-center justify-center pl-4 mr-1')}>
-          <SlashForward className="text-text-lo dark:text-text-lo-dark" />
+          <SlashForward className="text-primary dark:text-primary-dark animate-pulse" />
         </div>
 
         {/* Input */}
@@ -53,8 +53,8 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
           type="button"
           onClick={() => onEnter?.(props.value as string)}
           className={twMerge(
-            'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-            'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+            'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors duration-300'
+            // 'group-focus-within:border-blue dark:group-focus-within:border-blue-dark'
           )}
         >
           <ArrowEnter className="text-text-lo" />

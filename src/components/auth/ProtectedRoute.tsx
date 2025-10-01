@@ -23,10 +23,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <AppLoading />;
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to={redirectTo} state={{ from: location.pathname }} replace />;
-  }
+  // // Redirect to login if not authenticated
+  // if (!isAuthenticated) {
+  //   return <Navigate to={redirectTo} state={{ from: location.pathname }} replace />;
+  // }
 
   // Check email verification if required
   if (requireEmailVerification && user && !user.emailVerified) {

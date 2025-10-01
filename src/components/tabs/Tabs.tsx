@@ -100,24 +100,37 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
       {type === 'card' && (
         <div>
           <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5">
-            <div className={`flex w-fit rounded-lg gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark`}>
+            <div className="relative flex w-fit rounded-lg gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark">
               {tabs.map((tab) => {
                 const isActive = currentActive === tab.key;
-
                 return (
-                  <div className={`rounded-lg`}>
-                    <button
-                      key={tab.key}
-                      onClick={() => handleClick(tab.key)}
-                      className={`text-sm font-medium flex items-center gap-2 px-4 py-[10px] rounded-lg transition-all duration-200
-                    ${isActive ? 'bg-primary text-white shadow-xs !font-bold' : 'text-text-lo hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark'}`}
-                    >
-                      {tab.icon && <span className="w-5 h-5">{tab.icon}</span>}
-                      <span>{tab.label}</span>
-                    </button>
-                  </div>
+                  <button
+                    key={tab.key}
+                    onClick={() => handleClick(tab.key)}
+                    className={`relative text-sm font-medium flex items-center gap-2 px-4 py-[10px] rounded-lg transition-colors duration-200 z-10
+              ${isActive ? 'text-white !font-bold' : 'text-text-lo hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark'}`}
+                    ref={(el) => {
+                      if (isActive && el) {
+                        const rect = el.getBoundingClientRect();
+                        const parentRect = el.parentElement?.getBoundingClientRect();
+                        const offsetLeft = rect.left - (parentRect?.left ?? 0);
+
+                        const highlight = document.querySelector<HTMLDivElement>('#tab-highlight');
+                        if (highlight) {
+                          highlight.style.width = `${rect.width}px`;
+                          highlight.style.height = `${rect.height}px`;
+                          highlight.style.transform = `translateX(${offsetLeft}px)`;
+                        }
+                      }
+                    }}
+                  >
+                    {tab.icon && <span className="w-5 h-5">{tab.icon}</span>}
+                    <span>{tab.label}</span>
+                  </button>
                 );
               })}
+              {/* background highlight */}
+              <div id="tab-highlight" className="absolute bg-primary rounded-lg transition-all duration-300 ease-in-out z-0 shadow-xs" />
             </div>
           </div>
           <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>

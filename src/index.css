@@ -106,3 +106,24 @@ code {
     -1px 0 3px 0 rgba(0, 0, 0, 0.1),
     -1px 0 2px 0 rgba(0, 0, 0, 0.06);
 }
+
+@keyframes moveBlur {
+  0% {
+    transform: translateX(0) rotate(30deg);
+  }
+  100% {
+    transform: translateX(var(--move-distance, 400px)) rotate(30deg);
+  }
+}
+
+.animate-moveBlur {
+  animation: moveBlur var(--move-duration, 2s) infinite linear;
+}
+
+/* custom utility cho pause/run */
+.paused {
+  animation-play-state: paused;
+}
+.running {
+  animation-play-state: running;
+}

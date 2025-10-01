@@ -16,7 +16,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   content,
   position = 'top',
   className = '',
-  delay = 100,
+  delay = 150,
   disabled = false,
   trigger = 'hover',
   arrow = true
@@ -54,8 +54,6 @@ const Tooltip: React.FC<TooltipProps> = ({
     };
 
     let newPosition = position;
-
-    // Check if tooltip goes outside viewport and adjust position
     switch (position) {
       case 'top':
         if (tooltipRect.top < 0) newPosition = 'bottom';
@@ -70,27 +68,19 @@ const Tooltip: React.FC<TooltipProps> = ({
         if (tooltipRect.right > viewport.width) newPosition = 'left';
         break;
     }
-
     setActualPosition(newPosition);
   };
 
   const showTooltip = () => {
     if (disabled) return;
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setIsVisible(true);
     }, delay);
   };
 
   const hideTooltip = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
     }, 100);
@@ -104,9 +94,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   };
 
   useEffect(() => {
-    if (isVisible) {
-      checkPosition();
-    }
+    if (isVisible) checkPosition();
   }, [isVisible]);
 
   useEffect(() => {
@@ -117,16 +105,13 @@ const Tooltip: React.FC<TooltipProps> = ({
         }
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [trigger]);
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -137,7 +122,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   return (
     <div
       ref={triggerRef}
-      className="relative inline-block"
+      className="relative inline-flex"
       onMouseEnter={trigger === 'hover' || trigger === 'both' ? showTooltip : undefined}
       onMouseLeave={trigger === 'hover' || trigger === 'both' ? hideTooltip : undefined}
       onClick={handleClick}
@@ -147,13 +132,14 @@ const Tooltip: React.FC<TooltipProps> = ({
       {isVisible && (
         <div
           ref={tooltipRef}
-          className={`absolute z-[9999] px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-lg whitespace-nowrap dark:bg-gray-200 dark:text-gray-800 transition-opacity duration-200 ${positionClasses[actualPosition]} ${className}`}
+          className={`absolute z-[9999] px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-lg whitespace-nowrap 
+          dark:bg-gray-200 dark:text-gray-800 
+          transition-all duration-200 ease-out 
+          opacity-100 scale-100 
+          ${positionClasses[actualPosition]} ${className}`}
           role="tooltip"
-          onMouseEnter={trigger === 'hover' || trigger === 'both' ? showTooltip : undefined}
-          onMouseLeave={trigger === 'hover' || trigger === 'both' ? hideTooltip : undefined}
         >
           {content}
-
           {arrow && <div className={`absolute w-0 h-0 border-4 ${arrowClasses[actualPosition]}`} />}
         </div>
       )}

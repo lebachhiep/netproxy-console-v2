@@ -67,7 +67,7 @@ export default {
         'border-element-dark': '#254060',
 
         // Primary
-        primary: '#ff8700',
+        primary: '#FF7530',
         'primary-dark': '#FF8A4D',
 
         'primary-hi': '#DA540B',

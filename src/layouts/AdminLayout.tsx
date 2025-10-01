@@ -6,10 +6,10 @@ import { Sidebar } from './components/Sidebar';
 // import "./styles/AdminLayout.scss";
 
 export const AdminLayout: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
-  const toggle = useCallback(() => {
-    setCollapsed((prev) => !prev);
+  const toggle = useCallback((collapsed: boolean) => {
+    setCollapsed(collapsed);
   }, []);
 
   return (

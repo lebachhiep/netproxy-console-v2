@@ -164,7 +164,7 @@ export const Navbar: React.FC = () => {
           <div className="relative" ref={dropdownRef}>
             {/* User info */}
             <div
-              className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-border-element-dark pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
+              className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-border-element-dark pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:border-blue transition-colors duration-300"
               onClick={() => setMenuOpen((prev) => !prev)}
             >
               <div className="flex items-center gap-2">

@@ -231,7 +231,10 @@ const PurchasePage: React.FC = () => {
         <div key="rotating">
           <Tabs type="card" tabs={speedGroups} activeKey={activeGroup} onChange={(key) => setActiveGroup(key as SpeedLimitGroup)}>
             {speedGroups.map((g) => (
-              <div key={g.key} className="flex flex-wrap gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto">
+              <div
+                key={g.key}
+                className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+              >
                 {plansByType.rotating[g.key].map((plan) => (
                   <PricingCard
                     tag={{ text: 'POPULAR', icon: <Fire /> }}
@@ -241,12 +244,12 @@ const PurchasePage: React.FC = () => {
                     features={[
                       {
                         icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                       label: (
-                    <div className="text-base">
-                      <label htmlFor="">Hỗ trợ: </label>
-                      <span className="font-bold">HTTP/HTTPS</span>
-                    </div>
-                  )
+                        label: (
+                          <div className="text-base">
+                            <label htmlFor="">Hỗ trợ: </label>
+                            <span className="font-bold">HTTP/HTTPS</span>
+                          </div>
+                        )
                       },
                       {
                         icon: <Clock className="w-6 h-6 text-yellow" />,
@@ -300,7 +303,10 @@ const PurchasePage: React.FC = () => {
             {[
               // Speed Limit → Nhóm gói
               <div key="bandwidth">
-                <div key={'bandwidth'} className="flex flex-wrap gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto">
+                <div
+                  key={'bandwidth'}
+                  className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+                >
                   {plansByType.static['bandwidth'].map((plan) => (
                     <PricingCard
                       tag={{ text: 'POPULAR', icon: <Fire /> }}
@@ -311,11 +317,11 @@ const PurchasePage: React.FC = () => {
                         {
                           icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
                           label: (
-                    <div className="text-base">
-                      <label htmlFor="">Hỗ trợ: </label>
-                      <span className="font-bold">HTTP/HTTPS</span>
-                    </div>
-                  )
+                            <div className="text-base">
+                              <label htmlFor="">Hỗ trợ: </label>
+                              <span className="font-bold">HTTP/HTTPS</span>
+                            </div>
+                          )
                         },
                         {
                           icon: <Clock className="w-6 h-6 text-yellow" />,
@@ -361,7 +367,10 @@ const PurchasePage: React.FC = () => {
                 </div>
               </div>,
               <div key="unlimited">
-                <div key={'unlimited'} className="flex flex-wrap gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto">
+                <div
+                  key={'unlimited'}
+                  className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+                >
                   {plansByType.static['unlimited'].map((plan) => (
                     <PricingCard
                       tag={{ text: 'POPULAR', icon: <Fire /> }}
@@ -371,12 +380,12 @@ const PurchasePage: React.FC = () => {
                       features={[
                         {
                           icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                           label: (
-                    <div className="text-base">
-                      <label htmlFor="">Hỗ trợ: </label>
-                      <span className="font-bold">HTTP/HTTPS</span>
-                    </div>
-                  )
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Hỗ trợ: </label>
+                              <span className="font-bold">HTTP/HTTPS</span>
+                            </div>
+                          )
                         },
                         {
                           icon: <Clock className="w-6 h-6 text-yellow" />,

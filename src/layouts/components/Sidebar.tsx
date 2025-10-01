@@ -9,7 +9,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface SidebarProps {
   collapsed: boolean;
-  toggle: () => void;
+  toggle: (collapse: boolean) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
@@ -31,13 +31,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
     <aside
       className={`fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-primary dark:bg-bg-primary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] dark:rounded-sidebar shadow-lg flex flex-col transition-all duration-300 
       ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[272px]'}`}
+      // Hover auto expand / collapse
+      onMouseEnter={() => toggle(false)} // mở khi hover
+      onMouseLeave={() => toggle(true)} // đóng khi rời chuột
     >
       {/* Nút collapse */}
       <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
         {collapsed ? (
-          <IconButton onClick={toggle} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
+          <IconButton onClick={() => toggle(true)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
         ) : (
-          <IconButton onClick={toggle} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
+          <IconButton onClick={() => toggle(false)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
         )}
       </div>
       {/* Logo */}
@@ -79,7 +82,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                         className={`flex items-center gap-3 px-4 py-2 text-[14px] font-medium w-full text-left hover:bg-gray-100 transition
                     ${isOpen ? 'bg-gray-50' : ''}`}
                       >
-                        <span className="w-6 h-6 flex items-center justify-center">{route.icon}</span>
+                        <span className="w-6 h-6 flex items-center justify-center">
+                          {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
+                        </span>
                         <span
                           className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
                             collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
@@ -129,10 +134,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                       <div
                         className={twMerge(
                           'w-6 h-6 flex items-center justify-center',
-                          isActive(route.path || '') ? 'text-white' : route.iconClass
+                          collapsed
+                            ? isActive(route.path || '')
+                              ? 'text-white'
+                              : 'text-text-hi'
+                            : isActive(route.path || '')
+                              ? 'text-white'
+                              : route.iconClass
                         )}
                       >
-                        {route.icon}
+                        {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
                       </div>
                       <span
                         className={`transition-smooth overflow-hidden whitespace-nowrap ${
@@ -165,10 +176,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                   <div
                     className={twMerge(
                       'w-6 h-6 flex items-center justify-center',
-                      isActive(route.path || '') ? 'text-white' : route.iconClass
+                      collapsed
+                        ? isActive(route.path || '')
+                          ? 'text-white'
+                          : 'text-text-hi'
+                        : isActive(route.path || '')
+                          ? 'text-white'
+                          : route.iconClass
                     )}
                   >
-                    {route.icon}
+                    {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
                   </div>
                   <div
                     className={`w-full transition-all duration-300 overflow-hidden whitespace-nowrap ${

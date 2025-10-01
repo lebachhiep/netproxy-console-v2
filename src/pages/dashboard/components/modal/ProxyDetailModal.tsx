@@ -24,6 +24,7 @@ import { SelectTag } from '@/components/select/SelectTag';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Tabs } from '@/components/tabs/Tabs';
+import Tooltip from '@/components/tooltip/Tooltip';
 import React, { useState } from 'react';
 
 // Fake data type
@@ -246,6 +247,8 @@ interface ProxyDetailModalProps {
   onClose: () => void;
   onPrev?: () => void;
   onNext?: () => void;
+  prevItem?: ProxyCardData | null;
+  nextItem?: ProxyCardData | null;
 }
 
 interface HeaderInfoProps {
@@ -281,7 +284,7 @@ export const HeaderInfo: React.FC<HeaderInfoProps> = ({ expired, dataLeft, autoR
   );
 };
 
-export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, onClose, onPrev, onNext }) => {
+export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, onClose, onPrev, onNext, nextItem, prevItem }) => {
   if (!item) return null;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -302,21 +305,29 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       onClose={onClose}
       title={item.title || 'Chi tiết'}
     >
-      {/* Nút Prev */}
-      <IconButton
-        className="absolute -left-[70px] top-1/2 -translate-y-1/2 z-10 bg-bg-secondary dark:bg-bg-secondary-dark shadow-xs"
-        icon={<Chevron className="text-2xl" />}
-        onClick={onPrev}
-        disabled={!onPrev}
-      />
+      <div className="absolute -left-[70px] top-1/2 -translate-y-1/2 z-10">
+        <Tooltip content={prevItem?.title}>
+          {/* Nút Prev */}
+          <IconButton
+            className=" bg-bg-secondary dark:bg-bg-secondary-dark shadow-xs"
+            icon={<Chevron className="text-2xl" />}
+            onClick={onPrev}
+            disabled={!onPrev}
+          />
+        </Tooltip>
+      </div>
 
-      {/* Nút Next */}
-      <IconButton
-        className="absolute -right-[70px] top-1/2 -translate-y-1/2 z-10 bg-bg-secondary dark:bg-bg-secondary-dark  shadow-xs"
-        icon={<Chevron className="text-2xl rotate-180" />}
-        onClick={onNext}
-        disabled={!onNext}
-      />
+      <div className="absolute -right-[70px] top-1/2 -translate-y-1/2 z-10">
+        <Tooltip content={nextItem?.title}>
+          {/* Nút Next */}
+          <IconButton
+            className="bg-bg-secondary dark:bg-bg-secondary-dark  shadow-xs"
+            icon={<Chevron className="text-2xl rotate-180" />}
+            onClick={onNext}
+            disabled={!onNext}
+          />
+        </Tooltip>
+      </div>
 
       {/* Nội dung modal */}
       <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark">

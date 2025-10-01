@@ -211,6 +211,9 @@ const DashboardPage = () => {
     });
   }, [sortField, sortOrder, tableData]);
 
+  const prevItem = selectedIndex !== null && selectedIndex > 0 ? sortedData[selectedIndex - 1] : null;
+  const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
+
   return (
     <>
       <div className="p-5 bg-bg-primary dark:bg-bg-primary-dark">
@@ -390,15 +393,11 @@ const DashboardPage = () => {
       <ProxyDetailModal
         open={modalOpen}
         item={selectedIndex !== null ? sortedData[selectedIndex] : null}
+        prevItem={prevItem}
+        nextItem={nextItem}
         onClose={() => setModalOpen(false)}
-        onPrev={
-          selectedIndex !== null && selectedIndex > 0 ? () => setSelectedIndex((prev) => (prev !== null ? prev - 1 : prev)) : undefined
-        }
-        onNext={
-          selectedIndex !== null && selectedIndex < sortedData.length - 1
-            ? () => setSelectedIndex((prev) => (prev !== null ? prev + 1 : prev))
-            : undefined
-        }
+        onPrev={prevItem ? () => setSelectedIndex((prev) => (prev !== null ? prev - 1 : prev)) : undefined}
+        onNext={nextItem ? () => setSelectedIndex((prev) => (prev !== null ? prev + 1 : prev)) : undefined}
       />
 
       <DepositFlowModal open={open} onClose={() => setOpen(false)} />

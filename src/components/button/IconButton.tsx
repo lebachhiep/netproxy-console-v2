@@ -27,18 +27,19 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
  */
 const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className, disabled, hoverIconColor = 'text-text-hi', ...rest }) => {
   const baseClasses =
-    'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors group';
+    'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue';
 
-  const activeClasses = active
-    ? 'text-primary'
-    : 'border-border-element dark:border-border-element-dark text-gray-500 hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark';
+  const activeClasses = active ? 'text-primary' : 'border-border-element dark:border-border-element-dark';
 
   const disabledClasses = 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-500';
 
   // Type assertion để fix lỗi TypeScript
   const iconWithHover = isValidElement(icon)
     ? cloneElement(icon as React.ReactElement<any>, {
-        className: twMerge((icon as React.ReactElement<any>).props.className, !disabled ? `group-hover:${hoverIconColor}` : '')
+        className: twMerge(
+          (icon as React.ReactElement<any>).props.className,
+          !disabled ? `group-hover:${hoverIconColor} transition-colors duration-300` : ''
+        )
       })
     : icon;
 

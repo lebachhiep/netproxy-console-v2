@@ -391,6 +391,12 @@ export function Table<T extends Record<string, any>>({
                 minWidth: getColumnWidth(col)
               };
 
+              // Chỉ cột fixed right mới cần maxWidth để cứng width
+              if (isRightFixed) {
+                style.maxWidth = 200;
+                style.width = 200;
+              }
+
               if (isLeftFixed) style.left = leftOffset;
               if (isRightFixed) style.right = rightOffset;
 
@@ -533,6 +539,12 @@ export function Table<T extends Record<string, any>>({
                     minWidth: getColumnWidth(col),
                     ...rowStyleFinal
                   };
+
+                  // Chỉ cột fixed right mới cần maxWidth để cứng width
+                  if (isRightFixed) {
+                    style.maxWidth = 200;
+                    style.width = 200;
+                  }
 
                   if (isLeftFixed) style.left = leftOffset;
                   if (isRightFixed) style.right = rightOffset;

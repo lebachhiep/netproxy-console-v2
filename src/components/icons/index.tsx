@@ -1,4 +1,5 @@
 import { ReactComponent as Person } from '@/assets/icons/person.svg';
+import { ReactComponent as PersonOutlined } from '@/assets/icons/person_outlined.svg';
 import { ReactComponent as Lock } from '@/assets/icons/lock.svg';
 import { ReactComponent as Eye } from '@/assets/icons/eye.svg';
 import { ReactComponent as EyeOff } from '@/assets/icons/eye_off.svg';
@@ -75,6 +76,7 @@ import { ReactComponent as FileCopy } from '@/assets/icons/file_copy.svg';
 import { ReactComponent as DismissCircle } from '@/assets/icons/dismiss_circle.svg';
 import { ReactComponent as ArrowRight } from '@/assets/icons/arrow_right.svg';
 import { ReactComponent as CloudSwapFilled } from '@/assets/icons/cloud_swap_filled.svg';
+import { ReactComponent as CloudSwapOutlined } from '@/assets/icons/cloud_swap_outlined.svg';
 import { ReactComponent as Storage } from '@/assets/icons/storage.svg';
 import { ReactComponent as CalendarPlus } from '@/assets/icons/calendar_plus.svg';
 import { ReactComponent as AddCircle } from '@/assets/icons/add_circle.svg';
@@ -83,6 +85,7 @@ import { ReactComponent as GridDots } from '@/assets/icons/grid_dots.svg';
 
 export {
   Person,
+  PersonOutlined,
   Lock,
   Eye,
   EyeOff,
@@ -155,6 +158,7 @@ export {
   DismissCircle,
   ArrowRight,
   CloudSwapFilled,
+  CloudSwapOutlined,
   ChatWarningFilled,
   ClockBillFilled,
   DocumentSyncFilled,

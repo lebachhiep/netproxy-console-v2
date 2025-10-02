@@ -83,7 +83,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                     ${isOpen ? 'bg-gray-50' : ''}`}
                       >
                         <span className="w-6 h-6 flex items-center justify-center">
-                          {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
+                          {collapsed && route.collapsedIcon && !isActive(route.path || '') ? route.collapsedIcon : route.icon}
                         </span>
                         <span
                           className={`transition-all duration-300 overflow-hidden whitespace-nowrap ${
@@ -143,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                               : route.iconClass
                         )}
                       >
-                        {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
+                        {collapsed && route.collapsedIcon && !isActive(route.path || '') ? route.collapsedIcon : route.icon}
                       </div>
                       <span
                         className={`transition-smooth overflow-hidden whitespace-nowrap ${
@@ -185,7 +185,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                           : route.iconClass
                     )}
                   >
-                    {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
+                    {collapsed && route.collapsedIcon && !isActive(route.path || '') ? route.collapsedIcon : route.icon}
                   </div>
                   <div
                     className={`w-full transition-all duration-300 overflow-hidden whitespace-nowrap ${

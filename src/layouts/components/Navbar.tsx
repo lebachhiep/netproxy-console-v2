@@ -1,5 +1,14 @@
 import IconButton from '@/components/button/IconButton';
-import { ArrowDown, Chevron, Globe, Person, SignOut, WalletCreditCardFilled } from '@/components/icons';
+import {
+  ArrowDown,
+  Chevron,
+  Globe,
+  Person,
+  PersonOutlined,
+  SignOut,
+  WalletCreditCardFilled,
+  WalletCreditCardOutlined
+} from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { AUTH_MESSAGES } from '@/utils/constants';
 import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
+import UserDropdown from '@/components/UserDropdown';
 
 interface Breadcrumb {
   title: string;
@@ -121,7 +131,7 @@ export const Navbar: React.FC = () => {
       <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-primary dark:bg-bg-primary-dark dark:border-t-2 dark:border-border-element-dark transition-colors duration-300">
         {/* Left */}
         <div className="flex items-center gap-4">
-          <IconButton icon={<Chevron className="text-text-lo dark:text-text-lo-dark " />} disabled={!canGoBack} onClick={handleBack} />
+          <IconButton icon={<Chevron />} disabled={!canGoBack} onClick={handleBack} />
 
           {/* Dashboard / Breadcrumb */}
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
@@ -148,7 +158,7 @@ export const Navbar: React.FC = () => {
             onEnter={handleEnter}
           />
           {/* Ngôn ngữ */}
-          <IconButton icon={<Globe className="text-text-lo w-6 h-6 dark:text-text-lo-dark" />} />
+          <IconButton icon={<Globe className="w-6 h-6" />} />
           {/* <IconButton
           icon={
             darkMode ? (
@@ -157,74 +167,12 @@ export const Navbar: React.FC = () => {
               <WeatherSunny className="text-text-lo dark:text-text-lo-dark" />
             )
           }
-          onClick={() => setDarkMode((prev) => !prev)}
+        onClick={() => setDarkMode((prev) => !prev)}
         /> */}
 
           {/* User info */}
-          <div className="relative" ref={dropdownRef}>
-            {/* User info */}
-            <div
-              className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-border-element-dark pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:border-blue transition-colors duration-300"
-              onClick={() => setMenuOpen((prev) => !prev)}
-            >
-              <div className="flex items-center gap-2">
-                <img src={user?.photoURL || settings.defaultAvatar} className="w-9 h-9 rounded-full" />
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-xs font-medium text-text-me dark:text-text-me-dark">
-                    {user?.displayName || user?.email?.split('@')[0] || 'User'}
-                  </span>
-                  <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$ 825.97</span>
-                </div>
-              </div>
-              <ArrowDown className="text-text-lo dark:text-text-lo-dark" />
-            </div>
 
-            {/* Dropdown */}
-            {menuOpen && (
-              <div className="absolute top-[64px] right-0 w-[200px] bg-bg-primary dark:bg-bg-primary-dark rounded-lg shadow-lg border border-border-element dark:border-border-element-dark overflow-hidden z-50">
-                <div className="flex flex-col gap-1 p-1">
-                  <div
-                    onClick={() => {
-                      setModalOpen(true);
-                      setMenuOpen(false);
-                    }}
-                    className="cursor-pointer block rounded-lg px-2 py-1 text-sm text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Person className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
-                      <div>
-                        Xem hồ sơ{' '}
-                        <span className="text-sm text-blue-hi dark:text-blue-hi-dark">
-                          {user?.displayName || user?.email?.split('@')[0] || 'User'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <Link
-                    to="/wallet"
-                    className="block rounded-lg px-2 py-1 text-sm text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <div className="flex items-center gap-2 flex-nowrap">
-                      <WalletCreditCardFilled className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
-                      <div>
-                        Xem ví của tôi <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$825.97</span>
-                      </div>
-                    </div>
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left block rounded-lg px-2 py-1 text-sm text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
-                  >
-                    <div className="flex items-center gap-2">
-                      <SignOut className="w-5 h-5 text-red dark:text-red-dark" />
-                      <div>Đăng xuất</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          <UserDropdown user={user} settings={settings} handleLogout={handleLogout} setModalOpen={setModalOpen} />
         </div>
       </div>
 

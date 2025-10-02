@@ -27,7 +27,7 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
     return (
       <div
         className={twMerge(
-          'group shadow-xs flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden transition-colors duration-300',
+          'group flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden transition-colors duration-300',
           'focus-within:border-blue dark:focus-within:border-blue-dark hover:border-blue dark:hover:border-blue-dark',
           wrapperClassName
         )}

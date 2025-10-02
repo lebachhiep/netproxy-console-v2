@@ -189,11 +189,8 @@ const WalletPage: React.FC = () => {
               />
             </div>
 
-            <div>
+            <div className="flex items-center gap-5 justify-between">
               {/* Submit Button */}
-              <Button variant="primary" className="h-10 mb-1" onClick={() => setOpen(true)}>
-                NẠP TIỀN
-              </Button>
 
               {/* Terms */}
               <p className="text-sm text-text-lo dark:text-text-lo-dark font-medium">
@@ -206,6 +203,9 @@ const WalletPage: React.FC = () => {
                   Chính sách bảo mật
                 </a>
               </p>
+              <Button variant="primary" className="h-10 mb-1" onClick={() => setOpen(true)}>
+                NẠP TIỀN
+              </Button>
             </div>
           </div>
         </div>

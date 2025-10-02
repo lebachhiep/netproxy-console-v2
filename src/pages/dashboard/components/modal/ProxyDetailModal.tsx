@@ -309,7 +309,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
         <Tooltip content={prevItem?.title} className="w-[125px] line-clamp-2 text-wrap text-center">
           {/* Nút Prev */}
           <IconButton
-            className=" bg-bg-secondary dark:bg-bg-secondary-dark shadow-xs"
+            className="bg-bg-secondary dark:bg-bg-secondary-dark shadow-xs"
             icon={<Chevron className="text-2xl" />}
             onClick={onPrev}
             disabled={!onPrev}
@@ -366,7 +366,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                       onChange={(val) => console.log('Selected:', val)}
                     />
                   </div>
-                  <IconButton className="w-10 h-10" icon={<ArrowCounter className="text-text-lo" />}></IconButton>
+                  <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
                 </div>
               </div>
 
@@ -471,7 +471,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                     onChange={(val) => console.log('Selected:', val)}
                   />
                 </div>
-                <IconButton className="w-10 h-10" icon={<ArrowCounter className="text-text-lo" />}></IconButton>
+                <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
               </div>
             </div>
 

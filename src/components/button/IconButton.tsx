@@ -37,6 +37,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className
   const iconWithHover = isValidElement(icon)
     ? cloneElement(icon as React.ReactElement<any>, {
         className: twMerge(
+          'text-text-me dark:text-text-me-dark',
           (icon as React.ReactElement<any>).props.className,
           !disabled ? `group-hover:${hoverIconColor} transition-colors duration-300` : ''
         )

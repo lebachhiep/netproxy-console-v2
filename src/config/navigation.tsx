@@ -8,6 +8,7 @@ import {
   ChatWarningFilled,
   ClockBillFilled,
   CloudSwapFilled,
+  CloudSwapOutlined,
   DashboardFilled,
   DashboardOutlined,
   DocumentSync,
@@ -42,7 +43,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Trang chủ',
         icon: <DashboardFilled />,
-        collapsedIcon: <DashboardOutlined width={20} height={20} />,
+        collapsedIcon: <DashboardOutlined />,
         iconClass: 'text-primary',
         breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
         path: '/home',
@@ -97,6 +98,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Chương trình đại lý',
         icon: <CloudSwapFilled />,
+        collapsedIcon: <CloudSwapOutlined />,
         iconClass: 'text-pink',
         breadcrumbIcon: <CloudSwapFilled width={32} height={32} className="text-pink" />,
         path: '/reseller',

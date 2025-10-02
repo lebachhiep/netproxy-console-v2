@@ -24,7 +24,7 @@ interface PricingCardProps {
 
 export const PricingCard: React.FC<PricingCardProps> = ({ title, price, description, features, buttonText, onClick, tag }) => {
   return (
-    <div className="group relative w-full rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-1 transition-all hover:border-primary hover:dark:border-primary-dark">
+    <div className="group relative w-full rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-1 transition-all hover:border-blue hover:dark:border-blue-dark">
       {/* Tag */}
       {tag && (
         <span className="absolute -top-3 -left-[2px] flex items-center gap-1 bg-primary dark:bg-primary-dark text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">

@@ -156,14 +156,12 @@ const DashboardPage = () => {
       key: 'title',
       title: 'Tên Gói',
       align: 'left',
-      width: '200px',
       sortable: true
     },
     {
       key: 'description',
       title: 'Mô tả',
-      render: (value) => <div>{value || '...'}</div>,
-      width: 200
+      render: (value) => <div>{value || '...'}</div>
     },
     {
       width: 150,
@@ -331,16 +329,10 @@ const DashboardPage = () => {
           <div className="flex items-center gap-2">
             <IconButton
               className="w-10 h-10"
-              icon={
-                viewMode === 'list' ? (
-                  <TextColumnOne className="text-text-lo dark:text-text-lo-dark" />
-                ) : (
-                  <GridDots className="text-text-lo dark:text-text-lo-dark" />
-                )
-              }
+              icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
               onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
             />
-            <IconButton className="w-10 h-10" icon={<ArrowCounter className="text-text-lo dark:text-text-lo-dark" />} />
+            <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
             <IconButton
               hoverIconColor="text-white"
               icon={<Add className="text-white" />}

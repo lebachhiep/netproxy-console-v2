@@ -43,10 +43,10 @@ const baseClasses =
 // variant style
 const variants: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary dark:bg-primary-dark border-primary-border dark:border-primary-border-dark text-white hover:border-primary-hover dark:hover:bg-primary-hover-dark',
+    'bg-primary hover:brightness-[110%] dark:bg-primary-dark border-primary-border dark:border-primary-border-dark text-white hover:border-primary-hover dark:hover:bg-primary-hover-dark',
   outlined: 'border-primary-border text-primary bg-primary-bg hover:border-primary',
   default:
-    'border-border-element dark:border-border-element-dark text-text-lo dark:text-text-lo-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:border-blue',
+    'border-border-element dark:border-border-element-dark text-text-me dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:border-blue',
   disabled: 'bg-gray-100 text-gray-400 cursor-not-allowed border-0'
 };
 
@@ -120,7 +120,7 @@ export const Button: FC<ButtonProps> = ({
     <button ref={btnRef} className={twMerge(baseClasses, variants[variant], sizes[size], className)} disabled={isDisabled} {...props}>
       <span
         className={twMerge(
-          'absolute -bottom-[22px] -top-[22px] flex-none mix-blend-overlay -left-[27px] w-[22px] bg-[rgb(255,161,46)] blur-[10px] opacity-0 rotate-[30deg] animate-moveBlur',
+          'absolute  -bottom-[22px] -top-[22px] flex-none mix-blend-overlay -left-[27px] w-[22px] bg-[rgb(255,161,46)] blur-[10px] opacity-0 rotate-[30deg] animate-moveBlur',
           blurClasses
         )}
       ></span>

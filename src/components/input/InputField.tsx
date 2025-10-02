@@ -75,8 +75,8 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
         {label && <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">{label}</label>}
         <div
           className={twMerge(
-            'group flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
-            'focus-within:border-primary dark:focus-within:border-primary-dark',
+            'group flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden transition-colors duration-300',
+            'focus-within:border-blue dark:focus-within:border-blue-dark hover:border-blue dark:hover:border-blue-dark',
             wrapperClassName
           )}
         >
@@ -85,7 +85,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             <div
               className={twMerge(
                 'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-r-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-                'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+                'group-focus-within:border-blue dark:group-focus-within:border-blue-dark'
               )}
             >
               {icon}
@@ -108,7 +108,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             <div
               className={twMerge(
                 'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-                'group-focus-within:border-primary dark:group-focus-within:border-primary-dark'
+                'group-focus-within:border-blue dark:group-focus-within:border-blue-dark'
               )}
             >
               {icon}

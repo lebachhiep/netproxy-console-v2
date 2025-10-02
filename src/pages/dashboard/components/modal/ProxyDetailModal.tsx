@@ -305,8 +305,8 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       onClose={onClose}
       title={item.title || 'Chi tiết'}
     >
-      <div className="absolute -left-[70px] top-1/2 -translate-y-1/2 z-10">
-        <Tooltip content={prevItem?.title}>
+      <div className="absolute z-50 -left-[70px] top-1/2 -translate-y-1/2">
+        <Tooltip content={prevItem?.title} className="w-[125px] line-clamp-2 text-wrap text-center">
           {/* Nút Prev */}
           <IconButton
             className=" bg-bg-secondary dark:bg-bg-secondary-dark shadow-xs"
@@ -317,8 +317,8 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
         </Tooltip>
       </div>
 
-      <div className="absolute -right-[70px] top-1/2 -translate-y-1/2 z-10">
-        <Tooltip content={nextItem?.title}>
+      <div className="absolute z-50 -right-[70px] top-1/2 -translate-y-1/2">
+        <Tooltip content={nextItem?.title} className="w-[125px] line-clamp-2 text-wrap text-center">
           {/* Nút Next */}
           <IconButton
             className="bg-bg-secondary dark:bg-bg-secondary-dark  shadow-xs"

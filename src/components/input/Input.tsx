@@ -22,8 +22,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ icon, wrapperCl
   return (
     <div
       className={twMerge(
-        'flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden',
-        'focus-within:border-primary dark:focus-within:border-primary-dark',
+        'flex items-center h-12 bg-bg-input dark:bg-bg-input-dark border-2 border-border-element dark:border-border-dark rounded-lg overflow-hidden transition-colors duration-300',
+        'focus-within:border-blue dark:focus-within:border-blue-dark hover:border-blue dark:hover:border-blue-dark',
         wrapperClassName
       )}
     >

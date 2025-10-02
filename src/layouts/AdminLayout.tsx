@@ -30,7 +30,7 @@ export const AdminLayout: React.FC = () => {
         </div>
 
         {/* Content */}
-        <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'ml-[88px]' : 'ml-[272px]')}>
+        <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'ml-[68px]' : 'ml-[272px]')}>
           <Outlet />
         </main>
       </div>

@@ -65,7 +65,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-bg-primary">
-      {!emailSent ? (
+      {emailSent ? (
         <AuthFormWrapper title="Lấy lại mật khẩu" subtitle="Vui lòng nhập email đã đăng ký">
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -130,16 +130,19 @@ export const ForgotPasswordPage: React.FC = () => {
         //   </div>
         // </div>
         <div className="flex flex-col gap-6 text-center">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 max-w-[512px]">
             <h3>Đã gởi mail</h3>
             <p className="text-base text-text-hi dark:text-text-hi-dark">
-              Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu.
+              Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu. Hoặc{' '}
+              <a href="#" className="text-blue underline font-medium" onClick={() => setEmailSent(false)}>
+                gởi lại email
+              </a>
             </p>
-          </div>
-          <div>
-            <Button className="px-8 uppercase" onClick={() => setEmailSent(false)}>
-              GỬI LẠI EMAIL
-            </Button>
+            <div>
+              <Button variant="default" className="px-8 uppercase" onClick={() => navigate(AUTH_ROUTES.LOGIN)}>
+                TRỞ LẠI ĐĂNG NHẬP
+              </Button>
+            </div>
           </div>
         </div>
       )}

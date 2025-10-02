@@ -42,7 +42,7 @@ export const navigationSections: NavigationSection[] = [
       {
         title: 'Trang chủ',
         icon: <DashboardFilled />,
-        collapsedIcon: <DashboardOutlined />,
+        collapsedIcon: <DashboardOutlined width={20} height={20} />,
         iconClass: 'text-primary',
         breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
         path: '/home',

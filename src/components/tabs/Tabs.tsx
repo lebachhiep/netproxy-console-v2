@@ -75,22 +75,36 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
     <>
       {type === 'default' && (
         <div>
-          <div className="border-b-2 h-10 border-border-element dark:border-border-element-dark">
-            <div className={`flex w-fit rounded-lg gap-5 pl-5`}>
+          <div className="relative border-b-2 h-10 border-border-element dark:border-border-element-dark  pl-5">
+            <div className="flex w-fit gap-5 relative">
               {tabs.map((tab) => {
                 const isActive = currentActive === tab.key;
-
                 return (
                   <button
                     key={tab.key}
                     onClick={() => handleClick(tab.key)}
-                    className={`text-sm px-2 py-[10px] -mb-px font-medium
-                  ${isActive ? 'border-b-2 border-primary text-primary' : 'text-text-lo dark:text-text-lo-dark hover:text-primary'}`}
+                    className={`relative text-sm px-2 py-[10px] font-medium transition-colors duration-200
+                ${isActive ? 'text-primary' : 'text-text-lo dark:text-text-lo-dark hover:text-primary'}`}
+                    ref={(el) => {
+                      if (isActive && el) {
+                        const rect = el.getBoundingClientRect();
+                        const parentRect = el.parentElement?.getBoundingClientRect();
+                        const offsetLeft = rect.left - (parentRect?.left ?? 0);
+
+                        const indicator = document.querySelector<HTMLSpanElement>('#tab-indicator');
+                        if (indicator) {
+                          indicator.style.width = `${rect.width}px`;
+                          indicator.style.transform = `translateX(${offsetLeft}px)`;
+                        }
+                      }
+                    }}
                   >
                     {tab.label}
                   </button>
                 );
               })}
+              {/* underline indicator */}
+              <span id="tab-indicator" className="absolute bottom-0 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
             </div>
           </div>
           <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>

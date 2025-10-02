@@ -86,13 +86,13 @@ export const RegisterPage: React.FC = () => {
               className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
-              <span className="font-medium text-gray-700">GOOGLE</span>
+              <span className="font-bold text-text-hi text-[12px] tracking-[0.6px]">ĐĂNG KÝ VỚI GOOGLE</span>
             </button>
             {/* Divider */}
             <div className="flex items-center w-full">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="mx-3 text-gray-400 text-sm">Hoặc</span>
-              <div className="flex-grow border-t border-gray-300"></div>
+              <div className="flex-grow border-t border-border-element"></div>
+              <span className="mx-3 text-text-lo text-sm">Hoặc</span>
+              <div className="flex-grow border-t border-border-element"></div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>

@@ -87,84 +87,87 @@ export const LoginPage: React.FC = () => {
       left={
         <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại!">
           {/* Google Button */}
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            disabled={isSubmitting}
-            className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Google />
-            <span className="font-medium text-gray-700">GOOGLE</span>
-          </button>
-          {/* Divider */}
-          <div className="flex items-center w-full">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-3 text-gray-400 text-sm">Hoặc</span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-3">
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <div>
-                      <InputField
-                        {...field}
-                        type="email"
-                        placeholder="Nhập email"
-                        icon={<EmojiLaugh className="text-blue" />}
-                        disabled={isSubmitting}
-                      />
-                      {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
-                    </div>
-                  )}
-                />
-
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <div>
-                      <InputField
-                        {...field}
-                        type="password"
-                        placeholder="Nhập mật khẩu"
-                        icon={<LockClosed className="text-primary" />}
-                        showPasswordToggle
-                        disabled={isSubmitting}
-                      />
-                      {errors.password && <span className="text-red text-sm mt-1">{errors.password.message}</span>}
-                    </div>
-                  )}
-                />
-
-                <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm underline text-end font-medium">
-                  Quên mật khẩu?
-                </Link>
-              </div>
-
-              <Controller
-                name="remember"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <label className="flex items-center gap-2 w-fit">
-                    <Checkbox checked={value} onChange={onChange} disabled={isSubmitting} />
-                    <span className="font-normal text-sm text-text-hi">Lưu trạng thái đăng nhập</span>
-                  </label>
-                )}
-              />
-
-              {errors.root && <div className="text-red text-sm text-center">{errors.root.message}</div>}
-
-              <div className="flex flex-col gap-5">
-                <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
-                  {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
-                </Button>
-              </div>
+          <div className="flex flex-col gap-5">
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isSubmitting}
+              className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Google />
+              <span className="font-bold text-text-hi text-[12px] tracking-[0.6px]">GOOGLE</span>
+            </button>
+            {/* Divider */}
+            <div className="flex items-center w-full">
+              <div className="flex-grow border-t border-border-element"></div>
+              <span className="mx-3 text-text-lo text-sm">Hoặc</span>
+              <div className="flex-grow border-t border-border-element"></div>
             </div>
-          </form>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <InputField
+                          {...field}
+                          type="email"
+                          placeholder="Nhập email"
+                          icon={<EmojiLaugh className="text-blue" />}
+                          disabled={isSubmitting}
+                        />
+                        {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <InputField
+                          {...field}
+                          type="password"
+                          placeholder="Nhập mật khẩu"
+                          icon={<LockClosed className="text-primary" />}
+                          showPasswordToggle
+                          disabled={isSubmitting}
+                        />
+                        {errors.password && <span className="text-red text-sm mt-1">{errors.password.message}</span>}
+                      </div>
+                    )}
+                  />
+
+                  <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm underline text-end font-medium">
+                    Quên mật khẩu?
+                  </Link>
+                </div>
+
+                <Controller
+                  name="remember"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <label className="flex items-center gap-2 w-fit">
+                      <Checkbox checked={value} onChange={onChange} disabled={isSubmitting} />
+                      <span className="font-normal text-sm text-text-hi">Lưu trạng thái đăng nhập</span>
+                    </label>
+                  )}
+                />
+
+                {errors.root && <div className="text-red text-sm text-center">{errors.root.message}</div>}
+
+                <div className="flex flex-col gap-5">
+                  <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
+                    {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
+                  </Button>
+                </div>
+              </div>
+            </form>
+          </div>
 
           <p className="text-center text-sm">
             Bạn chưa có tài khoản?{' '}

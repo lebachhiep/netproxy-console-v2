@@ -32,8 +32,8 @@ export interface SwitchProps {
 }
 
 const sizeMap = {
-  sm: { w: 'w-8', h: 'h-4', dot: 'h-3 w-3', translate: 'translate-x-[18px]' },
-  md: { w: 'w-10', h: 'h-5', dot: 'h-4 w-4', translate: 'translate-x-[22px]' },
+  sm: { w: 'w-6', h: 'h-2', dot: 'h-3 w-3', translate: 'translate-x-[14px]' },
+  md: { w: 'w-8', h: 'h-3', dot: 'h-4 w-4', translate: 'translate-x-[17px]' },
   lg: { w: 'w-16', h: 'h-8', dot: 'h-7 w-7', translate: 'translate-x-[34px]' }
 };
 
@@ -88,7 +88,7 @@ export const Switch: React.FC<SwitchProps> = ({ checked, onChange, size = 'md', 
     >
       <span
         className={`inline-block ${dot} transform rounded-full shadow-md transition-all duration-300
-          ${checked ? translate : 'translate-x-0'} 
+          ${checked ? translate : '-translate-x-[1px]'} 
           ${checked ? 'bg-white' : 'bg-text-lo dark:bg-text-lo-dark'}
         `}
       />

@@ -132,7 +132,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       {isVisible && (
         <div
           ref={tooltipRef}
-          className={`absolute z-[9999] px-2 py-1 text-xs text-white bg-gray-800 rounded-md shadow-lg whitespace-nowrap 
+          className={`absolute z-[9999] px-3 py-1 text-sm text-white bg-gray-800 rounded-[100px] shadow-lg whitespace-nowrap 
           dark:bg-gray-200 dark:text-gray-800 
           transition-all duration-200 ease-out 
           opacity-100 scale-100 

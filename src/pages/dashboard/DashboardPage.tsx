@@ -10,8 +10,10 @@ import {
   CartFilled,
   DatabaseStackFilled,
   Grid,
+  GridDots,
   MagnifyingGlass,
   Storage,
+  TextColumnOne,
   TopSpeed,
   WalletCreditCardFilled
 } from '@/components/icons';
@@ -231,8 +233,8 @@ const DashboardPage = () => {
             }
             title="Số dư"
             mainContent={
-              <div className="flex items-start gap-[2px] font-averta">
-                <span className="text-green font-semibold text-sm tracking-[-0.66px]">$</span>
+              <div className="flex items-center font-averta">
+                <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
                 <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
               </div>
             }
@@ -329,11 +331,21 @@ const DashboardPage = () => {
           <div className="flex items-center gap-2">
             <IconButton
               className="w-10 h-10"
-              icon={viewMode === 'list' ? <AppsList /> : <Grid />}
+              icon={
+                viewMode === 'list' ? (
+                  <TextColumnOne className="text-text-lo dark:text-text-lo-dark" />
+                ) : (
+                  <GridDots className="text-text-lo dark:text-text-lo-dark" />
+                )
+              }
               onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
             />
-            <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
-            <IconButton icon={<Add className="text-white" />} className="bg-primary w-10 h-10 border-primary-border hover:bg-primary" />
+            <IconButton className="w-10 h-10" icon={<ArrowCounter className="text-text-lo dark:text-text-lo-dark" />} />
+            <IconButton
+              hoverIconColor="text-white"
+              icon={<Add className="text-white" />}
+              className="bg-primary w-10 h-10 border-primary-border hover:bg-primary hover:border-primary-border"
+            />
           </div>
         </div>
       </div>

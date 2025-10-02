@@ -78,6 +78,8 @@ import { ReactComponent as CloudSwapFilled } from '@/assets/icons/cloud_swap_fil
 import { ReactComponent as Storage } from '@/assets/icons/storage.svg';
 import { ReactComponent as CalendarPlus } from '@/assets/icons/calendar_plus.svg';
 import { ReactComponent as AddCircle } from '@/assets/icons/add_circle.svg';
+import { ReactComponent as TextColumnOne } from '@/assets/icons/text_column_one.svg';
+import { ReactComponent as GridDots } from '@/assets/icons/grid_dots.svg';
 
 export {
   Person,
@@ -159,5 +161,7 @@ export {
   SettingsFilled,
   Storage,
   CalendarPlus,
-  AddCircle
+  AddCircle,
+  TextColumnOne,
+  GridDots
 };

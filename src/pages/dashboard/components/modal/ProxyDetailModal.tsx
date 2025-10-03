@@ -97,6 +97,7 @@ const columns: TableColumn<ProxyData>[] = [
     width: 150
   },
   {
+    width: 200,
     key: 'action',
     title: 'Hành động',
     render: () => (
@@ -104,7 +105,6 @@ const columns: TableColumn<ProxyData>[] = [
         Lấy Proxy
       </Button>
     ),
-    width: 120,
     align: 'center',
     fixed: 'right'
   }

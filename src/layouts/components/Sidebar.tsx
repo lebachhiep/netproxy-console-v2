@@ -127,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                       className={`flex items-center h-10 gap-2 px-2 py-1 text-[14px] font-medium rounded-lg transition-smooth
                   ${
                     isActive(route.path || '')
-                      ? 'bg-primary text-white !font-bold'
+                      ? 'bg-primary shadow-menuItem text-white !font-bold'
                       : 'text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray hover:!font-bold'
                   }`}
                     >
@@ -170,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                 <Link
                   to={route.path || ''}
                   className={`flex h-10 items-center gap-2 px-2 py-1 text-[14px] font-medium rounded-lg transition
-                        ${isActive(route.path || '') ? 'bg-primary text-white !font-bold' : 'text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray hover:!font-bold'} 
+                        ${isActive(route.path || '') ? 'bg-primary shadow-menuItem text-white !font-bold' : 'text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray hover:!font-bold'} 
                       `}
                 >
                   <div

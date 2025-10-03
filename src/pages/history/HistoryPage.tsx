@@ -74,12 +74,11 @@ const HistoryPage: React.FC = () => {
         </div>
       )
     },
-    { key: 'service', title: 'Dịch vụ', width: '150px', align: 'left', render: (v) => v || '...' },
+    { key: 'service', title: 'Dịch vụ', align: 'left', render: (v) => v || '...' },
     { key: 'amount', title: 'Số tiền', width: '120px', render: (v) => `$ ${Number(v).toFixed(2)}` },
     {
       key: 'description',
       title: 'Mô tả',
-      width: '250px',
       align: 'left',
       render: (v) => <div className="truncate max-w-[220px]">{v || '...'}</div>
     },
@@ -93,7 +92,7 @@ const HistoryPage: React.FC = () => {
     {
       key: 'date',
       title: 'Thời gian',
-      width: '160px',
+      width: 200,
       fixed: 'right',
       render: (v) => (v ? <span>{new Date(v).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span> : '-')
     }

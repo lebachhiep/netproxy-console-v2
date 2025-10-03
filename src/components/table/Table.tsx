@@ -221,9 +221,14 @@ export function Table<T extends Record<string, any>>({
   // Tính toán width cho columns
   const getColumnWidth = (column: TableColumn<T>) => {
     if (column.width) {
+      // Nếu có width -> giữ nguyên (cứng)
       return typeof column.width === 'number' ? `${column.width}px` : column.width;
     }
-    return column.minWidth ? (typeof column.minWidth === 'number' ? `${column.minWidth}px` : column.minWidth) : '150px';
+    // Nếu không có width -> auto (hoặc fallback minWidth nếu có)
+    if (column.minWidth) {
+      return typeof column.minWidth === 'number' ? `${column.minWidth}px` : column.minWidth;
+    }
+    return 'auto'; // để auto thay vì 150px cứng
   };
 
   // Tính left offset cho sticky columns bên trái
@@ -386,20 +391,15 @@ export function Table<T extends Record<string, any>>({
                 }
               }
 
-              const style: React.CSSProperties = {
-                width: getColumnWidth(col),
-                minWidth: getColumnWidth(col)
-              };
+              const colWidth = getColumnWidth(col);
 
-              // Chỉ cột fixed right mới cần maxWidth để cứng width
-              if (isRightFixed) {
-                style.maxWidth = 200;
-                style.width = 200;
-              }
+              const style: React.CSSProperties = {
+                width: colWidth,
+                minWidth: colWidth
+              };
 
               if (isLeftFixed) style.left = leftOffset;
               if (isRightFixed) style.right = rightOffset;
-
               // Border className cho div bên trong
               let borderClassName = '';
               // Chỉ thêm border-right cho các cột không phải cuối, kế cuối và không phải fixed
@@ -534,17 +534,12 @@ export function Table<T extends Record<string, any>>({
                     }
                   }
 
-                  const style: React.CSSProperties = {
-                    width: getColumnWidth(col),
-                    minWidth: getColumnWidth(col),
-                    ...rowStyleFinal
-                  };
+                  const colWidth = getColumnWidth(col);
 
-                  // Chỉ cột fixed right mới cần maxWidth để cứng width
-                  if (isRightFixed) {
-                    style.maxWidth = 200;
-                    style.width = 200;
-                  }
+                  const style: React.CSSProperties = {
+                    width: colWidth,
+                    minWidth: colWidth
+                  };
 
                   if (isLeftFixed) style.left = leftOffset;
                   if (isRightFixed) style.right = rightOffset;

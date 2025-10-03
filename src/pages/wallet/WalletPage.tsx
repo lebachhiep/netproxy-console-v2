@@ -103,7 +103,6 @@ const WalletPage: React.FC = () => {
     {
       key: 'service',
       title: 'Dịch vụ',
-      width: '150px',
       align: 'left',
       render: (value) => value || '...'
     },
@@ -116,7 +115,6 @@ const WalletPage: React.FC = () => {
     {
       key: 'description',
       title: 'Mô tả',
-      width: '250px',
       align: 'left',
       render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
     },
@@ -130,7 +128,7 @@ const WalletPage: React.FC = () => {
     {
       key: 'date',
       title: 'Thời gian',
-      width: '160px',
+      width: 200,
       fixed: 'right',
       render: (value) =>
         value ? (

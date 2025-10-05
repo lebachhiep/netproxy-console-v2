@@ -122,7 +122,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
 
           <div>
             <Button className="w-full text-[12px]">MUA GÓI</Button>
-            <p className="text-xs text-text-muted dark:text-text-muted-dark text-center mt-1 font-medium">Terms & conditions apply</p>
+            <p className="text-xs text-text-lo dark:text-text-lo-dark text-center mt-1 font-medium">Terms & conditions apply</p>
           </div>
         </div>
       </div>

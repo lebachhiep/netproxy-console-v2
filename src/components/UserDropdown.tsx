@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chevron, PersonOutlined, SignOut, WalletCreditCardOutlined } from './icons';
 import { User } from 'firebase/auth';
@@ -14,6 +14,7 @@ interface Props {
 const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalOpen }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -27,7 +28,7 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
         className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-border-element-dark 
                    pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs 
                    hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark 
-                   hover:border-blue transition-colors duration-300"
+                   hover:border-blue dark:hover:border-blue-dark transition-colors duration-300"
         onClick={() => setMenuOpen((prev) => !prev)}
       >
         <div className="flex items-center gap-2">
@@ -63,7 +64,8 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
               <div className="flex flex-col gap-1 p-1">
                 <div
                   onClick={() => {
-                    setModalOpen(true);
+                    navigate('/account-profile');
+                    // setModalOpen(true);
                     setMenuOpen(false);
                   }}
                   className="cursor-pointer block rounded-lg px-2 py-1 text-sm 

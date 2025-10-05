@@ -32,13 +32,13 @@ export default {
 
         // Background
         'bg-canvas': '#FFFFFF',
-        'bg-canvas-dark': '#16273B',
+        'bg-canvas-dark': '#142334',
 
         'bg-primary': '#FFFFFF',
-        'bg-primary-dark': '#213245',
+        'bg-primary-dark': '#1E2D3E',
 
         'bg-secondary': '#FFFFFF',
-        'bg-secondary-dark': '#283B53',
+        'bg-secondary-dark': '#24374C',
 
         'bg-tertiary': '#FFFFFF',
         'bg-tertiary-dark': '#2E4560',
@@ -60,21 +60,21 @@ export default {
         black: '#1D1D1D',
 
         // Border
-        border: '#E3E5E8',
-        'border-dark': '#2A4A6F',
+        border: '#F1F2F4',
+        'border-dark': '#2D4F76',
 
         'border-element': '#F1F2F4',
-        'border-element-dark': '#254060',
+        'border-element-dark': '#192C42',
 
         // Primary
         primary: '#FF7530',
         'primary-dark': '#FF8A4D',
 
-        'primary-hi': '#DA540B',
-        'primary-hi-dark': '#FF7A33',
+        'primary-hi': '#FF6619',
+        'primary-hi-dark': '#FFBC99',
 
         'primary-border': '#FFBB99',
-        'primary-border-dark': '#7A2A00',
+        'primary-border-dark': '#794006',
 
         'primary-bg': '#FFF5F0',
         'primary-bg-dark': '#612405',

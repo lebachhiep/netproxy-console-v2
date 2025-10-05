@@ -1,5 +1,6 @@
 import { ReactComponent as Person } from '@/assets/icons/person.svg';
 import { ReactComponent as PersonOutlined } from '@/assets/icons/person_outlined.svg';
+import { ReactComponent as PersonFilled } from '@/assets/icons/person_filled.svg';
 import { ReactComponent as Lock } from '@/assets/icons/lock.svg';
 import { ReactComponent as Eye } from '@/assets/icons/eye.svg';
 import { ReactComponent as EyeOff } from '@/assets/icons/eye_off.svg';
@@ -86,6 +87,7 @@ import { ReactComponent as GridDots } from '@/assets/icons/grid_dots.svg';
 export {
   Person,
   PersonOutlined,
+  PersonFilled,
   Lock,
   Eye,
   EyeOff,

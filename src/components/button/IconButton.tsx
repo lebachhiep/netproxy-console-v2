@@ -27,9 +27,9 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
  */
 const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className, disabled, hoverIconColor = 'text-text-hi', ...rest }) => {
   const baseClasses =
-    'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue';
+    'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-blue-dark';
 
-  const activeClasses = active ? 'text-primary' : 'border-border-element dark:border-border-element-dark';
+  const activeClasses = active ? 'text-primary' : 'border-border dark:border-border-dark';
 
   const disabledClasses = 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-500';
 
@@ -39,7 +39,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className
         className: twMerge(
           'text-text-me dark:text-text-me-dark',
           (icon as React.ReactElement<any>).props.className,
-          !disabled ? `group-hover:${hoverIconColor} transition-colors duration-300` : ''
+          !disabled ? `group-hover:${hoverIconColor} group-hover:dark:${hoverIconColor}-dark transition-colors duration-300` : ''
         )
       })
     : icon;

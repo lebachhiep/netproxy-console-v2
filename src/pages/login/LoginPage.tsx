@@ -92,16 +92,16 @@ export const LoginPage: React.FC = () => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
-              className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-bg-secondary dark:bg-bg-secondary-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
-              <span className="font-bold text-text-hi text-[12px] tracking-[0.6px]">GOOGLE</span>
+              <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">GOOGLE</span>
             </button>
             {/* Divider */}
             <div className="flex items-center w-full">
-              <div className="flex-grow border-t border-border-element"></div>
+              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
               <span className="mx-3 text-text-lo text-sm">Hoặc</span>
-              <div className="flex-grow border-t border-border-element"></div>
+              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -153,7 +153,7 @@ export const LoginPage: React.FC = () => {
                   render={({ field: { value, onChange } }) => (
                     <label className="flex items-center gap-2 w-fit">
                       <Checkbox checked={value} onChange={onChange} disabled={isSubmitting} />
-                      <span className="font-normal text-sm text-text-hi">Lưu trạng thái đăng nhập</span>
+                      <span className="font-normal text-sm text-text-hi dark:text-text-hi-dark">Lưu trạng thái đăng nhập</span>
                     </label>
                   )}
                 />
@@ -169,7 +169,7 @@ export const LoginPage: React.FC = () => {
             </form>
           </div>
 
-          <p className="text-center text-sm">
+          <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
             Bạn chưa có tài khoản?{' '}
             <Link to={AUTH_ROUTES.REGISTER} className="text-blue hover:underline">
               Đăng ký

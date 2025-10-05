@@ -74,25 +74,25 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-primary">
+    <div className="flex items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
       <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
-        <div className="p-5 shadow-lg rounded-[20px] border border-border-element">
+        <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-5">
             {/* Google Button */}
             <button
               type="button"
               onClick={handleGoogleRegister}
               disabled={isSubmitting}
-              className="flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] rounded-full shadow-xs hover:shadow-md transition-shadow bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-bg-secondary dark:bg-bg-secondary-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
-              <span className="font-bold text-text-hi text-[12px] tracking-[0.6px]">ĐĂNG KÝ VỚI GOOGLE</span>
+              <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">ĐĂNG KÝ VỚI GOOGLE</span>
             </button>
             {/* Divider */}
             <div className="flex items-center w-full">
-              <div className="flex-grow border-t border-border-element"></div>
+              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
               <span className="mx-3 text-text-lo text-sm">Hoặc</span>
-              <div className="flex-grow border-t border-border-element"></div>
+              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -180,14 +180,14 @@ export const RegisterPage: React.FC = () => {
             </form>
           </div>
         </div>
-        <p className="text-center text-sm">
+        <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
           Bạn đã có tài khoản?{' '}
           <Link to={AUTH_ROUTES.LOGIN} className="text-blue hover:underline">
             Đăng nhập
           </Link>
         </p>
       </AuthFormWrapper>
-      <div className="absolute bottom-10 text-text-lo font-medium text-sm">© Netproxy</div>
+      <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
     </div>
   );
 };

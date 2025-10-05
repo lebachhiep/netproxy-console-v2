@@ -7,7 +7,9 @@ import {
   PersonOutlined,
   SignOut,
   WalletCreditCardFilled,
-  WalletCreditCardOutlined
+  WalletCreditCardOutlined,
+  WeatherMoon,
+  WeatherSunny
 } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import { settings } from '@/settings';
@@ -34,7 +36,11 @@ export const Navbar: React.FC = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [code, setCode] = useState('');
   const [canGoBack, setCanGoBack] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark';
+  });
+
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
   const { user, logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
@@ -68,8 +74,10 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
@@ -128,7 +136,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-primary dark:bg-bg-primary-dark dark:border-t-2 dark:border-border-element-dark transition-colors duration-300">
+      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-canvas dark:bg-bg-canvas-dark  dark:border-border-element-dark transition-colors duration-300">
         {/* Left */}
         <div className="flex items-center gap-4">
           <IconButton icon={<Chevron />} disabled={!canGoBack} onClick={handleBack} />
@@ -159,16 +167,16 @@ export const Navbar: React.FC = () => {
           />
           {/* Ngôn ngữ */}
           <IconButton icon={<Globe className="w-6 h-6" />} />
-          {/* <IconButton
-          icon={
-            darkMode ? (
-              <WeatherMoon className="text-text-lo dark:text-text-lo-dark" />
-            ) : (
-              <WeatherSunny className="text-text-lo dark:text-text-lo-dark" />
-            )
-          }
-        onClick={() => setDarkMode((prev) => !prev)}
-        /> */}
+          <IconButton
+            icon={
+              darkMode ? (
+                <WeatherMoon className="text-text-lo dark:text-text-lo-dark" />
+              ) : (
+                <WeatherSunny className="text-text-lo dark:text-text-lo-dark" />
+              )
+            }
+            onClick={() => setDarkMode((prev) => !prev)}
+          />
 
           {/* User info */}
 

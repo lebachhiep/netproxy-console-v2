@@ -64,10 +64,10 @@ export const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-primary">
-      {emailSent ? (
+    <div className="flex items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
+      {!emailSent ? (
         <AuthFormWrapper title="Lấy lại mật khẩu" subtitle="Vui lòng nhập email đã đăng ký">
-          <div className="p-5 shadow-lg rounded-[20px] border border-border-element">
+          <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
@@ -104,7 +104,7 @@ export const ForgotPasswordPage: React.FC = () => {
             </form>
           </div>
 
-          <p className="text-center text-sm">
+          <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
             Bạn chưa có tài khoản?{' '}
             <Link to={AUTH_ROUTES.REGISTER} className="text-blue hover:underline">
               Đăng ký
@@ -146,7 +146,7 @@ export const ForgotPasswordPage: React.FC = () => {
           </div>
         </div>
       )}
-      <div className="absolute bottom-10 text-text-lo font-medium text-sm">© Netproxy</div>
+      <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
     </div>
   );
 };

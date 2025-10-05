@@ -114,7 +114,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
                   onChange={(val) => setSelectedMethod(val)}
                   placeholder="Chọn ngân hàng"
                   placement="bottom"
-                  className="w-full"
+                  className="w-full h-10"
                 />
               </div>
 
@@ -174,7 +174,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
               </div>
             </div>
 
-            <div className="text-sm text-text-hi font-medium p-3">
+            <div className="text-sm text-text-hi dark:text-text-hi-dark font-medium p-3">
               <div className="border flex flex-col gap-2 border-yellow dark:border-yellow-dark bg-yellow-bg dark:bg-yellow-bg-dark p-3 rounded-lg">
                 <div>
                   <b className="text-red dark:text-red-dark">Lưu ý:</b> Sau khi thanh toán, vui lòng đợi hệ thống cập nhật số dư cho bạn.

@@ -216,13 +216,8 @@ const DashboardPage = () => {
 
   return (
     <>
-      <div className="p-5 bg-bg-primary dark:bg-bg-primary-dark">
-        <div
-          className="grid h-[212px] gap-5"
-          style={{
-            gridTemplateColumns: 'repeat(2, minmax(0, 264px)) 1fr 1fr'
-          }}
-        >
+      <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
+        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 h-[212px] gap-5">
           <OverViewCard
             icon={
               <div className="flex justify-center items-center w-10 h-10 bg-blue-gradient rounded-[4px] text-white">
@@ -314,7 +309,7 @@ const DashboardPage = () => {
           />
         </div>
       </div>
-      <div className="p-5 pb-2 bg-bg-primary dark:bg-bg-primary-dark">
+      <div className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
         <div className="flex items-center gap-2">
           <p className="text-text-lo dark:text-text-lo-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
           <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
@@ -335,8 +330,8 @@ const DashboardPage = () => {
             <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
             <IconButton
               hoverIconColor="text-white"
-              icon={<Add className="text-white" />}
-              className="bg-primary w-10 h-10 border-primary-border hover:bg-primary hover:border-primary-border"
+              icon={<Add className="text-white dark:text-white" />}
+              className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border dark:border-primary-hi-dark hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark"
             />
           </div>
         </div>

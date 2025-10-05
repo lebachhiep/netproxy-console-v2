@@ -13,6 +13,8 @@ import {
   DashboardOutlined,
   DocumentSync,
   DocumentSyncFilled,
+  Person,
+  PersonFilled,
   SettingsFilled,
   WalletCreditCardFilled,
   WalletCreditCardOutlined
@@ -79,6 +81,17 @@ export const navigationSections: NavigationSection[] = [
         path: '/history',
         name: '/history',
         breadcrumb: 'Lịch sử'
+      },
+      {
+        title: 'Tài khoản',
+        icon: <Person />,
+        collapsedIcon: <Person />,
+        iconClass: 'text-blue',
+        breadcrumbIcon: <PersonFilled width={32} height={32} className="text-blue" />,
+        path: '/account-profile',
+        name: '/account-profile',
+        breadcrumb: 'Tài khoản',
+        hidden: true
       },
       {
         title: 'Components',

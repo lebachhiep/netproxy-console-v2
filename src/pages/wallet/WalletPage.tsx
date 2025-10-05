@@ -183,7 +183,7 @@ const WalletPage: React.FC = () => {
                 onChange={(val) => setSelectedMethod(val)}
                 placeholder="Chọn ngân hàng"
                 placement="bottom"
-                className="w-full"
+                className="w-full h-10"
               />
             </div>
 

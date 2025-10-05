@@ -93,7 +93,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
         <Tabs tabs={accountTabs} defaultActiveKey="info">
           {/* Tab 1: Thông tin chung */}
           <div>
-            <div className="p-5 border-b-2 border-border-element">
+            <div className="p-5 border-b-2 border-border-element dark:border-border-element-dark">
               <form onSubmit={handleProfileSubmit(onSubmitProfile)}>
                 <ProfileForm control={profileControl} errors={profileErrors} isSubmitting={isProfileSubmitting} />
               </form>

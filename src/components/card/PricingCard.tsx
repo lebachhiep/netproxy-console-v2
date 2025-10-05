@@ -35,9 +35,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({ title, price, descript
 
       <div className="flex flex-col gap-4 text-text-me dark:text-text-me-dark group-hover:text-text-hi group-hover:dark:text-text-hi-dark">
         <div className="flex justify-between items-start">
-          <h3 className="text-lg font-semibold text-text-hi font-averta">{title}</h3>
+          <h3 className="text-lg font-semibold text-text-hi dark:text-text-hi-dark font-averta">{title}</h3>
           <div className="flex items-start gap-[2px] font-averta">
-            <span className="text-green font-semibold text-[12px] tracking-[-0.66px]">$</span>
+            <span className="text-green dark:text-green-dark font-semibold text-[12px] tracking-[-0.66px]">$</span>
             <span className="text-blue dark:text-blue-dark font-semibold text-lg">{price}</span>
           </div>
         </div>
@@ -73,7 +73,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({ title, price, descript
         </Button>
       </div>
 
-      <p className="text-xs text-center text-text-muted">Terms & conditions apply</p>
+      <p className="text-xs text-center text-text-lo dark:text-text-lo-dark">Terms & conditions apply</p>
     </div>
   );
 };

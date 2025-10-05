@@ -135,11 +135,14 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
         {/* Slider Track */}
         <div
           ref={sliderRef}
-          className={clsx('relative h-3 w-full cursor-pointer rounded-full bg-gray-200', disabled && 'cursor-not-allowed opacity-50')}
+          className={clsx(
+            'relative h-3 w-full cursor-pointer rounded-full bg-bg-mute dark:bg-bg-mute-dark',
+            disabled && 'cursor-not-allowed opacity-50'
+          )}
           onMouseDown={handleMouseDown}
         >
           {/* Active Track */}
-          <div className="absolute h-full rounded-full bg-blue" style={{ width: `${percentage}%` }} />
+          <div className="absolute h-full rounded-full bg-blue dark:bg-blue-dark" style={{ width: `${percentage}%` }} />
 
           {/* Thumb */}
           <div
@@ -177,8 +180,10 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
                   <div
                     onClick={handleLabelClick}
                     className={clsx(
-                      'cursor-pointer border-2 transition-colors flex items-center h-6 px-3 rounded-[100px] font-bold',
-                      isActive ? 'text-blue bg-blue-bg border-transparent' : 'text-text-lo border-border-element'
+                      'cursor-pointer border-2 border-border dark:border-border-dark transition-colors flex items-center h-6 px-3 rounded-[100px] font-bold',
+                      isActive
+                        ? 'text-blue dark:text-blue-dark bg-blue-bg dark:bg-blue-bg-dark border-transparent'
+                        : 'text-text-lo bg-bg-primary dark:bg-bg-primary-dark border-border-element'
                     )}
                   >
                     {label}

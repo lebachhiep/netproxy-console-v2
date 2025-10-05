@@ -312,7 +312,7 @@ export function Table<T extends Record<string, any>>({
   const renderHeaderTable = () => (
     <div
       ref={headerScrollRef}
-      className="overflow-auto relative bg-bg-primary dark:bg-bg-primary-dark border-border-element dark:border-border-element-dark border-b-2 border-t-2"
+      className="overflow-auto relative bg-bg-canvas dark:bg-bg-canvas-dark border-border-element dark:border-border-element-dark border-b-2 border-t-2"
       style={{
         overflowX: 'hidden',
         overflowY: scroll?.y ? 'scroll' : 'visible',
@@ -332,7 +332,7 @@ export function Table<T extends Record<string, any>>({
         <thead className="z-20">
           <tr>
             {rowSelection && (
-              <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-primary dark:bg-bg-primary-dark">
+              <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-canvas-dark">
                 <div className="flex items-center justify-center px-2 gap-1 border-r-[1.25px] border-border-element dark:border-border-element-dark h-full">
                   <Checkbox indeterminate={isIndeterminate} checked={!!isAllSelected} onChange={(checked) => handleSelectAll(checked)} />
                 </div>
@@ -364,11 +364,11 @@ export function Table<T extends Record<string, any>>({
 
               let thClassName = `h-9 py-1 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
   ${col.sortable ? 'cursor-pointer !text-text-hi dark:!text-text-hi-dark' : ''} 
-  bg-bg-primary dark:bg-bg-primary-dark`;
+  bg-bg-canvas dark:bg-bg-canvas-dark`;
 
               let className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
   ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} 
-  bg-bg-primary dark:bg-bg-primary-dark`;
+  bg-bg-canvas dark:bg-bg-canvas-dark`;
 
               // THÊM FONT-WEIGHT CHO CỘT ĐANG SORT
               if (isSorted) {

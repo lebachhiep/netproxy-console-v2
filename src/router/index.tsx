@@ -5,6 +5,7 @@ import { AdminLayout } from '../layouts/AdminLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
+import { AccountProfilePage } from '@/pages/account-profile/AccountProfilePage';
 
 const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
@@ -41,6 +42,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
         break;
       case '/history':
         element = <HistoryPage />;
+        break;
+      case '/account-profile':
+        element = <AccountProfilePage />;
         break;
       case '/components':
         element = <ComponentPage />;

@@ -22,7 +22,7 @@
     @apply text-[33px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.66px];
   }
   h3 {
-    @apply text-[24px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.48px];
+    @apply text-text-hi dark:text-text-hi-dark text-[24px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.48px];
   }
   h4 {
     @apply text-[20px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.3px];

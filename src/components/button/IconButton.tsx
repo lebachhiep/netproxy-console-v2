@@ -29,7 +29,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className
   const baseClasses =
     'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-blue-dark';
 
-  const activeClasses = active ? 'text-primary' : 'border-border dark:border-border-dark';
+  const activeClasses = active ? 'text-primary' : 'border-border dark:border-none dark:border-top-dark';
 
   const disabledClasses = 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-gray-500';
 

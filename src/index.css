@@ -11,6 +11,22 @@
     transition-timing-function: cubic-bezier(0.04, 0.88, 0.66, 0.69);
     transition-duration: 100ms;
   }
+  .border-top-dark {
+    position: relative;
+  }
+
+  .border-top-dark::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    border-top: 2px solid #2d4f76;
+    border-radius: inherit;
+    clip-path: inset(0 0 50% 0);
+    pointer-events: none;
+  }
 }
 
 @layer base {

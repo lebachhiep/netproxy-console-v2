@@ -3,13 +3,14 @@ import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { AnimatedOutlet } from './AnimatedOutlet';
 // import "./styles/AdminLayout.scss";
 
 export const AdminLayout: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
 
   const toggle = useCallback((collapsed: boolean) => {
-    setCollapsed(collapsed);
+    setCollapsed(false);
   }, []);
 
   return (
@@ -31,7 +32,7 @@ export const AdminLayout: React.FC = () => {
 
         {/* Content */}
         <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'ml-[68px]' : 'ml-[272px]')}>
-          <Outlet />
+          <AnimatedOutlet />
         </main>
       </div>
     </div>

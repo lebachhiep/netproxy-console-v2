@@ -6,18 +6,27 @@ import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
 import { AccountProfilePage } from '@/pages/account-profile/AccountProfilePage';
+import DashboardPage from '@/pages/dashboard/DashboardPage';
+import PurchasePage from '@/pages/purchase/PurchasePage';
+import WalletPage from '@/pages/wallet/WalletPage';
+import ComponentPage from '@/pages/component/ComponentPage';
+import SupportSoftwarePage from '@/pages/support-software/SupportSoftwarePage';
+import { LoginPage } from '@/pages/login/LoginPage';
+import { RegisterPage } from '@/pages/register/RegisterPage';
+import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
+import { NotFoundPage } from '@/pages/404/NotFoundPage';
 
-const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
-const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
-const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
-const LoginPage = lazy(() => import('@/pages/login/LoginPage').then((m) => ({ default: m.LoginPage })));
-const RegisterPage = lazy(() => import('@/pages/register/RegisterPage').then((m) => ({ default: m.RegisterPage })));
-const ForgotPasswordPage = lazy(() =>
-  import('@/pages/forgot-password/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
-);
-const PurchasePage = lazy(() => import('@/pages/purchase/PurchasePage'));
-const WalletPage = lazy(() => import('@/pages/wallet/WalletPage'));
-const SupportSoftwarePage = lazy(() => import('@/pages/support-software/SupportSoftwarePage'));
+// const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
+// const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
+// const DashboardPage = lazy(() => import('@/pages/dashboard/DashboardPage'));
+// const LoginPage = lazy(() => import('@/pages/login/LoginPage').then((m) => ({ default: m.LoginPage })));
+// const RegisterPage = lazy(() => import('@/pages/register/RegisterPage').then((m) => ({ default: m.RegisterPage })));
+// const ForgotPasswordPage = lazy(() =>
+//   import('@/pages/forgot-password/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+// );
+// const PurchasePage = lazy(() => import('@/pages/purchase/PurchasePage'));
+// const WalletPage = lazy(() => import('@/pages/wallet/WalletPage'));
+// const SupportSoftwarePage = lazy(() => import('@/pages/support-software/SupportSoftwarePage'));
 
 // Extend NavigationRoute với RouteObject properties
 export interface Route extends NavigationRoute, RouteObject {

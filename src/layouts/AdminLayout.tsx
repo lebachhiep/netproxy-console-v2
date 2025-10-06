@@ -7,10 +7,10 @@ import { AnimatedOutlet } from './AnimatedOutlet';
 // import "./styles/AdminLayout.scss";
 
 export const AdminLayout: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const toggle = useCallback((collapsed: boolean) => {
-    setCollapsed(false);
+    setCollapsed(collapsed);
   }, []);
 
   return (

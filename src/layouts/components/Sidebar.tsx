@@ -29,7 +29,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
 
   return (
     <aside
-      className={`fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg flex flex-col transition-all duration-300 
+      className={`fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg flex flex-col transition-[width] duration-300 
       ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[272px]'}`}
       // Hover auto expand / collapse
       onMouseEnter={() => toggle(false)} // mở khi hover

@@ -30,7 +30,7 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border border-none dark:border-top-dark shadow-md p-2 h-full',
+        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border dark:border-none dark:border-top-dark shadow-md p-2 h-full',
         className
       )}
     >

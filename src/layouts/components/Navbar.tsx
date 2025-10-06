@@ -72,13 +72,23 @@ export const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const root = document.documentElement;
+
+    // Tạm tắt transition toàn trang
+    root.classList.add('disable-transitions');
+
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
+
+    // Gỡ class sau 1 frame (để theme đổi tức thì)
+    setTimeout(() => {
+      root.classList.remove('disable-transitions');
+    }, 0);
   }, [darkMode]);
 
   useEffect(() => {
@@ -136,7 +146,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-canvas dark:bg-bg-canvas-dark  dark:border-border-element-dark transition-colors duration-300">
+      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-canvas dark:bg-bg-canvas-dark  dark:border-border-element-dark">
         {/* Left */}
         <div className="flex items-center gap-4">
           <IconButton icon={<Chevron />} disabled={!canGoBack} onClick={handleBack} />
@@ -167,16 +177,7 @@ export const Navbar: React.FC = () => {
           />
           {/* Ngôn ngữ */}
           <IconButton icon={<Globe className="w-6 h-6" />} />
-          <IconButton
-            icon={
-              darkMode ? (
-                <WeatherMoon className="text-text-lo dark:text-text-lo-dark" />
-              ) : (
-                <WeatherSunny className="text-text-lo dark:text-text-lo-dark" />
-              )
-            }
-            onClick={() => setDarkMode((prev) => !prev)}
-          />
+          <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
 
           {/* User info */}
 

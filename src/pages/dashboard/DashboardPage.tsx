@@ -5,11 +5,8 @@ import { OverViewCard } from '@/components/card/OverViewCard';
 import { ProxyCard, ProxyCardData } from '@/components/card/ProxyCard';
 import {
   Add,
-  AppsList,
   ArrowCounter,
   CartFilled,
-  DatabaseStackFilled,
-  Grid,
   GridDots,
   MagnifyingGlass,
   Storage,
@@ -21,6 +18,7 @@ import { Input } from '@/components/input/Input';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useMemo, useState } from 'react';
+import { motion, Variants } from 'framer-motion';
 import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
 import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
@@ -119,6 +117,27 @@ const data: ProxyCardData[] = [
   }
 ];
 
+//  Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.25, // khoảng delay giữa các item
+      delayChildren: 0.2 // delay trước khi item đầu tiên bắt đầu
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 2, ease: [0.4, 0, 0.2, 1] }
+  }
+};
+
 const DashboardPage = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -133,12 +152,11 @@ const DashboardPage = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [openDataUsageModal, setOpenDataUsageModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
   const handleAutoRenewChange = (id: number | string, checked: boolean) => {
-    console.log({ id });
     setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
   };
 
-  // Khi click vào Card hoặc row
   const handleItemClick = (index: number) => {
     setSelectedIndex(index);
     setModalOpen(true);
@@ -199,11 +217,9 @@ const DashboardPage = () => {
 
   const sortedData = useMemo(() => {
     if (!sortField || !sortOrder) return tableData;
-
     return [...tableData].sort((a, b) => {
       const v1 = a[sortField as keyof ProxyCardData];
       const v2 = b[sortField as keyof ProxyCardData];
-
       if (typeof v1 === 'number' && typeof v2 === 'number') {
         return sortOrder === 'asc' ? v1 - v2 : v2 - v1;
       }
@@ -216,99 +232,108 @@ const DashboardPage = () => {
 
   return (
     <>
+      {/* ====== TOP CARDS ====== */}
       <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
-        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 h-[212px] gap-5">
-          <OverViewCard
-            icon={
-              <div className="flex justify-center items-center w-10 h-10 bg-blue-gradient rounded-[4px] text-white">
-                <WalletCreditCardFilled />
-              </div>
-            }
-            title="Số dư"
-            mainContent={
-              <div className="flex items-center font-averta">
-                <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
-                <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
-              </div>
-            }
-            subInfo={[{ label: 'Đã chi tiêu', value: '$20.00' }]}
-            buttonText="NẠP THÊM"
-            onButtonClick={() => setOpen(true)}
-          />
-
-          <OverViewCard
-            icon={
-              <div className="flex justify-center items-center w-10 h-10 bg-yellow-gradient rounded-[4px] text-white">
-                <CartFilled />
-              </div>
-            }
-            title="Các gói hoạt động"
-            mainContent={
-              <div className="">
-                <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
-              </div>
-            }
-            subInfo={[{ label: 'Tổng gói', value: '10 gói' }]}
-            buttonText="MUA THÊM"
-            onButtonClick={() => navigate('/buy')}
-          />
-          <OverViewCard
-            icon={
-              <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
-                <TopSpeed />
-              </div>
-            }
-            title="Hiệu suất & khả dụng"
-            mainContent={
-              <div className="">
-                <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
-              </div>
-            }
-            subInfo={[
-              {
-                label: 'Proxy khả dụng:',
-                value: (
-                  <div className="">
-                    <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
-                    <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
-                  </div>
-                )
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-4 h-[212px] gap-5">
+          {[
+            <OverViewCard
+              key="1"
+              icon={
+                <div className="flex justify-center items-center w-10 h-10 bg-blue-gradient rounded-[4px] text-white">
+                  <WalletCreditCardFilled />
+                </div>
               }
-            ]}
-            //subInfo={[{ label: 'Cổng proxy khả dụng', value: '10.153 Ports' }]}
-          />
-
-          <OverViewCard
-            icon={
-              <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
-                <Storage />
-              </div>
-            }
-            title="Máy chủ & IP"
-            mainContent={
-              <div className="">
-                <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-                <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
-
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
-              </div>
-            }
-            subInfo={[
-              {
-                label: 'Tổng số IP:',
-                value: (
-                  <div className="">
-                    <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
-                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
-                  </div>
-                )
+              title="Số dư"
+              mainContent={
+                <div className="flex items-center font-averta">
+                  <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
+                  <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
+                </div>
               }
-            ]}
-          />
-        </div>
+              subInfo={[{ label: 'Đã chi tiêu', value: '$20.00' }]}
+              buttonText="NẠP THÊM"
+              onButtonClick={() => setOpen(true)}
+            />,
+            <OverViewCard
+              key="2"
+              icon={
+                <div className="flex justify-center items-center w-10 h-10 bg-yellow-gradient rounded-[4px] text-white">
+                  <CartFilled />
+                </div>
+              }
+              title="Các gói hoạt động"
+              mainContent={
+                <div>
+                  <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
+                </div>
+              }
+              subInfo={[{ label: 'Tổng gói', value: '10 gói' }]}
+              buttonText="MUA THÊM"
+              onButtonClick={() => navigate('/buy')}
+            />,
+            <OverViewCard
+              key="3"
+              icon={
+                <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
+                  <TopSpeed />
+                </div>
+              }
+              title="Hiệu suất & khả dụng"
+              mainContent={
+                <div>
+                  <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
+                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
+                </div>
+              }
+              subInfo={[
+                {
+                  label: 'Proxy khả dụng:',
+                  value: (
+                    <div>
+                      <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
+                      <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
+                    </div>
+                  )
+                }
+              ]}
+            />,
+            <OverViewCard
+              key="4"
+              icon={
+                <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
+                  <Storage />
+                </div>
+              }
+              title="Máy chủ & IP"
+              mainContent={
+                <div>
+                  <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+                  <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
+                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
+                </div>
+              }
+              subInfo={[
+                {
+                  label: 'Tổng số IP:',
+                  value: (
+                    <div>
+                      <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
+                      <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
+                    </div>
+                  )
+                }
+              ]}
+            />
+          ].map((card, i) => (
+            <motion.div key={i} variants={itemVariants}>
+              {card}
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
+
+      {/* ====== FILTER BAR ====== */}
       <div className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
         <div className="flex items-center gap-2">
           <p className="text-text-lo dark:text-text-lo-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
@@ -336,6 +361,8 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ====== CONTENT ====== */}
       <div>
         {viewMode === 'list' ? (
           <Table
@@ -343,10 +370,6 @@ const DashboardPage = () => {
             scroll={{ x: 300, y: 'calc(100dvh - 505px)' }}
             data={sortedData}
             columns={columns}
-            // rowSelection={{
-            //   selectedRowKeys,
-            //   onChange: (keys, rows) => setSelectedRowKeys(keys)
-            // }}
             pagination={{
               current: currentPage,
               pageSize,
@@ -364,7 +387,6 @@ const DashboardPage = () => {
             sortField={sortField}
             sortOrder={sortOrder}
             onSort={(field, order) => {
-              console.log({ field, order });
               setSortField(field);
               setSortOrder(order);
             }}
@@ -372,23 +394,28 @@ const DashboardPage = () => {
         ) : (
           <div className="relative">
             <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
-            <div
-              className="overflow-y-auto h-[calc(100vh-460px)]
-          grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5"
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5"
             >
               {tableData.map((item, index) => (
-                <ProxyCard
-                  data={item}
-                  buttonText={'Quản lý'}
-                  onRenewChange={handleAutoRenewChange}
-                  onButtonClick={() => handleItemClick(index)}
-                />
+                <motion.div key={item.id} variants={itemVariants}>
+                  <ProxyCard
+                    data={item}
+                    buttonText="Quản lý"
+                    onRenewChange={handleAutoRenewChange}
+                    onButtonClick={() => handleItemClick(index)}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         )}
       </div>
 
+      {/* ====== MODALS ====== */}
       <ProxyDetailModal
         open={modalOpen}
         item={selectedIndex !== null ? sortedData[selectedIndex] : null}

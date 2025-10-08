@@ -209,12 +209,8 @@ const WalletPage: React.FC = () => {
         </div>
 
         {/* Right Panel */}
-        <div className="w-[420px]">
-          {/* Wallet Card */}
-          <div>
-            <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="black" />
-          </div>
-        </div>
+        {/* Wallet Card */}
+        <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="black" />
       </div>
       <div className="p-5 pb-2">
         <div>

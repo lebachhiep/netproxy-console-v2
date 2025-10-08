@@ -15,7 +15,7 @@ export const AppCard: React.FC<AppCardProps> = ({ icon, title, description, butt
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-4 rounded-xl border bg-white dark:bg-bg-secondary-dark border-border-element dark:border-border-element-dark shadow-md p-4 w-full',
+        'flex flex-col gap-4  rounded-xl border bg-white dark:bg-bg-secondary-dark border-border-element dark:border-border-element-dark shadow-md p-4 w-full',
         className
       )}
     >

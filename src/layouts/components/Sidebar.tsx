@@ -36,11 +36,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
       onMouseLeave={() => toggle(true)} // đóng khi rời chuột
     >
       {/* Nút collapse */}
-      <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
+      <div className="absolute top-1/2 -left-3 z-50 -translate-y-1/2">
         {collapsed ? (
-          <IconButton onClick={() => toggle(true)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
+          <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
         ) : (
-          <IconButton onClick={() => toggle(false)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
+          <IconButton onClick={() => toggle(true)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
         )}
       </div>
       {/* Logo */}
@@ -146,13 +146,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                         >
                           {collapsed && route.collapsedIcon && !isActive(route.path || '') ? route.collapsedIcon : route.icon}
                         </div>
-                        <span
-                          className={`transition-smooth overflow-hidden whitespace-nowrap ${
+                        <div
+                          className={`transition-smooth overflow-hidden whitespace-nowrap flex-1 ${
                             collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
                           }`}
                         >
                           {route.title}
-                        </span>
+                        </div>
                       </Link>
                     </li>
                   );

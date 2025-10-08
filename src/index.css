@@ -11,6 +11,7 @@
     transition-timing-function: cubic-bezier(0.04, 0.88, 0.66, 0.69);
     transition-duration: 100ms;
   }
+
   .border-top-dark {
     position: relative;
   }
@@ -27,6 +28,18 @@
     clip-path: inset(0 0 50% 0);
     pointer-events: none;
   }
+
+  /* .border-top-dark:hover::before {
+    display: none;
+  } */
+
+  .hidden-border-top.border-top-dark:hover::before {
+    display: none;
+  }
+
+  /* .group:hover .border-top-dark::before {
+    display: none;
+  } */
 }
 
 @layer base {
@@ -66,6 +79,11 @@ body {
   font-family: 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ẩn scrollbar trên Chrome, Safari, Edge */
+body::-webkit-scrollbar {
+  display: none;
 }
 
 code {

@@ -19,14 +19,14 @@ const backgrounds: Record<string, string> = {
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ balance, spent, owner, variant = 'blue' }) => {
   return (
-    <div className="w-full max-w-[430px] flex flex-col gap-1">
-      {/* Card with background */}
-      <div className="relative rounded-2xl overflow-hidden text-white">
-        {/* Background image */}
-        <img src={backgrounds[variant]} alt="card background" className="absolute inset-0 w-full h-full object-contain" />
+    <div className="w-full max-w-[388.5px] aspect-[388.5/296] flex flex-col gap-1 rounded-2xl overflow-hidden">
+      {/* Main Card */}
+      <div className="relative flex-1 text-white">
+        {/* Background */}
+        <img src={backgrounds[variant]} alt="card background" className="absolute inset-0 w-full h-full object-cover" />
 
-        {/* Overlay content */}
-        <div className="relative flex flex-col h-[272px] justify-between p-5">
+        {/* Nội dung */}
+        <div className="relative flex flex-col justify-between h-full p-5">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">Số dư tài khoản</p>
             <p className="text-[33px] font-averta leading-[120%] font-semibold">${balance.toLocaleString()}</p>

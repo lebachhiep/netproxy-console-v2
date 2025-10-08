@@ -33,7 +33,7 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
         )}
       >
         <div className={twMerge('flex items-center justify-center pl-4 mr-1')}>
-          <SlashForward className="text-primary dark:text-primary-dark animate-pulse" />
+          <SlashForward className="text-primary dark:text-primary-dark animate-fade-pulse" />
         </div>
 
         {/* Input */}

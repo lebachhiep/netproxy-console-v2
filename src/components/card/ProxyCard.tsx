@@ -34,7 +34,7 @@ interface ProxyCardProps {
 
 export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onButtonClick, buttonText, onRenewChange }) => {
   return (
-    <div className="group relative w-full rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark">
+    <div className="group relative w-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark">
       {/* Tag */}
       {data.tag && (
         <span className="absolute -top-3 left-0 flex items-center gap-1  bg-primary text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
@@ -54,7 +54,7 @@ export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onButtonClick, butto
           <Button
             onClick={onButtonClick}
             variant="default"
-            className="h-10 group-hover:bg-primary group-hover:dark:bg-primary-dark group-hover:border-primary-border group-hover:dark:border-primary-border-dark group-hover:text-white"
+            className="h-10 group-hover:bg-primary group-hover:dark:bg-primary-dark group-hover:border-primary-border group-hover:dark:border-primary-border-dark group-hover:!border-2 group-hover:text-white"
           >
             {buttonText || 'Chọn gói'}
           </Button>

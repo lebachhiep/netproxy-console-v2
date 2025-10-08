@@ -83,6 +83,7 @@ import { ReactComponent as CalendarPlus } from '@/assets/icons/calendar_plus.svg
 import { ReactComponent as AddCircle } from '@/assets/icons/add_circle.svg';
 import { ReactComponent as TextColumnOne } from '@/assets/icons/text_column_one.svg';
 import { ReactComponent as GridDots } from '@/assets/icons/grid_dots.svg';
+import { ReactComponent as Open } from '@/assets/icons/open.svg';
 
 export {
   Person,
@@ -169,5 +170,6 @@ export {
   CalendarPlus,
   AddCircle,
   TextColumnOne,
-  GridDots
+  GridDots,
+  Open
 };

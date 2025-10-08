@@ -117,14 +117,41 @@ const data: ProxyCardData[] = [
   }
 ];
 
+const easeInOutCustom = [0.44, 0, 0.56, 1];
+
+const pageVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.25,
+      ease: easeInOutCustom as any
+    }
+  }
+};
+
+const sectionVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      delay: 0.9,
+      ease: easeInOutCustom as any
+    }
+  }
+};
 //  Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.25, // khoảng delay giữa các item
-      delayChildren: 0.2 // delay trước khi item đầu tiên bắt đầu
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+      ease: easeInOutCustom as any
     }
   }
 };
@@ -134,7 +161,10 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 2, ease: [0.4, 0, 0.2, 1] }
+    transition: {
+      duration: 0.4,
+      ease: easeInOutCustom as any
+    }
   }
 };
 
@@ -231,7 +261,7 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <>
+    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark min-h-screen">
       {/* ====== TOP CARDS ====== */}
       <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-4 h-[212px] gap-5">
@@ -334,9 +364,9 @@ const DashboardPage = () => {
       </div>
 
       {/* ====== FILTER BAR ====== */}
-      <div className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
+      <motion.div variants={sectionVariants} className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
         <div className="flex items-center gap-2">
-          <p className="text-text-lo dark:text-text-lo-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
+          <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
           <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
         </div>
         <div className="flex items-center justify-between mt-3">
@@ -360,10 +390,10 @@ const DashboardPage = () => {
             />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ====== CONTENT ====== */}
-      <div>
+      <motion.div variants={sectionVariants} className="relative">
         {viewMode === 'list' ? (
           <Table
             className="min-h-[calc(100dvh-465px)]"
@@ -413,7 +443,7 @@ const DashboardPage = () => {
             </motion.div>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* ====== MODALS ====== */}
       <ProxyDetailModal
@@ -428,7 +458,7 @@ const DashboardPage = () => {
 
       <DepositFlowModal open={open} onClose={() => setOpen(false)} />
       <DataUsageModal open={openDataUsageModal} onClose={() => setOpenDataUsageModal(false)} />
-    </>
+    </motion.div>
   );
 };
 

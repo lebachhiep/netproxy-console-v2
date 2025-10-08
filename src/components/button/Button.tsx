@@ -46,7 +46,7 @@ const variants: Record<ButtonVariant, string> = {
     'bg-primary hover:brightness-[110%] dark:bg-primary-dark border-primary-border dark:border-primary-border-dark text-white hover:border-primary-hover dark:hover:bg-primary-hover-dark',
   outlined: 'border-primary-border text-primary bg-primary-bg hover:border-primary',
   default:
-    'border-border dark:border-border-dark text-text-me dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:border-blue',
+    'border-border dark:border-none dark:border-top-dark text-text-me dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:border-blue',
   disabled: 'bg-gray-100 text-gray-400 cursor-not-allowed border-0'
 };
 

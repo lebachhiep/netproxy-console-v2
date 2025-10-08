@@ -10,7 +10,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({ text, className, ico
   return (
     <div className={`flex items-center gap-2 ${className || ''}`}>
       {/* Text */}
-      <p className="text-text-lo dark:text-text-lo-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">{text}</p>
+      <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">{text}</p>
 
       {/* Line */}
       <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>

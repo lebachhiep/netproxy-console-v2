@@ -16,6 +16,7 @@ import {
   Person,
   PersonFilled,
   SettingsFilled,
+  Open,
   WalletCreditCardFilled,
   WalletCreditCardOutlined
 } from '@/components/icons';
@@ -119,7 +120,12 @@ export const navigationSections: NavigationSection[] = [
         breadcrumb: 'Chương trình đại lý'
       },
       {
-        title: 'Tài liệu API',
+        title: (
+          <div className="flex items-center flex-1 justify-between w-full">
+            <span>Tài liệu API</span>
+            <Open className="text-blue dark:text-blue-dark" />
+          </div>
+        ),
         icon: <DocumentSyncFilled />,
         collapsedIcon: <DocumentSync />,
         iconClass: 'text-primary',

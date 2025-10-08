@@ -8,10 +8,15 @@ export default {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(-10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        fadePulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.05' }
         }
       },
       animation: {
-        fadeIn: 'fadeIn 0.3s ease-out forwards'
+        fadeIn: 'fadeIn 0.3s ease-out forwards',
+        'fade-pulse': 'fadePulse 1.5s ease-in-out infinite'
       },
       fontFamily: {
         averta: ['"Averta CY"', 'sans-serif']
@@ -44,7 +49,7 @@ export default {
         'bg-tertiary-dark': '#2E4560',
 
         'bg-mute': '#F5F5F5',
-        'bg-mute-dark': '#192C43',
+        'bg-mute-dark': '#182A3F',
 
         'bg-input': '#FAFAFA',
         'bg-input-dark': '#111D2D',

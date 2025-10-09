@@ -261,10 +261,15 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark min-h-screen">
+    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark">
       {/* ====== TOP CARDS ====== */}
       <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-4 h-[212px] gap-5">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-2 md:grid-cols-4 h-[212px] gap-5"
+        >
           {[
             <OverViewCard
               key="1"
@@ -396,7 +401,7 @@ const DashboardPage = () => {
       <motion.div variants={sectionVariants} className="relative">
         {viewMode === 'list' ? (
           <Table
-            className="min-h-[calc(100dvh-465px)]"
+            className="md:min-h-[calc(100dvh-465px)]"
             scroll={{ x: 300, y: 'calc(100dvh - 505px)' }}
             data={sortedData}
             columns={columns}
@@ -428,7 +433,7 @@ const DashboardPage = () => {
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5"
+              className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
             >
               {tableData.map((item, index) => (
                 <motion.div key={item.id} variants={itemVariants}>
@@ -436,7 +441,7 @@ const DashboardPage = () => {
                     data={item}
                     buttonText="Quản lý"
                     onRenewChange={handleAutoRenewChange}
-                    onButtonClick={() => handleItemClick(index)}
+                    onClick={() => handleItemClick(index)}
                   />
                 </motion.div>
               ))}

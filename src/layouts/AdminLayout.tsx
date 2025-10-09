@@ -7,16 +7,16 @@ import { motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 
 export const AdminLayout: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   const toggle = useCallback((collapsed: boolean) => {
-    setCollapsed(false);
+    setCollapsed(collapsed);
   }, []);
 
   const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
   return (
-    <div className="bg-bg-canvas dark:bg-bg-canvas-dark min-h-screen pl-5 py-5 overflow-hidden">
+    <div className="bg-bg-canvas dark:bg-bg-canvas-dark min-h-screen md:pl-5 md:py-5 md:overflow-hidden">
       <div className="rounded-tl-[16px] border-border-element relative">
         {/* Sidebar */}
         <motion.div
@@ -46,7 +46,7 @@ export const AdminLayout: React.FC = () => {
         </motion.div>
 
         {/* Content */}
-        <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'ml-[68px]' : 'ml-[272px]')}>
+        <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]')}>
           <Outlet />
         </main>
       </div>

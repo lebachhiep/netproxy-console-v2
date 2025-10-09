@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import OrderSummary, { OrderItemType } from './components/OrderSumary';
 import CountrySelector, { Country } from './components/table/CountrySelector';
 import PricingTable from './components/table/PricingTable';
+import { motion, Variants } from 'framer-motion';
 
 // Data riêng cho 7 ngày và 30 ngày
 const data7day = [
@@ -25,6 +26,45 @@ const data30day = [
   { range: '100-299 IPs', price: 2.5, desc: '$2.7/IP' },
   { range: '>300 IPs', price: 2.35, desc: '$2.45/IP' }
 ];
+
+// Animation variants
+const easeInOutCustom = [0.44, 0, 0.56, 1];
+
+const pageVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.2,
+      staggerChildren: 0.25,
+      ease: easeInOutCustom as any
+    }
+  }
+};
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+      ease: easeInOutCustom as any
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: easeInOutCustom as any
+    }
+  }
+};
 
 type TabKey = 'rotating' | 'static' | 'dedicated';
 type StaticSubKey = 'bandwidth' | 'unlimited';
@@ -224,75 +264,80 @@ const PurchasePage: React.FC = () => {
   ];
 
   return (
-    <div className="">
+    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
       {/* Main Tabs */}
       <Tabs tabs={mainTabs} activeKey={activeMain} onChange={(key) => setActiveMain(key as TabKey)}>
         {/* Rotating */}
         <div key="rotating">
           <Tabs type="card" tabs={speedGroups} activeKey={activeGroup} onChange={(key) => setActiveGroup(key as SpeedLimitGroup)}>
             {speedGroups.map((g) => (
-              <div
+              <motion.div
                 key={g.key}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
                 className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
               >
-                {plansByType.rotating[g.key].map((plan) => (
-                  <PricingCard
-                    tag={{ text: 'POPULAR', icon: <Fire /> }}
-                    description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                    title={plan.name}
-                    price="4.50"
-                    features={[
-                      {
-                        icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                        label: (
-                          <div className="text-base">
-                            <label htmlFor="">Hỗ trợ: </label>
-                            <span className="font-bold">HTTP/HTTPS</span>
-                          </div>
-                        )
-                      },
-                      {
-                        icon: <Clock className="w-6 h-6 text-yellow" />,
-                        label: (
-                          <div className="text-base">
-                            <label htmlFor="">Thời gian xoay IP: </label>
-                            <span className="font-bold">10 phút</span>
-                          </div>
-                        )
-                      },
-                      {
-                        icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                        label: (
-                          <div className="text-base">
-                            <label htmlFor="">Băng thông: </label>
-                            <span className="font-bold">Không giới hạn</span>
-                          </div>
-                        )
-                      },
-                      {
-                        icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                        label: (
-                          <div className="text-base">
-                            <label htmlFor="">Lượt xoay IP: </label>
-                            <span className="font-bold">Không giới hạn</span>
-                          </div>
-                        )
-                      },
-                      {
-                        icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                        label: (
-                          <div className="text-base">
-                            <label htmlFor="">Tăng tốc: </label>
-                            <span className="font-bold">50Mbps</span>
-                          </div>
-                        )
-                      }
-                    ]}
-                    buttonText="MUA GÓI"
-                    onClick={() => alert('Mua gói')}
-                  />
+                {plansByType.rotating[g.key].map((plan, index) => (
+                  <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
+                    <PricingCard
+                      tag={{ text: 'POPULAR', icon: <Fire /> }}
+                      description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
+                      title={plan.name}
+                      price="4.50"
+                      features={[
+                        {
+                          icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Hỗ trợ: </label>
+                              <span className="font-bold">HTTP/HTTPS</span>
+                            </div>
+                          )
+                        },
+                        {
+                          icon: <Clock className="w-6 h-6 text-yellow" />,
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Thời gian xoay IP: </label>
+                              <span className="font-bold">10 phút</span>
+                            </div>
+                          )
+                        },
+                        {
+                          icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Băng thông: </label>
+                              <span className="font-bold">Không giới hạn</span>
+                            </div>
+                          )
+                        },
+                        {
+                          icon: <ArrowRotate className="w-6 h-6 text-blue" />,
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Lượt xoay IP: </label>
+                              <span className="font-bold">Không giới hạn</span>
+                            </div>
+                          )
+                        },
+                        {
+                          icon: <TopSpeed className="w-6 h-6 text-pink" />,
+                          label: (
+                            <div className="text-base">
+                              <label htmlFor="">Tăng tốc: </label>
+                              <span className="font-bold">50Mbps</span>
+                            </div>
+                          )
+                        }
+                      ]}
+                      buttonText="MUA GÓI"
+                      onClick={() => alert('Mua gói')}
+                    />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             ))}
           </Tabs>
         </div>
@@ -301,134 +346,145 @@ const PurchasePage: React.FC = () => {
         <div key="static">
           <Tabs type="card" tabs={staticTabs} activeKey={activeStatic} onChange={(key) => setActiveStatic(key as StaticSubKey)}>
             {[
-              // Speed Limit → Nhóm gói
+              // Bandwidth
               <div key="bandwidth">
-                <div
+                <motion.div
                   key={'bandwidth'}
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
                   className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
-                  {plansByType.static['bandwidth'].map((plan) => (
-                    <PricingCard
-                      tag={{ text: 'POPULAR', icon: <Fire /> }}
-                      description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                      title={plan.name}
-                      price="4.50"
-                      features={[
-                        {
-                          icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Hỗ trợ: </label>
-                              <span className="font-bold">HTTP/HTTPS</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <Clock className="w-6 h-6 text-yellow" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Thời gian xoay IP: </label>
-                              <span className="font-bold">10 phút</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Băng thông: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Lượt xoay IP: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Tăng tốc: </label>
-                              <span className="font-bold">50Mbps</span>
-                            </div>
-                          )
-                        }
-                      ]}
-                      buttonText="MUA GÓI"
-                      onClick={() => alert('Mua gói')}
-                    />
+                  {plansByType.static['bandwidth'].map((plan, index) => (
+                    <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
+                      <PricingCard
+                        tag={{ text: 'POPULAR', icon: <Fire /> }}
+                        description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
+                        title={plan.name}
+                        price="4.50"
+                        features={[
+                          {
+                            icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Hỗ trợ: </label>
+                                <span className="font-bold">HTTP/HTTPS</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <Clock className="w-6 h-6 text-yellow" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Thời gian xoay IP: </label>
+                                <span className="font-bold">10 phút</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Băng thông: </label>
+                                <span className="font-bold">Không giới hạn</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <ArrowRotate className="w-6 h-6 text-blue" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Lượt xoay IP: </label>
+                                <span className="font-bold">Không giới hạn</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <TopSpeed className="w-6 h-6 text-pink" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Tăng tốc: </label>
+                                <span className="font-bold">50Mbps</span>
+                              </div>
+                            )
+                          }
+                        ]}
+                        buttonText="MUA GÓI"
+                        onClick={() => alert('Mua gói')}
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>,
+              // Unlimited
               <div key="unlimited">
-                <div
+                <motion.div
                   key={'unlimited'}
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
                   className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
-                  {plansByType.static['unlimited'].map((plan) => (
-                    <PricingCard
-                      tag={{ text: 'POPULAR', icon: <Fire /> }}
-                      description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                      title={plan.name}
-                      price="4.50"
-                      features={[
-                        {
-                          icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Hỗ trợ: </label>
-                              <span className="font-bold">HTTP/HTTPS</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <Clock className="w-6 h-6 text-yellow" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Thời gian xoay IP: </label>
-                              <span className="font-bold">10 phút</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Băng thông: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Lượt xoay IP: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Tăng tốc: </label>
-                              <span className="font-bold">50Mbps</span>
-                            </div>
-                          )
-                        }
-                      ]}
-                      buttonText="MUA GÓI"
-                      onClick={() => alert('Mua gói')}
-                    />
+                  {plansByType.static['unlimited'].map((plan, index) => (
+                    <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
+                      <PricingCard
+                        tag={{ text: 'POPULAR', icon: <Fire /> }}
+                        description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
+                        title={plan.name}
+                        price="4.50"
+                        features={[
+                          {
+                            icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Hỗ trợ: </label>
+                                <span className="font-bold">HTTP/HTTPS</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <Clock className="w-6 h-6 text-yellow" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Thời gian xoay IP: </label>
+                                <span className="font-bold">10 phút</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Băng thông: </label>
+                                <span className="font-bold">Không giới hạn</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <ArrowRotate className="w-6 h-6 text-blue" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Lượt xoay IP: </label>
+                                <span className="font-bold">Không giới hạn</span>
+                              </div>
+                            )
+                          },
+                          {
+                            icon: <TopSpeed className="w-6 h-6 text-pink" />,
+                            label: (
+                              <div className="text-base">
+                                <label htmlFor="">Tăng tốc: </label>
+                                <span className="font-bold">50Mbps</span>
+                              </div>
+                            )
+                          }
+                        ]}
+                        buttonText="MUA GÓI"
+                        onClick={() => alert('Mua gói')}
+                      />
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               </div>
             ]}
           </Tabs>
@@ -465,7 +521,7 @@ const PurchasePage: React.FC = () => {
           </div>
         </div>
       </Tabs>
-    </div>
+    </motion.div>
   );
 };
 

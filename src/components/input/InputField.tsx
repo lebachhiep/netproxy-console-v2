@@ -92,39 +92,41 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             </div>
           )}
 
-          {/* Input */}
-          <input
-            ref={ref} // <-- thêm ref
-            type={inputType}
-            className={twMerge(
-              'flex-1 px-3 h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
-              inputClassName
-            )}
-            {...props}
-          />
-
-          {/* Icon Right */}
-          {icon && iconPosition === 'right' && !showPasswordToggle && (
-            <div
+          <div className="flex-1 px-3 flex items-center justify-between">
+            {/* Input */}
+            <input
+              ref={ref} // <-- thêm ref
+              type={inputType}
               className={twMerge(
-                'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
-                'group-focus-within:border-blue dark:group-focus-within:border-blue-dark'
+                'h-5 text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+                inputClassName
               )}
-            >
-              {icon}
-            </div>
-          )}
+              {...props}
+            />
 
-          {/* Toggle Password */}
-          {showPasswordToggle && (
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="px-3 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
-            >
-              {showPassword ? <EyeOff /> : <Eye />}
-            </button>
-          )}
+            {/* Icon Right */}
+            {icon && iconPosition === 'right' && !showPasswordToggle && (
+              <div
+                className={twMerge(
+                  'flex items-center justify-center w-12 h-12 bg-bg-secondary dark:bg-bg-secondary-dark border-l-[2px] border-border-element dark:border-border-dark text-primary dark:text-primary-dark transition-colors',
+                  'group-focus-within:border-blue dark:group-focus-within:border-blue-dark'
+                )}
+              >
+                {icon}
+              </div>
+            )}
+
+            {/* Toggle Password */}
+            {showPasswordToggle && (
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="w-6 h-6 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
+              >
+                {showPassword ? <EyeOff /> : <Eye />}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );

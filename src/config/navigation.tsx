@@ -18,7 +18,8 @@ import {
   SettingsFilled,
   Open,
   WalletCreditCardFilled,
-  WalletCreditCardOutlined
+  WalletCreditCardOutlined,
+  ClockBill
 } from '@/components/icons';
 
 export interface NavigationRoute {
@@ -75,10 +76,10 @@ export const navigationSections: NavigationSection[] = [
       },
       {
         title: 'Lịch sử',
-        icon: <ArrowCounter />,
-        collapsedIcon: <ArrowCounter />,
+        icon: <ClockBillFilled />,
+        collapsedIcon: <ClockBill />,
         iconClass: 'text-blue',
-        breadcrumbIcon: <ArrowCounter width={32} height={32} className="text-blue" />,
+        breadcrumbIcon: <ClockBillFilled width={32} height={32} className="text-blue" />,
         path: '/history',
         name: '/history',
         breadcrumb: 'Lịch sử'

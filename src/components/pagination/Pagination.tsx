@@ -155,7 +155,7 @@ export function Pagination({
 
   return (
     <div className={`px-5 ${className}`}>
-      <div className="flex items-center justify-between bg-bg-primary dark:bg-bg-primary-dark">
+      <div className="flex items-center justify-between">
         {/* Left side - Page info and size changer */}
         <div className="flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
           <div>

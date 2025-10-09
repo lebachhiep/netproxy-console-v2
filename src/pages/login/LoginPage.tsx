@@ -87,12 +87,12 @@ export const LoginPage: React.FC = () => {
       left={
         <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại!">
           {/* Google Button */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 p-5 md:p-0 shadow-lg md:shadow-none rounded-[20px] border md:border-none border-border-element dark:border-border-element-dark">
             <button
               type="button"
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
-              className="bg-bg-secondary dark:bg-bg-secondary-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:border-top-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
               <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">GOOGLE</span>

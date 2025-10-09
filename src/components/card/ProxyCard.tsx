@@ -27,14 +27,17 @@ export interface ProxyCardData {
 
 interface ProxyCardProps {
   data: ProxyCardData;
-  onButtonClick?: () => void;
+  onClick?: () => void;
   onRenewChange?: (id: number | string, checked: boolean) => void;
   buttonText?: string;
 }
 
-export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onButtonClick, buttonText, onRenewChange }) => {
+export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onClick, buttonText, onRenewChange }) => {
   return (
-    <div className="group relative w-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark">
+    <div
+      onClick={onClick}
+      className="group cursor-pointer relative w-full h-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark"
+    >
       {/* Tag */}
       {data.tag && (
         <span className="absolute -top-3 left-0 flex items-center gap-1  bg-primary text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
@@ -47,12 +50,12 @@ export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onButtonClick, butto
         {/* Header */}
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-2">
-            <h3 className="text-lg font-semibold font-averta">{data.title}</h3>
+            <h3 className="text-lg font-semibold font-averta line-clamp-1">{data.title}</h3>
             {data.status && <Badge color={data.status.color}>{data.status.text}</Badge>}
           </div>
           {/* Button */}
           <Button
-            onClick={onButtonClick}
+            onClick={onClick}
             variant="default"
             className="h-10 group-hover:bg-primary group-hover:dark:bg-primary-dark group-hover:border-primary-border group-hover:dark:border-primary-border-dark group-hover:!border-2 group-hover:text-white"
           >

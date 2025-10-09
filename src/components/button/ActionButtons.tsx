@@ -8,7 +8,7 @@ interface ActionButtonsProps {
 
 export const ActionButtons: React.FC<ActionButtonsProps> = ({ onGetProxy, onExportKey }) => {
   return (
-    <div className="bg-bg-secondary dark:bg-bg-secondary-dark inline-flex items-center border-2 border-border-element dark:border-border-element-dark p-2 rounded-full shadow-md">
+    <div className="bg-bg-primary dark:border-none dark:border-top-dark dark:bg-bg-primary-dark inline-flex items-center border-2 border-border-element dark:border-border-element-dark p-2 rounded-full shadow-md">
       {/* Nút Get Proxy */}
       <button
         onClick={onGetProxy}

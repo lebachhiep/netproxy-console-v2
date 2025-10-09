@@ -74,7 +74,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="flex p-6 items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
       <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
         <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-5">
@@ -83,7 +83,7 @@ export const RegisterPage: React.FC = () => {
               type="button"
               onClick={handleGoogleRegister}
               disabled={isSubmitting}
-              className="bg-bg-secondary dark:bg-bg-secondary-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:border-top-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
               <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">ĐĂNG KÝ VỚI GOOGLE</span>

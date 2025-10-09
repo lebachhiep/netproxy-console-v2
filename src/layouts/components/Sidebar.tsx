@@ -29,20 +29,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
 
   return (
     <aside
-      className={`fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg flex flex-col transition-[width] duration-300 
+      className={`hidden fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
       ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[272px]'}`}
       // Hover auto expand / collapse
       onMouseEnter={() => toggle(false)} // mở khi hover
       onMouseLeave={() => toggle(true)} // đóng khi rời chuột
     >
       {/* Nút collapse */}
-      <div className="absolute top-1/2 -left-3 z-50 -translate-y-1/2">
+      {/* <div className="absolute top-1/2 -left-3 z-50 -translate-y-1/2">
         {collapsed ? (
           <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
         ) : (
           <IconButton onClick={() => toggle(true)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
         )}
-      </div>
+      </div> */}
       {/* Logo */}
 
       {collapsed ? (

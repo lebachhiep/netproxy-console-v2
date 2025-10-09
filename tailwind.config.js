@@ -69,7 +69,7 @@ export default {
         'border-dark': '#2D4F76',
 
         'border-element': '#F1F2F4',
-        'border-element-dark': '#192C42',
+        'border-element-dark': '#1E344E',
 
         // Primary
         primary: '#FF7530',
@@ -152,7 +152,7 @@ export default {
         md: 'rgba(0, 0, 0, 0.03) 0px 4px 6px -2px, rgba(0, 0, 0, 0.08) 0px 12px 16px -4px',
         lg: '0 20px 24px -4px rgba(0, 0, 0, 0.12), 0 8px 8px -4px rgba(0, 0, 0, 0.06)',
         table: '-1px 0 0 0 #FFFFFF, -1px 0 3px 0 rgba(0,0,0,0.10), -1px 0 2px 0 rgba(0,0,0,0.06)',
-        'table-dark': '-1px 0 0 0 #2E4560, -1px 0 3px 0 rgba(0, 0, 0, 0.10), -1px 0 2px 0 rgba(0, 0, 0, 0.06)',
+        'table-dark': '-1px 0 0 0 #163754, -1px 0 3px 0 rgba(0, 0, 0, 0.25), -1px 0 2px 0 rgba(0, 0, 0, 0.08)',
         menuItem: '2px 2px 4px 0 rgba(255, 255, 255, 0.50) inset, -2px -2px 4px 0 rgba(18, 18, 18, 0.12) inset;'
       },
       // borderWidth: {

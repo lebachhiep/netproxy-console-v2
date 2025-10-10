@@ -25,7 +25,7 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
     >
       {/* User info */}
       <div
-        className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-none dark:border-border-element-dark dark:border-top-dark
+        className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-transparent dark:border-border-element-dark dark:pseudo-border-top
                    pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs 
                    bg-bg-secondary dark:bg-bg-secondary-dark 
                    hover:border-blue dark:hover:border-blue-dark transition-colors duration-300"

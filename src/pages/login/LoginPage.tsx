@@ -92,7 +92,7 @@ export const LoginPage: React.FC = () => {
               type="button"
               onClick={handleGoogleLogin}
               disabled={isSubmitting}
-              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:border-top-dark flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:pseudo-border-top flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Google />
               <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">GOOGLE</span>

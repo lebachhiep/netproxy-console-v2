@@ -332,7 +332,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       {/* Nội dung modal */}
       <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark">
         {item.type === 'bandwidth-proxy' ? (
-          <Tabs tabs={bandwidthTabs} defaultActiveKey="list">
+          <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark" defaultActiveKey="list">
             {/* Tab 1: Danh sách Proxy */}
             <div>
               {/* Header info */}

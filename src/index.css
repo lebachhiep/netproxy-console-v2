@@ -50,7 +50,7 @@
     @apply text-text-hi dark:text-text-hi-dark text-[24px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.48px];
   }
   h4 {
-    @apply text-[20px] font-averta not-italic font-semibold leading-[120%] tracking-[-0.3px];
+    @apply text-text-hi dark:text-text-hi-dark text-[13px] md:text-[20px] font-averta font-semibold leading-[120%] tracking-[-0.3px];
   }
 
   /* Nav */
@@ -104,6 +104,15 @@ code {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE và Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .font-ibm-plex-mono {

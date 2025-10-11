@@ -1,5 +1,5 @@
 import { PricingCard } from '@/components/card/PricingCard';
-import { ArrowRotate, Clock, DatabaseStackOutlined, Fire, ShieldCheckmark, TopSpeed } from '@/components/icons';
+import { ArrowRotate, CartFilled, Clock, DatabaseStackOutlined, Fire, ShieldCheckmark, TopSpeed } from '@/components/icons';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { Tabs } from '@/components/tabs/Tabs';
 import React, { useState } from 'react';
@@ -143,8 +143,9 @@ const PurchasePage: React.FC = () => {
   const [activeStatic, setActiveStatic] = useState<StaticSubKey>('bandwidth');
   const [activeDedicated, setActiveDedicated] = useState<DedicatedSubKey>('residential');
   const [activeResidentialGroup, setActiveResidentialGroup] = useState<ResidentialGroup>('7day');
-
   const [orders, setOrders] = useState<OrderItemType[]>([]);
+
+  const [cartOpen, setCartOpen] = useState(false);
 
   // Bảng giá theo số lượng
   const getPricePerIp = (totalIps: number) => {
@@ -202,7 +203,7 @@ const PurchasePage: React.FC = () => {
   // Các trang con tương ứng với radio chọn
   const residentialPages: Record<ResidentialGroup, JSX.Element> = {
     '7day': (
-      <div className="flex flex-col md:flex-row h-[calc(100vh-270px)]">
+      <>
         {/* Bên trái */}
         <div className={`flex-1 flex flex-col p-5 gap-10 overflow-y-auto ${orders.length ? '' : 'md:w-full'}`}>
           <PricingTable items={data7day} />
@@ -211,14 +212,14 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] overflow-y-auto">
+          <div className="w-[473px] hidden md:block overflow-y-auto">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}
-      </div>
+      </>
     ),
     '30day': (
-      <div className="flex flex-col md:flex-row h-[calc(100vh-270px)]">
+      <>
         {/* Bên trái */}
         <div className={`flex-1 flex flex-col p-5 gap-10 overflow-y-auto ${orders.length ? '' : 'md:w-full'}`}>
           <PricingTable items={data30day} />
@@ -227,11 +228,11 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] overflow-y-auto">
+          <div className="w-[473px] hidden md:block overflow-y-auto">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}
-      </div>
+      </>
     )
   };
 
@@ -265,6 +266,22 @@ const PurchasePage: React.FC = () => {
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
+      <div className="md:hidden px-5 py-3 border-b border-border dark:border-border-dark">
+        <div className="flex items-center justify-between">
+          {/* Dashboard / Breadcrumb */}
+          <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
+            <CartFilled width={24} height={24} className="text-yellow" />
+            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
+          </div>
+
+          <div
+            onClick={() => setCartOpen(true)}
+            className="flex rounded-full items-center justify-center w-10 h-10 border-2 border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark"
+          >
+            <CartFilled className="text-white" />
+          </div>
+        </div>
+      </div>
       {/* Main Tabs */}
       <Tabs tabs={mainTabs} activeKey={activeMain} onChange={(key) => setActiveMain(key as TabKey)}>
         {/* Rotating */}
@@ -276,7 +293,7 @@ const PurchasePage: React.FC = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+                className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
               >
                 {plansByType.rotating[g.key].map((plan, index) => (
                   <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -353,7 +370,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['bandwidth'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -423,7 +440,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['unlimited'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -514,13 +531,52 @@ const PurchasePage: React.FC = () => {
                       direction="row"
                     />
                   </div>
-                  {residentialPages[activeResidentialGroup]}
+                  <div className="flex flex-col md:flex-row h-[calc(100vh-310px)] md:h-[calc(100vh-270px)]">
+                    {residentialPages[activeResidentialGroup]}
+                  </div>
                 </div>
               ]}
             </Tabs>
           </div>
         </div>
       </Tabs>
+
+      {cartOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 bg-black/40 flex justify-end"
+          onClick={() => setCartOpen(false)} // click overlay để đóng
+        >
+          {/* Drawer container */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+            className="relative w-[90%] sm:w-[380px] md:w-[420px] h-full bg-white dark:bg-bg-canvas-dark rounded-l-2xl shadow-xl flex flex-col"
+            onClick={(e) => e.stopPropagation()} // tránh tắt khi click bên trong
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-border dark:border-border-dark">
+              <div className="flex items-center gap-2">
+                <CartFilled className="text-yellow" width={24} height={24} />
+                <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
+              </div>
+              <button onClick={() => setCartOpen(false)} className="text-text dark:text-text-dark hover:opacity-80">
+                ✕
+              </button>
+            </div>
+
+            {/* Nội dung */}
+            <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
+              <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 };

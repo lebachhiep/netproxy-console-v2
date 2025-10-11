@@ -32,22 +32,23 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
           wrapperClassName
         )}
       >
-        <div className={twMerge('flex items-center justify-center pl-4 mr-1')}>
-          <SlashForward className="text-primary dark:text-primary-dark animate-fade-pulse" />
+        <div className="px-4 flex items-center flex-1 min-w-0">
+          <div className={twMerge('md:flex hidden items-center justify-center mr-1')}>
+            <SlashForward className="text-primary dark:text-primary-dark animate-fade-pulse" />
+          </div>
+
+          {/* Input */}
+          <input
+            ref={ref}
+            type="text"
+            onKeyDown={handleKeyDown}
+            className={twMerge(
+              'h-full w-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+              inputClassName
+            )}
+            {...props}
+          />
         </div>
-
-        {/* Input */}
-        <input
-          ref={ref}
-          type="text"
-          onKeyDown={handleKeyDown}
-          className={twMerge(
-            'flex-1 pr-4 h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
-            inputClassName
-          )}
-          {...props}
-        />
-
         {/* Icon Right */}
         <button
           type="button"

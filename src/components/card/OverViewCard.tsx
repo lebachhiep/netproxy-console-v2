@@ -30,20 +30,20 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border dark:border-transparent dark:pseudo-border-top shadow-md p-2 h-full',
+        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border dark:border-transparent dark:pseudo-border-top shadow-md p-2 md:h-[212px] h-full',
         className
       )}
     >
       {/* Header */}
-      <div className="px-3 py-1">
+      <div className="md:px-3 md:py-1 mb-3 md:mb-0">
         <span className="text-text-hi dark:text-text-hi-dark font-medium">{title}</span>
       </div>
 
-      <div className="p-3 flex flex-col rounded-[4px] flex-1 justify-between border border-dashed border-border dark:border-border-dark">
+      <div className="md:p-3 gap-2 flex flex-col rounded-[4px] flex-1 justify-between md:border md:border-dashed border-border dark:border-border-dark">
         <div className="flex items-center justify-between">
           {icon && icon}
           {buttonText && (
-            <Button variant="default" className="px-3 py-[7.5px] h-[32px]" onClick={onButtonClick}>
+            <Button variant="default" className="px-3 py-[7.5px] h-[32px] hidden md:flex" onClick={onButtonClick}>
               {buttonText}
             </Button>
           )}
@@ -59,18 +59,27 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
       {/* Sub Info */}
       {subInfo.length > 0 && (
         <div
-          className="grid gap-2 mt-1"
+          className="grid gap-2 md:mt-1"
           style={{
             gridTemplateColumns: `248px repeat(${subInfo.length - 1}, minmax(0, 1fr))`
           }}
         >
           {subInfo.map((item, idx) => (
-            <div key={idx} className="flex justify-between text-sm rounded-[4px] bg-bg-mute dark:bg-bg-mute-dark px-3 py-2">
+            <div
+              key={idx}
+              className="flex flex-col md:flex-row justify-between text-sm rounded-[4px] bg-bg-mute dark:bg-bg-mute-dark px-3 py-2 my-1 md:my-0"
+            >
               <span className="text-text-me dark:text-text-me-dark">{item.label}</span>
               <div className="font-semibold text-text-hi dark:text-text-hi-dark">{item.value}</div>
             </div>
           ))}
         </div>
+      )}
+
+      {buttonText && (
+        <Button variant="default" className="px-3 rounded-[4px] py-[7.5px] h-[32px] flex md:hidden" onClick={onButtonClick}>
+          {buttonText}
+        </Button>
       )}
     </div>
   );

@@ -49,36 +49,39 @@ export function Pagination({
   };
 
   const generatePageNumbers = () => {
-    const pages = [];
-    const showPages = 7;
+    const pages: (number | string)[] = [];
 
-    if (totalPages <= showPages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      if (current <= 4) {
-        for (let i = 1; i <= 5; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      } else if (current >= totalPages - 3) {
-        pages.push(1);
-        pages.push('...');
-        for (let i = totalPages - 4; i <= totalPages; i++) {
-          pages.push(i);
-        }
-      } else {
-        pages.push(1);
-        pages.push('...');
-        for (let i = current - 1; i <= current + 1; i++) {
-          pages.push(i);
-        }
-        pages.push('...');
-        pages.push(totalPages);
-      }
+    // Nếu ít hơn hoặc bằng 4 trang thì hiển thị hết
+    if (totalPages <= 4) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      return pages;
     }
+
+    // Giữ 2 trang đầu động
+    let start = current;
+    let next = current + 1;
+
+    // Nếu ở gần đầu thì vẫn bắt đầu từ 1
+    if (current <= 1) {
+      start = 1;
+      next = 2;
+    }
+
+    // Nếu ở gần cuối thì hiển thị 2 trang cuối trước totalPages
+    if (current >= totalPages - 1) {
+      start = totalPages - 2;
+      next = totalPages - 1;
+    }
+
+    pages.push(start, next);
+
+    // Dấu ...
+    if (next < totalPages - 1) {
+      pages.push('...');
+    }
+
+    // Trang cuối
+    pages.push(totalPages);
 
     return pages;
   };
@@ -154,10 +157,10 @@ export function Pagination({
   }
 
   return (
-    <div className={`px-5 ${className}`}>
+    <div className={`px-5 z-[100] ${className}`}>
       <div className="flex items-center justify-between">
         {/* Left side - Page info and size changer */}
-        <div className="flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
+        <div className="hidden md:flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
           <div>
             <span className="text-text-hi dark:text-text-hi-dark">
               {startItem}-{endItem}{' '}
@@ -165,6 +168,24 @@ export function Pagination({
             trong <span className="text-text-hi dark:text-text-hi-dark">{total}</span> mục
           </div>
         </div>
+
+        {showSizeChanger && (
+          <div className="flex md:hidden items-center">
+            <Select
+              options={pageSizeOptions.map((size) => {
+                return {
+                  label: <div>{size} / trang</div>,
+                  value: size
+                };
+              })}
+              className="shadow-none h-8 rounded-lg border-border dark:border-border-dark w-[118px] font-medium hover:font-bold"
+              labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
+              value={pageSize}
+              onChange={(value) => handleSizeChange(value as number)}
+              placement="top"
+            />
+          </div>
+        )}
 
         {/* Right side - Page navigation */}
         <div className="flex items-center gap-2">
@@ -217,7 +238,7 @@ export function Pagination({
           </button>
 
           {showSizeChanger && (
-            <div className="flex items-center">
+            <div className="hidden md:flex items-center">
               <Select
                 options={pageSizeOptions.map((size) => {
                   return {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 interface TabItem {
   /** Label hiển thị */
@@ -29,6 +30,8 @@ interface TabsProps {
 
   /** Callback khi tab thay đổi */
   onChange?: (key: string | number) => void;
+
+  className?: string;
 }
 
 /**
@@ -58,7 +61,7 @@ interface TabsProps {
  * </Tabs>
  *
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className }) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
   const isControlled = activeKey !== undefined;
@@ -75,7 +78,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
     <>
       {type === 'default' && (
         <div>
-          <div className="relative border-b-2 h-10 border-border-element dark:border-border-element-dark  pl-5">
+          <div className={twMerge('relative border-b-2 h-10 border-border-element dark:border-border-element-dark pl-5', className)}>
             <div className="flex w-fit gap-5 relative">
               {tabs.map((tab) => {
                 const isActive = currentActive === tab.key;
@@ -114,39 +117,82 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
       {type === 'card' && (
         <div>
           <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5">
-            <div className="relative flex w-fit rounded-lg gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark">
-              {tabs.map((tab) => {
-                const isActive = currentActive === tab.key;
-                return (
-                  <button
-                    key={tab.key}
-                    onClick={() => handleClick(tab.key)}
-                    className={`relative text-sm font-medium flex items-center gap-2 px-4 py-[10px] rounded-lg transition-colors duration-200 z-10
-              ${isActive ? 'text-white !font-bold' : 'text-text-lo hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark'}`}
-                    ref={(el) => {
-                      if (isActive && el) {
-                        const rect = el.getBoundingClientRect();
-                        const parentRect = el.parentElement?.getBoundingClientRect();
-                        const offsetLeft = rect.left - (parentRect?.left ?? 0);
+            {/* Wrapper có scroll ngang + ẩn scrollbar */}
+            <div className="relative w-full overflow-x-auto scrollbar-hide" id="tab-scroll-container">
+              <div className="flex w-fit flex-nowrap rounded-lg gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark relative">
+                {tabs.map((tab) => {
+                  const isActive = currentActive === tab.key;
 
-                        const highlight = document.querySelector<HTMLDivElement>('#tab-highlight');
-                        if (highlight) {
-                          highlight.style.width = `${rect.width}px`;
-                          highlight.style.height = `${rect.height}px`;
-                          highlight.style.transform = `translateX(${offsetLeft}px)`;
+                  return (
+                    <button
+                      key={tab.key}
+                      onClick={(e) => {
+                        handleClick(tab.key);
+
+                        //  Tự cuộn khi tab bị che
+                        const container = document.getElementById('tab-scroll-container');
+                        const target = e.currentTarget as HTMLElement;
+
+                        if (container && target) {
+                          const rect = target.getBoundingClientRect();
+                          const parentRect = container.getBoundingClientRect();
+                          const scrollLeft = container.scrollLeft;
+                          const targetLeft = rect.left - parentRect.left + scrollLeft;
+                          const targetCenter = targetLeft - container.clientWidth / 2 + rect.width / 2;
+
+                          container.scrollTo({
+                            left: targetCenter,
+                            behavior: 'smooth'
+                          });
                         }
-                      }
-                    }}
-                  >
-                    {tab.icon && <span className="w-5 h-5">{tab.icon}</span>}
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-              {/* background highlight */}
-              <div id="tab-highlight" className="absolute bg-primary rounded-lg transition-all duration-300 ease-in-out z-0 shadow-xs" />
+                      }}
+                      className={`relative text-sm font-medium flex items-center gap-2 px-4 py-[10px] rounded-lg transition-colors duration-200 z-10 min-w-max
+                  ${isActive ? 'text-white !font-bold' : 'text-text-lo hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark'}`}
+                      ref={(el) => {
+                        if (isActive && el) {
+                          //  Cập nhật vị trí highlight
+                          const rect = el.getBoundingClientRect();
+                          const parentRect = el.parentElement?.getBoundingClientRect();
+                          const offsetLeft = rect.left - (parentRect?.left ?? 0);
+
+                          const highlight = document.querySelector<HTMLDivElement>('#tab-highlight');
+                          if (highlight) {
+                            highlight.style.width = `${rect.width}px`;
+                            highlight.style.height = `${rect.height}px`;
+                            highlight.style.transform = `translateX(${offsetLeft}px)`;
+                          }
+
+                          // Khi tab active bị che — tự scroll vào view
+                          const container = document.getElementById('tab-scroll-container');
+                          if (container) {
+                            const cRect = container.getBoundingClientRect();
+                            if (rect.left < cRect.left || rect.right > cRect.right) {
+                              const scrollLeft = container.scrollLeft;
+                              const targetLeft = rect.left - cRect.left + scrollLeft;
+                              const targetCenter = targetLeft - container.clientWidth / 2 + rect.width / 2;
+
+                              container.scrollTo({
+                                left: targetCenter,
+                                behavior: 'smooth'
+                              });
+                            }
+                          }
+                        }
+                      }}
+                    >
+                      {tab.icon && <span className="w-5 h-5">{tab.icon}</span>}
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+
+                {/* Background highlight (vẫn giữ transition mượt) */}
+                <div id="tab-highlight" className="absolute bg-primary rounded-lg transition-all duration-300 ease-in-out z-0 shadow-xs" />
+              </div>
             </div>
           </div>
+
+          {/* Nội dung tab */}
           <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
         </div>
       )}

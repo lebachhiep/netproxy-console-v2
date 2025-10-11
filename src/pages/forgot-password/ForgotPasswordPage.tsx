@@ -64,7 +64,7 @@ export const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="relative flex p-6 items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
       {!emailSent ? (
         <AuthFormWrapper title="Lấy lại mật khẩu" subtitle="Vui lòng nhập email đã đăng ký">
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">

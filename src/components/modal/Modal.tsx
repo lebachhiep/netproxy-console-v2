@@ -98,7 +98,7 @@ export const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40`}>
+    <div className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40`}>
       <div
         className={twMerge('max-w-md bg-bg-primary dark:bg-bg-primary-dark rounded-2xl shadow-2xl w-full  animate-fadeIn', className)}
         style={{ animationDuration: '200ms' }}

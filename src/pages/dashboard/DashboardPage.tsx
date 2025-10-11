@@ -23,6 +23,8 @@ import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
 import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
 import { DataUsageModal } from './components/modal/DataUsageModal';
+import { useMediaQuery } from 'react-responsive';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const data: ProxyCardData[] = [
   {
@@ -182,6 +184,7 @@ const DashboardPage = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [openDataUsageModal, setOpenDataUsageModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const { isMobile } = useResponsive();
 
   const handleAutoRenewChange = (id: number | string, checked: boolean) => {
     setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
@@ -201,12 +204,14 @@ const DashboardPage = () => {
       render: (value, _, index) => index + 1
     },
     {
+      width: isMobile ? 200 : '',
       key: 'title',
       title: 'Tên Gói',
       align: 'left',
       sortable: true
     },
     {
+      width: isMobile ? 200 : '',
       key: 'description',
       title: 'Mô tả',
       render: (value) => <div>{value || '...'}</div>
@@ -232,7 +237,7 @@ const DashboardPage = () => {
       title: 'Hết hạn'
     },
     {
-      width: 200,
+      width: isMobile ? 125 : 200,
       fixed: 'right',
       key: 'buttonText',
       title: 'Hành động',
@@ -268,7 +273,7 @@ const DashboardPage = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-2 md:grid-cols-4 h-[212px] gap-5"
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
         >
           {[
             <OverViewCard
@@ -383,7 +388,7 @@ const DashboardPage = () => {
           />
           <div className="flex items-center gap-2">
             <IconButton
-              className="w-10 h-10"
+              className="w-10 h-10 hidden md:flex"
               icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
               onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
             />
@@ -401,8 +406,8 @@ const DashboardPage = () => {
       <motion.div variants={sectionVariants} className="relative">
         {viewMode === 'list' ? (
           <Table
-            className="md:min-h-[calc(100dvh-465px)]"
-            scroll={{ x: 300, y: 'calc(100dvh - 505px)' }}
+            className="md:min-h-[calc(100dvh-510px)]"
+            scroll={{ x: 300, y: 'calc(100dvh - 550px)' }}
             data={sortedData}
             columns={columns}
             pagination={{
@@ -416,6 +421,7 @@ const DashboardPage = () => {
                 setPageSize(size);
               }
             }}
+            paginationType="pagination"
             rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
             size="large"
             bordered={false}

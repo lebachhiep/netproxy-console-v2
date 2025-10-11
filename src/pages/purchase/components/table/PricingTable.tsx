@@ -23,7 +23,10 @@ const PricingTable: React.FC<PricingTableProps> = ({ items }) => {
             style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
           >
             {items.map((item, idx) => (
-              <div key={idx} className="py-[6px] px-3 text-sm font-semibold text-primary dark:text-primary-dark">
+              <div
+                key={idx}
+                className="py-[6px] px-[2px] md:px-3 text-[10px] md:text-sm font-medium md:font-semibold text-primary dark:text-primary-dark"
+              >
                 {item.range}
               </div>
             ))}
@@ -35,7 +38,7 @@ const PricingTable: React.FC<PricingTableProps> = ({ items }) => {
             style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
           >
             {items.map((item, idx) => (
-              <div key={idx} className="py-[6px] px-3 text-sm font-semibold text-text-me dark:text-text-me-dark">
+              <div key={idx} className="py-[6px] px-2 md:px-3 text-[10px] md:text-sm font-semibold text-text-me dark:text-text-me-dark">
                 {item.desc}
               </div>
             ))}

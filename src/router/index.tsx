@@ -1,7 +1,6 @@
 import React, { lazy } from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 import { navigationSections, NavigationRoute } from '@/config/navigation';
-import { AdminLayout } from '../layouts/AdminLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
@@ -15,6 +14,7 @@ import { LoginPage } from '@/pages/login/LoginPage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
 import { NotFoundPage } from '@/pages/404/NotFoundPage';
+import { ResponsiveLayout } from '@/layouts/ResponsiveLayout';
 
 // const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 // const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
@@ -84,7 +84,7 @@ const routes: Route[] = [
     name: '/',
     element: (
       <ProtectedRoute>
-        <AdminLayout />
+        <ResponsiveLayout />
       </ProtectedRoute>
     ),
     children: [

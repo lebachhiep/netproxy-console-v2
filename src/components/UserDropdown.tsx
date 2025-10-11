@@ -33,7 +33,7 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
       >
         <div className="flex items-center gap-2">
           <img src={user?.photoURL || settings.defaultAvatar} className="w-9 h-9 rounded-full" />
-          <div className="hidden md:flex flex-col items-start">
+          <div className="flex flex-col items-start">
             <span className="text-xs font-medium text-text-me dark:text-text-me-dark">
               {user?.displayName || user?.email?.split('@')[0] || 'User'}
             </span>

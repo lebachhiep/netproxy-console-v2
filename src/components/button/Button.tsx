@@ -104,7 +104,6 @@ export const Button: FC<ButtonProps> = ({
     if (btnRef.current) {
       const width = btnRef.current.offsetWidth;
 
-      console.log(width);
       const distance = width + 300; // chạy ngang button + 300px
       btnRef.current.style.setProperty('--move-distance', `${distance}px`);
 

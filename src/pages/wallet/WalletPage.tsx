@@ -14,6 +14,7 @@ import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import DepositFlowModal from './components/modal/DepositFlowModal';
 import { Transaction } from '../history/HistoryPage';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
 
@@ -76,6 +77,7 @@ const WalletPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
+  const { isMobile } = useResponsive();
   const paginatedData = tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const [priceValue, setPriceValue] = useState(5);
 
@@ -101,6 +103,7 @@ const WalletPage: React.FC = () => {
       )
     },
     {
+      width: isMobile ? 150 : '',
       key: 'service',
       title: 'Dịch vụ',
       align: 'left',
@@ -113,6 +116,7 @@ const WalletPage: React.FC = () => {
       render: (value) => `$ ${Number(value).toFixed(2)}`
     },
     {
+      width: isMobile ? 150 : '',
       key: 'description',
       title: 'Mô tả',
       align: 'left',
@@ -128,7 +132,7 @@ const WalletPage: React.FC = () => {
     {
       key: 'date',
       title: 'Thời gian',
-      width: 200,
+      width: isMobile ? 120 : 200,
       fixed: 'right',
       render: (value) =>
         value ? (
@@ -146,8 +150,8 @@ const WalletPage: React.FC = () => {
   ];
 
   return (
-    <div>
-      <div className="flex items-center gap-5 p-5">
+    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-auto">
+      <div className="flex flex-col md:flex-row items-center gap-5 p-5">
         {/* Left Panel - Top Up Form */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-4">
@@ -191,7 +195,7 @@ const WalletPage: React.FC = () => {
               {/* Submit Button */}
 
               {/* Terms */}
-              <p className="text-sm text-text-lo dark:text-text-lo-dark font-medium">
+              <p className="text-sm flex-1 text-text-lo dark:text-text-lo-dark font-medium">
                 Bằng cách nhấp vào tiếp tục thanh toán, bạn đồng ý với{' '}
                 <a href="#" className="text-blue dark:text-blue-dark underline">
                   Điều khoản dịch vụ
@@ -201,7 +205,7 @@ const WalletPage: React.FC = () => {
                   Chính sách bảo mật
                 </a>
               </p>
-              <Button variant="primary" className="h-10 mb-1" onClick={() => setOpen(true)}>
+              <Button variant="primary" className="h-10 w-[100px] mb-1" onClick={() => setOpen(true)}>
                 NẠP TIỀN
               </Button>
             </div>
@@ -215,34 +219,42 @@ const WalletPage: React.FC = () => {
       <div className="p-5 pb-2">
         <div>
           <SectionTitle text="Lịch sử nạp tiền" />
-          <div className="flex items-center justify-between mt-3">
-            <div className="flex items-center gap-2">
+
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
+            {/* Left group (Search + Filter + Button) */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              {/* Search field */}
               <Input
                 placeholder="Tìm kiếm"
-                wrapperClassName="bg-bg-input border-2 h-10"
+                wrapperClassName="bg-bg-input border-2 h-10 w-full sm:w-[240px]"
                 icon={<MagnifyingGlass />}
                 onChange={(e) => console.log(e.target.value)}
               />
-              <DatePicker
-                className="h-10"
-                value={selectedDate}
-                onChange={(date: Dayjs | null) => {
-                  setSelectedDate(date);
-                  console.log('Selected date:', date?.format('DD/MM/YYYY'));
-                }}
-              />
-            </div>
 
-            <div className="flex items-center gap-2">
-              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+              {/* Row below for Date + Button (on mobile) */}
+              <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
+                <div className="flex-1">
+                  <DatePicker
+                    className="h-10 w-full md:w-[220px] sm:flex-none"
+                    value={selectedDate}
+                    onChange={(date: Dayjs | null) => {
+                      setSelectedDate(date);
+                      console.log('Selected date:', date?.format('DD/MM/YYYY'));
+                    }}
+                  />
+                </div>
+
+                <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <div>
         <Table
           className="min-h-[calc(100dvh-565px)]"
-          scroll={{ x: 300, y: 'calc(100dvh - 615px)' }}
+          scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 615px)' }}
           data={paginatedData}
           columns={columns}
           pagination={{
@@ -252,10 +264,12 @@ const WalletPage: React.FC = () => {
             showSizeChanger: true,
             pageSizeOptions: [5, 10, 20, 50],
             onChange: (page, size) => {
+              console.log({ page, size });
               setCurrentPage(page);
               setPageSize(size);
             }
           }}
+          paginationType="pagination"
           rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
           size="large"
           bordered={false}

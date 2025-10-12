@@ -86,24 +86,42 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* Scrollbar styles (Tailwind + theme-aware) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background-color: theme('colors.text-lo'); /* sáng */
   border-radius: 5px;
 }
 
-/* Handle on hover */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: theme('colors.text-lo-dark'); /* tối */
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background-color: theme('colors.text-lo'); /* hover sáng */
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: theme('colors.text-lo-dark'); /* hover tối */
+}
+
+/* Ẩn thanh cuộn ngang, giữ thanh dọc */
+.hide-scroll-x {
+  overflow-x: hidden; /* Không cho cuộn ngang */
+  overflow-y: auto; /* Vẫn cho cuộn dọc */
+}
+
+/* Chỉ ẩn thanh cuộn ngang (phần track bên dưới) */
+.hide-scroll-x::-webkit-scrollbar:horizontal {
+  display: none; /* Ẩn thanh ngang */
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -168,6 +186,7 @@ code {
 }
 
 /* Tạo class để disable transition tạm thời */
+/* Tắt mọi transition khi đổi theme (để tránh flicker) */
 .disable-transitions *,
 .disable-transitions *::before,
 .disable-transitions *::after {

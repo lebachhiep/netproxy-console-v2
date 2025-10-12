@@ -151,15 +151,15 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
             </div>
 
             <div className="flex justify-center p-3 border-b border-border dark:border-border-dark">
-              {/* Container có ảnh nền */}
-              <div className="relative inline-block">
-                <img src={bgDeposit} alt="QR Background" className="h-auto rounded-lg" />
+              <div className="relative inline-block w-full sm:w-auto">
+                {/* Ảnh nền */}
+                <img src={bgDeposit} alt="QR Background" className="h-auto rounded-lg object-contain w-full sm:w-auto" />
 
-                {/* QR code overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-5">
-                  <img src={qrDemoImg} alt="QR Code" className="w-[305px]" />
+                {/* Overlay */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-5">
+                  <img src={qrDemoImg} alt="QR Code" className="w-[70%] sm:w-[305px] h-auto object-contain" />
 
-                  <div className="bg-bg-primary dark:bg-bg-primary-dark rounded -mt-3 p-3 text-center text-sm w-[280px] flex flex-col gap-1">
+                  <div className="bg-bg-primary dark:bg-bg-primary-dark rounded -mt-3 p-2 sm:p-3 text-center text-xs sm:text-sm w-[calc(70%-20px)] sm:w-[280px] flex flex-col gap-1">
                     <p className="text-text-me">
                       Chủ tài khoản: <b className="text-text-hi dark:text-text-hi-dark">******</b>
                     </p>
@@ -180,7 +180,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
                   <b className="text-red dark:text-red-dark">Lưu ý:</b> Sau khi thanh toán, vui lòng đợi hệ thống cập nhật số dư cho bạn.
                   Sau <b className="text-red dark:text-red-dark"> 1 phút</b> và tải lại trang.
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center flex-wrap gap-1">
                   <span className="text-red dark:text-red-dark font-bold">Đơn hàng sẽ hết hạn sau:</span>
                   <span className="text-red dark:text-red-dark font-bold">03:59:00</span>
                 </div>

@@ -55,6 +55,14 @@ export const navigationSections: NavigationSection[] = [
         breadcrumb: 'Trang chủ'
       },
       {
+        title: 'Chi tiết proxy',
+        hidden: true, // ẩn trong menu
+        path: '/proxy/detail/:id',
+        name: '/proxy/detail/:id',
+        breadcrumb: 'Chi tiết proxy',
+        breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />
+      },
+      {
         title: 'Mua hàng',
         icon: <CartFilled />,
         collapsedIcon: <CartOutlined />,

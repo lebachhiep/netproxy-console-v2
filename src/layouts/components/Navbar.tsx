@@ -74,7 +74,7 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const root = document.documentElement;
 
-    // Tạm tắt transition toàn trang
+    // Tắt tạm transition để tránh flicker khi đổi theme
     root.classList.add('disable-transitions');
 
     if (darkMode) {
@@ -85,7 +85,7 @@ export const Navbar: React.FC = () => {
       localStorage.setItem('theme', 'light');
     }
 
-    // Gỡ class sau 1 frame (để theme đổi tức thì)
+    // Gỡ sau 1 frame để transition hoạt động đồng bộ
     setTimeout(() => {
       root.classList.remove('disable-transitions');
     }, 0);

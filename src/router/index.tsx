@@ -15,6 +15,7 @@ import { RegisterPage } from '@/pages/register/RegisterPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
 import { NotFoundPage } from '@/pages/404/NotFoundPage';
 import { ResponsiveLayout } from '@/layouts/ResponsiveLayout';
+import { ProxyDetailPage } from '@/pages/dashboard/ProxyDetailPage';
 
 // const NotFoundPage = lazy(() => import('@/pages/404/NotFoundPage').then((m) => ({ default: m.NotFoundPage })));
 // const ComponentPage = lazy(() => import('@/pages/component/ComponentPage'));
@@ -42,6 +43,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
     switch (navRoute.path) {
       case '/home':
         element = <DashboardPage />;
+        break;
+      case '/proxy/detail/:id':
+        element = <ProxyDetailPage />;
         break;
       case '/buy':
         element = <PurchasePage />;

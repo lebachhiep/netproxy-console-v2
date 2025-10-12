@@ -2,6 +2,7 @@ import IconButton from '@/components/button/IconButton';
 import {
   ArrowDown,
   Chevron,
+  Dismiss,
   Globe,
   Person,
   PersonOutlined,
@@ -16,7 +17,7 @@ import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from 'router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -34,7 +35,7 @@ interface Breadcrumb {
   icon?: React.ReactNode;
 }
 
-export const NavbarMobile = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
+export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: () => void; sidebarOpen: boolean }) => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -47,7 +48,8 @@ export const NavbarMobile = ({ toggleSidebar }: { toggleSidebar: () => void }) =
     return saved === 'dark';
   });
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isBuyPage = location.pathname === '/buy';
+  const isProxyDetail = matchPath('/proxy/detail/:id', location.pathname);
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
   const { user, logout } = useAuth();
@@ -105,9 +107,7 @@ export const NavbarMobile = ({ toggleSidebar }: { toggleSidebar: () => void }) =
   }, [location]);
 
   const handleBack = () => {
-    if (canGoBack) {
-      navigate(-1);
-    }
+    navigate('/home');
   };
 
   const handleChange = (value: string) => {
@@ -162,24 +162,33 @@ export const NavbarMobile = ({ toggleSidebar }: { toggleSidebar: () => void }) =
       </div>
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="flex items-center gap-2">
+          {isProxyDetail && <IconButton className="w-10 h-10" icon={<Chevron className="w-5 h-5" />} onClick={handleBack} />}
           <div className="flex-1 min-w-0">
             <HeaderSearchInput
               ref={inputRef}
               placeholder={'Nhập mã kích hoạt'}
-              wrapperClassName="rounded-[100px]"
+              wrapperClassName="rounded-[100px] h-10"
               value={code}
               onChange={(e) => handleChange(e.target.value)}
               onEnter={handleEnter}
             />
           </div>
           {/* Ngôn ngữ */}
-          <IconButton icon={<Globe className="w-6 h-6" />} />
-          <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
-          <IconButton icon={<TextColumnOne className="w-8 h-8" />} onClick={toggleSidebar} />
+          <IconButton className="w-10 h-10" icon={<Globe className="w-5 h-5" />} />
+          <IconButton
+            className="w-10 h-10"
+            icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
+            onClick={() => setDarkMode((prev) => !prev)}
+          />
+          <IconButton
+            className="w-10 h-10"
+            icon={sidebarOpen ? <Dismiss className="w-5 h-5" /> : <TextColumnOne className="w-6 h-6" />}
+            onClick={toggleSidebar}
+          />
         </div>
       </div>
 
-      {location.pathname !== '/buy' && (
+      {!isBuyPage && !isProxyDetail && (
         <div className="px-5 py-3 border-b border-border dark:border-border-dark">
           <div className="flex items-center gap-4">
             {/* Dashboard / Breadcrumb */}

@@ -204,9 +204,14 @@ export function Pagination({
             {generatePageNumbers().map((page, index) => {
               if (page === '...') {
                 return (
-                  <span key={`ellipsis-${index}`} className="px-2 py-2 text-text-me text-sm">
+                  <button
+                    key={`ellipsis-${index}`}
+                    className="min-w-8 min-h-8 rounded-lg text-text-me dark:text-text-me-dark text-sm 
+                     border-2 border-border dark:border-border-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark
+                     transition-all"
+                  >
                     ...
-                  </span>
+                  </button>
                 );
               }
 
@@ -229,7 +234,7 @@ export function Pagination({
 
           {/* Next button */}
           <button
-            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-border-dark rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             disabled={current >= totalPages}
             onClick={() => handlePageChange(current + 1)}
             title="Trang sau"

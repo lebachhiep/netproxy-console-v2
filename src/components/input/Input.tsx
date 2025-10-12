@@ -27,21 +27,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ icon, wrapperCl
         wrapperClassName
       )}
     >
-      {/* Input */}
-      <input
-        ref={ref}
-        type="text"
-        className={twMerge(
-          'flex-1 px-3 h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
-          inputClassName
-        )}
-        {...props}
-      />
+      <div className="flex items-center flex-1 px-3 min-w-0">
+        {/* Input */}
+        <input
+          ref={ref}
+          type="text"
+          className={twMerge(
+            'h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+            inputClassName
+          )}
+          {...props}
+        />
 
-      {/* Icon Right */}
-      <button type="button" className="flex items-center justify-center w-12 h-12 transition-colors">
-        {icon}
-      </button>
+        {/* Icon Right */}
+        <button type="button" className="flex items-center justify-center w-5 h-5 transition-colors">
+          {icon}
+        </button>
+      </div>
     </div>
   );
 });

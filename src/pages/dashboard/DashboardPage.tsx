@@ -26,7 +26,7 @@ import { DataUsageModal } from './components/modal/DataUsageModal';
 import { useMediaQuery } from 'react-responsive';
 import { useResponsive } from '@/hooks/useResponsive';
 
-const data: ProxyCardData[] = [
+export const data: ProxyCardData[] = [
   {
     id: 1,
     title: 'UK Bandwidth Proxy - 5GB / 30 ngày',
@@ -190,9 +190,13 @@ const DashboardPage = () => {
     setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
   };
 
-  const handleItemClick = (index: number) => {
-    setSelectedIndex(index);
-    setModalOpen(true);
+  const handleItemClick = (index: number, id: number | string) => {
+    if (isMobile)
+      navigate(`/proxy/detail/${id}`); // 👈 chuyển trang
+    else {
+      setModalOpen(true);
+      setSelectedIndex(index);
+    }
   };
 
   const columns: TableColumn<ProxyCardData>[] = [
@@ -243,7 +247,7 @@ const DashboardPage = () => {
       title: 'Hành động',
       align: 'center',
       render: (_, record, index) => (
-        <Button variant="default" className="px-3 py-[7.5px] h-[32px]" onClick={() => handleItemClick(index)}>
+        <Button variant="default" className="px-3 py-[7.5px] h-[32px]" onClick={() => handleItemClick(index, record.id)}>
           QUẢN LÝ
         </Button>
       )
@@ -266,210 +270,212 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark">
-      {/* ====== TOP CARDS ====== */}
-      <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
-        >
-          {[
-            <OverViewCard
-              key="1"
-              icon={
-                <div className="flex justify-center items-center w-10 h-10 bg-blue-gradient rounded-[4px] text-white">
-                  <WalletCreditCardFilled />
-                </div>
-              }
-              title="Số dư"
-              mainContent={
-                <div className="flex items-center font-averta">
-                  <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
-                  <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
-                </div>
-              }
-              subInfo={[{ label: 'Đã chi tiêu', value: '$20.00' }]}
-              buttonText="NẠP THÊM"
-              onButtonClick={() => setOpen(true)}
-            />,
-            <OverViewCard
-              key="2"
-              icon={
-                <div className="flex justify-center items-center w-10 h-10 bg-yellow-gradient rounded-[4px] text-white">
-                  <CartFilled />
-                </div>
-              }
-              title="Các gói hoạt động"
-              mainContent={
-                <div>
-                  <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
-                </div>
-              }
-              subInfo={[{ label: 'Tổng gói', value: '10 gói' }]}
-              buttonText="MUA THÊM"
-              onButtonClick={() => navigate('/buy')}
-            />,
-            <OverViewCard
-              key="3"
-              icon={
-                <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
-                  <TopSpeed />
-                </div>
-              }
-              title="Hiệu suất & khả dụng"
-              mainContent={
-                <div>
-                  <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
-                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
-                </div>
-              }
-              subInfo={[
-                {
-                  label: 'Proxy khả dụng:',
-                  value: (
-                    <div>
-                      <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
-                      <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
-                    </div>
-                  )
+    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-auto bg-bg-canvas dark:bg-bg-canvas-dark">
+      <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark">
+        {/* ====== TOP CARDS ====== */}
+        <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5"
+          >
+            {[
+              <OverViewCard
+                key="1"
+                icon={
+                  <div className="flex justify-center items-center w-10 h-10 bg-blue-gradient rounded-[4px] text-white">
+                    <WalletCreditCardFilled />
+                  </div>
                 }
-              ]}
-            />,
-            <OverViewCard
-              key="4"
-              icon={
-                <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
-                  <Storage />
-                </div>
-              }
-              title="Máy chủ & IP"
-              mainContent={
-                <div>
-                  <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-                  <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
-                  <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
-                </div>
-              }
-              subInfo={[
-                {
-                  label: 'Tổng số IP:',
-                  value: (
-                    <div>
-                      <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
-                      <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
-                    </div>
-                  )
+                title="Số dư"
+                mainContent={
+                  <div className="flex items-center font-averta">
+                    <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
+                    <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
+                  </div>
                 }
-              ]}
-            />
-          ].map((card, i) => (
-            <motion.div key={i} variants={itemVariants}>
-              {card}
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* ====== FILTER BAR ====== */}
-      <motion.div variants={sectionVariants} className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
-        <div className="flex items-center gap-2">
-          <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
-          <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
+                subInfo={[{ label: 'Đã chi tiêu', value: '$20.00' }]}
+                buttonText="NẠP THÊM"
+                onButtonClick={() => setOpen(true)}
+              />,
+              <OverViewCard
+                key="2"
+                icon={
+                  <div className="flex justify-center items-center w-10 h-10 bg-yellow-gradient rounded-[4px] text-white">
+                    <CartFilled />
+                  </div>
+                }
+                title="Các gói hoạt động"
+                mainContent={
+                  <div>
+                    <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
+                  </div>
+                }
+                subInfo={[{ label: 'Tổng gói', value: '10 gói' }]}
+                buttonText="MUA THÊM"
+                onButtonClick={() => navigate('/buy')}
+              />,
+              <OverViewCard
+                key="3"
+                icon={
+                  <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
+                    <TopSpeed />
+                  </div>
+                }
+                title="Hiệu suất & khả dụng"
+                mainContent={
+                  <div>
+                    <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
+                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
+                  </div>
+                }
+                subInfo={[
+                  {
+                    label: 'Proxy khả dụng:',
+                    value: (
+                      <div>
+                        <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
+                        <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
+                      </div>
+                    )
+                  }
+                ]}
+              />,
+              <OverViewCard
+                key="4"
+                icon={
+                  <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
+                    <Storage />
+                  </div>
+                }
+                title="Máy chủ & IP"
+                mainContent={
+                  <div>
+                    <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+                    <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
+                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
+                  </div>
+                }
+                subInfo={[
+                  {
+                    label: 'Tổng số IP:',
+                    value: (
+                      <div>
+                        <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
+                        <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
+                      </div>
+                    )
+                  }
+                ]}
+              />
+            ].map((card, i) => (
+              <motion.div key={i} variants={itemVariants}>
+                {card}
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
-        <div className="flex items-center justify-between mt-3">
-          <Input
-            placeholder="Tìm kiếm"
-            wrapperClassName="bg-bg-input border-2 h-10"
-            icon={<MagnifyingGlass />}
-            onChange={(e) => console.log(e.target.value)}
-          />
+
+        {/* ====== FILTER BAR ====== */}
+        <motion.div variants={sectionVariants} className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
           <div className="flex items-center gap-2">
-            <IconButton
-              className="w-10 h-10 hidden md:flex"
-              icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
-              onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
-            />
-            <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
-            <IconButton
-              hoverIconColor="text-white"
-              icon={<Add className="text-white dark:text-white" />}
-              className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border dark:border-primary-hi-dark hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark"
-            />
+            <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
+            <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
           </div>
-        </div>
-      </motion.div>
-
-      {/* ====== CONTENT ====== */}
-      <motion.div variants={sectionVariants} className="relative">
-        {viewMode === 'list' ? (
-          <Table
-            className="md:min-h-[calc(100dvh-510px)]"
-            scroll={{ x: 300, y: 'calc(100dvh - 550px)' }}
-            data={sortedData}
-            columns={columns}
-            pagination={{
-              current: currentPage,
-              pageSize,
-              total: data.length,
-              showSizeChanger: true,
-              pageSizeOptions: [2, 4, 6, 8],
-              onChange: (page, size) => {
-                setCurrentPage(page);
-                setPageSize(size);
-              }
-            }}
-            paginationType="pagination"
-            rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-            size="large"
-            bordered={false}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            onSort={(field, order) => {
-              setSortField(field);
-              setSortOrder(order);
-            }}
-          />
-        ) : (
-          <div className="relative">
-            <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
-            >
-              {tableData.map((item, index) => (
-                <motion.div key={item.id} variants={itemVariants}>
-                  <ProxyCard
-                    data={item}
-                    buttonText="Quản lý"
-                    onRenewChange={handleAutoRenewChange}
-                    onClick={() => handleItemClick(index)}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
+          <div className="flex items-center justify-between mt-3">
+            <Input
+              placeholder="Tìm kiếm"
+              wrapperClassName="bg-bg-input border-2 h-10"
+              icon={<MagnifyingGlass />}
+              onChange={(e) => console.log(e.target.value)}
+            />
+            <div className="flex items-center gap-2">
+              <IconButton
+                className="w-10 h-10 hidden md:flex"
+                icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
+                onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+              />
+              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+              <IconButton
+                hoverIconColor="text-white"
+                icon={<Add className="text-white dark:text-white" />}
+                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border dark:border-primary-hi-dark hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark"
+              />
+            </div>
           </div>
-        )}
+        </motion.div>
+
+        {/* ====== CONTENT ====== */}
+        <motion.div variants={sectionVariants} className="relative">
+          {viewMode === 'list' ? (
+            <Table
+              className="md:min-h-[calc(100dvh-510px)]"
+              scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 550px)' }}
+              data={sortedData}
+              columns={columns}
+              pagination={{
+                current: currentPage,
+                pageSize,
+                total: data.length,
+                showSizeChanger: true,
+                pageSizeOptions: [2, 4, 6, 8],
+                onChange: (page, size) => {
+                  setCurrentPage(page);
+                  setPageSize(size);
+                }
+              }}
+              paginationType="pagination"
+              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+              size="large"
+              bordered={false}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              onSort={(field, order) => {
+                setSortField(field);
+                setSortOrder(order);
+              }}
+            />
+          ) : (
+            <div className="relative">
+              <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
+              >
+                {tableData.map((item, index) => (
+                  <motion.div key={item.id} variants={itemVariants}>
+                    <ProxyCard
+                      data={item}
+                      buttonText="Quản lý"
+                      onRenewChange={handleAutoRenewChange}
+                      onClick={() => handleItemClick(index, item.id)}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          )}
+        </motion.div>
+
+        {/* ====== MODALS ====== */}
+        <ProxyDetailModal
+          open={modalOpen}
+          item={selectedIndex !== null ? sortedData[selectedIndex] : null}
+          prevItem={prevItem}
+          nextItem={nextItem}
+          onClose={() => setModalOpen(false)}
+          onPrev={prevItem ? () => setSelectedIndex((prev) => (prev !== null ? prev - 1 : prev)) : undefined}
+          onNext={nextItem ? () => setSelectedIndex((prev) => (prev !== null ? prev + 1 : prev)) : undefined}
+        />
+
+        <DepositFlowModal open={open} onClose={() => setOpen(false)} />
+        <DataUsageModal open={openDataUsageModal} onClose={() => setOpenDataUsageModal(false)} />
       </motion.div>
-
-      {/* ====== MODALS ====== */}
-      <ProxyDetailModal
-        open={modalOpen}
-        item={selectedIndex !== null ? sortedData[selectedIndex] : null}
-        prevItem={prevItem}
-        nextItem={nextItem}
-        onClose={() => setModalOpen(false)}
-        onPrev={prevItem ? () => setSelectedIndex((prev) => (prev !== null ? prev - 1 : prev)) : undefined}
-        onNext={nextItem ? () => setSelectedIndex((prev) => (prev !== null ? prev + 1 : prev)) : undefined}
-      />
-
-      <DepositFlowModal open={open} onClose={() => setOpen(false)} />
-      <DataUsageModal open={openDataUsageModal} onClose={() => setOpenDataUsageModal(false)} />
-    </motion.div>
+    </div>
   );
 };
 

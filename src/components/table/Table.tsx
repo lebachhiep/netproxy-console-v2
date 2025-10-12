@@ -434,7 +434,7 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="overflow-auto relative flex-1 bg-white dark:bg-bg-canvas-dark"
+      className="overflow-auto hide-scroll-x relative flex-1 bg-white dark:bg-bg-canvas-dark"
       style={{
         maxHeight: scroll?.y,
         overflowX: 'auto',
@@ -461,7 +461,7 @@ export function Table<T extends Record<string, any>>({
             const isEmpty = record === null; // Dòng trống
 
             // Row className: kết hợp cursor, hover, selection, custom
-            const rowClass = `${rowIndex % 2 === 0 ? 'dark:bg-transparent' : 'bg-bg-mute dark:bg-bg-mute-dark'} ${!isEmpty && onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''} ${!isEmpty ? rowClassName?.(record, actualRowIndex) || '' : ''}`;
+            const rowClass = `${rowIndex % 2 === 0 ? 'bg-bg-canvas dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'} ${!isEmpty && onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''} ${!isEmpty ? rowClassName?.(record, actualRowIndex) || '' : ''}`;
 
             // Row style: chẵn/lẻ + selection + custom
             const rowStyleFinal: React.CSSProperties = {
@@ -477,7 +477,7 @@ export function Table<T extends Record<string, any>>({
               >
                 {rowSelection && (
                   <td
-                    className="rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10"
+                    className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`}
                     style={{
                       ...rowStyleFinal
                     }}
@@ -523,7 +523,7 @@ export function Table<T extends Record<string, any>>({
                     className += ' sticky z-10';
                     const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                     if (isLastLeftFixed) {
-                      className += ` shadow-table dark:shadow-table-dark ${rowIndex % 2 === 0 ? 'dark:bg-transparent' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` shadow-table dark:shadow-table-dark ${rowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
                   if (isRightFixed) {

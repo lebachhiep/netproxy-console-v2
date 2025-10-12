@@ -28,14 +28,14 @@ import Tooltip from '@/components/tooltip/Tooltip';
 import React, { useState } from 'react';
 
 // Fake data type
-interface ProxyData {
+export interface ProxyData {
   id: string;
   name: string;
   key: string;
   location: string;
 }
 
-const locationOptions = [
+export const locationOptions = [
   { label: 'Việt Nam', value: 'VN' },
   { label: 'Mỹ', value: 'US' },
   { label: 'Nhật Bản', value: 'JP' },
@@ -50,67 +50,8 @@ const tableData: ProxyData[] = [
 ];
 
 // Columns definition
-const columns: TableColumn<ProxyData>[] = [
-  {
-    sortable: true,
-    key: 'select',
-    title: 'STT',
-    render: (_, __, index) => <>{index + 1}</>,
-    width: 50,
-    align: 'center'
-  },
-  { key: 'name', title: 'Tên Gói', width: 200, sortable: true },
-  {
-    key: 'key',
-    title: (
-      <div className="flex items-center gap-1">
-        <Key className="text-text-lo dark:text-text-lo-dark" />
-        <span>Key</span>
-      </div>
-    ),
-    render: (value) => (
-      <div className="flex items-center justify-between">
-        <span>•••</span>
-        <ContentCopy className="text-blue cursor-pointer" />
-      </div>
-    ),
-    width: 140
-  },
-  {
-    key: 'location',
-    title: (
-      <div className="flex items-center gap-1">
-        <Location className="text-text-lo dark:text-text-lo-dark" />
-        <span>Vị trí</span>
-      </div>
-    ),
-    render: (value) => (
-      <Select
-        labelClassName="font-medium text-text-me"
-        className="h-8"
-        options={locationOptions}
-        value={value}
-        onChange={(newValue) => console.log('Selected:', newValue)}
-      />
-    ),
 
-    width: 150
-  },
-  {
-    width: 200,
-    key: 'action',
-    title: 'Hành động',
-    render: () => (
-      <Button variant="default" icon={<Language className="text-text-lo text-sm" />} className="h-8">
-        Lấy Proxy
-      </Button>
-    ),
-    align: 'center',
-    fixed: 'right'
-  }
-];
-
-const columnsBandwidth: TableColumn<ProxyData>[] = [
+export const columnsBandwidth: TableColumn<ProxyData>[] = [
   {
     sortable: true,
     key: 'select',
@@ -180,7 +121,7 @@ const columnsBandwidth: TableColumn<ProxyData>[] = [
   }
 ];
 
-const optionsTagSelect = [
+export const optionsTagSelect = [
   {
     value: '1',
     label: 'Tag 1',
@@ -232,13 +173,20 @@ const optionsTagSelect = [
   }
 ];
 
-const countryOptions = [
+export const countryOptions = [
   { label: 'Việt Nam', value: 'VN' },
   { label: 'Mỹ', value: 'US' },
   { label: 'Nhật Bản', value: 'JP' },
   { label: 'Singapore', value: 'SG' },
   { label: 'Hàn Quốc', value: 'KR' },
   { label: 'Anh', value: 'UK' }
+];
+
+// Tabs cho bandwidth proxy
+export const bandwidthTabs = [
+  { key: 'list', label: 'Danh sách Proxy' },
+  { key: 'get', label: 'Lấy Proxy' },
+  { key: 'white', label: 'White list' }
 ];
 
 interface ProxyDetailModalProps {
@@ -290,11 +238,64 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
   const [pageSize, setPageSize] = useState(20);
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
 
-  // Tabs cho bandwidth proxy
-  const bandwidthTabs = [
-    { key: 'list', label: 'Danh sách Proxy' },
-    { key: 'get', label: 'Lấy Proxy' },
-    { key: 'white', label: 'White list' }
+  const columns: TableColumn<ProxyData>[] = [
+    {
+      sortable: true,
+      key: 'select',
+      title: 'STT',
+      render: (_, __, index) => <>{index + 1}</>,
+      width: 50,
+      align: 'center'
+    },
+    { key: 'name', title: 'Tên Gói', width: 200, sortable: true },
+    {
+      key: 'key',
+      title: (
+        <div className="flex items-center gap-1">
+          <Key className="text-text-lo dark:text-text-lo-dark" />
+          <span>Key</span>
+        </div>
+      ),
+      render: (value) => (
+        <div className="flex items-center justify-between">
+          <span>•••</span>
+          <ContentCopy className="text-blue cursor-pointer" />
+        </div>
+      ),
+      width: 140
+    },
+    {
+      key: 'location',
+      title: (
+        <div className="flex items-center gap-1">
+          <Location className="text-text-lo dark:text-text-lo-dark" />
+          <span>Vị trí</span>
+        </div>
+      ),
+      render: (value) => (
+        <Select
+          labelClassName="font-medium text-text-me"
+          className="h-8"
+          options={locationOptions}
+          value={value}
+          onChange={(newValue) => console.log('Selected:', newValue)}
+        />
+      ),
+
+      width: 150
+    },
+    {
+      width: 200,
+      key: 'action',
+      title: 'Hành động',
+      render: () => (
+        <Button variant="default" icon={<Language className="text-text-lo text-sm" />} className="h-8">
+          Lấy Proxy
+        </Button>
+      ),
+      align: 'center',
+      fixed: 'right'
+    }
   ];
 
   return (

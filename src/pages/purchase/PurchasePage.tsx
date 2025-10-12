@@ -1,12 +1,13 @@
 import { PricingCard } from '@/components/card/PricingCard';
-import { ArrowRotate, CartFilled, Clock, DatabaseStackOutlined, Fire, ShieldCheckmark, TopSpeed } from '@/components/icons';
+import { ArrowRotate, CartFilled, Clock, DatabaseStackOutlined, Dismiss, Fire, ShieldCheckmark, TopSpeed } from '@/components/icons';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { Tabs } from '@/components/tabs/Tabs';
 import React, { useState } from 'react';
 import OrderSummary, { OrderItemType } from './components/OrderSumary';
 import CountrySelector, { Country } from './components/table/CountrySelector';
 import PricingTable from './components/table/PricingTable';
-import { motion, Variants } from 'framer-motion';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
+import IconButton from '@/components/button/IconButton';
 
 // Data riêng cho 7 ngày và 30 ngày
 const data7day = [
@@ -28,7 +29,7 @@ const data30day = [
 ];
 
 // Animation variants
-const easeInOutCustom = [0.44, 0, 0.56, 1];
+const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
 const pageVariants: Variants = {
   hidden: { opacity: 0 },
@@ -242,7 +243,6 @@ const PurchasePage: React.FC = () => {
     { label: 'Dedicated', key: 'dedicated' }
   ];
 
-  const rotatingTabs = [{ label: 'Speed Limit', key: 'speedLimit' }];
   const staticTabs = [
     { label: 'Bandwidth', key: 'bandwidth' },
     { label: 'Unlimited', key: 'unlimited' }
@@ -266,20 +266,22 @@ const PurchasePage: React.FC = () => {
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
-      <div className="md:hidden px-5 py-3 border-b border-border dark:border-border-dark">
-        <div className="flex items-center justify-between">
+      <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
+        <div className="flex items-center justify-between w-full">
           {/* Dashboard / Breadcrumb */}
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
             <CartFilled width={24} height={24} className="text-yellow" />
             <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
           </div>
 
-          <div
-            onClick={() => setCartOpen(true)}
-            className="flex rounded-full items-center justify-center w-10 h-10 border-2 border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark"
-          >
-            <CartFilled className="text-white" />
-          </div>
+          {activeMain === 'dedicated' && (
+            <div
+              onClick={() => setCartOpen(true)}
+              className="flex rounded-full items-center justify-center w-10 h-10 border-2 border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark"
+            >
+              <CartFilled className="text-white" />
+            </div>
+          )}
         </div>
       </div>
       {/* Main Tabs */}
@@ -293,7 +295,7 @@ const PurchasePage: React.FC = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
+                className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
               >
                 {plansByType.rotating[g.key].map((plan, index) => (
                   <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -370,7 +372,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['bandwidth'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -531,7 +533,7 @@ const PurchasePage: React.FC = () => {
                       direction="row"
                     />
                   </div>
-                  <div className="flex flex-col md:flex-row h-[calc(100vh-310px)] md:h-[calc(100vh-270px)]">
+                  <div className="flex flex-col md:flex-row h-[calc(100vh-350px)] md:h-[calc(100vh-270px)]">
                     {residentialPages[activeResidentialGroup]}
                   </div>
                 </div>
@@ -541,42 +543,53 @@ const PurchasePage: React.FC = () => {
         </div>
       </Tabs>
 
-      {cartOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-black/40 flex justify-end"
-          onClick={() => setCartOpen(false)} // click overlay để đóng
-        >
-          {/* Drawer container */}
+      <AnimatePresence>
+        {cartOpen && (
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 280, damping: 30 }}
-            className="relative w-[90%] sm:w-[380px] md:w-[420px] h-full bg-white dark:bg-bg-canvas-dark rounded-l-2xl shadow-xl flex flex-col"
-            onClick={(e) => e.stopPropagation()} // tránh tắt khi click bên trong
+            key="cart-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              transition: { delay: 0.25, duration: 0.25, ease: easeInOutCustom }
+            }}
+            transition={{ duration: 0.25, ease: easeInOutCustom }}
+            className="fixed inset-0 z-50 bg-black/40 flex justify-end"
+            onClick={() => setCartOpen(false)}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border dark:border-border-dark">
-              <div className="flex items-center gap-2">
-                <CartFilled className="text-yellow" width={24} height={24} />
-                <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
+            <motion.div
+              key="cart-drawer"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{
+                x: '100%',
+                transition: { duration: 0.25, ease: easeInOutCustom }
+              }}
+              transition={{ type: 'tween', duration: 0.35, ease: easeInOutCustom }}
+              className="relative w-[calc(100%-75px)] h-full bg-white dark:bg-bg-canvas-dark rounded-l-2xl shadow-xl flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex h-[64px] items-center justify-between p-5 border-b border-border dark:border-border-dark">
+                <div className="flex items-center gap-2">
+                  <CartFilled className="text-yellow" width={24} height={24} />
+                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
+                </div>
+                <IconButton
+                  className="w-10 h-10"
+                  icon={<Dismiss className="text-text-me dark:text-text-me-dark" />}
+                  onClick={() => setCartOpen(false)}
+                ></IconButton>
               </div>
-              <button onClick={() => setCartOpen(false)} className="text-text dark:text-text-dark hover:opacity-80">
-                ✕
-              </button>
-            </div>
 
-            {/* Nội dung */}
-            <div className="flex-1 overflow-y-auto p-4 scrollbar-hide">
-              <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
-            </div>
+              {/* Nội dung */}
+              <div className="flex-1">
+                <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

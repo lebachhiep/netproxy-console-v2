@@ -1,0 +1,339 @@
+// src/pages/proxy/ProxyDetailPage.tsx
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowCounter, Chevron, ContentCopy, Eye, FileCopy, Key, Language, Location, MagnifyingGlass } from '@/components/icons';
+import IconButton from '@/components/button/IconButton';
+import { Input } from '@/components/input/Input';
+import { Select } from '@/components/select/Select';
+import { SelectTag } from '@/components/select/SelectTag';
+import { Table, TableColumn } from '@/components/table/Table';
+import {
+  bandwidthTabs,
+  columnsBandwidth,
+  countryOptions,
+  HeaderInfo,
+  locationOptions,
+  optionsTagSelect,
+  ProxyData
+} from './components/modal/ProxyDetailModal';
+import { data } from './DashboardPage';
+import { Tabs } from '@/components/tabs/Tabs';
+import { ApiInput } from '@/components/input/ApiInput';
+import { ActionButtons } from '@/components/button/ActionButtons';
+import { Switch } from '@/components/switch/Switch';
+import { Button } from '@/components/button/Button';
+import { useResponsive } from '@/hooks/useResponsive';
+import { Pagination } from '@/components/pagination/Pagination';
+
+export const ProxyDetailPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [autoRenew, setAutoRenew] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const { isMobile } = useResponsive();
+
+  const item = data.find((item) => item.id == id);
+
+  console.log({ item });
+  if (!item) {
+    return;
+  }
+
+  const tableData: ProxyData[] = [
+    { id: '1', name: 'Proxy xoay - 5GB', key: 'ABC123', location: 'VN' },
+    { id: '2', name: 'Proxy xoay - 10GB', key: 'DEF456', location: 'US' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' },
+    { id: '3', name: 'Proxy xoay - 20GB', key: 'GHI789', location: 'JP' }
+  ];
+
+  const columns: TableColumn<ProxyData>[] = [
+    { key: 'name', title: 'Tên Gói', width: 200, sortable: true },
+    {
+      key: 'key',
+      title: (
+        <div className="flex items-center gap-1">
+          <Key className="text-text-lo dark:text-text-lo-dark" />
+          <span>Key</span>
+        </div>
+      ),
+      render: (value) => (
+        <div className="flex items-center justify-between">
+          <span>•••</span>
+          <ContentCopy className="text-blue cursor-pointer" />
+        </div>
+      ),
+      width: 140
+    },
+    {
+      key: 'location',
+      title: (
+        <div className="flex items-center gap-1">
+          <Location className="text-text-lo dark:text-text-lo-dark" />
+          <span>Vị trí</span>
+        </div>
+      ),
+      render: (value) => (
+        <Select
+          labelClassName="font-medium text-text-me"
+          className="h-8"
+          options={locationOptions}
+          value={value}
+          onChange={(newValue) => console.log('Selected:', newValue)}
+        />
+      ),
+
+      width: 150
+    },
+    {
+      width: 125,
+      key: 'action',
+      title: 'Hành động',
+      render: () => (
+        <Button variant="default" icon={<Language className="text-text-lo text-sm" />} className="h-8">
+          Lấy Proxy
+        </Button>
+      ),
+      align: 'center',
+      fixed: 'right'
+    }
+  ];
+
+  return (
+    <>
+      <div className="bg-bg-canvas dark:bg-bg-canvas-dark">
+        <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
+          <div className="flex items-center gap-1">
+            <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium">Trang chủ</span>
+            <Chevron className="w-4 h-4 rotate-180 text-text-me dark:text-text-me-dark" />
+            <span className="text-sm text-text-lo dark:text-text-lo-dark font-medium">{item.title}</span>
+          </div>
+        </div>
+        {item.type === 'bandwidth-proxy' ? (
+          <div className="overflow-y-auto h-[calc(100dvh-190px)] md:h-auto">
+            <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark" defaultActiveKey="list">
+              {/* Tab 1: Danh sách Proxy */}
+              <div>
+                <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
+                  {/* Header info */}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
+                      <label className="text-sm min-w-[120px]">Ngày hết hạn</label>
+                      <span className="font-semibold text-base">{item.expired}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Data left</label>
+                      <div className="text-base">
+                        <span className="text-primary dark:text-primary-dark font-medium">40.8</span>
+                        <span className="font-normal text-text-hi dark:text-text-hi-dark"> / </span>
+                        <span className="font-normal text-text-hi dark:text-text-hi-dark">50 GB</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Tự động gia hạn</span>
+                      <Switch checked={false} onChange={() => {}} />
+                    </div>
+                  </div>
+                </div>
+                {/* Filter + table */}
+                <div className="py-2 px-5 bg-bg-primary dark:bg-bg-primary-dark">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <Input
+                        placeholder="Tìm kiếm"
+                        wrapperClassName="bg-bg-input border-2 h-10"
+                        inputClassName="h-10 min-w-0"
+                        icon={<MagnifyingGlass />}
+                        onChange={(e) => console.log(e.target.value)}
+                      />
+                      <Select
+                        className="h-10"
+                        options={optionsTagSelect}
+                        placeholder="Type"
+                        onChange={(val) => console.log('Selected:', val)}
+                      />
+                      <Select
+                        className="h-10"
+                        options={optionsTagSelect}
+                        placeholder="ISP"
+                        onChange={(val) => console.log('Selected:', val)}
+                      />
+                    </div>
+                    <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
+                  </div>
+                </div>
+
+                {/* Table danh sách proxy */}
+                <Table
+                  className="min-h-[calc(100dvh-425px)]"
+                  scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
+                  data={tableData}
+                  columns={columnsBandwidth}
+                  rowSelection={{
+                    selectedRowKeys,
+                    onChange: (keys, rows) => setSelectedRowKeys(keys)
+                  }}
+                  paginationType="pagination"
+                  size="large"
+                  rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+                  pagination={{
+                    current: currentPage,
+                    pageSize,
+                    total: tableData.length,
+                    showSizeChanger: true,
+                    pageSizeOptions: [10, 20, 50, 100],
+                    onChange: (page, size) => {
+                      setCurrentPage(page);
+                      setPageSize(size);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Tab 2 */}
+              <div>
+                <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
+                      <label className="text-sm min-w-[120px]">Ngày hết hạn</label>
+                      <span className="font-semibold text-base">{item.expired}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <label className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Data left</label>
+                      <div className="text-base">
+                        <span className="text-primary dark:text-primary-dark font-medium">40.8</span>
+                        <span className="font-normal text-text-hi dark:text-text-hi-dark"> / </span>
+                        <span className="font-normal text-text-hi dark:text-text-hi-dark">50 GB</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Tự động gia hạn</span>
+                      <Switch checked={false} onChange={() => {}} />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center gap-2">
+                    <Select className="h-10 min-w-[179px]" placeholder="Quốc gia" options={countryOptions} />
+                    <ApiInput
+                      className="h-10"
+                      value="https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321..."
+                      actions={[
+                        {
+                          icon: <Eye className="text-primary dark:text-primary-dark w-6 h-6" />,
+                          onClick: () => console.log('View clicked')
+                        },
+                        {
+                          icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
+                          onClick: () => navigator.clipboard.writeText('https://api.netproxy.io/api/...')
+                        }
+                      ]}
+                    />
+                  </div>
+                </div>
+              </div>
+              {/* Tab 3 */}
+              <div className="p-5">Content tab "White list"</div>
+            </Tabs>
+          </div>
+        ) : (
+          <div className="overflow-y-auto h-[calc(100dvh-190px)] md:h-auto">
+            <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
+                  <label className="text-sm min-w-[120px]">Ngày hết hạn</label>
+                  <span className="font-semibold text-base">{item.expired}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Data left</label>
+                  <div className="text-base">
+                    <span className="text-primary dark:text-primary-dark font-medium">40.8</span>
+                    <span className="font-normal text-text-hi dark:text-text-hi-dark"> / </span>
+                    <span className="font-normal text-text-hi dark:text-text-hi-dark">50 GB</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-text-hi dark:text-text-hi-dark text-sm min-w-[120px]">Tự động gia hạn</span>
+                  <Switch checked={false} onChange={() => {}} />
+                </div>
+              </div>
+            </div>
+
+            {/* Filter + table */}
+            <div className="py-3 px-5 bg-bg-primary dark:bg-bg-primary-dark">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <Input
+                    placeholder="Tìm kiếm"
+                    wrapperClassName="bg-bg-input border-2 h-10"
+                    inputClassName="h-10 min-w-0"
+                    icon={<MagnifyingGlass />}
+                    onChange={(e) => console.log(e.target.value)}
+                  />
+                  <SelectTag
+                    className="h-10"
+                    options={optionsTagSelect}
+                    placeholder="Trạng thái"
+                    onChange={(val) => console.log('Selected:', val)}
+                  />
+                </div>
+                <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
+              </div>
+            </div>
+
+            <Table
+              className="min-h-[calc(100dvh-485px)]"
+              scroll={{ x: 300, y: 'calc(100dvh - 535px)' }}
+              data={tableData}
+              columns={columns}
+              rowSelection={{
+                selectedRowKeys,
+                onChange: (keys, rows) => setSelectedRowKeys(keys)
+              }}
+              paginationType="pagination"
+              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+              size="large"
+              bordered={false}
+              showEmptyRows
+            />
+            <div className="px-5 py-3 border-t-2 border-b-2 border-border dark:border-border-dark">
+              <ActionButtons />
+            </div>
+
+            <div className="py-3">
+              <Pagination
+                type="pagination"
+                current={currentPage}
+                pageSize={pageSize}
+                total={tableData.length}
+                showSizeChanger={true}
+                pageSizeOptions={[10, 20, 50, 100]}
+                onChange={(page, size) => {
+                  setCurrentPage(page);
+                  setPageSize(size);
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Header info */}
+      </div>
+    </>
+  );
+};

@@ -63,7 +63,13 @@ export const ProxyDetailPage = () => {
   ];
 
   const columns: TableColumn<ProxyData>[] = [
-    { key: 'name', title: 'Tên Gói', width: 200, sortable: true },
+    {
+      key: 'name',
+      title: 'Tên Gói',
+      width: 200,
+      sortable: true,
+      render: (value) => <div className="line-clamp-1">{value}</div>
+    },
     {
       key: 'key',
       title: (

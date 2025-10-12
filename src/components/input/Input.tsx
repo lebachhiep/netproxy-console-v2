@@ -33,7 +33,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(({ icon, wrapperCl
           ref={ref}
           type="text"
           className={twMerge(
-            'h-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+            'h-full flex-1 text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
             inputClassName
           )}
           {...props}

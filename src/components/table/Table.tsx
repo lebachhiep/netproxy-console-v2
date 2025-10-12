@@ -501,9 +501,9 @@ export function Table<T extends Record<string, any>>({
 
                   let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
-                  if (!isLeftFixed && !isRightFixed) {
-                    className += ' truncate';
-                  }
+                  // if (!isLeftFixed && !isRightFixed) {
+                  //   className += ' truncate';
+                  // }
 
                   if (isSorted) {
                     className += ' font-medium';

@@ -212,13 +212,14 @@ const DashboardPage = () => {
       key: 'title',
       title: 'Tên Gói',
       align: 'left',
-      sortable: true
+      sortable: true,
+      render: (value) => <div className="line-clamp-1">{value}</div>
     },
     {
       width: isMobile ? 200 : '',
       key: 'description',
       title: 'Mô tả',
-      render: (value) => <div>{value || '...'}</div>
+      render: (value) => <div className="line-clamp-1">{value || '...'}</div>
     },
     {
       width: 150,
@@ -238,7 +239,8 @@ const DashboardPage = () => {
     },
     {
       key: 'expired',
-      title: 'Hết hạn'
+      title: 'Hết hạn',
+      render: (value) => <div className="line-clamp-1">{value || '...'}</div>
     },
     {
       width: isMobile ? 125 : 200,
@@ -412,7 +414,7 @@ const DashboardPage = () => {
           {viewMode === 'list' ? (
             <Table
               className="md:min-h-[calc(100dvh-510px)]"
-              scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 550px)' }}
+              scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}
               columns={columns}
               pagination={{

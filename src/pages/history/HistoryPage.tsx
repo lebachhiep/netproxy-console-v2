@@ -4,6 +4,7 @@ import { DatePicker } from '@/components/datepicker/DatePicker';
 import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
+import { useResponsive } from '@/hooks/useResponsive';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 
@@ -43,24 +44,21 @@ const HistoryPage: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(10); // số item hiển thị
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
-
+  const { isMobile } = useResponsive();
   const paginatedData = tableData.slice(0, displayCount);
-  const hasMore = displayCount < tableData.length;
-
-  const handleLoadMore = () => {
-    setLoadingMore(true);
-    setTimeout(() => {
-      setDisplayCount((prev) => Math.min(prev + 10, tableData.length));
-      setLoadingMore(false);
-    }, 500); // giả lập loading
-  };
 
   const handlePageSizeChange = (newPageSize: number) => {
     setDisplayCount(newPageSize);
   };
 
   const columns: TableColumn<Transaction>[] = [
-    { key: 'stt', title: 'STT', width: '60px', align: 'center', render: (_v, _r, i) => i + 1 },
+    {
+      key: 'stt',
+      title: 'STT',
+      width: '60px',
+      align: 'center',
+      render: (_value, _record, index) => index + 1
+    },
     {
       key: 'id',
       title: 'Mã',
@@ -74,60 +72,90 @@ const HistoryPage: React.FC = () => {
         </div>
       )
     },
-    { key: 'service', title: 'Dịch vụ', align: 'left', render: (v) => v || '...' },
-    { key: 'amount', title: 'Số tiền', width: '120px', render: (v) => `$ ${Number(v).toFixed(2)}` },
     {
+      width: isMobile ? 150 : '',
+      key: 'service',
+      title: 'Dịch vụ',
+      align: 'left',
+      render: (value) => value || '...'
+    },
+    {
+      key: 'amount',
+      title: 'Số tiền',
+      width: '120px',
+      render: (value) => `$ ${Number(value).toFixed(2)}`
+    },
+    {
+      width: isMobile ? 150 : '',
       key: 'description',
       title: 'Mô tả',
       align: 'left',
-      render: (v) => <div className="truncate max-w-[220px]">{v || '...'}</div>
+      render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
     },
     {
       key: 'status',
       title: 'Trạng thái',
       width: '160px',
       align: 'center',
-      render: (s) => <Badge color={s?.color || 'gray'}>{s?.text || '-'}</Badge>
+      render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
     },
     {
       key: 'date',
       title: 'Thời gian',
-      width: 200,
+      width: isMobile ? 120 : 200,
       fixed: 'right',
-      render: (v) => (v ? <span>{new Date(v).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</span> : '-')
+      render: (value) =>
+        value ? (
+          <span>
+            {new Date(value).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric'
+            })}
+          </span>
+        ) : (
+          '-'
+        )
     }
   ];
 
   return (
-    <div>
+    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-auto">
       <div className="px-5 py-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
+          {/* Left group (Search + Filter + Button) */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            {/* Search field */}
             <Input
               placeholder="Tìm kiếm"
-              wrapperClassName="bg-bg-input border-2 h-10"
+              wrapperClassName="bg-bg-input border-2 h-10 w-full sm:w-[240px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => console.log(e.target.value)}
             />
-            <DatePicker
-              className="h-10"
-              value={selectedDate}
-              onChange={(date: Dayjs | null) => {
-                setSelectedDate(date);
-                console.log('Selected date:', date?.format('DD/MM/YYYY'));
-              }}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+
+            {/* Row below for Date + Button (on mobile) */}
+            <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
+              <div className="flex-1">
+                <DatePicker
+                  className="h-10 w-full md:w-[220px] sm:flex-none"
+                  value={selectedDate}
+                  onChange={(date: Dayjs | null) => {
+                    setSelectedDate(date);
+                    console.log('Selected date:', date?.format('DD/MM/YYYY'));
+                  }}
+                />
+              </div>
+
+              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+            </div>
           </div>
         </div>
       </div>
 
       <div>
         <Table
-          className="min-h-[calc(100dvh-160px)]"
-          scroll={{ x: 300, y: 'calc(100dvh - 210px)' }}
+          className="min-h-[calc(100dvh-340px)] md:min-h-[calc(100dvh-175px)]"
+          scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 210px)' }}
           data={paginatedData}
           columns={columns}
           pagination={{
@@ -136,12 +164,9 @@ const HistoryPage: React.FC = () => {
             total: tableData.length,
             showSizeChanger: true,
             pageSizeOptions: [5, 10, 20, 50],
-            type: 'loadmore',
-            onLoadMore: handleLoadMore,
-            loading: loadingMore,
-            hasMore: hasMore,
             onChange: (_page, newPageSize) => handlePageSizeChange(newPageSize)
           }}
+          paginationType="pagination"
           rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
           size="large"
           bordered={false}

@@ -35,7 +35,7 @@ const SupportSoftwarePage = () => {
 
   return (
     <div className="p-5">
-      <div className="flex flex-wrap gap-5">
+      <div className="grid grid-cols-2 md:flex md:flex-wrap gap-5">
         {apps.map((app, idx) => (
           <AppCard
             key={idx}
@@ -43,7 +43,7 @@ const SupportSoftwarePage = () => {
             title={app.title}
             description={app.description}
             onButtonClick={() => alert(`Cài đặt ${app.title}`)}
-            className="w-[264px]"
+            className="md:w-[264px]"
           />
         ))}
       </div>

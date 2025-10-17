@@ -1,10 +1,9 @@
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
 import { useCallback, useState } from 'react';
+import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
-import { AnimatedOutlet } from './AnimatedOutlet';
-import { motion } from 'framer-motion';
-import { Outlet } from 'react-router-dom';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);

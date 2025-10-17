@@ -150,8 +150,6 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  console.log({ modalOpen });
-
   return (
     <motion.header initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
@@ -181,7 +179,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
             onClick={() => setDarkMode((prev) => !prev)}
           />
           <IconButton
-            className="w-10 h-10"
+            className="w-10 h-10 md:hidden"
             icon={sidebarOpen ? <Dismiss className="w-5 h-5" /> : <TextColumnOne className="w-6 h-6" />}
             onClick={toggleSidebar}
           />

@@ -1,8 +1,8 @@
 import { useLocation, useRoutes } from 'react-router-dom';
 import { Toaster } from 'sonner';
+import { routes } from './router';
 import './globals.css';
 import './index.css';
-import { routes } from './router';
 import './styles/App.scss';
 import './styles/custom.scss';
 

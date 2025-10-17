@@ -14,6 +14,7 @@
 
   .pseudo-border-top {
     position: relative;
+    --border-color: #2d4f76;
   }
 
   .pseudo-border-top::before {
@@ -23,10 +24,19 @@
     left: -1px;
     right: -1px;
     height: 100%;
-    border-top: 2px solid #2d4f76;
+    border-top: 2px solid var(--border-color);
     border-radius: inherit;
     clip-path: inset(0 0 50% 0);
     pointer-events: none;
+    transition: border-color 0.3s;
+  }
+
+  .pseudo-border-top:hover {
+    --border-color: #55b3f6; /* màu mới khi hover */
+  }
+
+  .no-pseudo::before {
+    content: none !important;
   }
 
   /* .pseudo-border-top:hover::before {

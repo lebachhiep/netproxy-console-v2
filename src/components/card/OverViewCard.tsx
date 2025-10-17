@@ -30,7 +30,7 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
   return (
     <div
       className={twMerge(
-        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border dark:border-transparent dark:pseudo-border-top shadow-md p-2 md:h-[212px] h-full',
+        'flex flex-col gap-1 justify-between rounded-xl border-2 bg-bg-primary dark:bg-bg-primary-dark border-border dark:border-transparent dark:pseudo-border-top shadow-md p-2 lg:h-[212px] h-full',
         className
       )}
     >
@@ -43,7 +43,7 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
         <div className="flex items-center justify-between">
           {icon && icon}
           {buttonText && (
-            <Button variant="default" className="px-3 py-[7.5px] h-[32px] hidden md:flex" onClick={onButtonClick}>
+            <Button variant="default" className="px-3 py-[7.5px] h-[32px] hidden lg:flex" onClick={onButtonClick}>
               {buttonText}
             </Button>
           )}
@@ -77,7 +77,7 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
       )}
 
       {buttonText && (
-        <Button variant="default" className="px-3 rounded-[4px] py-[7.5px] h-[32px] flex md:hidden" onClick={onButtonClick}>
+        <Button variant="default" className="px-3 rounded-[4px] py-[7.5px] h-[32px] flex lg:hidden" onClick={onButtonClick}>
           {buttonText}
         </Button>
       )}

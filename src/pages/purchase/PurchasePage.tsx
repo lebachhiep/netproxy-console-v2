@@ -213,7 +213,7 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] hidden md:block overflow-y-auto">
+          <div className="w-[473px] hidden lg:block overflow-y-auto">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}
@@ -229,7 +229,7 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] hidden md:block overflow-y-auto">
+          <div className="w-[473px] hidden lg:block overflow-y-auto">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}
@@ -266,7 +266,7 @@ const PurchasePage: React.FC = () => {
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
-      <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
+      <div className="lg:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="flex items-center justify-between w-full">
           {/* Dashboard / Breadcrumb */}
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
@@ -295,7 +295,7 @@ const PurchasePage: React.FC = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
+                className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
               >
                 {plansByType.rotating[g.key].map((plan, index) => (
                   <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -372,7 +372,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['bandwidth'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -442,7 +442,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['unlimited'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -566,7 +566,7 @@ const PurchasePage: React.FC = () => {
                 transition: { duration: 0.25, ease: easeInOutCustom }
               }}
               transition={{ type: 'tween', duration: 0.35, ease: easeInOutCustom }}
-              className="relative w-[calc(100%-75px)] h-full bg-white dark:bg-bg-canvas-dark rounded-l-2xl shadow-xl flex flex-col"
+              className="relative w-[calc(100%-75px)] max-w-[354px] h-full bg-white dark:bg-bg-canvas-dark shadow-xl flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}

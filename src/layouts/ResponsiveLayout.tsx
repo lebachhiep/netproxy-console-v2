@@ -1,11 +1,11 @@
+import { useResponsive } from '@/hooks/useResponsive';
 import React from 'react';
-import { useMediaQuery } from 'react-responsive';
 import { AdminLayout } from './AdminLayout';
 import { MobileLayout } from './MobileLayout';
-import { useResponsive } from '@/hooks/useResponsive';
+import { TabletLayout } from './TabletLayout';
 
 export const ResponsiveLayout: React.FC = () => {
-  const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
 
-  return isMobile ? <MobileLayout /> : <AdminLayout />;
+  return isMobile ? <MobileLayout /> : isTablet ? <TabletLayout /> : <AdminLayout />;
 };

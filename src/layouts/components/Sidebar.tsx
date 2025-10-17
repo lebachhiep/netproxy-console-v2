@@ -1,10 +1,11 @@
+import IconButton from '@/components/button/IconButton';
+import { Chevron } from '@/components/icons';
+import { useResponsive } from '@/hooks/useResponsive';
+import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
+import { ReactComponent as Logo } from 'assets/images/logo.svg';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { adminSections, Route } from 'router';
-import { ReactComponent as Logo } from 'assets/images/logo.svg';
-import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
-import { Chevron } from '@/components/icons';
-import IconButton from '@/components/button/IconButton';
 import { twMerge } from 'tailwind-merge';
 
 interface SidebarProps {
@@ -15,7 +16,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
-
+  const { isDesktop } = useResponsive();
   const navigate = useNavigate();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -29,39 +30,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
 
   return (
     <aside
-      className={`hidden fixed left-5 h-[calc(100vh-40px)] z-20 bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
-      ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[272px]'}`}
+      className={`hidden fixed left-5 h-[calc(100vh-40px)] z-[999] bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
+      ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[212px] lg:w-[272px]'}`}
       // Hover auto expand / collapse
-      onMouseEnter={() => toggle(false)} // mở khi hover
-      onMouseLeave={() => toggle(true)} // đóng khi rời chuột
+      onMouseEnter={() => (isDesktop ? toggle(false) : '')} // mở khi hover
+      onMouseLeave={() => (isDesktop ? toggle(true) : '')} // đóng khi rời chuột
     >
       {/* Nút collapse */}
-      {/* <div className="absolute top-1/2 -left-3 z-50 -translate-y-1/2">
+      <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
         {collapsed ? (
           <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
         ) : (
           <IconButton onClick={() => toggle(true)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
         )}
-      </div> */}
+      </div>
       {/* Logo */}
 
       {collapsed ? (
-        <div className="h-[52px] flex items-center justify-center cursor-pointer" onClick={() => navigate('/home')}>
+        <div className="h-[52px] hidden lg:flex items-center justify-center cursor-pointer" onClick={() => navigate('/home')}>
           <Logo className="h-8 object-contain cursor-pointer dark:invert" />
         </div>
       ) : (
-        <div className="h-[52px] flex items-center">
+        <div className="h-[52px] hidden lg:flex items-center">
           <LogoText className="h-8 object-contain text-center cursor-pointer dark:invert" onClick={() => navigate('/home')} />
         </div>
       )}
 
       {/* Main menu */}
-      <nav className="mt-2 flex-1 overflow-y-auto flex flex-col gap-4">
-        {mainSections.map((section) => (
+      <nav className="lg:mt-2 flex-1 overflow-y-auto flex flex-col gap-2 lg:gap-4">
+        {mainSections.map((section, index) => (
           <div key={section.title} className="flex flex-col gap-2">
             {/* Section Header / Divider */}
 
-            <div className="flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-2">
               {!collapsed && (
                 <div className="text-[11px] text-text-lo uppercase font-ibm-plex-mono tracking-[0.44px] leading-[17px]">
                   {section.title}
@@ -69,6 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
               )}
               <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1 my-[8.5px]"></div>
             </div>
+
             {/* Menu Items */}
             <ul className="flex flex-col gap-1 ">
               {section.routes
@@ -158,6 +160,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
                   );
                 })}
             </ul>
+
+            {/* Divider riêng cho tablet giữa 2 section */}
+            {index === 0 && (
+              <div className="flex md:flex lg:hidden">
+                <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1 my-[8.5px]" />
+              </div>
+            )}
           </div>
         ))}
       </nav>

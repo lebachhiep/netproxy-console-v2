@@ -434,7 +434,7 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="overflow-auto hide-scroll-x relative flex-1 bg-white dark:bg-bg-canvas-dark"
+      className="overflow-auto hide-scroll-x relative flex-1 dark:bg-bg-canvas-dark"
       style={{
         maxHeight: scroll?.y,
         overflowX: 'auto',
@@ -443,7 +443,7 @@ export function Table<T extends Record<string, any>>({
       onScroll={handleBodyScroll}
     >
       <table
-        className={`px-5 bg-white dark:bg-bg-canvas-dark ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
+        className={`px-5 dark:bg-bg-canvas-dark ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
         style={{
           tableLayout: 'fixed',
           minWidth: tableMinWidth,

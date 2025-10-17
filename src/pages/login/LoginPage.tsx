@@ -178,25 +178,26 @@ export const LoginPage: React.FC = () => {
         </AuthFormWrapper>
       }
       right={
-        <div className="w-[720px] justify-center items-center gap-1 p-5 hidden md:flex relative">
+        <div className="md:w-[414px] lg:w-[720px] justify-center items-center gap-1 p-5 md:pr-0 hidden md:flex relative">
           <AuthShowcase
             bg={bgAuth}
             images={[
               {
                 src: group7,
-                className: 'absolute w-[119px] h-[141px] top-[15px] left-[516px] mix-blend-soft-light'
+                className: 'absolute w-[119px] lg:h-[141px] top-[15px] md:right-10 lg:left-[516px] mix-blend-soft-light'
               },
               {
                 src: img9,
-                className: 'aspect-[91/60] w-[606px] h-[405px] top-[100px] left-[37px] absolute object-contain'
+                className:
+                  'aspect-[91/60] md:w-[360px] lg:w-[606px] lg:h-[405px] md:top-[183px] lg:top-[100px] lg:left-[37px] absolute object-contain'
               },
               {
                 src: productCardImg,
-                className: 'aspect-[101/108] w-[180px] h-[193px] top-[360px] left-[479px] absolute object-contain'
+                className: 'aspect-[101/108] h-[193px] top-[360px] md:right-12 lg:left-[479px] absolute object-contain'
               },
               {
                 src: pcImg,
-                className: 'absolute w-[132px] h-[154px] top-[274px] left-0 object-contain'
+                className: 'absolute w-[132px] lg:h-[154px] top-[274px] left-0 object-contain'
               }
             ]}
             title="Proxy Tốc Độ Cao"

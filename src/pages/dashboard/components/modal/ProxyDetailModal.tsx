@@ -53,7 +53,6 @@ const tableData: ProxyData[] = [
 
 export const columnsBandwidth: TableColumn<ProxyData>[] = [
   {
-    sortable: true,
     key: 'select',
     title: 'STT',
     render: (_, __, index) => <>{index + 1}</>,
@@ -240,7 +239,6 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
 
   const columns: TableColumn<ProxyData>[] = [
     {
-      sortable: true,
       key: 'select',
       title: 'STT',
       render: (_, __, index) => <>{index + 1}</>,
@@ -377,10 +375,6 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                 scroll={{ x: 300, y: 'calc(100dvh - 340px)' }}
                 data={tableData}
                 columns={columnsBandwidth}
-                rowSelection={{
-                  selectedRowKeys,
-                  onChange: (keys, rows) => setSelectedRowKeys(keys)
-                }}
                 paginationType="pagination"
                 size="large"
                 rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}

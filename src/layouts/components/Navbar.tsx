@@ -1,27 +1,16 @@
 import IconButton from '@/components/button/IconButton';
-import {
-  ArrowDown,
-  Chevron,
-  Globe,
-  Person,
-  PersonOutlined,
-  SignOut,
-  WalletCreditCardFilled,
-  WalletCreditCardOutlined,
-  WeatherMoon,
-  WeatherSunny
-} from '@/components/icons';
+import { Chevron, Globe, WeatherMoon, WeatherSunny } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
+import UserDropdown from '@/components/UserDropdown';
+import { useAuth } from '@/hooks/useAuth';
+import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
 import { settings } from '@/settings';
+import { AUTH_MESSAGES } from '@/utils/constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from 'router';
-import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { AUTH_MESSAGES } from '@/utils/constants';
-import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
-import UserDropdown from '@/components/UserDropdown';
 
 interface Breadcrumb {
   title: string;

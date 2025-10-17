@@ -19,26 +19,29 @@ const backgrounds: Record<string, string> = {
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ balance, spent, owner, variant = 'blue' }) => {
   return (
-    <div className="w-full max-w-[388.5px] aspect-[388.5/296] flex flex-col gap-1 rounded-2xl overflow-hidden">
-      {/* Main Card */}
-      <div className="relative flex-1 text-white">
-        {/* Background */}
+    <div className="w-full max-w-sm md:max-w-md lg:max-w-[388.5px]  flex flex-col gap-2 rounded-2xl overflow-hidden">
+      {/* Main Card giữ đúng tỷ lệ ảnh */}
+      <div className="relative aspect-[168/109] rounded-2xl overflow-hidden text-white">
+        {/* Background giữ đúng tỉ lệ */}
         <img src={backgrounds[variant]} alt="card background" className="absolute inset-0 w-full h-full object-cover" />
 
-        {/* Nội dung */}
-        <div className="relative flex flex-col justify-between h-full p-5">
+        {/* Nội dung đè lên ảnh */}
+        <div className="relative z-10 flex flex-col justify-between h-full p-5">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">Số dư tài khoản</p>
-            <p className="text-[33px] font-averta leading-[120%] font-semibold">${balance.toLocaleString()}</p>
+            <p className="text-[28px] sm:text-[33px] font-averta leading-[120%] font-semibold">${balance.toLocaleString()}</p>
           </div>
-          <p className="text-right text-lg font-semibold font-averta">{owner}</p>
+          <p className="text-right text-base sm:text-lg font-semibold font-averta">{owner}</p>
         </div>
+
+        {/* Overlay nhẹ để tăng tương phản (optional) */}
+        <div className="absolute inset-0 bg-black/10"></div>
       </div>
 
       {/* Footer */}
       <div
         className={twMerge(
-          'rounded-xl text-white text-sm px-5 py-3 flex justify-between items-center',
+          'rounded-xl text-white text-sm sm:text-base px-5 py-3 flex justify-between items-center transition-colors',
           variant === 'blue' && 'bg-[#2471C9]',
           variant === 'yellow' && 'bg-primary',
           variant === 'black' && 'bg-[#010101]'

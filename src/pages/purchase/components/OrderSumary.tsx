@@ -22,14 +22,14 @@ interface Props {
 const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onClearAll }) => {
   if (!orders.length) return null;
 
-  const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const total = orders.reduce((sum, o) => sum + o.price * o.quantity, 0);
   const totalIps = orders.reduce((sum, o) => sum + o.quantity, 0);
   const totalLocation = orders.length;
 
   return (
     <>
-      {!isMobile ? (
+      {!isMobile || !isTablet ? (
         <div className="bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark p-5 min-h-[calc(100vh-270px)] flex flex-col">
           {/* Header */}
           {/* <SectionTitle text="Đơn hàng" icon={<Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={onClearAll} />} /> */}

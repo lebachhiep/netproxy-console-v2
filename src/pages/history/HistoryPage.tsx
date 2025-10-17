@@ -44,7 +44,7 @@ const HistoryPage: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(10); // số item hiển thị
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
-  const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const paginatedData = tableData.slice(0, displayCount);
 
   const handlePageSizeChange = (newPageSize: number) => {
@@ -73,7 +73,7 @@ const HistoryPage: React.FC = () => {
       )
     },
     {
-      width: isMobile ? 150 : '',
+      width: isMobile || isTablet ? 150 : '',
       key: 'service',
       title: 'Dịch vụ',
       align: 'left',
@@ -86,7 +86,7 @@ const HistoryPage: React.FC = () => {
       render: (value) => `$ ${Number(value).toFixed(2)}`
     },
     {
-      width: isMobile ? 150 : '',
+      width: isMobile || isTablet ? 150 : '',
       key: 'description',
       title: 'Mô tả',
       align: 'left',
@@ -102,7 +102,7 @@ const HistoryPage: React.FC = () => {
     {
       key: 'date',
       title: 'Thời gian',
-      width: isMobile ? 120 : 200,
+      width: isMobile || isTablet ? 120 : 200,
       fixed: 'right',
       render: (value) =>
         value ? (
@@ -120,7 +120,7 @@ const HistoryPage: React.FC = () => {
   ];
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-auto">
+    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-[calc(100dvh-240px)] lg:h-auto">
       <div className="px-5 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
           {/* Left group (Search + Filter + Button) */}
@@ -154,8 +154,8 @@ const HistoryPage: React.FC = () => {
 
       <div>
         <Table
-          className="min-h-[calc(100dvh-340px)] md:min-h-[calc(100dvh-175px)]"
-          scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 210px)' }}
+          className="min-h-[calc(100dvh-330px)] md:min-h-[calc(100dvh-310px)] lg:min-h-[calc(100dvh-175px)]"
+          scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 210px)' }}
           data={paginatedData}
           columns={columns}
           pagination={{

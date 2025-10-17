@@ -157,7 +157,7 @@ export const Select: React.FC<SelectProps> = ({
       {open && (
         <div
           className={twMerge(
-            'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-10',
+            'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-50',
             placement === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
           )}
         >

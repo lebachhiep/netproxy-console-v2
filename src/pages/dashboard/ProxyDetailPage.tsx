@@ -64,6 +64,13 @@ export const ProxyDetailPage = () => {
 
   const columns: TableColumn<ProxyData>[] = [
     {
+      key: 'select',
+      title: 'STT',
+      render: (_, __, index) => <>{index + 1}</>,
+      width: 50,
+      align: 'center'
+    },
+    {
       key: 'name',
       title: 'Tên Gói',
       width: 200,
@@ -168,13 +175,13 @@ export const ProxyDetailPage = () => {
                         onChange={(e) => console.log(e.target.value)}
                       />
                       <Select
-                        className="h-10"
+                        className="h-10 md:min-w-[179px]"
                         options={optionsTagSelect}
                         placeholder="Type"
                         onChange={(val) => console.log('Selected:', val)}
                       />
                       <Select
-                        className="h-10"
+                        className="h-10 md:min-w-[179px]"
                         options={optionsTagSelect}
                         placeholder="ISP"
                         onChange={(val) => console.log('Selected:', val)}
@@ -190,10 +197,6 @@ export const ProxyDetailPage = () => {
                   scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
                   data={tableData}
                   columns={columnsBandwidth}
-                  rowSelection={{
-                    selectedRowKeys,
-                    onChange: (keys, rows) => setSelectedRowKeys(keys)
-                  }}
                   paginationType="pagination"
                   size="large"
                   rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}

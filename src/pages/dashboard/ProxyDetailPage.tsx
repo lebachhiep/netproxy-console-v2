@@ -132,7 +132,9 @@ export const ProxyDetailPage = () => {
       <div className="bg-bg-canvas dark:bg-bg-canvas-dark">
         <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
           <div className="flex items-center gap-1">
-            <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium">Trang chủ</span>
+            <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium" onClick={() => navigate('/home')}>
+              Trang chủ
+            </span>
             <Chevron className="w-4 h-4 rotate-180 text-text-me dark:text-text-me-dark" />
             <span className="text-sm text-text-lo dark:text-text-lo-dark font-medium">{item.title}</span>
           </div>
@@ -193,7 +195,7 @@ export const ProxyDetailPage = () => {
 
                 {/* Table danh sách proxy */}
                 <Table
-                  className="min-h-[calc(100dvh-425px)]"
+                  className="min-h-[calc(100dvh-395px)] md:min-h-[calc(100dvh-375px)]"
                   scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
                   data={tableData}
                   columns={columnsBandwidth}
@@ -238,7 +240,7 @@ export const ProxyDetailPage = () => {
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-2">
-                    <Select className="h-10 min-w-[179px]" placeholder="Quốc gia" options={countryOptions} />
+                    <Select className="h-10 w-[100px] whitespace-nowrap" placeholder="Quốc gia" options={countryOptions} />
                     <ApiInput
                       className="h-10"
                       value="https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321..."
@@ -306,7 +308,7 @@ export const ProxyDetailPage = () => {
             </div>
 
             <Table
-              className="min-h-[calc(100dvh-485px)]"
+              className="min-h-[calc(100dvh-475px)] md:min-h-[calc(100dvh-445px)]"
               scroll={{ x: 300, y: 'calc(100dvh - 535px)' }}
               data={tableData}
               columns={columns}

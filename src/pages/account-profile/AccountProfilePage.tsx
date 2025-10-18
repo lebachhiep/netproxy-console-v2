@@ -167,7 +167,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                 <span className="font-semibold text-text-hi dark:text-text-hi-dark">API Key</span>
                 <div className="bg-blue rounded-[2px] text-white px-1">1 / 5</div>
               </div>
-              <span className="text-text-me dark:text-text-me-dark">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</span>
+              <span className="text-text-me dark:text-text-me-dark mb-4">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</span>
 
               <ApiInput
                 value={

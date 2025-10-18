@@ -1,7 +1,6 @@
-import React from 'react';
-import { SectionTitle } from '@/components/SectionTitle';
+import { Caret } from '@/components/icons';
 import { CountryTag } from '@/components/tag/CountryTag';
-import { ArrowCounter, Caret, CaretLeft } from '@/components/icons';
+import React, { useState } from 'react';
 
 export type Country = { id: string; name: string; code: string };
 
@@ -41,34 +40,49 @@ interface Props {
 }
 
 const CountrySelector: React.FC<Props> = ({ selected, onSelect, onUnselect }) => {
-  const renderSection = (title: string, countries: Country[]) => {
-    const groupActive = countries.some((c) => selected.some((s) => s.code === c.code && s.name === c.name));
+  const [openGroups, setOpenGroups] = useState<{ [key: string]: boolean }>({
+    popular: true,
+    asia: true
+  });
+
+  const toggleGroup = (key: string) => {
+    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const renderSection = (key: string, title: string, countries: Country[]) => {
+    const isOpen = openGroups[key];
 
     return (
-      <div className="flex flex-col gap-3">
+      <div className={`flex flex-col gap-3`}>
+        {/* Header */}
         <div
-          className={`font-medium text-sm flex items-center gap-2 ${
-            groupActive ? 'text-text-hi dark:text-text-hi-dark' : 'text-text-me dark:text-text-me-dark'
+          className={`font-medium text-sm flex items-center gap-2 cursor-pointer select-none transition-colors ${
+            isOpen ? 'text-text-hi dark:text-text-hi-dark' : 'text-text-me dark:text-text-me-dark'
           }`}
+          onClick={() => toggleGroup(key)}
         >
-          <Caret />
+          <Caret className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
           {title}
         </div>
-        <div className="flex flex-wrap gap-3">
-          {countries.map((c) => {
-            const isActive = selected.some((s) => s.code === c.code && s.name === c.name);
-            return (
-              <CountryTag
-                key={c.code + c.name}
-                name={c.name}
-                flagUrl={`https://flagcdn.com/w20/${c.code}.png`}
-                active={isActive}
-                removable={isActive}
-                onClick={() => !isActive && onSelect(c)}
-                onRemove={() => onUnselect(c)}
-              />
-            );
-          })}
+
+        {/* Body (collapse) */}
+        <div className={`transition-all duration-300 ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+          <div className="flex flex-wrap gap-3 mt-2">
+            {countries.map((c) => {
+              const isActive = selected.some((s) => s.code === c.code && s.name === c.name);
+              return (
+                <CountryTag
+                  key={c.code + c.name}
+                  name={c.name}
+                  flagUrl={`https://flagcdn.com/w20/${c.code}.png`}
+                  active={isActive}
+                  removable={isActive}
+                  onClick={() => (isActive ? onUnselect(c) : onSelect(c))}
+                  onRemove={() => onUnselect(c)}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -78,8 +92,8 @@ const CountrySelector: React.FC<Props> = ({ selected, onSelect, onUnselect }) =>
     <div className="flex flex-col gap-6">
       {/* <SectionTitle text="Chọn quốc gia" /> */}
 
-      {renderSection('Phổ biến', popularCountries)}
-      {renderSection('Châu Á', asiaCountries)}
+      {renderSection('popular', 'Phổ biến', popularCountries)}
+      {renderSection('asia', 'Châu Á', asiaCountries)}
 
       <p className="text-sm text-text-me dark:text-text-me-dark font-medium leading-[150%] max-w-[348px]">
         Cho những{' '}

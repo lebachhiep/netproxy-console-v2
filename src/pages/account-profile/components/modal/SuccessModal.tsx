@@ -22,7 +22,7 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({ open, onClose, onCon
       closeButtonClassName="hidden"
       actions={[
         <div className="flex items-center justify-center">
-          <Button variant="primary" className="h-10 mb-1 px-4" icon={<SignOut />}>
+          <Button variant="primary" className="h-10 mb-1 px-4" icon={<SignOut />} onClick={onConfirm}>
             ĐĂNG NHẬP LẠI
           </Button>
         </div>

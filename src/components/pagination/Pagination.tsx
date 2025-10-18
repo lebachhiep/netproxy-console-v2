@@ -191,7 +191,7 @@ export function Pagination({
         <div className="flex items-center gap-2">
           {/* Previous button */}
           <button
-            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-border-dark rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="shadow-xs bg-bg-primary dark:bg-bg-primary-dark dark:border-transparent dark:pseudo-border-top flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-border-dark rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             disabled={current <= 1}
             onClick={() => handlePageChange(current - 1)}
             title="Trang trước"
@@ -206,7 +206,7 @@ export function Pagination({
                 return (
                   <button
                     key={`ellipsis-${index}`}
-                    className="min-w-8 min-h-8 rounded-lg text-text-me dark:text-text-me-dark text-sm 
+                    className="shadow-xs bg-bg-primary dark:border-transparent dark:pseudo-border-top dark:bg-bg-primary-dark min-w-8 min-h-8 rounded-lg text-text-me dark:text-text-me-dark text-sm 
                      border-2 border-border dark:border-border-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark
                      transition-all"
                   >
@@ -219,10 +219,10 @@ export function Pagination({
               return (
                 <button
                   key={page}
-                  className={`border-2 min-h-8 min-w-8 flex items-center justify-center text-sm rounded-lg font-medium transition-all ${
+                  className={`shadow-xs bg-bg-primary dark:bg-bg-primary-dark border-2 min-h-8 min-w-8 flex items-center justify-center text-sm rounded-lg font-medium transition-all ${
                     isCurrentPage
                       ? 'text-primary dark:text-primary-dark border border-primary dark:border-primary-dark'
-                      : 'text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark border-2 border-border dark:border-border-dark'
+                      : 'text-text-me dark:text-text-me-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark border-2 border-border dark:border-transparent dark:pseudo-border-top'
                   }`}
                   onClick={() => handlePageChange(page as number)}
                 >
@@ -234,7 +234,7 @@ export function Pagination({
 
           {/* Next button */}
           <button
-            className="flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-border-dark rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="shadow-xs bg-bg-primary dark:bg-bg-primary-dark flex items-center justify-center min-h-8 min-w-8 border-2 border-border dark:border-transparent dark:pseudo-border-top rounded-lg font-medium hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             disabled={current >= totalPages}
             onClick={() => handlePageChange(current + 1)}
             title="Trang sau"
@@ -251,7 +251,7 @@ export function Pagination({
                     value: size
                   };
                 })}
-                className="shadow-none h-8 rounded-lg border-border dark:border-border-dark w-[118px] font-medium hover:font-bold"
+                className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold"
                 labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
                 value={pageSize}
                 onChange={(value) => handleSizeChange(value as number)}

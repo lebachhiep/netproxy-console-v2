@@ -19,7 +19,7 @@ const backgrounds: Record<string, string> = {
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ balance, spent, owner, variant = 'blue' }) => {
   return (
-    <div className="w-full max-w-sm md:max-w-md lg:max-w-[388.5px]  flex flex-col gap-2 rounded-2xl overflow-hidden">
+    <div className="w-full max-w-sm md:max-w-md lg:max-w-[388.5px] flex flex-col gap-1 rounded-2xl overflow-hidden">
       {/* Main Card giữ đúng tỷ lệ ảnh */}
       <div className="relative aspect-[168/109] rounded-2xl overflow-hidden text-white">
         {/* Background giữ đúng tỉ lệ */}

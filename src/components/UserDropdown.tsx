@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chevron, PersonOutlined, SignOut, WalletCreditCardOutlined } from './icons';
 import { User } from 'firebase/auth';
+import { useResponsive } from '@/hooks/useResponsive';
+import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface Props {
   user: User | null;
@@ -12,16 +14,21 @@ interface Props {
 }
 
 const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalOpen }) => {
+  const { isMobile, isTablet } = useResponsive();
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  useClickOutside(dropdownRef, () => setMenuOpen(false));
 
   return (
     <div
       className="relative"
       ref={dropdownRef}
-      onMouseEnter={() => setMenuOpen(true)} // hover vào avatar HOẶC menu thì mở
-      onMouseLeave={() => setMenuOpen(false)} // rời hẳn ra ngoài thì đóng
+      {...(!(isMobile || isTablet) && {
+        onMouseEnter: () => setMenuOpen(true),
+        onMouseLeave: () => setMenuOpen(false)
+      })}
     >
       {/* User info */}
       <div
@@ -29,7 +36,7 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
                    pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs 
                    bg-bg-secondary dark:bg-bg-secondary-dark 
                    hover:border-blue dark:hover:border-transparent transition-colors duration-300"
-        onClick={() => setMenuOpen((prev) => !prev)}
+        onClick={() => (isMobile || isTablet) && setMenuOpen((prev) => !prev)}
       >
         <div className="flex items-center gap-2">
           <img src={user?.photoURL || settings.defaultAvatar} className="w-9 h-9 rounded-full" />

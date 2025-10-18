@@ -277,9 +277,14 @@ const PurchasePage: React.FC = () => {
           {activeMain === 'dedicated' && (
             <div
               onClick={() => setCartOpen(true)}
-              className="flex rounded-full items-center justify-center w-10 h-10 border-2 border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark"
+              className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2 
+      ${
+        orders.length > 0
+          ? 'border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark'
+          : 'border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark'
+      }`}
             >
-              <CartFilled className="text-white" />
+              <CartFilled className={`${orders.length > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'}`} />
             </div>
           )}
         </div>
@@ -442,7 +447,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['unlimited'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>

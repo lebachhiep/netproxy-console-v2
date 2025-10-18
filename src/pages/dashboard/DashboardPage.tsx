@@ -412,7 +412,7 @@ const DashboardPage = () => {
         <motion.div variants={sectionVariants} className="relative">
           {viewMode === 'list' ? (
             <Table
-              className="lg:min-h-[calc(100dvh-510px)]"
+              className="lg:min-h-[calc(100dvh-460px)]"
               scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}
               columns={columns}

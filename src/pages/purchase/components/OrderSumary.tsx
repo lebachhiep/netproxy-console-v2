@@ -1,7 +1,7 @@
 import React from 'react';
 import { Country } from './table/CountrySelector';
 import { SectionTitle } from '@/components/SectionTitle';
-import { Add, Delete, Subtract } from '@/components/icons';
+import { Add, CartFilled, Delete, Subtract } from '@/components/icons';
 import { Divider } from '@/components/divider/Divider';
 import { Button } from '@/components/button/Button';
 import { useResponsive } from '@/hooks/useResponsive';
@@ -20,16 +20,25 @@ interface Props {
 }
 
 const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onClearAll }) => {
-  if (!orders.length) return null;
-
   const { isMobile, isTablet } = useResponsive();
+
+  // Nếu giỏ hàng trống
+  if (!orders.length) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-270px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
+        <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70" />
+        <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
+        <p className="text-text-me dark:text-text-me-dark text-sm mb-6">Hãy chọn quốc gia để thêm IP vào giỏ hàng của bạn.</p>
+      </div>
+    );
+  }
   const total = orders.reduce((sum, o) => sum + o.price * o.quantity, 0);
   const totalIps = orders.reduce((sum, o) => sum + o.quantity, 0);
   const totalLocation = orders.length;
 
   return (
     <>
-      {!isMobile || !isTablet ? (
+      {!isMobile && !isTablet ? (
         <div className="bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark p-5 min-h-[calc(100vh-270px)] flex flex-col">
           {/* Header */}
           {/* <SectionTitle text="Đơn hàng" icon={<Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={onClearAll} />} /> */}

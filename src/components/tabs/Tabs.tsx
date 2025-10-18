@@ -153,7 +153,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
                           //  Cập nhật vị trí highlight
                           const rect = el.getBoundingClientRect();
                           const parentRect = el.parentElement?.getBoundingClientRect();
-                          const offsetLeft = rect.left - (parentRect?.left ?? 0);
+                          const offsetLeft = rect.left - (parentRect?.left ?? 0) - 4;
 
                           const highlight = document.querySelector<HTMLDivElement>('#tab-highlight');
                           if (highlight) {

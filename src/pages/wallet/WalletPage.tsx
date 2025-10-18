@@ -205,7 +205,7 @@ const WalletPage: React.FC = () => {
                   Chính sách bảo mật
                 </a>
               </p>
-              <Button variant="primary" className="h-10 w-[100px] mb-1" onClick={() => setOpen(true)}>
+              <Button variant="primary" className="h-10 w-[100px]" onClick={() => setOpen(true)}>
                 NẠP TIỀN
               </Button>
             </div>

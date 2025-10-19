@@ -107,6 +107,7 @@ const WalletPage: React.FC = () => {
             className="text-blue cursor-pointer"
             onClick={() => {
               copyToClipboard(value);
+              toast.success('Đã sao chép mã giao dịch vào clipboard');
             }}
           />
         </div>
@@ -254,14 +255,14 @@ const WalletPage: React.FC = () => {
                     placeholder="Chọn ngày"
                     className="h-10 w-full md:w-[220px] sm:flex-none"
                   />
-                  <DatePicker
+                  {/* <DatePicker
                     className="h-10 w-full md:w-[220px] sm:flex-none"
                     value={selectedDate}
                     onChange={(date: Dayjs | null) => {
                       setSelectedDate(date);
                       console.log('Selected date:', date?.format('DD/MM/YYYY'));
                     }}
-                  />
+                  /> */}
                 </div>
 
                 <IconButton className="w-10 h-10" icon={<ArrowCounter />} />

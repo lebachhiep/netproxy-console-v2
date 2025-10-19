@@ -72,7 +72,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
 
   return (
     <Modal
-      className={'max-w-[558px]'}
+      className={'max-w-[558px] max-h-screen overflow-auto'}
       open={open}
       title={step === 1 ? 'Nạp tiền' : 'QR - Thanh toán'}
       onClose={onClose}
@@ -103,7 +103,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
             ]
       }
     >
-      <div className="">
+      <div>
         {step === 1 && (
           <div className="p-5">
             <div className="flex flex-col gap-4">
@@ -180,7 +180,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
             </div>
 
             <div className="flex justify-center p-3 border-b border-border dark:border-border-dark">
-              <div className="relative inline-block w-full sm:w-auto">
+              <div className="relative inline-block w-full sm:w-auto m">
                 {/* Ảnh nền */}
                 <img src={bgDeposit} alt="QR Background" className="h-auto rounded-lg object-contain w-full sm:w-auto" />
 

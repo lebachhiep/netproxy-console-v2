@@ -1,5 +1,5 @@
 import { Button } from '@/components/button/Button';
-import { AddCircle, Eye, FileCopy } from '@/components/icons';
+import { AddCircle, Eye, EyeOff, FileCopy } from '@/components/icons';
 import { ApiInput } from '@/components/input/ApiInput';
 import { InputField } from '@/components/input/InputField';
 import { Modal } from '@/components/modal/Modal';
@@ -8,7 +8,7 @@ import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@
 import { UserProfile } from '@/services/user/user.types';
 import { mapFirebaseError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import ProfileForm from '../ProfileForm';
@@ -22,6 +22,8 @@ interface AccountProfileModalProps {
 
 export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, user, onClose }) => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+  const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
+  const [isHideApiValue, setIsHideApiValue] = useState(true);
   const accountTabs = [
     { key: 'info', label: 'Thông tin chung' },
     { key: 'change-password', label: 'Đổi mật khẩu' }
@@ -109,17 +111,22 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
                 <span className="text-text-me dark:text-text-me-dark">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</span>
 
                 <ApiInput
-                  value={
-                    'https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321CD283FFE61B8A0B99433E704A8&country=all&type=all&count=50'
-                  }
+                  value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
                   actions={[
                     {
-                      icon: <Eye className="text-primary dark:text-primary-dark w-6 h-6" />,
-                      onClick: () => console.log('View clicked')
+                      icon: isHideApiValue ? (
+                        <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
+                      ) : (
+                        <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
+                      ),
+                      onClick: () => setIsHideApiValue(!isHideApiValue)
                     },
                     {
                       icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                      onClick: () => navigator.clipboard.writeText('https://api.netproxy.io/api/...')
+                      onClick: () => {
+                        navigator.clipboard.writeText(apiValue);
+                        toast.success('Đã sao chép API Endpoint');
+                      }
                     }
                   ]}
                 />

@@ -8,6 +8,7 @@ import {
   Chevron,
   ContentCopy,
   Eye,
+  EyeOff,
   FileCopy,
   Globe,
   Key,
@@ -26,6 +27,7 @@ import { Table, TableColumn } from '@/components/table/Table';
 import { Tabs } from '@/components/tabs/Tabs';
 import Tooltip from '@/components/tooltip/Tooltip';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 // Fake data type
 export interface ProxyData {
@@ -236,6 +238,8 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
+  const [isHideApiValue, setIsHideApiValue] = useState(true);
+  const [apiValue, _] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
 
   const columns: TableColumn<ProxyData>[] = [
     {
@@ -406,15 +410,22 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                   <Select className="h-10 min-w-[179px]" placeholder="Quốc gia" options={countryOptions} />
                   <ApiInput
                     className="h-10"
-                    value="https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321..."
+                    value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
                     actions={[
                       {
-                        icon: <Eye className="text-primary dark:text-primary-dark w-6 h-6" />,
-                        onClick: () => console.log('View clicked')
+                        icon: isHideApiValue ? (
+                          <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
+                        ) : (
+                          <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
+                        ),
+                        onClick: () => setIsHideApiValue(!isHideApiValue)
                       },
                       {
                         icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                        onClick: () => navigator.clipboard.writeText('https://api.netproxy.io/api/...')
+                        onClick: () => {
+                          navigator.clipboard.writeText(apiValue);
+                          toast.success('Đã sao chép API Endpoint');
+                        }
                       }
                     ]}
                   />

@@ -1,12 +1,15 @@
 import { Badge } from '@/components/badge/Badge';
 import IconButton from '@/components/button/IconButton';
+import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { DatePicker } from '@/components/datepicker/DatePicker';
 import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useResponsive } from '@/hooks/useResponsive';
+import { copyToClipboard } from '@/utils/copyToClipboard';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 export interface Transaction {
   id: string;
@@ -43,9 +46,9 @@ export const tableData: Transaction[] = Array.from({ length: 500 }, (_, i) => {
 const HistoryPage: React.FC = () => {
   const [displayCount, setDisplayCount] = useState(10); // số item hiển thị
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-  const [loadingMore, setLoadingMore] = useState(false);
   const { isMobile, isTablet } = useResponsive();
   const paginatedData = tableData.slice(0, displayCount);
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
 
   const handlePageSizeChange = (newPageSize: number) => {
     setDisplayCount(newPageSize);
@@ -68,7 +71,13 @@ const HistoryPage: React.FC = () => {
       render: (value) => (
         <div className="flex items-center justify-between">
           <span>{value}</span>
-          <ContentCopy className="text-blue cursor-pointer" />
+          <ContentCopy
+            className="text-blue cursor-pointer"
+            onClick={() => {
+              copyToClipboard(value);
+              toast.success('Đã sao chép mã giao dịch vào clipboard');
+            }}
+          />
         </div>
       )
     },
@@ -136,14 +145,20 @@ const HistoryPage: React.FC = () => {
             {/* Row below for Date + Button (on mobile) */}
             <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
               <div className="flex-1">
-                <DatePicker
+                <DateRangePicker
+                  value={dateRange}
+                  onChange={setDateRange}
+                  placeholder="Chọn ngày"
+                  className="h-10 w-full md:w-[220px] sm:flex-none"
+                />
+                {/* <DatePicker
                   className="h-10 w-full md:w-[220px] sm:flex-none"
                   value={selectedDate}
                   onChange={(date: Dayjs | null) => {
                     setSelectedDate(date);
                     console.log('Selected date:', date?.format('DD/MM/YYYY'));
                   }}
-                />
+                /> */}
               </div>
 
               <IconButton className="w-10 h-10" icon={<ArrowCounter />} />

@@ -524,7 +524,10 @@ const PurchasePage: React.FC = () => {
               onChange={(key) => setActiveDedicated(key as DedicatedSubKey)}
             >
               {[
-                <div key="residential">
+                <div key="residential" className="text-text-hi dark:text-text-hi-dark">
+                  Residential
+                </div>,
+                <div key="datacenter">
                   <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
                     <RadioGroup
                       value={activeResidentialGroup}

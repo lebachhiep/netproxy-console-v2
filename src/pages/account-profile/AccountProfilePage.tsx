@@ -1,5 +1,5 @@
 import { Button } from '@/components/button/Button';
-import { AddCircle, Eye, FileCopy } from '@/components/icons';
+import { AddCircle, Eye, EyeOff, FileCopy } from '@/components/icons';
 import { ApiInput } from '@/components/input/ApiInput';
 import { InputField } from '@/components/input/InputField';
 import { Tabs } from '@/components/tabs/Tabs';
@@ -8,7 +8,7 @@ import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@
 import { UserProfile } from '@/services/user/user.types';
 import { mapFirebaseError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { SuccessModal } from './components/modal/SuccessModal';
@@ -18,6 +18,8 @@ interface AccountProfilePageProps {}
 
 export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
+  const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
+  const [isHideApiValue, setIsHideApiValue] = useState(true);
   const { user, logout } = useAuth();
   const accountTabs = [
     { key: 'info', label: 'Thông tin chung' },
@@ -108,6 +110,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                           type="password"
                           label="Nhập mật khẩu cũ"
                           showPasswordToggle
+                          inputClassName="w-full"
                           disabled={isPasswordSubmitting}
                         />
                         {passwordErrors.oldPassword && <span className="text-red text-sm mt-1">{passwordErrors.oldPassword.message}</span>}
@@ -123,6 +126,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                           wrapperClassName="h-10"
                           {...field}
                           type="password"
+                          inputClassName="w-full"
                           label="Nhập mật khẩu mới"
                           showPasswordToggle
                           disabled={isPasswordSubmitting}
@@ -144,6 +148,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                           label="Nhập lại mật khẩu mới"
                           showPasswordToggle
                           disabled={isPasswordSubmitting}
+                          inputClassName="w-full"
                         />
                         {passwordErrors.confirmPassword && (
                           <span className="text-red text-sm mt-1">{passwordErrors.confirmPassword.message}</span>
@@ -169,25 +174,32 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
               </div>
               <span className="text-text-me dark:text-text-me-dark mb-4">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</span>
 
-              <ApiInput
-                value={
-                  'https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321CD283FFE61B8A0B99433E704A8&country=all&type=all&count=50'
-                }
-                actions={[
-                  {
-                    icon: <Eye className="text-primary dark:text-primary-dark w-6 h-6" />,
-                    onClick: () => console.log('View clicked')
-                  },
-                  {
-                    icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                    onClick: () => navigator.clipboard.writeText('https://api.netproxy.io/api/...')
-                  }
-                ]}
-              />
+              <div className="flex flex-row justify-center items-center gap-5">
+                <ApiInput
+                  value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
+                  actions={[
+                    {
+                      icon: isHideApiValue ? (
+                        <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
+                      ) : (
+                        <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
+                      ),
+                      onClick: () => setIsHideApiValue(!isHideApiValue)
+                    },
+                    {
+                      icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
+                      onClick: () => {
+                        navigator.clipboard.writeText(apiValue);
+                        toast.success('Đã sao chép API Endpoint');
+                      }
+                    }
+                  ]}
+                />
+                <Button variant="default" className="w-fit h-10 px-4 rounded-md" icon={<AddCircle />}>
+                  TẠO MÃ API MỚI
+                </Button>
+              </div>
             </div>
-            <Button variant="default" className="mt-2 w-fit h-10 px-4" icon={<AddCircle />}>
-              TẠO MÃ API MỚI
-            </Button>
           </div>
         </Tabs>
       </div>

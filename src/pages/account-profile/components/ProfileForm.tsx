@@ -1,6 +1,10 @@
 import { Button } from '@/components/button/Button';
+import { CountrySelect } from '@/components/country-select/CountrySelect';
 import { InputField } from '@/components/input/InputField';
+import { Select } from '@/components/select/Select';
+import CountrySelector from '@/pages/purchase/components/table/CountrySelector';
 import { UserProfile } from '@/services/user/user.types';
+import { COUNTRY_OPTIONS } from '@/utils/constants';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 interface ProfileFormProps {
@@ -56,14 +60,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
             control={control}
             render={({ field }) => (
               <div>
-                <InputField
-                  wrapperClassName="h-10"
-                  {...field}
-                  type="text"
-                  placeholder="Quốc gia"
-                  label="Quốc gia"
-                  disabled={isSubmitting}
-                />
+                <CountrySelect options={COUNTRY_OPTIONS} placeholder="Quốc gia" label="Quốc gia" />
                 {errors.country && <span className="text-red text-sm mt-1">{errors.country.message}</span>}
               </div>
             )}

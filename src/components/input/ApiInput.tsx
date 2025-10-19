@@ -26,7 +26,7 @@ export const ApiInput: React.FC<ApiInputProps> = ({ label = 'API: ', value, acti
         <span className="text-sm text-text-hi font-bold dark:text-text-hi-dark whitespace-nowrap">{label}</span>
 
         {/* Value */}
-        <span className="flex-1 min-w-0 text-sm line-clamp-1 text-text-lo dark:text-text-lo-dark">{value}</span>
+        <span className="flex-1 min-w-0 text-sm line-clamp-1 text-text-lo dark:text-text-lo-dark w-full">{value}</span>
       </div>
       {/* Actions */}
       {actions.length > 0 && (

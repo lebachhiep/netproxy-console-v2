@@ -1,7 +1,7 @@
 // src/pages/proxy/ProxyDetailPage.tsx
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowCounter, Chevron, ContentCopy, Eye, FileCopy, Key, Language, Location, MagnifyingGlass } from '@/components/icons';
+import { ArrowCounter, Chevron, ContentCopy, Eye, EyeOff, FileCopy, Key, Language, Location, MagnifyingGlass } from '@/components/icons';
 import IconButton from '@/components/button/IconButton';
 import { Input } from '@/components/input/Input';
 import { Select } from '@/components/select/Select';
@@ -24,6 +24,8 @@ import { Switch } from '@/components/switch/Switch';
 import { Button } from '@/components/button/Button';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Pagination } from '@/components/pagination/Pagination';
+import { toast } from 'sonner';
+import { set } from 'zod';
 
 export const ProxyDetailPage = () => {
   const { id } = useParams();
@@ -33,6 +35,8 @@ export const ProxyDetailPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const { isMobile } = useResponsive();
+  const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
+  const [isHideApiValue, setIsHideApiValue] = useState(true);
 
   const item = data.find((item) => item.id == id);
 
@@ -243,15 +247,22 @@ export const ProxyDetailPage = () => {
                     <Select className="h-10 w-[100px] whitespace-nowrap" placeholder="Quốc gia" options={countryOptions} />
                     <ApiInput
                       className="h-10"
-                      value="https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321..."
+                       value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
                       actions={[
                         {
-                          icon: <Eye className="text-primary dark:text-primary-dark w-6 h-6" />,
-                          onClick: () => console.log('View clicked')
+                          icon: isHideApiValue ? (
+                            <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
+                          ) : (
+                            <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
+                          ),
+                          onClick: () => setIsHideApiValue(!isHideApiValue)
                         },
                         {
                           icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                          onClick: () => navigator.clipboard.writeText('https://api.netproxy.io/api/...')
+                          onClick: () => {
+                            navigator.clipboard.writeText(apiValue);
+                            toast.success('Đã sao chép API Endpoint');
+                          }
                         }
                       ]}
                     />

@@ -36,3 +36,16 @@ export const AUTH_MESSAGES = {
   EMAIL_VERIFICATION_SENT: 'Email xác thực đã được gửi!',
   PROFILE_UPDATED: 'Cập nhật thông tin thành công!'
 } as const;
+
+export const COUNTRY_OPTIONS = [
+  { value: 'vn', label: '🇻🇳 Việt Nam' },
+  { value: 'us', label: '🇺🇸 United States' },
+  { value: 'jp', label: '🇯🇵 Japan' },
+  { value: 'kr', label: '🇰🇷 South Korea' },
+  { value: 'cn', label: '🇨🇳 China' },
+  { value: 'th', label: '🇹🇭 Thailand' },
+  { value: 'sg', label: '🇸🇬 Singapore' },
+  { value: 'my', label: '🇲🇾 Malaysia' },
+  { value: 'id', label: '🇮🇩 Indonesia' },
+  { value: 'ph', label: '🇵🇭 Philippines' }
+];

@@ -54,7 +54,6 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      oldPassword: '',
       password: '',
       confirmPassword: ''
     }
@@ -99,24 +98,6 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
             <div className="p-5">
               <form onSubmit={handlePasswordSubmit(onSubmitPassword)}>
                 <div className="space-y-4">
-                  <Controller
-                    name="oldPassword"
-                    control={passwordControl}
-                    render={({ field }) => (
-                      <div>
-                        <InputField
-                          wrapperClassName="h-10"
-                          {...field}
-                          type="password"
-                          label="Nhập mật khẩu cũ"
-                          showPasswordToggle
-                          inputClassName="w-full"
-                          disabled={isPasswordSubmitting}
-                        />
-                        {passwordErrors.oldPassword && <span className="text-red text-sm mt-1">{passwordErrors.oldPassword.message}</span>}
-                      </div>
-                    )}
-                  />
                   <Controller
                     name="password"
                     control={passwordControl}

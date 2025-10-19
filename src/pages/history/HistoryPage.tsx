@@ -133,11 +133,11 @@ const HistoryPage: React.FC = () => {
       <div className="px-5 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
           {/* Left group (Search + Filter + Button) */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full">
+          <div className="flex flex-col md:flex-row gap-3 w-full">
             {/* Search field */}
             <Input
               placeholder="Tìm kiếm"
-              wrapperClassName="bg-bg-input border-2 h-10 w-full sm:w-[240px]"
+              wrapperClassName="bg-bg-input border-2 h-10 w-full md:w-[240px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => console.log(e.target.value)}
             />

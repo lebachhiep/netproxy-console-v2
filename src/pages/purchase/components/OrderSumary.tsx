@@ -90,7 +90,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
                   <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                   {/* Nút xóa */}
-                  <div className="w-[20px] text-center">
+                   <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-transparent">
                     <Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={() => onRemove(o.country)} />
                   </div>
                 </div>
@@ -143,11 +143,11 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
       ) : (
         <div className="flex flex-col h-[calc(100vh-64px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark">
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-3">
+          <div className="flex-1 overflow-y-auto p-5 space-y-3 ">
             {orders.map((o, index) => (
               <div
                 key={index}
-                className="rounded-lg font-medium text-sm bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border dark:border-border-dark"
+                className="rounded-lg font-medium text-sm bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border dark:border-border-dark shadow-[0px_4px_8px_-2px_rgba(0,0,0,0.10)]"
               >
                 <div className="p-2 border-b border-border dark:border-border-dark">
                   <div className="text-text-hi dark:text-text-hi-dark">{o.country.name}</div>
@@ -181,8 +181,8 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
                     <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                     {/* Xóa */}
-                    <div className="w-[20px] text-center">
-                      <Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={() => onRemove(o.country)} />
+                    <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-transparent">
+                      <Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={() => onRemove(o.country)} width={20} height={20}/>
                     </div>
                   </div>
                 </div>

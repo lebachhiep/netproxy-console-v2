@@ -37,26 +37,22 @@ export const forgotPasswordSchema = z.object({
 });
 
 // Password reset schema
-export const resetPasswordSchema = z.object({
-  oldPassword: z
-    .string()
-    .min(1, 'Mật khẩu là bắt buộc')
-    .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
-    .regex(/[A-Z]/, 'Phải có ít nhất 1 chữ hoa')
-    .regex(/[a-z]/, 'Phải có ít nhất 1 chữ thường')
-    .regex(/[0-9]/, 'Phải có ít nhất 1 số')
-    .regex(/[^A-Za-z0-9]/, 'Phải có ít nhất 1 ký tự đặc biệt')
-    .optional(),
-  password: z
-    .string()
-    .min(1, 'Mật khẩu là bắt buộc')
-    .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
-    .regex(/[A-Z]/, 'Phải có ít nhất 1 chữ hoa')
-    .regex(/[a-z]/, 'Phải có ít nhất 1 chữ thường')
-    .regex(/[0-9]/, 'Phải có ít nhất 1 số')
-    .regex(/[^A-Za-z0-9]/, 'Phải có ít nhất 1 ký tự đặc biệt'),
-  confirmPassword: z.string().min(1, 'Xác nhận mật khẩu là bắt buộc')
-});
+export const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(1, 'Mật khẩu là bắt buộc')
+      .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+      .regex(/[A-Z]/, 'Phải có ít nhất 1 chữ hoa')
+      .regex(/[a-z]/, 'Phải có ít nhất 1 chữ thường')
+      .regex(/[0-9]/, 'Phải có ít nhất 1 số')
+      .regex(/[^A-Za-z0-9]/, 'Phải có ít nhất 1 ký tự đặc biệt'),
+    confirmPassword: z.string().min(1, 'Xác nhận mật khẩu là bắt buộc')
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword']
+  });
 
 // User profile schema
 export const userProfileSchema = z.object({

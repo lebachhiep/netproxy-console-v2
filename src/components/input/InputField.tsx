@@ -120,6 +120,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
             {showPasswordToggle && (
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => setShowPassword(!showPassword)}
                 className="w-6 h-6 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
               >

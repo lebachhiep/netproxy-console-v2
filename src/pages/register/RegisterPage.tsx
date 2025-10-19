@@ -24,7 +24,6 @@ export const RegisterPage: React.FC = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: '',
       email: '',
       password: '',
       confirmPassword: ''

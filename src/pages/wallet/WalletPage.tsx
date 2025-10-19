@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { formatCurrency } from '@/utils/currency';
+import clsx from 'clsx';
 
 const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
 
@@ -81,7 +82,7 @@ const WalletPage: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const paginatedData = tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const [priceValue, setPriceValue] = useState(10);
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
@@ -237,23 +238,27 @@ const WalletPage: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
             {/* Left group (Search + Filter + Button) */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <div className={clsx('w-full flex flex-col gap-3', (isDesktop || isLargeDesktop) && '!flex-row')}>
               {/* Search field */}
               <Input
                 placeholder="Tìm kiếm"
-                wrapperClassName="bg-bg-input border-2 h-10 w-full sm:w-[240px]"
+                wrapperClassName={clsx(
+                  'bg-bg-input border-2 h-10 w-full sm:w-[240px]',
+                  isTablet && '!w-full',
+                  (isDesktop || isLargeDesktop) && 'flex flex-col'
+                )}
                 icon={<MagnifyingGlass />}
                 onChange={(e) => console.log(e.target.value)}
               />
 
               {/* Row below for Date + Button (on mobile) */}
-              <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
+              <div className={clsx('flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between')}>
                 <div className="flex-1">
                   <DateRangePicker
                     value={dateRange}
                     onChange={setDateRange}
                     placeholder="Chọn ngày"
-                    className="h-10 w-full md:w-[220px] sm:flex-none"
+                    className={clsx('h-10 w-full sm:flex-none', isTablet && '!w-full', (isDesktop || isLargeDesktop) && 'max-w-[220px]')}
                   />
                   {/* <DatePicker
                     className="h-10 w-full md:w-[220px] sm:flex-none"

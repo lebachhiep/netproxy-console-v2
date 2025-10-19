@@ -23,8 +23,8 @@ import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
 import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
 import { DataUsageModal } from './components/modal/DataUsageModal';
-import { useMediaQuery } from 'react-responsive';
 import { useResponsive } from '@/hooks/useResponsive';
+import clsx from 'clsx';
 
 export const data: ProxyCardData[] = [
   {
@@ -279,7 +279,7 @@ const DashboardPage = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 "
           >
             {[
               <OverViewCard
@@ -372,7 +372,11 @@ const DashboardPage = () => {
                 ]}
               />
             ].map((card, i) => (
-              <motion.div key={i} variants={itemVariants}>
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                className={clsx(i === 3 && '[grid-area:2/1] lg:[grid-area:1/3]', i === 4 && '[grid-area:2/2] lg:[grid-area:1/4]')}
+              >
                 {card}
               </motion.div>
             ))}

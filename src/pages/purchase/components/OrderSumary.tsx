@@ -90,7 +90,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
                   <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                   {/* Nút xóa */}
-                   <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-transparent">
+                   <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:border-none">
                     <Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={() => onRemove(o.country)} />
                   </div>
                 </div>
@@ -181,7 +181,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
                     <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                     {/* Xóa */}
-                    <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-transparent">
+                    <div className="w-8 h-8 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:border-none">
                       <Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={() => onRemove(o.country)} width={20} height={20}/>
                     </div>
                   </div>

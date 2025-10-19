@@ -1,34 +1,23 @@
 import IconButton from '@/components/button/IconButton';
 import {
-  ArrowDown,
   Chevron,
-  Dismiss,
-  Globe,
-  Person,
-  PersonOutlined,
-  SignOut,
-  TextColumnOne,
-  WalletCreditCardFilled,
-  WalletCreditCardOutlined,
-  WeatherMoon,
+  Dismiss, TextColumnOne,
+  Translate, WeatherMoon,
   WeatherSunny
 } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
-import { Link, matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from 'router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { AUTH_MESSAGES } from '@/utils/constants';
-import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
 import UserDropdown from '@/components/UserDropdown';
 import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
-import { AnimatePresence } from 'framer-motion';
 import { motion } from 'framer-motion';
-import { Sidebar } from './Sidebar';
-import { SidebarMobile } from './SidebarMobile';
+import Tooltip from '@/components/tooltip/Tooltip';
 
 interface Breadcrumb {
   title: string;
@@ -172,12 +161,16 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
             />
           </div>
           {/* Ngôn ngữ */}
-          <IconButton className="w-10 h-10" icon={<Globe className="w-5 h-5" />} />
-          <IconButton
-            className="w-10 h-10"
-            icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
-            onClick={() => setDarkMode((prev) => !prev)}
-          />
+          <Tooltip content="Chọn ngôn ngữ" trigger="hover">
+            <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
+          </Tooltip>
+          <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover">
+            <IconButton
+              className="w-10 h-10"
+              icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
+              onClick={() => setDarkMode((prev) => !prev)}
+            />
+          </Tooltip>
           <IconButton
             className="w-10 h-10 md:hidden"
             icon={sidebarOpen ? <Dismiss className="w-5 h-5" /> : <TextColumnOne className="w-6 h-6" />}

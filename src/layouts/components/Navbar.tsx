@@ -1,6 +1,7 @@
 import IconButton from '@/components/button/IconButton';
-import { Chevron, Globe, WeatherMoon, WeatherSunny } from '@/components/icons';
+import { Chevron, Globe, Translate, WeatherMoon, WeatherSunny } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
+import Tooltip from '@/components/tooltip/Tooltip';
 import UserDropdown from '@/components/UserDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
@@ -165,8 +166,12 @@ export const Navbar: React.FC = () => {
             onEnter={handleEnter}
           />
           {/* Ngôn ngữ */}
-          <IconButton icon={<Globe className="w-6 h-6" />} />
-          <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
+          <Tooltip content="Chọn ngôn ngữ" trigger="hover" position='bottom'>
+            <IconButton icon={<Translate className="w-6 h-6" />} />
+          </Tooltip>
+          <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover" position='bottom'>
+            <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
+          </Tooltip>
 
           {/* User info */}
 

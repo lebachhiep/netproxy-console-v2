@@ -116,6 +116,36 @@ export const data: ProxyCardData[] = [
     expired: 'Nov 25, 2023',
     autoRenew: true,
     type: 'rotating-proxy'
+  },
+  {
+    id: 10,
+    title: 'Sweden Bandwidth Proxy - 3GB / 15 ngày',
+    planID: 'SWE.EXP2DIP',
+    status: { text: 'Đang hoạt động', color: 'blue' },
+    dataLeft: '3GB',
+    expired: 'Dec 5, 2023',
+    autoRenew: true,
+    type: 'bandwidth-proxy'
+  },
+  {
+    id: 11,
+    title: 'Italy Rotating Proxy - 2GB / 10 ngày',
+    planID: 'ITA.EXP2DIP',
+    status: { text: 'Đang hoạt động', color: 'blue' },
+    dataLeft: '2GB',
+    expired: 'Dec 15, 2023',
+    autoRenew: true,
+    type: 'rotating-proxy'
+  },
+  {
+    id: 12,
+    title: 'Spain Bandwidth Proxy - 4GB / 20 ngày',
+    planID: 'ESP.EXP2DIP',
+    status: { text: 'Đang hoạt động', color: 'blue' },
+    dataLeft: '4GB',
+    expired: 'Dec 20, 2023',
+    autoRenew: true,
+    type: 'bandwidth-proxy'
   }
 ];
 

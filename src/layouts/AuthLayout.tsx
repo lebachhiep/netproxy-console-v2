@@ -7,7 +7,7 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right }) => {
   return (
-    <div className="relative md:flex min-h-screen px-6 lg:px-[120px] bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="max-w-[1200px] mx-auto relative md:flex min-h-screen ">
       {/* Left */}
       <div className="flex-1 flex items-center justify-center lg:p-10 min-h-screen lg:min-h-0">{left}</div>
       {/* Right */}

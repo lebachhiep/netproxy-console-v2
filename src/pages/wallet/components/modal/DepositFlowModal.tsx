@@ -6,12 +6,37 @@ import { InputField } from '@/components/input/InputField';
 import { Modal } from '@/components/modal/Modal';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
+import { formatCurrency } from '@/utils/currency';
 import React, { useEffect, useState } from 'react';
 
 const options = [
-  { value: 'ACB', label: 'Ngân hàng nội địa - ACB' },
-  { value: 'VCB', label: 'Ngân hàng nội địa - VCB' },
-  { value: 'TPB', label: 'Ngân hàng nội địa - TPB' }
+  {
+    value: 'ACB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">ACB</span>
+      </div>
+    )
+  },
+  {
+    value: 'VCB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">VCB</span>
+      </div>
+    )
+  },
+  {
+    value: 'TPB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">TPB</span>
+      </div>
+    )
+  }
 ];
 
 interface DepositFlowModalProps {
@@ -26,7 +51,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
   open,
   onClose,
   defaultStep = 1,
-  defaultAmount = 4.99,
+  defaultAmount = 10,
   defaultMethod = 'ACB'
 }) => {
   const [step, setStep] = useState<1 | 2>(defaultStep);
@@ -86,19 +111,23 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
                 <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
                 {/* Amount Display */}
                 <div className="">
-                  <InputField wrapperClassName="h-10" value={amount} onChange={(e) => setAmount(Math.min(+e.target.value, 10000))} />
+                  <InputField
+                    wrapperClassName="h-10"
+                    value={formatCurrency('' + amount)}
+                    onChange={(e) => setAmount(Math.min(+e.target.value, 10000))}
+                  />
 
                   {/* Slider */}
                   <div className="mt-2">
                     <Slider
-                      min={5}
-                      max={10000}
+                      min={10}
+                      max={1000}
                       step={5}
                       value={amount}
                       onValueChange={setAmount}
                       formatValue={(val) => `$${val.toLocaleString()}`}
-                      labels={['$5.00', '$10,000.00']}
-                      labelValues={[5, 10000]}
+                      labels={['$10.00', '$1,000.00']}
+                      labelValues={[10, 1000]}
                       showCurrentValue={false}
                     />
                   </div>

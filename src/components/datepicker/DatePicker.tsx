@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FiCalendar } from 'react-icons/fi';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { CalendarPlus } from '../icons';

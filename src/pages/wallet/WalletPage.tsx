@@ -15,6 +15,10 @@ import React, { useState } from 'react';
 import DepositFlowModal from './components/modal/DepositFlowModal';
 import { Transaction } from '../history/HistoryPage';
 import { useResponsive } from '@/hooks/useResponsive';
+import { toast } from 'sonner';
+import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { formatCurrency } from '@/utils/currency';
 
 const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
 
@@ -79,7 +83,8 @@ const WalletPage: React.FC = () => {
 
   const { isMobile, isTablet } = useResponsive();
   const paginatedData = tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  const [priceValue, setPriceValue] = useState(5);
+  const [priceValue, setPriceValue] = useState(10);
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
 
   const columns: TableColumn<Transaction>[] = [
     {
@@ -98,7 +103,12 @@ const WalletPage: React.FC = () => {
       render: (value) => (
         <div className="flex items-center justify-between">
           <span>{value}</span>
-          <ContentCopy className="text-blue cursor-pointer" />
+          <ContentCopy
+            className="text-blue cursor-pointer"
+            onClick={() => {
+              copyToClipboard(value);
+            }}
+          />
         </div>
       )
     },
@@ -158,20 +168,24 @@ const WalletPage: React.FC = () => {
             <div>
               <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
               {/* Amount Display */}
-              <div className="">
-                <InputField wrapperClassName="h-10" value={priceValue} onChange={(e) => setPriceValue(Math.min(+e.target.value, 10000))} />
+              <div>
+                <InputField
+                  wrapperClassName="h-10"
+                  value={formatCurrency('' + priceValue)}
+                  onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
+                />
 
                 {/* Slider */}
                 <div className="mt-2">
                   <Slider
-                    min={5}
-                    max={10000}
+                    min={10}
+                    max={1000}
                     step={5}
                     value={priceValue}
                     onValueChange={setPriceValue}
                     formatValue={(val) => `$${val.toLocaleString()}`}
-                    labels={['$5.00', '$10,000.00']}
-                    labelValues={[5, 10000]}
+                    labels={['$10.00', '$1,000.00']}
+                    labelValues={[10, 1000]}
                     showCurrentValue={false}
                   />
                 </div>
@@ -214,7 +228,7 @@ const WalletPage: React.FC = () => {
 
         {/* Right Panel */}
         {/* Wallet Card */}
-        <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="black" />
+        <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />
       </div>
       <div className="p-5 pb-2">
         <div>
@@ -234,6 +248,12 @@ const WalletPage: React.FC = () => {
               {/* Row below for Date + Button (on mobile) */}
               <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
                 <div className="flex-1">
+                  <DateRangePicker
+                    value={dateRange}
+                    onChange={setDateRange}
+                    placeholder="Chọn ngày"
+                    className="h-10 w-full md:w-[220px] sm:flex-none"
+                  />
                   <DatePicker
                     className="h-10 w-full md:w-[220px] sm:flex-none"
                     value={selectedDate}

@@ -5,10 +5,20 @@ import './globals.css';
 import './index.css';
 import './styles/App.scss';
 import './styles/custom.scss';
+import { useEffect } from 'react';
 
 const App = () => {
   const location = useLocation();
   const element = useRoutes(routes, location);
+
+  useEffect(() => {
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
 
   return (
     <>

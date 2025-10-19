@@ -36,7 +36,7 @@ export const ProxyCard: React.FC<ProxyCardProps> = ({ data, onClick, buttonText,
   return (
     <div
       onClick={onClick}
-      className="group cursor-pointer relative w-full h-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark"
+      className="group cursor-pointer relative w-full h-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-primary hover:dark:border-primary-dark"
     >
       {/* Tag */}
       {data.tag && (

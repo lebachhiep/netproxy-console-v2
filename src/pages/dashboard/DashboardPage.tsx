@@ -301,7 +301,7 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-[calc(100dvh-240px)] lg:h-auto bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="h-[calc(100dvh-100px)] md:h-[calc(100dvh-140px)] lg:h-auto bg-bg-canvas dark:bg-bg-canvas-dark">
       <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark">
         {/* ====== TOP CARDS ====== */}
         <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">

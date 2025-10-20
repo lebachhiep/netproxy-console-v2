@@ -301,8 +301,13 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <div className="h-[calc(100dvh-100px)] md:h-[calc(100dvh-140px)] lg:h-auto bg-bg-canvas dark:bg-bg-canvas-dark">
-      <motion.div variants={pageVariants} initial="hidden" animate="visible" className="bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
+      <motion.div
+        variants={pageVariants}
+        initial="hidden"
+        animate="visible"
+        className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col"
+      >
         {/* ====== TOP CARDS ====== */}
         <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
           <motion.div
@@ -443,10 +448,10 @@ const DashboardPage = () => {
         </motion.div>
 
         {/* ====== CONTENT ====== */}
-        <motion.div variants={sectionVariants} className="relative">
+        <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[200px]">
           {viewMode === 'list' ? (
             <Table
-              className="lg:min-h-[calc(100dvh-460px)]"
+              className="h-full"
               scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}
               columns={columns}

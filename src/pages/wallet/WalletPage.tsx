@@ -163,7 +163,7 @@ const WalletPage: React.FC = () => {
 
   return (
     <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
-      <div className="flex flex-col lg:flex-row items-center gap-5 p-5">
+      <div className="flex flex-col lg:flex-row gap-5 p-5 items-stretch">
         {/* Left Panel - Top Up Form */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-4">
@@ -230,7 +230,7 @@ const WalletPage: React.FC = () => {
 
         {/* Right Panel */}
         {/* Wallet Card */}
-        <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />
+        {(isDesktop || isLargeDesktop) && <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />}
       </div>
       {/* Filter section */}
       <div className="p-5 pb-2">
@@ -278,7 +278,7 @@ const WalletPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden min-h-[calc(100dvh-565px)]">
+      <div className="flex-1 overflow-hidden min-h-[200px]">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}

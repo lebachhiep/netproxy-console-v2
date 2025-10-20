@@ -142,7 +142,7 @@ export const Select: React.FC<SelectProps> = ({
           'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-secondary-dark text-sm',
           open
             ? 'border-primary dark:border-primary-dark'
-            : 'border-border-element dark:border-border-element-dark hover:bg-bg-input hover:dark:bg-bg-input-dark hover:font-bold hover:text-text-hi hover:dark:text-text-hi-dark',
+            : 'border-border-element dark:border-border-element-dark hover:bg-bg-input hover:dark:bg-bg-input-dark hover:font-bold hover:text-text-hi hover:dark:text-text-hi-dark hover:border-blue dark:hover:border-transparent',
           className
         )}
       >
@@ -172,7 +172,7 @@ export const Select: React.FC<SelectProps> = ({
               className={twMerge(
                 clsx(
                   'text-text-hi dark:text-text-hi-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold',
-                  selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold',
+                  selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
                 )
               )}
             >

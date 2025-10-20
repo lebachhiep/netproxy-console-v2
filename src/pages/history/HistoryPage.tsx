@@ -129,7 +129,7 @@ const HistoryPage: React.FC = () => {
   ];
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh-200px)] md:h-[calc(100dvh-240px)] lg:h-auto">
+    <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
       <div className="px-5 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
           {/* Left group (Search + Filter + Button) */}
@@ -151,14 +151,6 @@ const HistoryPage: React.FC = () => {
                   placeholder="Chọn ngày"
                   className="h-10 w-full md:w-[220px] sm:flex-none"
                 />
-                {/* <DatePicker
-                  className="h-10 w-full md:w-[220px] sm:flex-none"
-                  value={selectedDate}
-                  onChange={(date: Dayjs | null) => {
-                    setSelectedDate(date);
-                    console.log('Selected date:', date?.format('DD/MM/YYYY'));
-                  }}
-                /> */}
               </div>
 
               <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
@@ -167,9 +159,9 @@ const HistoryPage: React.FC = () => {
         </div>
       </div>
 
-      <div>
+      <div className="flex-1 overflow-hidden min-h-[200px]">
         <Table
-          className="min-h-[calc(100dvh-330px)] md:min-h-[calc(100dvh-310px)] lg:min-h-[calc(100dvh-175px)]"
+          className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 210px)' }}
           data={paginatedData}
           columns={columns}

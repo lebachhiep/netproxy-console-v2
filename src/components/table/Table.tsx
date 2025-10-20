@@ -92,6 +92,9 @@ export interface TableProps<T> {
 
   /** Hiển thị đủ số dòng theo pageSize (bao gồm dòng trống) */
   showEmptyRows?: boolean;
+
+  maxHeight?: string;
+  bodyClassName?: string;
 }
 
 /**
@@ -161,7 +164,9 @@ export function Table<T extends Record<string, any>>({
   sortField = null,
   sortOrder = null,
   onSort,
-  showEmptyRows = false
+  showEmptyRows = false,
+  maxHeight,
+  bodyClassName
 }: TableProps<T>) {
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
@@ -320,7 +325,7 @@ export function Table<T extends Record<string, any>>({
       }}
     >
       <table
-        className={`px-5 shadow-xs ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
+        className={`px-5 shadow-xs flex flex-col flex-1 ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
         style={{
           tableLayout: 'fixed',
           minWidth: tableMinWidth,
@@ -436,7 +441,7 @@ export function Table<T extends Record<string, any>>({
       ref={bodyScrollRef}
       className="overflow-auto hide-scroll-x relative flex-1 dark:bg-bg-canvas-dark"
       style={{
-        maxHeight: scroll?.y,
+        maxHeight: maxHeight || '',
         overflowX: 'auto',
         overflowY: scroll?.y ? 'scroll' : 'visible'
       }}
@@ -452,7 +457,7 @@ export function Table<T extends Record<string, any>>({
           borderSpacing: '0px'
         }}
       >
-        <tbody className="">
+        <tbody className={bodyClassName}>
           {displayData.map((record, rowIndex) => {
             // Tính chỉ số thực tế trong toàn bộ data
             const actualRowIndex = showEmptyRows && pagination ? (pagination.current - 1) * pagination.pageSize + rowIndex : rowIndex;

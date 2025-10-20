@@ -16,7 +16,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
-  const { isDesktop } = useResponsive();
+  const { isDesktop, isLargeDesktop } = useResponsive();
   const navigate = useNavigate();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -33,17 +33,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
       className={`hidden fixed left-5 h-[calc(100vh-40px)] z-[999] bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
       ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[212px] lg:w-[272px]'}`}
       // Hover auto expand / collapse
-      onMouseEnter={() => (isDesktop ? toggle(false) : '')} // mở khi hover
-      onMouseLeave={() => (isDesktop ? toggle(true) : '')} // đóng khi rời chuột
+      onMouseEnter={() => (isDesktop || isLargeDesktop ? toggle(false) : '')} // mở khi hover
+      onMouseLeave={() => (isDesktop || isLargeDesktop ? toggle(true) : '')} // đóng khi rời chuột
     >
       {/* Nút collapse */}
-      <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
-        {collapsed ? (
-          <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
-        ) : (
-          <IconButton onClick={() => toggle(true)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
-        )}
-      </div>
+      {!isDesktop || !isLargeDesktop && (
+        <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
+          {collapsed ? (
+            <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />
+          ) : (
+            <IconButton onClick={() => toggle(true)} icon={<Chevron className="w-4 h-4" />} className="w-6 h-6" />
+          )}
+        </div>
+      )}
       {/* Logo */}
 
       {collapsed ? (

@@ -161,14 +161,14 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center text-sm justify-between pl-3 pr-2 py-2.5 rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-sm transition ${className}`}
+        className={`flex items-center text-sm justify-between pl-3 pr-2 py-2.5 rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-sm transition ${className} hover:border-blue dark:hover:border-transparent ${open && 'border-primary dark:border-primary-dark'}`}
       >
         <span className={hasValue ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>{formatDisplayValue()}</span>
         <CalendarPlus className="text-gray-400 ml-2" />
       </button>
 
       {open && (
-        <div className="absolute mt-2 w-64 bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border-element dark:border-border-element-dark rounded-xl shadow-lg z-50 p-3">
+        <div className="absolute mt-2 w-64 bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border-element dark:border-border-element-dark rounded-xl shadow-lg p-3 z-[101]">
           <div className="flex items-center justify-between mb-2 text-gray-900 dark:text-gray-100">
             <button onClick={prevMonth} className="hover:bg-gray-100 dark:hover:bg-gray-700 w-8 h-8 rounded-lg transition">
               ◀

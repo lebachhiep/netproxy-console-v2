@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import cardBgBlue from '@/assets/images/card_bg_blue.png';
 import cardBgYellow from '@/assets/images/card_bg_yellow.png';
 import cardBgBlack from '@/assets/images/card_bg_black.png';
+import clsx from 'clsx';
 
 interface BalanceCardProps {
   balance: number;
@@ -19,9 +20,10 @@ const backgrounds: Record<string, string> = {
 
 export const BalanceCard: React.FC<BalanceCardProps> = ({ balance, spent, owner, variant = 'blue' }) => {
   return (
-    <div className="w-full max-w-full lg:max-w-[388.5px] flex flex-col gap-1 rounded-2xl overflow-hidden">
+    <div className="w-full max-w-full lg:max-w-[388.5px] flex flex-col gap-1 rounded-tl-2xl rounded-tr-2xl overflow-hidden">
       {/* Main Card giữ đúng tỷ lệ ảnh */}
-      <div className="relative aspect-[168/109] rounded-2xl overflow-hidden text-white">
+      {/* aspect-[388/248] */}
+      <div className="relative aspect-[388/248] rounded-2xl overflow-hidden text-white">
         {/* Background giữ đúng tỉ lệ */}
         <img src={backgrounds[variant]} alt="card background" className="absolute inset-0 w-full h-full object-cover" />
 
@@ -40,7 +42,7 @@ export const BalanceCard: React.FC<BalanceCardProps> = ({ balance, spent, owner,
 
       {/* Footer */}
       <div
-        className={twMerge(
+        className={clsx(
           'rounded-xl text-white text-sm sm:text-base px-5 py-3 flex justify-between items-center transition-colors',
           variant === 'blue' && 'bg-[#2471C9]',
           variant === 'yellow' && 'bg-primary',

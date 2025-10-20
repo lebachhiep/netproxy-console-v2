@@ -34,7 +34,7 @@ export const TabletLayout: React.FC = () => {
             delay: 0.4, // xuất hiện sau sidebar
             ease: easeInOutCustom
           }}
-          className={clsx('transition-all duration-300', collapsed ? 'ml-[68px]' : 'ml-[212px]')}
+          className={clsx('transition-all duration-300', collapsed ? 'md:ml-[68px]' : 'md:ml-[212px]')}
         >
           {/* Navbar đơn giản */}
           <NavbarMobile
@@ -45,7 +45,7 @@ export const TabletLayout: React.FC = () => {
           />
         </motion.div>
         {/* Nội dung */}
-        <main className={clsx('flex-1 transition-all duration-300 overflow-y-auto', collapsed ? 'ml-[68px]' : 'ml-[212px]')}>
+        <main className={clsx('flex-1 transition-all duration-300 overflow-y-auto', collapsed ? 'md:ml-[68px]' : 'md:ml-[212px]')}>
           <Outlet />
         </main>
       </div>

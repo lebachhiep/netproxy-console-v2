@@ -15,8 +15,8 @@ export const AdminLayout: React.FC = () => {
   const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
   return (
-    <div className="bg-bg-canvas dark:bg-bg-canvas-dark min-h-screen md:pl-5 md:py-5">
-      <div className="rounded-tl-[16px] border-border-element relative">
+    <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-screen md:pl-5 md:py-5 flex flex-col">
+      <div className="rounded-tl-[16px] border-border-element relative flex flex-col h-full">
         {/* Sidebar */}
         <motion.div
           initial={{ x: -40, opacity: 0 }}
@@ -45,7 +45,12 @@ export const AdminLayout: React.FC = () => {
         </motion.div>
 
         {/* Content */}
-        <main className={clsx('pt-16 transition-all duration-300 min-h-[calc(100vh-42px)]', collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]')}>
+        <main
+          className={clsx(
+            'pt-16 transition-all duration-300 flex-1 flex flex-col overflow-hidden',
+            collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]'
+          )}
+        >
           <Outlet />
         </main>
       </div>

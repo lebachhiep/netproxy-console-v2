@@ -48,7 +48,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         type="button"
         onClick={() => setOpen(!open)}
         className={twMerge(
-          'flex items-center text-sm justify-between pl-3 pr-2 py-[10px] rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-xs transition',
+          'flex items-center text-sm justify-between pl-3 pr-2 py-[10px] rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-xs transition hover:border-blue dark:hover:border-transparent',
           className
         )}
       >

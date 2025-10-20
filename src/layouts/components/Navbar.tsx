@@ -166,12 +166,8 @@ export const Navbar: React.FC = () => {
             onEnter={handleEnter}
           />
           {/* Ngôn ngữ */}
-          <Tooltip content="Chọn ngôn ngữ" trigger="hover" position='bottom'>
-            <IconButton icon={<Translate className="w-6 h-6" />} />
-          </Tooltip>
-          <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover" position='bottom'>
-            <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
-          </Tooltip>
+          <IconButton icon={<Translate className="w-6 h-6" />} />
+          <IconButton icon={darkMode ? <WeatherMoon /> : <WeatherSunny />} onClick={() => setDarkMode((prev) => !prev)} />
 
           {/* User info */}
 

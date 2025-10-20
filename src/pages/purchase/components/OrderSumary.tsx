@@ -28,7 +28,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
   // Nếu giỏ hàng trống
   if (!orders.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-270px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
+      <div className="flex flex-col items-center justify-center h-[calc(100dvh-270px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
         <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70" />
         <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
         <p className="text-text-me dark:text-text-me-dark text-sm mb-6">Hãy chọn quốc gia để thêm IP vào giỏ hàng của bạn.</p>
@@ -103,7 +103,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
           <DesktopSummary orders={orders} total={total} totalIps={totalIps} totalLocation={totalLocation} />
         </div>
       ) : (
-        <div className="flex flex-col h-[calc(100vh-64px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark">
+        <div className="flex flex-col h-[calc(100dvh-64px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark">
           {/* Scrollable content area */}
           <div className="flex-1 overflow-y-auto p-5 space-y-3 ">
             {orders.map((o, index) => (

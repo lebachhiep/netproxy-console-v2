@@ -22,7 +22,7 @@ export const AdminLayout: React.FC = () => {
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: -20, opacity: 1 }}
           transition={{ duration: 0.4, ease: easeInOutCustom }}
-          className="fixed left-5 top-5 h-[calc(100vh-40px)] z-20"
+          className="fixed left-5 top-5 h-[calc(100dvh-40px)] z-20"
         >
           <Sidebar collapsed={collapsed} toggle={toggle} />
         </motion.div>

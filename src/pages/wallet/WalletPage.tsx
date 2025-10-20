@@ -230,7 +230,7 @@ const WalletPage: React.FC = () => {
 
         {/* Right Panel */}
         {/* Wallet Card */}
-        {(isDesktop || isLargeDesktop) && <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />}
+        {(isDesktop || isLargeDesktop || isMobile) && <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />}
       </div>
       {/* Filter section */}
       <div className="p-5 pb-2">

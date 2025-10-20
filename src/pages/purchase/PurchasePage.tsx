@@ -300,7 +300,7 @@ const PurchasePage: React.FC = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
+                className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
               >
                 {plansByType.rotating[g.key].map((plan, index) => (
                   <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -377,7 +377,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-295px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['bandwidth'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -447,7 +447,7 @@ const PurchasePage: React.FC = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100vh-255px)] md:max-h-[calc(100vh-335px)] lg:max-h-[calc(100vh-215px)] overflow-y-auto"
+                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-255px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
                 >
                   {plansByType.static['unlimited'].map((plan, index) => (
                     <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
@@ -541,7 +541,7 @@ const PurchasePage: React.FC = () => {
                       direction="row"
                     />
                   </div>
-                  <div className="flex flex-col md:flex-row h-[calc(100vh-350px)] md:h-[calc(100vh-270px)]">
+                  <div className="flex flex-col md:flex-row h-[calc(100dvh-350px)] md:h-[calc(100dvh-270px)]">
                     {residentialPages[activeResidentialGroup]}
                   </div>
                 </div>

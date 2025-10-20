@@ -1,10 +1,5 @@
 import IconButton from '@/components/button/IconButton';
-import {
-  Chevron,
-  Dismiss, TextColumnOne,
-  Translate, WeatherMoon,
-  WeatherSunny
-} from '@/components/icons';
+import { Chevron, Dismiss, TextColumnOne, Translate, WeatherMoon, WeatherSunny } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
@@ -161,16 +156,12 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
             />
           </div>
           {/* Ngôn ngữ */}
-          <Tooltip content="Chọn ngôn ngữ" trigger="hover">
-            <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
-          </Tooltip>
-          <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover">
-            <IconButton
-              className="w-10 h-10"
-              icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
-              onClick={() => setDarkMode((prev) => !prev)}
-            />
-          </Tooltip>
+          <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
+          <IconButton
+            className="w-10 h-10"
+            icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
+            onClick={() => setDarkMode((prev) => !prev)}
+          />
           <IconButton
             className="w-10 h-10 md:hidden"
             icon={sidebarOpen ? <Dismiss className="w-5 h-5" /> : <TextColumnOne className="w-6 h-6" />}

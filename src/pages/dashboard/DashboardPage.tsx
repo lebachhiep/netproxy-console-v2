@@ -482,7 +482,7 @@ const DashboardPage = () => {
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="overflow-y-auto h-[calc(100vh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
+                className="overflow-y-auto h-[calc(100dvh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
               >
                 {tableData.map((item, index) => (
                   <motion.div key={item.id} variants={itemVariants}>

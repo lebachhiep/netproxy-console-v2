@@ -201,13 +201,11 @@ const itemVariants: Variants = {
 };
 
 const DashboardPage = () => {
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [tableData, setTableData] = useState<ProxyCardData[]>(data);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<ProxyCardData | null>(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
@@ -301,7 +299,7 @@ const DashboardPage = () => {
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
+    <div className="overflow-auto min-h-0 h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col" style={{ scrollbarGutter: 'stable' }}>
       <motion.div
         variants={pageVariants}
         initial="hidden"

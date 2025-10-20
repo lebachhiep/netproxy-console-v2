@@ -321,7 +321,7 @@ export function Table<T extends Record<string, any>>({
       style={{
         overflowX: 'hidden',
         overflowY: scroll?.y ? 'scroll' : 'visible',
-        scrollbarGutter: 'none'
+        scrollbarGutter: 'stable'
       }}
     >
       <table

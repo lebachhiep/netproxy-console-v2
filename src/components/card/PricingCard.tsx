@@ -75,8 +75,6 @@ export const PricingCard: React.FC<PricingCardProps> = ({ title, price, descript
           {buttonText}
         </Button>
       </div>
-
-      <p className="text-xs text-center text-text-lo dark:text-text-lo-dark">Terms & conditions apply</p>
     </div>
   );
 };

@@ -213,7 +213,7 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] hidden lg:block overflow-y-auto">
+          <div className="w-[473px] hidden lg:block overflow-y-hidden">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}
@@ -229,7 +229,7 @@ const PurchasePage: React.FC = () => {
 
         {/* Bên phải */}
         {orders.length > 0 && (
-          <div className="w-[473px] hidden lg:block overflow-y-auto">
+          <div className="w-[473px] hidden lg:block overflow-y-hidden">
             <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
           </div>
         )}

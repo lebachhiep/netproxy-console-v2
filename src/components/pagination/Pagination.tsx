@@ -243,18 +243,23 @@ export function Pagination({
           </button>
 
           {showSizeChanger && (
-            <div className="hidden md:flex items-center">
+            <div className="hidden md:flex items-center ">
               <Select
-                options={pageSizeOptions.map((size) => {
-                  return {
-                    label: <div>{size} / trang</div>,
-                    value: size
-                  };
-                })}
+                placeholder={current ? 'Trang ' + current : `Chọn trang`}
+                optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
+                options={Array(totalPages)
+                  .fill(null)
+                  .map((_, index) => {
+                    const size = index + 1;
+                    return {
+                      label: <div key={size}>Trang {size}</div>,
+                      value: size
+                    };
+                  })}
                 className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold"
                 labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
-                value={pageSize}
-                onChange={(value) => handleSizeChange(value as number)}
+                value={current}
+                onChange={(value) => handlePageChange(value as number)}
                 placement="top"
               />
             </div>

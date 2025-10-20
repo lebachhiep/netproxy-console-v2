@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
 import { FiChevronDown } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
@@ -15,6 +16,7 @@ interface Option {
 }
 
 interface SelectProps {
+  optionClassName?: string;
   /**
    * Danh sách các option để hiển thị.
    */
@@ -96,7 +98,8 @@ export const Select: React.FC<SelectProps> = ({
   className,
   labelClassName,
   onChange,
-  placement = 'bottom'
+  placement = 'bottom',
+  optionClassName
 }) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | number | undefined>(defaultValue);
@@ -158,7 +161,8 @@ export const Select: React.FC<SelectProps> = ({
         <div
           className={twMerge(
             'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-50',
-            placement === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
+            placement === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1',
+            optionClassName
           )}
         >
           {options.map((opt) => (
@@ -166,8 +170,10 @@ export const Select: React.FC<SelectProps> = ({
               key={opt.value}
               onClick={() => handleSelect(opt)}
               className={twMerge(
-                'text-text-hi dark:text-text-hi-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold',
-                selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
+                clsx(
+                  'text-text-hi dark:text-text-hi-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold',
+                  selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold',
+                )
               )}
             >
               {opt.label}

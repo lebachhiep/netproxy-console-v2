@@ -116,7 +116,7 @@ export const columnsBandwidth: TableColumn<ProxyData>[] = [
         Lấy Proxy
       </Button>
     ),
-    width: 120,
+    width: 135,
     align: 'center',
     fixed: 'right'
   }

@@ -81,7 +81,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
         step === 1 ? (
           <button
             onClick={onClose}
-            className="text-text-hi dark:text-text-hi-dark border-none h-10 flex items-center uppercase px-4 gap-2 text-[12px] tracking-[0.6px] font-bold"
+            className="text-text-hi dark:text-text-lo-dark border-none h-10 flex items-center uppercase px-4 gap-2 text-[12px] tracking-[0.6px] font-bold"
           >
             <DismissCircle />
             Hủy

@@ -25,7 +25,8 @@ import { Button } from '@/components/button/Button';
 import { useResponsive } from '@/hooks/useResponsive';
 import { Pagination } from '@/components/pagination/Pagination';
 import { toast } from 'sonner';
-import { set } from 'zod';
+import { motion, Variants } from 'framer-motion';
+import { sectionVariants } from '@/utils/animation';
 
 export const ProxyDetailPage = () => {
   const { id } = useParams();
@@ -133,7 +134,7 @@ export const ProxyDetailPage = () => {
 
   return (
     <>
-      <div className="bg-bg-canvas dark:bg-bg-canvas-dark">
+      <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col">
         <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
           <div className="flex items-center gap-1">
             <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium" onClick={() => navigate('/home')}>
@@ -144,10 +145,15 @@ export const ProxyDetailPage = () => {
           </div>
         </div>
         {item.type === 'bandwidth-proxy' ? (
-          <div className="overflow-y-auto h-[calc(100dvh-190px)] md:h-auto">
-            <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark" defaultActiveKey="list">
+          <div className="flex-1 h-[calc(100dvh-190px)] md:h-auto">
+            <Tabs
+              tabs={bandwidthTabs}
+              className="bg-bg-primary dark:bg-bg-primary-dark"
+              defaultWrapperClass="h-full flex flex-col"
+              defaultActiveKey="list"
+            >
               {/* Tab 1: Danh sách Proxy */}
-              <div>
+              <div className="h-full flex flex-col overflow-auto">
                 <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
                   {/* Header info */}
                   <div className="flex flex-col gap-1">
@@ -198,30 +204,33 @@ export const ProxyDetailPage = () => {
                 </div>
 
                 {/* Table danh sách proxy */}
-                <Table
-                  className="min-h-[calc(100dvh-395px)] md:min-h-[calc(100dvh-375px)]"
-                  scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
-                  data={tableData}
-                  columns={columnsBandwidth}
-                  paginationType="pagination"
-                  size="large"
-                  rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-                  pagination={{
-                    current: currentPage,
-                    pageSize,
-                    total: tableData.length,
-                    showSizeChanger: true,
-                    pageSizeOptions: [10, 20, 50, 100],
-                    onChange: (page, size) => {
-                      setCurrentPage(page);
-                      setPageSize(size);
-                    }
-                  }}
-                />
+                <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
+                  <Table
+                    className="h-full"
+                    // className="min-h-[calc(100dvh-395px)] md:min-h-[calc(100dvh-375px)]"
+                    scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
+                    data={tableData}
+                    columns={columnsBandwidth}
+                    paginationType="pagination"
+                    size="large"
+                    rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+                    pagination={{
+                      current: currentPage,
+                      pageSize,
+                      total: tableData.length,
+                      showSizeChanger: true,
+                      pageSizeOptions: [10, 20, 50, 100],
+                      onChange: (page, size) => {
+                        setCurrentPage(page);
+                        setPageSize(size);
+                      }
+                    }}
+                  />
+                </motion.div>
               </div>
 
               {/* Tab 2 */}
-              <div>
+              <div className="h-full flex flex-col overflow-auto">
                 <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
@@ -247,7 +256,7 @@ export const ProxyDetailPage = () => {
                     <Select className="h-10 w-[100px] whitespace-nowrap" placeholder="Quốc gia" options={countryOptions} />
                     <ApiInput
                       className="h-10"
-                       value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
+                      value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
                       actions={[
                         {
                           icon: isHideApiValue ? (
@@ -274,7 +283,7 @@ export const ProxyDetailPage = () => {
             </Tabs>
           </div>
         ) : (
-          <div className="overflow-y-auto h-[calc(100dvh-190px)] md:h-auto">
+          <div className="flex-1 h-[calc(100dvh-190px)] md:h-auto overflow-auto">
             <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
@@ -317,22 +326,24 @@ export const ProxyDetailPage = () => {
                 <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
               </div>
             </div>
-
-            <Table
-              className="min-h-[calc(100dvh-475px)] md:min-h-[calc(100dvh-445px)]"
-              scroll={{ x: 300, y: 'calc(100dvh - 535px)' }}
-              data={tableData}
-              columns={columns}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: (keys, rows) => setSelectedRowKeys(keys)
-              }}
-              paginationType="pagination"
-              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-              size="large"
-              bordered={false}
-              showEmptyRows
-            />
+            <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-scroll max-h-[250px]">
+              <Table
+                // className="min-h-[calc(100dvh-475px)] md:min-h-[calc(100dvh-445px)]"
+                className="h-full"
+                scroll={{ x: 300, y: 'calc(100dvh - 535px)' }}
+                data={tableData}
+                columns={columns}
+                rowSelection={{
+                  selectedRowKeys,
+                  onChange: (keys, rows) => setSelectedRowKeys(keys)
+                }}
+                paginationType="pagination"
+                rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+                size="large"
+                bordered={false}
+                showEmptyRows
+              />
+            </motion.div>
             <div className="px-5 py-3 border-t-2 border-b-2 border-border dark:border-border-dark">
               <ActionButtons />
             </div>

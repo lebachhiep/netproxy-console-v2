@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
   return (
     <AuthLayout
       left={
-        <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại!">
+        <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại !">
           {/* Google Button */}
           <div className="flex flex-col gap-5 p-5 md:p-0 shadow-lg md:shadow-none rounded-[20px] border md:border-none border-border-element dark:border-border-element-dark">
             <button
@@ -115,8 +115,8 @@ export const LoginPage: React.FC = () => {
                         <InputField
                           {...field}
                           type="email"
-                          placeholder="Nhập email"
-                          icon={<EmojiLaugh className="text-blue" />}
+                          placeholder="Tài khoản"
+                          icon={<EmojiLaugh className="text-primary" />}
                           disabled={isSubmitting}
                         />
                         {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
@@ -133,7 +133,7 @@ export const LoginPage: React.FC = () => {
                           {...field}
                           type="password"
                           placeholder="Nhập mật khẩu"
-                          icon={<LockClosed className="text-primary" />}
+                          icon={<LockClosed className="text-blue" />}
                           showPasswordToggle
                           disabled={isSubmitting}
                         />
@@ -142,7 +142,7 @@ export const LoginPage: React.FC = () => {
                     )}
                   />
 
-                  <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm underline text-end font-medium">
+                  <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm text-underline text-end font-medium">
                     Quên mật khẩu?
                   </Link>
                 </div>
@@ -171,14 +171,14 @@ export const LoginPage: React.FC = () => {
 
           <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
             Bạn chưa có tài khoản?{' '}
-            <Link to={AUTH_ROUTES.REGISTER} className="text-blue hover:underline">
+            <Link to={AUTH_ROUTES.REGISTER} className="text-blue text-underline">
               Đăng ký
             </Link>
           </p>
         </AuthFormWrapper>
       }
       right={
-        <div className="md:w-[414px] lg:w-[720px] justify-center items-center gap-1 p-5 md:pr-0 hidden md:flex relative">
+        <div className="md:w-[414px] lg:w-[720px] justify-center items-center gap-1 p-5 lg:pr-0 hidden md:flex relative">
           <AuthShowcase
             bg={bgAuth}
             images={[

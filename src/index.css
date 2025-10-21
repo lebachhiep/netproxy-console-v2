@@ -200,3 +200,9 @@ code {
 .disable-transitions *::after {
   transition: background-color 0.3s ease-out;
 }
+
+.text-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}

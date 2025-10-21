@@ -109,7 +109,7 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
             {orders.map((o, index) => (
               <div
                 key={index}
-                className="rounded-lg font-medium text-sm bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border dark:border-border-dark shadow-[0px_4px_8px_-2px_rgba(0,0,0,0.10)]"
+                className="rounded-lg font-medium text-sm bg-bg-canvas dark:bg-bg-canvas-dark border-2 border-border dark:border-border-element-dark shadow-[0px_4px_8px_-2px_rgba(0,0,0,0.10)]"
               >
                 <div className="p-2 border-b border-border dark:border-border-dark">
                   <div className="text-text-hi dark:text-text-hi-dark">{o.country.name}</div>

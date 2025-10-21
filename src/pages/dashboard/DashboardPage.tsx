@@ -24,7 +24,7 @@ import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
 import { DataUsageModal } from './components/modal/DataUsageModal';
 import { useResponsive } from '@/hooks/useResponsive';
-import clsx from 'clsx';
+import { sectionVariants } from '@/utils/animation';
 
 export const data: ProxyCardData[] = [
   {
@@ -163,18 +163,7 @@ const pageVariants: Variants = {
   }
 };
 
-const sectionVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      delay: 0.9,
-      ease: easeInOutCustom as any
-    }
-  }
-};
+
 //  Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -212,7 +201,7 @@ const DashboardPage = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [openDataUsageModal, setOpenDataUsageModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const { isMobile, isTablet } = useResponsive();
+  const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
 
   const handleAutoRenewChange = (id: number | string, checked: boolean) => {
     setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
@@ -270,13 +259,17 @@ const DashboardPage = () => {
       render: (value) => <div className="line-clamp-1">{value || '...'}</div>
     },
     {
-      width: isMobile || isTablet ? 125 : 200,
+      width: isMobile || isTablet ? 150 : 200,
       fixed: 'right',
       key: 'buttonText',
       title: 'Hành động',
       align: 'center',
       render: (_, record, index) => (
-        <Button variant="default" className="px-3 py-[7.5px] h-[32px]" onClick={() => handleItemClick(index, record.id)}>
+        <Button
+          variant="default"
+          className="px-3 py-[7.5px] h-[32px] dark:text-text-lo-dark"
+          onClick={() => handleItemClick(index, record.id)}
+        >
           QUẢN LÝ
         </Button>
       )
@@ -298,13 +291,73 @@ const DashboardPage = () => {
   const prevItem = selectedIndex !== null && selectedIndex > 0 ? sortedData[selectedIndex - 1] : null;
   const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
+  const last2Items = useMemo(() => {
+    const items = [
+      <OverViewCard
+        key="3"
+        icon={
+          <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
+            <TopSpeed />
+          </div>
+        }
+        title="Hiệu suất & khả dụng"
+        mainContent={
+          <div>
+            <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
+          </div>
+        }
+        subInfo={[
+          {
+            label: 'Lưu lượng đã sử dụng:',
+            value: (
+              <div>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">256</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> GB</span>
+              </div>
+            )
+          }
+        ]}
+      />,
+      <OverViewCard
+        key="4"
+        icon={
+          <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
+            <Storage />
+          </div>
+        }
+        title="Máy chủ & IP"
+        mainContent={
+          <div>
+            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+            <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
+          </div>
+        }
+        subInfo={[
+          {
+            label: 'IP có trong pool:',
+            value: (
+              <div>
+                <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
+              </div>
+            )
+          }
+        ]}
+      />
+    ];
+    if (isMobile || isTablet) return items.reverse();
+    return items;
+  }, [isDesktop, isLargeDesktop]);
+
   return (
-    <div className="overflow-auto min-h-0 h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col" style={{ scrollbarGutter: 'stable' }}>
+    <div className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
       <motion.div
         variants={pageVariants}
         initial="hidden"
         animate="visible"
-        className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col"
+        className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col flex-1"
       >
         {/* ====== TOP CARDS ====== */}
         <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark">
@@ -351,65 +404,9 @@ const DashboardPage = () => {
                 buttonText="MUA THÊM"
                 onButtonClick={() => navigate('/buy')}
               />,
-              <OverViewCard
-                key="3"
-                icon={
-                  <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
-                    <TopSpeed />
-                  </div>
-                }
-                title="Hiệu suất & khả dụng"
-                mainContent={
-                  <div>
-                    <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
-                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
-                  </div>
-                }
-                subInfo={[
-                  {
-                    label: 'Proxy khả dụng:',
-                    value: (
-                      <div>
-                        <span className="text-green dark:text-green-dark font-semibold text-sm">12.535</span>
-                        <span className="text-text-hi dark:text-green-dark font-semibold text-sm"> Ports</span>
-                      </div>
-                    )
-                  }
-                ]}
-              />,
-              <OverViewCard
-                key="4"
-                icon={
-                  <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
-                    <Storage />
-                  </div>
-                }
-                title="Máy chủ & IP"
-                mainContent={
-                  <div>
-                    <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-                    <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
-                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
-                  </div>
-                }
-                subInfo={[
-                  {
-                    label: 'Tổng số IP:',
-                    value: (
-                      <div>
-                        <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
-                        <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
-                      </div>
-                    )
-                  }
-                ]}
-              />
+              ...last2Items
             ].map((card, i) => (
-              <motion.div
-                key={i}
-                variants={itemVariants}
-                className={clsx(i === 3 && '[grid-area:2/1] lg:[grid-area:1/3]', i === 4 && '[grid-area:2/2] lg:[grid-area:1/4]')}
-              >
+              <motion.div key={i} variants={itemVariants}>
                 {card}
               </motion.div>
             ))}
@@ -425,7 +422,7 @@ const DashboardPage = () => {
           <div className="flex items-center justify-between mt-3">
             <Input
               placeholder="Tìm kiếm"
-              wrapperClassName="bg-bg-input border-2 h-10"
+              wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => console.log(e.target.value)}
             />
@@ -439,14 +436,14 @@ const DashboardPage = () => {
               <IconButton
                 hoverIconColor="text-white"
                 icon={<Add className="text-white dark:text-white" />}
-                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border dark:border-primary-hi-dark hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark dark:no-pseudo"
+                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border  hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark dark:no-pseudo"
               />
             </div>
           </div>
         </motion.div>
 
         {/* ====== CONTENT ====== */}
-        <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[200px]">
+        <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
           {viewMode === 'list' ? (
             <Table
               className="h-full"
@@ -488,7 +485,7 @@ const DashboardPage = () => {
                   <motion.div key={item.id} variants={itemVariants}>
                     <ProxyCard
                       data={item}
-                      buttonText="Quản lý"
+                      buttonText="QUẢN LÝ"
                       onRenewChange={handleAutoRenewChange}
                       onClick={() => handleItemClick(index, item.id)}
                     />

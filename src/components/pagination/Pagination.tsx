@@ -97,17 +97,6 @@ export function Pagination({
             <div className="flex items-center justify-center gap-2">
               <span className="text-text-me dark:text-text-me-dark">Hiển thị</span>
               {showSizeChanger && (
-                // <select
-                //   className="border shadow-md border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                //   value={pageSize}
-                //   onChange={(e) => handleSizeChange(parseInt(e.target.value))}
-                // >
-                //   {pageSizeOptions.map((size) => (
-                //     <option key={size} value={size}>
-                //       {size}
-                //     </option>
-                //   ))}
-                // </select>
                 <>
                   <Select
                     options={sizeOptionsWithCurrent.map((size) => {
@@ -160,14 +149,36 @@ export function Pagination({
     <div className={`py-3 px-5 z-[100] ${className}`}>
       <div className="flex items-center justify-between">
         {/* Left side - Page info and size changer */}
-        <div className="hidden md:flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
+        {/* <div className="hidden md:flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">
           <div>
             <span className="text-text-hi dark:text-text-hi-dark">
               {startItem}-{endItem}{' '}
             </span>
             trong <span className="text-text-hi dark:text-text-hi-dark">{total}</span> mục
           </div>
-        </div>
+        </div> */}
+        {showSizeChanger && (
+          <div className="hidden md:flex items-center ">
+            <Select
+              placeholder={current ? 'Trang ' + current : `Chọn trang`}
+              optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
+              options={Array(totalPages)
+                .fill(null)
+                .map((_, index) => {
+                  const size = index + 1;
+                  return {
+                    label: <div key={size}>Trang {size}</div>,
+                    value: size
+                  };
+                })}
+              className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent"
+              labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
+              value={current}
+              onChange={(value) => handlePageChange(value as number)}
+              placement="top"
+            />
+          </div>
+        )}
 
         {showSizeChanger && (
           <div className="flex md:hidden items-center">
@@ -241,29 +252,6 @@ export function Pagination({
           >
             <CaretRight className="" />
           </button>
-
-          {showSizeChanger && (
-            <div className="hidden md:flex items-center ">
-              <Select
-                placeholder={current ? 'Trang ' + current : `Chọn trang`}
-                optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
-                options={Array(totalPages)
-                  .fill(null)
-                  .map((_, index) => {
-                    const size = index + 1;
-                    return {
-                      label: <div key={size}>Trang {size}</div>,
-                      value: size
-                    };
-                  })}
-                className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent"
-                labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
-                value={current}
-                onChange={(value) => handlePageChange(value as number)}
-                placement="top"
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>

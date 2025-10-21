@@ -139,7 +139,7 @@ export const Select: React.FC<SelectProps> = ({
         type="button"
         onClick={() => setOpen(!open)}
         className={twMerge(
-          'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-secondary-dark text-sm',
+          'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-secondary-dark text-sm dark:text-text-me-dark',
           open
             ? 'border-primary dark:border-primary-dark'
             : 'border-border-element dark:border-border-element-dark hover:bg-bg-input hover:dark:bg-bg-input-dark hover:font-bold hover:text-text-hi hover:dark:text-text-hi-dark hover:border-blue dark:hover:border-transparent',
@@ -148,7 +148,7 @@ export const Select: React.FC<SelectProps> = ({
       >
         <div className="flex items-center gap-2">
           {selectedOption ? (
-            <div className={twMerge('text-text-hi dark:text-text-hi-dark font-bold', labelClassName)}>{selectedOption.label}</div>
+            <div className={twMerge('text-text-hi dark:text-text-me-dark font-bold', labelClassName)}>{selectedOption.label}</div>
           ) : (
             <span className="text-text-me dark:text-text-me-dark">{placeholder}</span>
           )}
@@ -171,7 +171,7 @@ export const Select: React.FC<SelectProps> = ({
               onClick={() => handleSelect(opt)}
               className={twMerge(
                 clsx(
-                  'text-text-hi dark:text-text-hi-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold',
+                  'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold ',
                   selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
                 )
               )}

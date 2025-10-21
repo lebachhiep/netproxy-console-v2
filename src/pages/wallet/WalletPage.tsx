@@ -165,7 +165,7 @@ const WalletPage: React.FC = () => {
     <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
       <div className="flex flex-col lg:flex-row gap-5 p-5 items-stretch">
         {/* Left Panel - Top Up Form */}
-        <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark">
+        <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
             <div>
               <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
@@ -278,7 +278,7 @@ const WalletPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden min-h-[200px]">
+      <div className="flex-1 overflow-hidden min-h-[350px]">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}

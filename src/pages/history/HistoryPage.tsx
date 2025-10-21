@@ -129,7 +129,7 @@ const HistoryPage: React.FC = () => {
   ];
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
+    <div className="overflow-y-auto md:h-[calc(100dvh-104px)] flex flex-col h-full">
       <div className="px-5 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
           {/* Left group (Search + Filter + Button) */}
@@ -159,7 +159,7 @@ const HistoryPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden min-h-[200px]">
+      <div className="flex-1 overflow-hidden min-h-[350px]">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 210px)' }}

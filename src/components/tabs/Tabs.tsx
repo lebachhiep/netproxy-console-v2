@@ -32,6 +32,7 @@ interface TabsProps {
   onChange?: (key: string | number) => void;
 
   className?: string;
+  defaultWrapperClass?: string;
 }
 
 /**
@@ -61,7 +62,7 @@ interface TabsProps {
  * </Tabs>
  *
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className, defaultWrapperClass }) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
   const isControlled = activeKey !== undefined;
@@ -77,7 +78,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
   return (
     <>
       {type === 'default' && (
-        <div>
+        <div className={defaultWrapperClass}>
           <div className={twMerge('relative border-b-2 h-10 border-border-element dark:border-border-element-dark pl-5', className)}>
             <div className="flex w-fit gap-5 relative">
               {tabs.map((tab) => {
@@ -110,7 +111,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
               <span id="tab-indicator" className="absolute bottom-0 h-[2px] bg-primary transition-all duration-300 ease-in-out" />
             </div>
           </div>
-          <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
+          <>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</>
         </div>
       )}
 

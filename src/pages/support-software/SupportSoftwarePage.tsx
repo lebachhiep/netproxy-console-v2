@@ -34,7 +34,7 @@ const SupportSoftwarePage = () => {
   ];
 
   return (
-    <div className="p-5">
+    <div className="p-5 h-full overflow-auto">
       <div className="grid grid-cols-2 md:flex md:flex-wrap gap-5">
         {apps.map((app, idx) => (
           <AppCard

@@ -42,7 +42,7 @@ export const ForgotPasswordPage: React.FC = () => {
   }, [clearError]);
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    console.log("calling onsubmit")
+    console.log('calling onsubmit');
     console.log({ data });
     try {
       await resetPassword(data.email);
@@ -56,7 +56,7 @@ export const ForgotPasswordPage: React.FC = () => {
     }
   };
 
-  console.log("isEmailSent", emailSent);
+  console.log('isEmailSent', emailSent);
 
   return (
     <div className="relative flex p-6 items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
@@ -71,13 +71,7 @@ export const ForgotPasswordPage: React.FC = () => {
                     control={control}
                     render={({ field }) => (
                       <div>
-                        <InputField
-                          type="email"
-                          placeholder="Nhập email"
-                          disabled={isSubmitting}
-                          className="w-full"
-                          {...field}
-                        />
+                        <InputField {...field} type="email" placeholder="Nhập email" disabled={isSubmitting} />
                         {errors.email && <span className="text-red-500 text-sm mt-1">{errors.email.message}</span>}
                       </div>
                     )}

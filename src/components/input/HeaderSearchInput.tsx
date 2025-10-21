@@ -43,7 +43,7 @@ export const HeaderSearchInput = forwardRef<HTMLInputElement, HeaderSearchInputP
             type="text"
             onKeyDown={handleKeyDown}
             className={twMerge(
-              'h-full w-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+              'h-full w-full text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark min-w-[243px]',
               inputClassName
             )}
             {...props}

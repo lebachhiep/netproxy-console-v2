@@ -82,7 +82,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
 
   return (
     <>
-      <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark pt-5">
+      <div className="h-full flex flex-col overflow-auto bg-bg-canvas dark:bg-bg-canvas-dark pt-5">
         <Tabs tabs={accountTabs} defaultActiveKey="info">
           {/* Tab 1: Thông tin chung */}
           <div>

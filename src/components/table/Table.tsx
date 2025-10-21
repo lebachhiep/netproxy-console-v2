@@ -325,7 +325,7 @@ export function Table<T extends Record<string, any>>({
       }}
     >
       <table
-        className={`px-5 shadow-xs flex flex-col flex-1 ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
+        className={`px-5 shadow-xs ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
         style={{
           tableLayout: 'fixed',
           minWidth: tableMinWidth,

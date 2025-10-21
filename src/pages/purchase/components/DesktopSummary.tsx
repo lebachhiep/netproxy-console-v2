@@ -19,7 +19,7 @@ export const DesktopSummary = ({
   const [isExpanded, setExpanded] = useState<boolean>(false);
 
   return (
-    <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-secondary-dark">
+    <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark">
       <div className="relative p-5">
         <div className="text-text-hi dark:text-text-hi-dark absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <IconButton

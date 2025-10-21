@@ -98,7 +98,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
               ref={ref} // <-- thêm ref
               type={inputType}
               className={twMerge(
-                'h-5 text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
+                'w-full h-5 text-sm outline-none bg-transparent text-text-hi dark:text-text-hi-dark placeholder:text-text-lo dark:placeholder:text-text-lo-dark',
                 inputClassName
               )}
               {...props}
@@ -122,7 +122,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
                 type="button"
                 tabIndex={-1}
                 onClick={() => setShowPassword(!showPassword)}
-                className="w-6 h-6 flex items-center text-text-muted dark:text-text-muted-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
+                className="w-6 h-6 flex items-center text-text-muted dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark transition-colors"
               >
                 {showPassword ? <EyeOff /> : <Eye />}
               </button>

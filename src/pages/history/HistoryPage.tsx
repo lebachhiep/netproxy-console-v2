@@ -150,6 +150,7 @@ const HistoryPage: React.FC = () => {
                   onChange={setDateRange}
                   placeholder="Chọn ngày"
                   className="h-10 w-full md:w-[220px] sm:flex-none"
+                  triggerClassName="dark:pseudo-border-top dark:border-transparent"
                 />
               </div>
 

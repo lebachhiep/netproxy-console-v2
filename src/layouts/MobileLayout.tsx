@@ -26,7 +26,7 @@ export const MobileLayout: React.FC = () => {
   }, [sidebarOpen]);
 
   return (
-    <div className="h-screen bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col">
+    <div className="h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col">
       {/* Navbar đơn giản */}
 
       <NavbarMobile sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />

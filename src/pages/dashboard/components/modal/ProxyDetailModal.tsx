@@ -303,7 +303,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
   return (
     <Modal
       bodyClassName="h-full"
-      className="h-screen rounded-none max-w-[1085px] relative"
+      className="h-[100dvh] rounded-none max-w-[1085px] relative"
       open={open}
       onClose={onClose}
       title={item.title || 'Chi tiết'}
@@ -471,7 +471,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                     onChange={(e) => console.log(e.target.value)}
                   />
                   <SelectTag
-                    className="h-10"
+                    className="h-10 dark:bg-bg-primary-dark dark:pseudo-border-top dark:border-transparent"
                     options={optionsTagSelect}
                     placeholder="Trạng thái"
                     onChange={(val) => console.log('Selected:', val)}

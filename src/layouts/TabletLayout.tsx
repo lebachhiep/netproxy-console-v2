@@ -15,7 +15,7 @@ export const TabletLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col h-screen md:pl-5 md:py-5 md:overflow-hidden">
+    <div className="bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col h-[100dvh] md:pl-5 md:py-5 md:overflow-hidden">
       <div className="rounded-tl-[16px] border-border-element relative flex flex-col h-full">
         {/* Sidebar */}
         <motion.div
@@ -45,7 +45,12 @@ export const TabletLayout: React.FC = () => {
           />
         </motion.div>
         {/* Nội dung */}
-        <main className={clsx('flex-1 transition-all duration-300 overflow-y-hidden flex flex-col', collapsed ? 'md:ml-[68px]' : 'md:ml-[212px]')}>
+        <main
+          className={clsx(
+            'flex-1 transition-all duration-300 overflow-y-hidden flex flex-col',
+            collapsed ? 'md:ml-[68px]' : 'md:ml-[212px]'
+          )}
+        >
           <Outlet />
         </main>
       </div>

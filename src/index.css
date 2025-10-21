@@ -32,6 +32,26 @@
     z-index: 10;
   }
 
+  .pseudo-border-top-orange {
+    position: relative;
+    --border-color: #FF8A4D;
+  }
+
+  .pseudo-border-top-orange::before {
+    content: '';
+    position: absolute;
+    top: -2px; /* chỉnh vừa khít border-2 (nếu border-1 thì để 0) */
+    left: -2px; /* khớp với độ dày border thật */
+    right: -2px;
+    height: calc(50% + 2px); /* chỉ chiếm nửa trên của nút */
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    border-top: 2px solid #ffbc99;
+    pointer-events: none;
+    transition: border-color 0.3s;
+    z-index: 10;
+  }
+
   .no-pseudo::before {
     content: none !important;
   }

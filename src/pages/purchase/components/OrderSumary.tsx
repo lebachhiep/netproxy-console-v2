@@ -75,17 +75,17 @@ const OrderSummary: React.FC<Props> = ({ orders, onUpdateQuantity, onRemove, onC
                   <div className="w-[100px]">
                     <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
                       <div
-                        className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer"
+                        className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                         onClick={() => onUpdateQuantity(o.country, o.quantity - 1)}
                       >
-                        <Subtract className="text-text-lo dark:text-text-lo-dark" />
+                        <Subtract className="text-text-lo dark:text-text-lo-dark " />
                       </div>
                       <span className="text-text-hi dark:text-text-hi-dark">{o.quantity}</span>
                       <div
-                        className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer"
+                        className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                         onClick={() => onUpdateQuantity(o.country, o.quantity + 1)}
                       >
-                        <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4" />
+                        <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
                       </div>
                     </div>
                   </div>

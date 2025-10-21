@@ -85,7 +85,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
   return (
     <Modal
       bodyClassName="h-full"
-      className="h-screen rounded-none max-w-[1085px] relative"
+      className="h-[100dvh] rounded-none max-w-[1085px] relative"
       open={open}
       onClose={onClose}
       title={'Tài khoản'}

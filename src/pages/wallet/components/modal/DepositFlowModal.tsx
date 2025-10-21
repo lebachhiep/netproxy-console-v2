@@ -72,7 +72,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
 
   return (
     <Modal
-      className={'max-w-[558px] max-h-screen overflow-auto'}
+      className={'max-w-[558px] max-h-[100dvh] overflow-auto'}
       open={open}
       title={step === 1 ? 'Nạp tiền' : 'QR - Thanh toán'}
       onClose={onClose}
@@ -143,7 +143,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
                   onChange={(val) => setSelectedMethod(val)}
                   placeholder="Chọn ngân hàng"
                   placement="bottom"
-                  className="w-full h-10"
+                  className="w-full h-10 dark:bg-[#2B405A] dark:pseudo-border-top dark:border-transparent "
                 />
               </div>
 

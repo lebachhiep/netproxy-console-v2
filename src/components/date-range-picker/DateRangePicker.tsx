@@ -11,6 +11,7 @@ interface DateRangePickerProps {
   onChange: (range: DateRange) => void;
   placeholder?: string;
   className?: string;
+  triggerClassName?: string;
 }
 
 const formatDate = (date: Date): string => {
@@ -67,7 +68,8 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   value = { from: null, to: null },
   onChange,
   placeholder = 'Chọn khoảng thời gian',
-  className = ''
+  className = '',
+  triggerClassName = ''
 }) => {
   const [open, setOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -161,7 +163,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center text-sm justify-between pl-3 pr-2 py-2.5 rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-sm transition ${className} hover:border-blue dark:hover:border-transparent ${open && 'border-primary dark:border-primary-dark'}`}
+        className={`flex items-center text-sm justify-between pl-3 pr-2 py-2.5 rounded-lg border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark shadow-sm transition ${className} hover:border-blue dark:hover:border-transparent ${open && 'border-primary dark:border-primary-dark'} ${triggerClassName}`}
       >
         <span className={hasValue ? 'text-gray-900 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}>{formatDisplayValue()}</span>
         <CalendarPlus className="text-gray-400 ml-2" />

@@ -436,7 +436,7 @@ const DashboardPage = () => {
               <IconButton
                 hoverIconColor="text-white"
                 icon={<Add className="text-white dark:text-white" />}
-                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border  hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-primary-hi-dark dark:no-pseudo"
+                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border  hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-transparent dark:!pseudo-border-top-orange"
               />
             </div>
           </div>

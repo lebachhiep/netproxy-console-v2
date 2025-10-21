@@ -73,7 +73,7 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex p-6 items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
       <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
         <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-5">

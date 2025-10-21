@@ -43,7 +43,7 @@ export const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex p-6 items-center justify-center min-h-screen bg-bg-canvas dark:bg-bg-canvas-dark">
+    <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
       {step == 1 ? (
         <AuthFormWrapper title="Đặt lại mật khẩu" subtitle="Vui lòng nhập mật khẩu mới">
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">

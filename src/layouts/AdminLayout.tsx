@@ -15,7 +15,7 @@ export const AdminLayout: React.FC = () => {
   const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
   return (
-    <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-screen md:pl-5 md:py-5 flex flex-col">
+    <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-[100dvh] md:pl-5 md:py-5 flex flex-col">
       <div className="rounded-tl-[16px] border-border-element relative flex flex-col h-full">
         {/* Sidebar */}
         <motion.div

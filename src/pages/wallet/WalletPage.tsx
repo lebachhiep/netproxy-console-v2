@@ -2,7 +2,6 @@ import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
-import { DatePicker } from '@/components/datepicker/DatePicker';
 import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { InputField } from '@/components/input/InputField';
@@ -203,7 +202,7 @@ const WalletPage: React.FC = () => {
                 onChange={(val) => setSelectedMethod(val)}
                 placeholder="Chọn ngân hàng"
                 placement="bottom"
-                className="w-full h-10"
+                className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
               />
             </div>
 
@@ -259,7 +258,8 @@ const WalletPage: React.FC = () => {
                     value={dateRange}
                     onChange={setDateRange}
                     placeholder="Chọn ngày"
-                    className={clsx('h-10 w-full sm:flex-none', isTablet && '!w-full', (isDesktop || isLargeDesktop) && 'max-w-[220px]')}
+                    className={clsx('h-10 w-full sm:flex-none ', isTablet && '!w-full', (isDesktop || isLargeDesktop) && 'max-w-[220px]')}
+                    triggerClassName="dark:bg-bg-primary-dark dark:pseudo-border-top dark:border-transparent"
                   />
                   {/* <DatePicker
                     className="h-10 w-full md:w-[220px] sm:flex-none"

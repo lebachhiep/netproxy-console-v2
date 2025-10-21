@@ -139,7 +139,7 @@ export const Select: React.FC<SelectProps> = ({
         type="button"
         onClick={() => setOpen(!open)}
         className={twMerge(
-          'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-secondary-dark text-sm dark:text-text-me-dark',
+          'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-primary-dark text-sm dark:text-text-me-dark',
           open
             ? 'border-primary dark:border-primary-dark'
             : 'border-border-element dark:border-border-element-dark hover:bg-bg-input hover:dark:bg-bg-input-dark hover:font-bold hover:text-text-hi hover:dark:text-text-hi-dark hover:border-blue dark:hover:border-transparent',

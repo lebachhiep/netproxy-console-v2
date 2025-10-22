@@ -500,7 +500,6 @@ const ComponentPage = () => {
             current: currentPage,
             pageSize: pageSize,
             total: data.length,
-            showSizeChanger: true,
             pageSizeOptions: [2, 4, 6, 8],
             onChange: (page, size) => {
               setCurrentPage(page);

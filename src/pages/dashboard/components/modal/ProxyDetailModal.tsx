@@ -83,8 +83,8 @@ export const columnsBandwidth: TableColumn<ProxyData>[] = [
     ),
     render: (value) => (
       <Select
-        labelClassName="font-medium text-text-me"
-        className="h-8"
+        labelClassName="font-medium text-text-me "
+        className="h-8 dark:pseudo-border-top dark:border-transparent"
         options={locationOptions}
         value={value}
         onChange={(newValue) => console.log('Selected:', newValue)}
@@ -277,7 +277,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       render: (value) => (
         <Select
           labelClassName="font-medium text-text-me"
-          className="h-8"
+          className="h-8 dark:pseudo-border-top dark:border-transparent"
           options={locationOptions}
           value={value}
           onChange={(newValue) => console.log('Selected:', newValue)}
@@ -302,8 +302,8 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
 
   return (
     <Modal
-      bodyClassName="h-full"
-      className="h-[100dvh] rounded-none max-w-[1085px] relative"
+      bodyClassName="flex-1 overflow-hidden flex flex-col"
+      className="rounded-none max-w-[1085px] relative flex flex-col h-full"
       open={open}
       onClose={onClose}
       title={item.title || 'Chi tiết'}
@@ -333,11 +333,11 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       </div>
 
       {/* Nội dung modal */}
-      <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark">
+      <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col">
         {item.type === 'bandwidth-proxy' ? (
-          <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark" defaultActiveKey="list">
+          <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark flex flex-col" defaultActiveKey="list" defaultWrapperClass='h-full flex flex-col'>
             {/* Tab 1: Danh sách Proxy */}
-            <div>
+            <div className='h-full flex flex-col overflow-auto'>
               {/* Header info */}
               <HeaderInfo
                 expired={item.expired}
@@ -357,13 +357,13 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                       onChange={(e) => console.log(e.target.value)}
                     />
                     <Select
-                      className="h-10 min-w-[179px]"
+                      className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent"
                       options={optionsTagSelect}
                       placeholder="Type"
                       onChange={(val) => console.log('Selected:', val)}
                     />
                     <Select
-                      className="h-10 min-w-[179px]"
+                      className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent"
                       options={optionsTagSelect}
                       placeholder="ISP"
                       onChange={(val) => console.log('Selected:', val)}
@@ -386,7 +386,6 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                   current: currentPage,
                   pageSize,
                   total: tableData.length,
-                  showSizeChanger: true,
                   pageSizeOptions: [10, 20, 50, 100],
                   onChange: (page, size) => {
                     setCurrentPage(page);
@@ -495,7 +494,6 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                 current: currentPage,
                 pageSize,
                 total: tableData.length,
-                showSizeChanger: true,
                 pageSizeOptions: [10, 20, 50, 100],
                 onChange: (page, size) => {
                   setCurrentPage(page);

@@ -33,6 +33,7 @@ interface TabsProps {
 
   className?: string;
   defaultWrapperClass?: string;
+  cardWrapperClass?: string;
 }
 
 /**
@@ -62,7 +63,7 @@ interface TabsProps {
  * </Tabs>
  *
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className, defaultWrapperClass }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className, defaultWrapperClass, cardWrapperClass }) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
   const isControlled = activeKey !== undefined;
@@ -116,8 +117,8 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
       )}
 
       {type === 'card' && (
-        <div>
-          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5">
+        <div className={cardWrapperClass}>
+          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 sm:px-5">
             {/* Wrapper có scroll ngang + ẩn scrollbar */}
             <div className="relative w-full overflow-x-auto scrollbar-hide" id="tab-scroll-container">
               <div className="flex w-fit flex-nowrap rounded-lg lg:gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark relative">

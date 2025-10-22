@@ -187,13 +187,13 @@ export const ProxyDetailPage = () => {
                         onChange={(e) => console.log(e.target.value)}
                       />
                       <Select
-                        className="h-10 md:min-w-[179px]"
+                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent"
                         options={optionsTagSelect}
                         placeholder="Type"
                         onChange={(val) => console.log('Selected:', val)}
                       />
                       <Select
-                        className="h-10 md:min-w-[179px]"
+                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent"
                         options={optionsTagSelect}
                         placeholder="ISP"
                         onChange={(val) => console.log('Selected:', val)}
@@ -207,7 +207,6 @@ export const ProxyDetailPage = () => {
                 <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
                   <Table
                     className="h-full"
-                    // className="min-h-[calc(100dvh-395px)] md:min-h-[calc(100dvh-375px)]"
                     scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
                     data={tableData}
                     columns={columnsBandwidth}
@@ -218,7 +217,6 @@ export const ProxyDetailPage = () => {
                       current: currentPage,
                       pageSize,
                       total: tableData.length,
-                      showSizeChanger: true,
                       pageSizeOptions: [10, 20, 50, 100],
                       onChange: (page, size) => {
                         setCurrentPage(page);
@@ -354,7 +352,6 @@ export const ProxyDetailPage = () => {
                 current={currentPage}
                 pageSize={pageSize}
                 total={tableData.length}
-                showSizeChanger={true}
                 pageSizeOptions={[10, 20, 50, 100]}
                 onChange={(page, size) => {
                   setCurrentPage(page);

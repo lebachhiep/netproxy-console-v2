@@ -33,7 +33,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       formatValue = (val) => `$${val.toFixed(2)}`,
       showLabels = true,
       labels,
-      labelValues, // Giá trị thực của từng label
+      labelValues,
       showCurrentValue = true,
       ...props
     },
@@ -46,14 +46,12 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 
     const currentValue = value !== undefined ? value : internalValue;
 
-    // Generate default labels and labelValues if not provided
     const { defaultLabels, defaultLabelValues } = React.useMemo(() => {
       if (labels && labelValues) {
         return { defaultLabels: labels, defaultLabelValues: labelValues };
       }
 
       if (labels) {
-        // Nếu có labels nhưng không có labelValues, tạo labelValues dựa trên việc chia đều
         const labelCount = labels.length;
         const generatedLabelValues = Array.from({ length: labelCount }, (_, i) => {
           return min + ((max - min) / (labelCount - 1)) * i;
@@ -61,7 +59,6 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
         return { defaultLabels: labels, defaultLabelValues: generatedLabelValues };
       }
 
-      // Generate default labels và values
       const labelCount = 6;
       const generatedLabelValues = Array.from({ length: labelCount }, (_, i) => {
         return min + ((max - min) / (labelCount - 1)) * i;
@@ -89,6 +86,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       [min, max, step, disabled, value, onValueChange]
     );
 
+    // --- Mouse handlers ---
     const handleMouseDown = React.useCallback(
       (e: React.MouseEvent) => {
         if (disabled) return;
@@ -100,9 +98,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 
     const handleMouseMove = React.useCallback(
       (e: MouseEvent) => {
-        if (isDragging) {
-          updateValue(e.clientX);
-        }
+        if (isDragging) updateValue(e.clientX);
       },
       [isDragging, updateValue]
     );
@@ -111,21 +107,51 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       setIsDragging(false);
     }, []);
 
+    // --- Touch handlers (mobile) ---
+    const handleTouchStart = React.useCallback(
+      (e: React.TouchEvent) => {
+        if (disabled) return;
+        setIsDragging(true);
+        updateValue(e.touches[0].clientX);
+      },
+      [disabled, updateValue]
+    );
+
+    const handleTouchMove = React.useCallback(
+      (e: TouchEvent) => {
+        if (isDragging) updateValue(e.touches[0].clientX);
+      },
+      [isDragging, updateValue]
+    );
+
+    const handleTouchEnd = React.useCallback(() => {
+      setIsDragging(false);
+    }, []);
+
+    // --- Register global listeners when dragging ---
     React.useEffect(() => {
       if (isDragging) {
+        // Mouse events
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
+
+        // Touch events
+        document.addEventListener('touchmove', handleTouchMove);
+        document.addEventListener('touchend', handleTouchEnd);
+
         return () => {
           document.removeEventListener('mousemove', handleMouseMove);
           document.removeEventListener('mouseup', handleMouseUp);
+          document.removeEventListener('touchmove', handleTouchMove);
+          document.removeEventListener('touchend', handleTouchEnd);
         };
       }
-    }, [isDragging, handleMouseMove, handleMouseUp]);
+    }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
     const percentage = ((currentValue - min) / (max - min)) * 100;
 
     return (
-      <div ref={ref} className={clsx('w-full', className)} {...props}>
+      <div ref={ref} className={clsx('w-full select-none', className)} {...props}>
         {showCurrentValue && (
           <div className="mb-4">
             <div className="text-2xl font-bold text-blue">{formatValue(currentValue)}</div>
@@ -140,6 +166,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
             disabled && 'cursor-not-allowed opacity-50'
           )}
           onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
           {/* Active Track */}
           <div className="absolute h-full rounded-full bg-blue dark:bg-blue-dark" style={{ width: `${percentage}%` }} />
@@ -161,8 +188,6 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
           <div className="relative flex justify-between text-sm">
             {defaultLabels.map((label, index) => {
               const labelValue = defaultLabelValues[index];
-
-              // Cải thiện logic kiểm tra active
               const isActive = Math.abs(currentValue - labelValue) <= step / 2;
 
               const handleLabelClick = () => {
@@ -173,10 +198,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 
               return (
                 <div key={index} className="relative flex flex-col items-center">
-                  {/* Tick line connecting down to track */}
                   <div className="w-[2px] bg-gray-300 h-3" />
-
-                  {/* Clickable label */}
                   <div
                     onClick={handleLabelClick}
                     className={clsx(

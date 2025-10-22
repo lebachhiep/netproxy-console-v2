@@ -309,11 +309,11 @@ const DashboardPage = () => {
         }
         subInfo={[
           {
-            label: 'Lưu lượng đã sử dụng:',
+            label: 'Cổng proxy khả dụng:',
             value: (
               <div>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">256</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> GB</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">23222</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Ports</span>
               </div>
             )
           }
@@ -352,7 +352,7 @@ const DashboardPage = () => {
   }, [isDesktop, isLargeDesktop]);
 
   return (
-    <div className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
+    <div className="overflow-auto min-h-0 h-[100dvh] z-50 md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
       <motion.div
         variants={pageVariants}
         initial="hidden"
@@ -454,7 +454,6 @@ const DashboardPage = () => {
                 current: currentPage,
                 pageSize,
                 total: data.length,
-                showSizeChanger: true,
                 pageSizeOptions: [2, 4, 6, 8],
                 onChange: (page, size) => {
                   setCurrentPage(page);

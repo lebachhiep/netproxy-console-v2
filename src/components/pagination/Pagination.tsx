@@ -22,7 +22,7 @@ export function Pagination({
   current,
   total,
   pageSize,
-  showSizeChanger = true,
+  showSizeChanger = false,
   pageSizeOptions = [10, 20, 50, 100],
   onChange,
   type = 'pagination',
@@ -105,7 +105,7 @@ export function Pagination({
                         value: size
                       };
                     })}
-                    className="h-6 rounded px-2 shadow-xs border-border w-12 hover:font-normal"
+                    className="h-6 rounded px-2 shadow-xs border-border w-12 hover:font-normal dark:pseudo-border-top dark:border-transparent"
                     value={pageSize}
                     onChange={(value) => handleSizeChange(value as number)}
                     placement="top"
@@ -157,8 +157,8 @@ export function Pagination({
             trong <span className="text-text-hi dark:text-text-hi-dark">{total}</span> mục
           </div>
         </div> */}
-        {showSizeChanger && (
-          <div className="hidden md:flex items-center ">
+        {
+          <div className="md:flex items-center ">
             <Select
               placeholder={current ? 'Trang ' + current : `Chọn trang`}
               optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
@@ -171,14 +171,14 @@ export function Pagination({
                     value: size
                   };
                 })}
-              className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent"
+              className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent dark:pseudo-border-top"
               labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
               value={current}
               onChange={(value) => handlePageChange(value as number)}
               placement="top"
             />
           </div>
-        )}
+        }
 
         {showSizeChanger && (
           <div className="flex md:hidden items-center">
@@ -189,7 +189,7 @@ export function Pagination({
                   value: size
                 };
               })}
-              className="shadow-none h-8 rounded-lg border-border dark:border-border-dark w-[118px] font-medium hover:font-bold"
+              className="shadow-none h-8 rounded-lg border-border dark:border-border-dark w-[118px] font-medium hover:font-bold dark:pseudo-border-top dark:hover:border-transparent dark:pseudo-border-top dark:border-transparent"
               labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
               value={pageSize}
               onChange={(value) => handleSizeChange(value as number)}

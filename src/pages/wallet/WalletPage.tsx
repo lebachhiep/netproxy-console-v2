@@ -288,7 +288,6 @@ const WalletPage: React.FC = () => {
             current: currentPage,
             pageSize,
             total: tableData.length,
-            showSizeChanger: true,
             pageSizeOptions: [5, 10, 20, 50],
             onChange: (page, size) => {
               console.log({ page, size });

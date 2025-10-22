@@ -170,7 +170,6 @@ const HistoryPage: React.FC = () => {
             current: 1,
             pageSize: displayCount,
             total: tableData.length,
-            showSizeChanger: true,
             pageSizeOptions: [5, 10, 20, 50],
             onChange: (_page, newPageSize) => handlePageSizeChange(newPageSize)
           }}

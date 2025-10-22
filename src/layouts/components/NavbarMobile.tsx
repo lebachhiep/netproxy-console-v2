@@ -135,7 +135,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   }, []);
 
   return (
-    <motion.header initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
+    <motion.header initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }} className='dark:bg-bg-primary-dark'>
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="h-12 flex items-center justify-between">
           <LogoText className="h-8 object-contain text-center cursor-pointer dark:invert" onClick={() => navigate('/home')} />

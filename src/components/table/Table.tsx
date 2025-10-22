@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
-import { Chevron, ExpandMore } from '../icons';
+import { ExpandMore } from '../icons';
+import clsx from 'clsx';
 
 export interface TableColumn<T> {
   /** Key của column, có thể là string hoặc path object */
@@ -317,7 +318,7 @@ export function Table<T extends Record<string, any>>({
   const renderHeaderTable = () => (
     <div
       ref={headerScrollRef}
-      className="overflow-auto relative bg-bg-canvas dark:bg-bg-canvas-dark border-border-element dark:border-border-element-dark border-b-2 border-t-2"
+      className={clsx("overflow-auto relative bg-bg-canvas border-border-element dark:border-border-element-dark border-b-2 border-t-2 dark:bg-bg-primary-dark")}
       style={{
         overflowX: 'hidden',
         overflowY: scroll?.y ? 'scroll' : 'visible',
@@ -337,7 +338,7 @@ export function Table<T extends Record<string, any>>({
         <thead className="z-20">
           <tr>
             {rowSelection && (
-              <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-canvas-dark">
+              <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-primary-dark">
                 <div className="flex items-center justify-center px-2 gap-1 border-r-[1.25px] border-border-element dark:border-border-element-dark h-full">
                   <Checkbox indeterminate={isIndeterminate} checked={!!isAllSelected} onChange={(checked) => handleSelectAll(checked)} />
                 </div>
@@ -369,11 +370,11 @@ export function Table<T extends Record<string, any>>({
 
               let thClassName = `h-9 py-1 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
   ${col.sortable ? 'cursor-pointer !text-text-hi dark:!text-text-hi-dark' : ''} 
-  bg-bg-canvas dark:bg-bg-canvas-dark`;
+  bg-bg-canvas dark:bg-bg-primary-dark`;
 
               let className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
   ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} 
-  bg-bg-canvas dark:bg-bg-canvas-dark`;
+  bg-bg-canvas dark:bg-bg-primary-dark`;
 
               // THÊM FONT-WEIGHT CHO CỘT ĐANG SORT
               if (isSorted) {

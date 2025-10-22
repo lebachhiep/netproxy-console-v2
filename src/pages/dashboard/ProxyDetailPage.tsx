@@ -135,7 +135,7 @@ export const ProxyDetailPage = () => {
   return (
     <>
       <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col">
-        <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
+        <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark dark:bg-bg-primary-dark">
           <div className="flex items-center gap-1">
             <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium" onClick={() => navigate('/home')}>
               Trang chủ
@@ -187,13 +187,13 @@ export const ProxyDetailPage = () => {
                         onChange={(e) => console.log(e.target.value)}
                       />
                       <Select
-                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent"
+                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent dark:bg-bg-secondary-dark"
                         options={optionsTagSelect}
                         placeholder="Type"
                         onChange={(val) => console.log('Selected:', val)}
                       />
                       <Select
-                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent"
+                        className="h-10 md:min-w-[179px] dark:pseudo-border-top dark:border-transparent dark:bg-bg-secondary-dark"
                         options={optionsTagSelect}
                         placeholder="ISP"
                         onChange={(val) => console.log('Selected:', val)}
@@ -251,7 +251,7 @@ export const ProxyDetailPage = () => {
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-2">
-                    <Select className="h-10 w-[100px] whitespace-nowrap" placeholder="Quốc gia" options={countryOptions} />
+                    <Select className="h-10 w-[100px] whitespace-nowrap dark:pseudo-border-top dark:border-transparent" placeholder="Quốc gia" options={countryOptions} />
                     <ApiInput
                       className="h-10"
                       value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}

@@ -446,7 +446,7 @@ const DashboardPage = () => {
         <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
           {viewMode === 'list' ? (
             <Table
-              className="h-full"
+              className="h-full pr-2"
               scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}
               columns={columns}

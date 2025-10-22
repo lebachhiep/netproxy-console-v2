@@ -567,10 +567,10 @@ export function Table<T extends Record<string, any>>({
     <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
       {/* Header Table - Fixed */}
       {showHeader && fixedHeader && (
-        <div className="relative">
+        <div className="relative pr-1">
           {renderHeaderTable()}
           {/* Shadow overlay không chiếm space */}
-          <div className="absolute bottom-0 left-0 right-0 h-[2px] shadow-xxs z-10" />
+          <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />
         </div>
       )}
 

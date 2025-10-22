@@ -220,7 +220,7 @@ const WalletPage: React.FC = () => {
                   Chính sách bảo mật
                 </a>
               </p>
-              <Button variant="primary" className="h-10 w-[100px]" onClick={() => setOpen(true)}>
+              <Button variant="primary" className="h-10 w-[100px] dark:pseudo-border-top-orange dark:border-transparent" onClick={() => setOpen(true)}>
                 NẠP TIỀN
               </Button>
             </div>

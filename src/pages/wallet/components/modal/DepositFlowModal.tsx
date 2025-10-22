@@ -97,7 +97,7 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
               </Button>
             ]
           : [
-              <Button key="confirm" onClick={onClose} className="h-10 mb-1" icon={<CheckMark className="w-5 h-5" />}>
+              <Button key="confirm" onClick={onClose} className="h-10 mb-1 dark:pseudo-border-top-orange dark:border-transparent" icon={<CheckMark className="w-5 h-5" />}>
                 Xác nhận thanh toán
               </Button>
             ]

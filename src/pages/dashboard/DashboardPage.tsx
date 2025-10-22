@@ -352,7 +352,7 @@ const DashboardPage = () => {
   }, [isDesktop, isLargeDesktop]);
 
   return (
-    <div className="overflow-auto min-h-0 h-[100dvh] z-50 md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
+    <div className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
       <motion.div
         variants={pageVariants}
         initial="hidden"

@@ -6,7 +6,6 @@ import { InputField } from '@/components/input/InputField';
 import { Modal } from '@/components/modal/Modal';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
-import { formatCurrency } from '@/utils/currency';
 import React, { useEffect, useState } from 'react';
 
 const options = [
@@ -97,7 +96,12 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
               </Button>
             ]
           : [
-              <Button key="confirm" onClick={onClose} className="h-10 mb-1 dark:pseudo-border-top-orange dark:border-transparent" icon={<CheckMark className="w-5 h-5" />}>
+              <Button
+                key="confirm"
+                onClick={onClose}
+                className="h-10 mb-1 dark:pseudo-border-top-orange dark:border-transparent"
+                icon={<CheckMark className="w-5 h-5" />}
+              >
                 Xác nhận thanh toán
               </Button>
             ]
@@ -111,11 +115,10 @@ const DepositFlowModal: React.FC<DepositFlowModalProps> = ({
                 <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
                 {/* Amount Display */}
                 <div className="">
-                  <InputField
-                    wrapperClassName="h-10"
-                    value={formatCurrency('' + amount)}
-                    onChange={(e) => setAmount(Math.min(+e.target.value, 10000))}
-                  />
+                  <div className='relative text-text-hi dark:text-text-hi-dark'>
+                    <span className='absolute z-10 top-1/2 left-3 -translate-y-1/2 text-sm flex justify-center items-center h-5'>$</span>
+                    <InputField  wrapperClassName="pl-3 h-10" value={amount} onChange={(e) => setAmount(Math.min(+e.target.value, 1000))} />
+                  </div>
 
                   {/* Slider */}
                   <div className="mt-2">

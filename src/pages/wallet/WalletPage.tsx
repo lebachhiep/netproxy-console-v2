@@ -17,7 +17,6 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import { formatCurrency } from '@/utils/currency';
 import clsx from 'clsx';
 
 const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
@@ -170,11 +169,14 @@ const WalletPage: React.FC = () => {
               <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
               {/* Amount Display */}
               <div>
-                <InputField
-                  wrapperClassName="h-10"
-                  value={formatCurrency('' + priceValue)}
-                  onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
-                />
+                <div className="relative text-text-hi dark:text-text-hi-dark">
+                  <span className="absolute z-10 top-1/2 left-3 -translate-y-1/2 text-sm flex justify-center items-center h-5">$</span>
+                  <InputField
+                    wrapperClassName="pl-3 h-10"
+                    value={priceValue}
+                    onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
+                  />
+                </div>
 
                 {/* Slider */}
                 <div className="mt-2">
@@ -220,7 +222,11 @@ const WalletPage: React.FC = () => {
                   Chính sách bảo mật
                 </a>
               </p>
-              <Button variant="primary" className="h-10 w-[100px] dark:pseudo-border-top-orange dark:border-transparent" onClick={() => setOpen(true)}>
+              <Button
+                variant="primary"
+                className="h-10 w-[100px] dark:pseudo-border-top-orange dark:border-transparent"
+                onClick={() => setOpen(true)}
+              >
                 NẠP TIỀN
               </Button>
             </div>

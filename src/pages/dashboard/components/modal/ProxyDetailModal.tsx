@@ -320,7 +320,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
         </Tooltip>
       </div>
 
-      <div className="absolute z-50 -right-[70px] top-1/2 -translate-y-1/2">
+      <div className="absolute z-[101] -right-[70px] top-1/2 -translate-y-1/2">
         <Tooltip content={nextItem?.title} className="w-[125px] line-clamp-2 text-wrap text-center">
           {/* Nút Next */}
           <IconButton

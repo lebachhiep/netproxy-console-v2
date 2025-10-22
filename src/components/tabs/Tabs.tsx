@@ -118,7 +118,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
 
       {type === 'card' && (
         <div className={cardWrapperClass}>
-          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 sm:px-5">
+          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-2 sm:px-5">
             {/* Wrapper có scroll ngang + ẩn scrollbar */}
             <div className="relative w-full overflow-x-auto scrollbar-hide" id="tab-scroll-container">
               <div className="flex w-fit flex-nowrap rounded-lg lg:gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark relative">

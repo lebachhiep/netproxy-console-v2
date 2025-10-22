@@ -439,7 +439,7 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="overflow-auto hide-scroll-x relative flex-1 dark:bg-bg-canvas-dark"
+      className="overflow-auto hide-scroll-x relative flex-1 dark:bg-bg-canvas-dark z-50"
       style={{
         maxHeight: maxHeight || '',
         overflowX: 'auto',
@@ -567,7 +567,7 @@ export function Table<T extends Record<string, any>>({
     <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
       {/* Header Table - Fixed */}
       {showHeader && fixedHeader && (
-        <div className="relative pr-1">
+        <div className="relative">
           {renderHeaderTable()}
           {/* Shadow overlay không chiếm space */}
           <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />

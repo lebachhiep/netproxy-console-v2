@@ -40,7 +40,7 @@ export const MobileLayout: React.FC = () => {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-x-0 top-[136px] bottom-0 bg-black/40 backdrop-blur-sm z-[999]"
+              className="fixed inset-x-0 top-[136px] bottom-0 bg-black/40 backdrop-blur-sm z-[102]"
               onClick={() => setSidebarOpen(false)}
             />
 
@@ -51,7 +51,7 @@ export const MobileLayout: React.FC = () => {
               exit={{ y: -20, opacity: 0 }}
               transition={{ duration: 0.25, ease: easeInOutCustom }}
               className="
-          fixed left-0 right-0 top-[136px] z-[999]
+          fixed left-0 right-0 top-[136px] z-[102]
           bg-white dark:bg-bg-surface-dark
           rounded-b-[16px] shadow-lg overflow-hidden
         "

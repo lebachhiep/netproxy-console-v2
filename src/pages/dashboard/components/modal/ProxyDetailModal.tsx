@@ -511,7 +511,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
         {/* Header info */}
       </div>
 
-      <div className="absolute -translate-x-1/2 bottom-[72px] left-1/2 ">
+      <div className="absolute -translate-x-1/2 bottom-[72px] left-1/2 z-50">
         <ActionButtons />
       </div>
     </Modal>

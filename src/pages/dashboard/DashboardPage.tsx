@@ -24,7 +24,7 @@ import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
 import { DataUsageModal } from './components/modal/DataUsageModal';
 import { useResponsive } from '@/hooks/useResponsive';
-import { sectionVariants } from '@/utils/animation';
+import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
 
 export const data: ProxyCardData[] = [
   {
@@ -158,32 +158,6 @@ const pageVariants: Variants = {
     transition: {
       delayChildren: 0.2,
       staggerChildren: 0.25,
-      ease: easeInOutCustom as any
-    }
-  }
-};
-
-
-//  Animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.2,
-      ease: easeInOutCustom as any
-    }
-  }
-};
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
       ease: easeInOutCustom as any
     }
   }

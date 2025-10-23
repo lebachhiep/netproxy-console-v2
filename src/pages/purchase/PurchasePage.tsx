@@ -527,7 +527,7 @@ const PurchasePage: React.FC = () => {
                 <div key="residential" className="text-text-hi dark:text-text-hi-dark">
                   Residential
                 </div>,
-                <div key="datacenter">
+                <motion.div variants={itemVariants} key="datacenter">
                   <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
                     <RadioGroup
                       value={activeResidentialGroup}
@@ -544,7 +544,7 @@ const PurchasePage: React.FC = () => {
                   <div className="flex flex-col md:flex-row h-[calc(100dvh-350px)] md:h-[calc(100dvh-270px)]">
                     {residentialPages[activeResidentialGroup]}
                   </div>
-                </div>
+                </motion.div>
               ]}
             </Tabs>
           </div>

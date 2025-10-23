@@ -12,7 +12,6 @@ import { AUTH_MESSAGES } from '@/utils/constants';
 import UserDropdown from '@/components/UserDropdown';
 import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
 import { motion } from 'framer-motion';
-import Tooltip from '@/components/tooltip/Tooltip';
 
 interface Breadcrumb {
   title: string;

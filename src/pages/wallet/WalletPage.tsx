@@ -18,6 +18,8 @@ import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import clsx from 'clsx';
+import { motion, Variants } from 'framer-motion';
+import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
 
 const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
 
@@ -160,8 +162,16 @@ const WalletPage: React.FC = () => {
   ];
 
   return (
-    <div className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col">
-      <div className="flex flex-col lg:flex-row gap-5 p-5 items-stretch">
+    <motion.div
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+      className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col"
+    >
+      <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible" className="flex flex-col md:flex-row gap-5 p-5 items-stretch">
         {/* Left Panel - Top Up Form */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
@@ -236,9 +246,9 @@ const WalletPage: React.FC = () => {
         {/* Right Panel */}
         {/* Wallet Card */}
         {(isDesktop || isLargeDesktop || isMobile) && <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />}
-      </div>
+      </motion.div>
       {/* Filter section */}
-      <div className="p-5 pb-2">
+      <motion.div variants={itemVariants} className="p-5 pb-2">
         <div>
           <SectionTitle text="Lịch sử nạp tiền" />
 
@@ -282,9 +292,9 @@ const WalletPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex-1 overflow-hidden min-h-[350px]">
+      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px]">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}
@@ -307,7 +317,7 @@ const WalletPage: React.FC = () => {
           bordered={false}
           showEmptyRows
         />
-      </div>
+      </motion.div>
 
       <DepositFlowModal
         open={open}
@@ -316,7 +326,7 @@ const WalletPage: React.FC = () => {
         defaultAmount={priceValue}
         defaultMethod={selectedMethod}
       />
-    </div>
+    </motion.div>
   );
 };
 

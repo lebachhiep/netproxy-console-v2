@@ -1,6 +1,8 @@
 import React from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from '../button/Button';
+import { motion } from 'framer-motion';
+import { itemVariants } from '@/utils/animation';
 
 interface AppCardProps {
   icon: React.ReactNode;
@@ -13,7 +15,8 @@ interface AppCardProps {
 
 export const AppCard: React.FC<AppCardProps> = ({ icon, title, description, buttonText = 'CÀI ĐẶT', onButtonClick, className }) => {
   return (
-    <div
+    <motion.div
+      variants={itemVariants}
       className={twMerge(
         'flex flex-col gap-4  rounded-xl border bg-white dark:bg-bg-secondary-dark border-border-element dark:border-border-element-dark shadow-md p-4 w-full',
         className
@@ -33,6 +36,6 @@ export const AppCard: React.FC<AppCardProps> = ({ icon, title, description, butt
         {/* Description */}
         <div className="text-sm text-text-me dark:text-text-me-dark leading-[150%]">{description}</div>
       </div>
-    </div>
+    </motion.div>
   );
 };

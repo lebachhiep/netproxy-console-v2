@@ -4,6 +4,9 @@ import linuxIcon from '@/assets/images/linux.png';
 import macIcon from '@/assets/images/mac.png';
 import windowsIcon from '@/assets/images/windows.png';
 import { AppCard } from '@/components/card/AppCard';
+import { pageVariants } from '@/utils/animation';
+import { motion } from 'framer-motion';
+
 const SupportSoftwarePage = () => {
   const apps = [
     {
@@ -34,7 +37,7 @@ const SupportSoftwarePage = () => {
   ];
 
   return (
-    <div className="p-5 h-full overflow-auto">
+    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="p-5 h-full overflow-auto">
       <div className="grid grid-cols-2 md:flex md:flex-wrap gap-5">
         {apps.map((app, idx) => (
           <AppCard
@@ -47,7 +50,7 @@ const SupportSoftwarePage = () => {
           />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

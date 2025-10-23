@@ -10,6 +10,8 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { Dayjs } from 'dayjs';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import { motion, Variants } from 'framer-motion';
+import { itemVariants, pageVariants } from '@/utils/animation';
 
 export interface Transaction {
   id: string;
@@ -129,8 +131,13 @@ const HistoryPage: React.FC = () => {
   ];
 
   return (
-    <div className="overflow-y-auto md:h-[calc(100dvh-104px)] flex flex-col h-full">
-      <div className="px-5 py-2">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={pageVariants}
+      className="overflow-y-auto md:h-[calc(100dvh-104px)] flex flex-col h-full"
+    >
+      <motion.div variants={itemVariants} className="px-5 py-2">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
           {/* Left group (Search + Filter + Button) */}
           <div className="flex flex-col md:flex-row gap-3 w-full">
@@ -158,9 +165,9 @@ const HistoryPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="flex-1 overflow-hidden min-h-[350px]">
+      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px]">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 210px)' }}
@@ -178,8 +185,8 @@ const HistoryPage: React.FC = () => {
           size="large"
           bordered={false}
         />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

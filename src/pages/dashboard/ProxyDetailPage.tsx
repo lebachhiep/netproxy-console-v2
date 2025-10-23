@@ -281,7 +281,7 @@ export const ProxyDetailPage = () => {
             </Tabs>
           </div>
         ) : (
-          <div className="flex-1 h-[calc(100dvh-190px)] md:h-auto overflow-auto">
+          <div className="flex-1 h-full md:h-auto overflow-scroll flex flex-col">
             <div className="border-b-[2px] py-3 px-5 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
@@ -324,7 +324,7 @@ export const ProxyDetailPage = () => {
                 <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
               </div>
             </div>
-            <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-scroll max-h-[250px]">
+            <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-scroll h-full min-h-[350px]">
               <Table
                 // className="min-h-[calc(100dvh-475px)] md:min-h-[calc(100dvh-445px)]"
                 className="h-full"

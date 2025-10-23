@@ -16,7 +16,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ onGetProxy, onExpo
           {/* Nút Get Proxy */}
           <button
             onClick={onGetProxy}
-            className="font-bold w-full flex items-center justify-center gap-2 px-4 py-[6px] border-2 border-border-element dark:border-border-element-dark rounded-[8px_0_0_8px] bg-bg-secondary dark:bg-bg-secondary-dark text-sm text-text-me dark:text-text-me-dark shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
+            className="font-bold w-full flex items-center justify-center gap-2 px-4 py-[6px] border-2 border-border-element dark:border-border-dark rounded-[8px_0_0_8px] bg-bg-secondary dark:bg-bg-secondary-dark text-sm text-text-me dark:text-text-me-dark shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark dark:border-r-0"
           >
             <Globe className="w-5 h-5 text-text-lo dark:text-text-lo-dark" />
             Get proxy
@@ -25,7 +25,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({ onGetProxy, onExpo
           {/* Nút Export Key */}
           <button
             onClick={onExportKey}
-            className="font-bold w-full flex items-center justify-center gap-2 px-4 py-[6px] border-2 border-border-element dark:border-border-element-dark rounded-[0_8px_8px_0] bg-bg-secondary dark:bg-bg-secondary-dark text-sm text-text-me dark:text-text-me-dark shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
+            className="font-bold w-full flex items-center justify-center gap-2 px-4 py-[6px] border-2 border-border-element dark:border-border-dark rounded-[0_8px_8px_0] bg-bg-secondary dark:bg-bg-secondary-dark text-sm text-text-me dark:text-text-me-dark shadow-xs hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
           >
             <DocumentQueue className="w-5 h-5 text-text-lo dark:text-text-lo-dark" />
             Export key

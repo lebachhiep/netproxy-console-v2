@@ -33,9 +33,8 @@ class AuthService {
       const response = await apiService.post<AuthResponse>('/auth/register', {
         email: credentials.email,
         username: credentials.username,
-        password: credentials.password
-        // Note: fullName is not sent to the API in registration,
-        // it will be updated via profile update endpoint later
+        password: credentials.password,
+        full_name: credentials.fullName
       });
 
       // Save tokens to storage (default to session storage for registration)

@@ -5,10 +5,11 @@ import { InputField } from '@/components/input/InputField';
 import { Tabs } from '@/components/tabs/Tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
-import { UserProfile } from '@/services/user/user.types';
+import { UserProfile, UpdateProfileRequest } from '@/services/user/user.types';
+import { userService } from '@/services/user/user.service';
 import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { SuccessModal } from './components/modal/SuccessModal';
@@ -20,7 +21,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
   const [isHideApiValue, setIsHideApiValue] = useState(true);
-  const { user, userProfile, logout } = useAuth();
+  const { user, userProfile, logout, fetchUserProfile } = useAuth();
   const accountTabs = [
     { key: 'info', label: 'Thông tin chung' },
     { key: 'change-password', label: 'Đổi mật khẩu' },
@@ -31,6 +32,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   const {
     control: profileControl,
     handleSubmit: handleProfileSubmit,
+    reset: resetProfileForm,
     formState: { errors: profileErrors, isSubmitting: isProfileSubmitting }
   } = useForm<UserProfile>({
     resolver: zodResolver(userProfileSchema),
@@ -62,12 +64,44 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
     }
   });
 
+  // Sync form with userProfile from zustand when it loads
+  useEffect(() => {
+    if (userProfile) {
+      resetProfileForm({
+        id: userProfile.id,
+        email: userProfile.email,
+        username: userProfile.username,
+        full_name: userProfile.full_name ?? null,
+        phone_number: userProfile.phone_number ?? null,
+        role: userProfile.role,
+        avatar_url: userProfile.avatar_url ?? null,
+        balance: userProfile.balance ?? 0,
+        is_banned: userProfile.is_banned ?? false,
+        ban_reason: userProfile.ban_reason ?? null
+      });
+    }
+  }, [userProfile, resetProfileForm]);
+
   const onSubmitProfile = async (data: UserProfile) => {
     try {
-      console.log('Profile data:', data);
-      // TODO: call API update profile
+      // Extract only updatable fields
+      const updateData: UpdateProfileRequest = {
+        full_name: data.full_name || null,
+        phone_number: data.phone_number || null,
+        avatar_url: data.avatar_url || null
+      };
+
+      // Call API to update profile
+      await userService.updateProfile(updateData);
+
+      // Refresh user profile from server to get latest data
+      await fetchUserProfile();
+
+      // Show success message
+      toast.success('Cập nhật hồ sơ thành công');
     } catch (error) {
-      toast.error('Cập nhật hồ sơ thất bại');
+      const errorMessage = mapApiError(error);
+      toast.error(errorMessage || 'Cập nhật hồ sơ thất bại');
     }
   };
 

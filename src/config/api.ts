@@ -10,12 +10,26 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 // API Base URL from environment variable
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://v2.dev.api.netproxy.io';
 
+// Extract host from API_BASE_URL for X-Host header
+const getHostFromUrl = (url: string): string => {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.host;
+  } catch (error) {
+    console.error('Failed to parse URL:', error);
+    return '';
+  }
+};
+
+const API_HOST = getHostFromUrl(API_BASE_URL);
+
 // Create axios instance with default config
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
+    'X-Host': API_HOST,
   },
 });
 

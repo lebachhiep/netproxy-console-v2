@@ -1,10 +1,6 @@
 import { Button } from '@/components/button/Button';
-import { CountrySelect } from '@/components/country-select/CountrySelect';
 import { InputField } from '@/components/input/InputField';
-import { Select } from '@/components/select/Select';
-import CountrySelector from '@/pages/purchase/components/table/CountrySelector';
 import { UserProfile } from '@/services/user/user.types';
-import { COUNTRY_OPTIONS } from '@/utils/constants';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 interface ProfileFormProps {
@@ -24,84 +20,97 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
           control={control}
           render={({ field }) => (
             <div>
-              <InputField wrapperClassName="h-10" {...field} type="text" placeholder="Họ tên" label="Họ tên" disabled={isSubmitting} />
+              <InputField
+                wrapperClassName="h-10"
+                {...field}
+                value={field.value ?? ''}
+                type="text"
+                placeholder="Họ tên"
+                label="Họ tên"
+                disabled={isSubmitting}
+              />
               {errors.full_name && <span className="text-red text-sm mt-1">{errors.full_name.message}</span>}
             </div>
           )}
         />
 
-        {/* Email */}
+        {/* Email (read-only) */}
         <Controller
           name="email"
           control={control}
           render={({ field }) => (
             <div>
-              <InputField wrapperClassName="h-10" {...field} type="email" placeholder="Email" label="Email" disabled={isSubmitting} />
+              <InputField
+                wrapperClassName="h-10"
+                {...field}
+                type="email"
+                placeholder="Email"
+                label="Email"
+                disabled={true}
+              />
               {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
             </div>
           )}
         />
 
-        {/* Địa chỉ + Quốc gia + Zip */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Controller
-            name="address"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <InputField wrapperClassName="h-10" {...field} type="text" placeholder="Địa chỉ" label="Địa chỉ" disabled={isSubmitting} />
-                {errors.address && <span className="text-red text-sm mt-1">{errors.address.message}</span>}
-              </div>
-            )}
-          />
+        {/* Username (read-only) */}
+        <Controller
+          name="username"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <InputField
+                wrapperClassName="h-10"
+                {...field}
+                type="text"
+                placeholder="Tên đăng nhập"
+                label="Tên đăng nhập"
+                disabled={true}
+              />
+              {errors.username && <span className="text-red text-sm mt-1">{errors.username.message}</span>}
+            </div>
+          )}
+        />
 
-          <Controller
-            name="country"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <CountrySelect options={COUNTRY_OPTIONS} placeholder="Quốc gia" label="Quốc gia" />
-                {errors.country && <span className="text-red text-sm mt-1">{errors.country.message}</span>}
-              </div>
-            )}
-          />
+        {/* Số điện thoại */}
+        <Controller
+          name="phone_number"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <InputField
+                wrapperClassName="h-10"
+                {...field}
+                value={field.value ?? ''}
+                type="tel"
+                placeholder="Số điện thoại"
+                label="Số điện thoại"
+                disabled={isSubmitting}
+              />
+              {errors.phone_number && <span className="text-red text-sm mt-1">{errors.phone_number.message}</span>}
+            </div>
+          )}
+        />
 
-          <Controller
-            name="zip"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <InputField wrapperClassName="h-10" {...field} type="text" placeholder="Mã Zip" label="Mã Zip" disabled={isSubmitting} />
-                {errors.zip && <span className="text-red text-sm mt-1">{errors.zip.message}</span>}
-              </div>
-            )}
-          />
-        </div>
-
-        {/* Công ty + VAT */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Controller
-            name="company"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <InputField wrapperClassName="h-10" {...field} type="text" placeholder="Công ty" label="Công ty" disabled={isSubmitting} />
-                {errors.company && <span className="text-red text-sm mt-1">{errors.company.message}</span>}
-              </div>
-            )}
-          />
-
-          <Controller
-            name="vatId"
-            control={control}
-            render={({ field }) => (
-              <div>
-                <InputField wrapperClassName="h-10" {...field} type="text" placeholder="VAT ID" label="VAT ID" disabled={isSubmitting} />
-                {errors.vatId && <span className="text-red text-sm mt-1">{errors.vatId.message}</span>}
-              </div>
-            )}
-          />
-        </div>
+        {/* Avatar URL */}
+        <Controller
+          name="avatar_url"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <InputField
+                wrapperClassName="h-10"
+                {...field}
+                value={field.value ?? ''}
+                type="url"
+                placeholder="URL ảnh đại diện"
+                label="Avatar URL"
+                disabled={isSubmitting}
+              />
+              {errors.avatar_url && <span className="text-red text-sm mt-1">{errors.avatar_url.message}</span>}
+            </div>
+          )}
+        />
 
         {/* Save button */}
         <Button type="submit" disabled={isSubmitting} className="h-10 px-4">

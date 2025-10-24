@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-// Login form schema
+// Login form schema (accepts email or username)
 export const loginSchema = z.object({
-  email: z.email('Email không hợp lệ'),
+  login: z.string().min(1, 'Email hoặc tên đăng nhập là bắt buộc').toLowerCase(),
   password: z.string().min(1, 'Mật khẩu là bắt buộc').min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
   remember: z.boolean().default(false)
 });
@@ -15,7 +15,14 @@ export const registerSchema = z
       .min(1, 'Họ tên là bắt buộc')
       .min(2, 'Họ tên phải có ít nhất 2 ký tự')
       .max(50, 'Họ tên không được vượt quá 50 ký tự'),
-    email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ'),
+    email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase(),
+    username: z
+      .string()
+      .min(1, 'Tên đăng nhập là bắt buộc')
+      .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự')
+      .max(30, 'Tên đăng nhập không được vượt quá 30 ký tự')
+      .regex(/^[a-z0-9]+$/, 'Tên đăng nhập chỉ được chứa chữ thường và số')
+      .toLowerCase(),
     password: z
       .string()
       .min(1, 'Mật khẩu là bắt buộc')
@@ -33,7 +40,7 @@ export const registerSchema = z
 
 // Password forgot schema
 export const forgotPasswordSchema = z.object({
-  email: z.email('Email không hợp lệ')
+  email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase()
 });
 
 // Password reset schema
@@ -54,31 +61,23 @@ export const resetPasswordSchema = z
     path: ['confirmPassword']
   });
 
-// User profile schema
+// User profile schema - matches backend GetMeResponse
 export const userProfileSchema = z.object({
   id: z.string().uuid('ID không hợp lệ'),
   email: z.string().email('Email không hợp lệ'),
   username: z.string().min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự').max(30, 'Tên đăng nhập không được vượt quá 30 ký tự'),
-  full_name: z.string().min(2, 'Họ tên phải có ít nhất 2 ký tự').max(50, 'Họ tên không được vượt quá 50 ký tự').optional(),
+  full_name: z.string().min(2, 'Họ tên phải có ít nhất 2 ký tự').max(100, 'Họ tên không được vượt quá 100 ký tự').optional().nullable(),
   phone_number: z
     .string()
     .regex(/^\+?[0-9]{9,15}$/, 'Số điện thoại không hợp lệ')
-    .optional(),
+    .max(20, 'Số điện thoại không được vượt quá 20 ký tự')
+    .optional()
+    .nullable(),
   role: z.string(),
-  avatar_url: z.string().url('URL avatar không hợp lệ').optional(),
+  avatar_url: z.string().url('URL avatar không hợp lệ').max(255, 'URL không được vượt quá 255 ký tự').optional().nullable(),
   balance: z.number().nonnegative('Số dư không được âm'),
   is_banned: z.boolean(),
-  ban_reason: z.string().optional(),
-
-  // Bổ sung địa chỉ
-  address: z.string().max(100, 'Địa chỉ không được vượt quá 100 ký tự').optional(),
-  country: z.string().max(50, 'Quốc gia không được vượt quá 50 ký tự').optional(),
-  zip: z
-    .string()
-    .regex(/^\d{4,10}$/, 'Mã Zip không hợp lệ')
-    .optional(),
-  company: z.string().max(100, 'Tên công ty không được vượt quá 100 ký tự').optional(),
-  vatId: z.string().max(30, 'VAT ID không được vượt quá 30 ký tự').optional()
+  ban_reason: z.string().optional().nullable()
 });
 
 // Type inference for form data

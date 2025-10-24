@@ -1,79 +1,175 @@
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  sendPasswordResetEmail,
-  updateProfile,
-  sendEmailVerification,
-  User,
-  UserCredential
-} from 'firebase/auth';
-import { auth, setAuthPersistence } from '@/config/firebase';
-import { RegisterCredentials } from './auth.types';
+import { apiService } from '@/services/api/api.service';
+import { AuthResponse, RegisterCredentials } from './auth.types';
+import { saveTokens, getRefreshToken, clearTokens, decodeJWT, getAccessToken } from '@/utils/token';
 
 class AuthService {
-  // Sign in with email and password
-  async signInWithEmail(email: string, password: string, rememberMe: boolean = false): Promise<UserCredential> {
-    await setAuthPersistence(rememberMe);
-    return signInWithEmailAndPassword(auth, email, password);
-  }
-
-  // Register new user with email and password
-  async createAccount({ email, password, fullName }: RegisterCredentials): Promise<UserCredential> {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-    // Update user profile with display name
-    if (userCredential.user) {
-      await updateProfile(userCredential.user, {
-        displayName: fullName
+  /**
+   * Sign in with email or username and password
+   * POST /auth/login
+   */
+  async login(login: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
+    try {
+      const response = await apiService.post<AuthResponse>('/auth/login', {
+        login,
+        password
       });
 
-      // Send email verification
-      await sendEmailVerification(userCredential.user);
-    }
+      // Save tokens to storage
+      saveTokens(response, rememberMe);
 
-    return userCredential;
-  }
-
-  // Sign in with Google
-  async signInWithGoogle(): Promise<UserCredential> {
-    const provider = new GoogleAuthProvider();
-    provider.addScope('profile');
-    provider.addScope('email');
-    return signInWithPopup(auth, provider);
-  }
-
-  // Sign out current user
-  async signOut(): Promise<void> {
-    return signOut(auth);
-  }
-
-  // Send password reset email
-  async sendPasswordReset(email: string): Promise<void> {
-    return sendPasswordResetEmail(auth, email);
-  }
-
-  // Get current user
-  getCurrentUser(): User | null {
-    return auth.currentUser;
-  }
-
-  // Resend verification email
-  async resendVerificationEmail(): Promise<void> {
-    const user = auth.currentUser;
-    if (user && !user.emailVerified) {
-      await sendEmailVerification(user);
+      return response;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
     }
   }
 
-  // Update user profile
-  async updateUserProfile(displayName?: string, photoURL?: string): Promise<void> {
-    const user = auth.currentUser;
-    if (user) {
-      await updateProfile(user, { displayName, photoURL });
+  /**
+   * Register new user account
+   * POST /auth/register
+   */
+  async register(credentials: RegisterCredentials): Promise<AuthResponse> {
+    try {
+      const response = await apiService.post<AuthResponse>('/auth/register', {
+        email: credentials.email,
+        username: credentials.username,
+        password: credentials.password
+        // Note: fullName is not sent to the API in registration,
+        // it will be updated via profile update endpoint later
+      });
+
+      // Save tokens to storage (default to session storage for registration)
+      saveTokens(response, false);
+
+      return response;
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
     }
+  }
+
+  /**
+   * Sign out current user
+   * POST /auth/logout
+   */
+  async logout(): Promise<void> {
+    try {
+      const refreshToken = getRefreshToken();
+      if (refreshToken) {
+        await apiService.post('/auth/logout', {
+          refresh_token: refreshToken
+        });
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Continue with local logout even if API call fails
+    } finally {
+      // Always clear tokens locally
+      clearTokens();
+    }
+  }
+
+  /**
+   * Refresh access token using refresh token
+   * POST /auth/refresh
+   */
+  async refreshAccessToken(): Promise<AuthResponse> {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      const response = await apiService.post<AuthResponse>('/auth/refresh', {
+        refresh_token: refreshToken
+      });
+
+      // Update tokens in storage (preserve the storage type)
+      const wasRemembered = !!localStorage.getItem('access_token');
+      saveTokens(response, wasRemembered);
+
+      return response;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      // Clear tokens on refresh failure
+      clearTokens();
+      throw error;
+    }
+  }
+
+  /**
+   * Request password reset email
+   * POST /auth/request-password-reset
+   */
+  async requestPasswordReset(email: string): Promise<void> {
+    try {
+      await apiService.post('/auth/request-password-reset', {
+        email
+      });
+    } catch (error) {
+      console.error('Password reset request failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Reset password with token
+   * POST /auth/reset-password
+   */
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    try {
+      await apiService.post('/auth/reset-password', {
+        token,
+        new_password: newPassword
+      });
+    } catch (error) {
+      console.error('Password reset failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Verify email with token
+   * POST /auth/verify-email
+   */
+  async verifyEmail(token: string): Promise<void> {
+    try {
+      await apiService.post('/auth/verify-email', {
+        token
+      });
+    } catch (error) {
+      console.error('Email verification failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get current user from stored access token
+   * Returns decoded JWT payload
+   */
+  getCurrentUser() {
+    const token = getAccessToken();
+    if (!token) return null;
+
+    const payload = decodeJWT(token);
+    if (!payload) return null;
+
+    // Map JWT payload to AuthUser format
+    return {
+      user_id: payload.sub,
+      username: payload.username,
+      email: payload.username, // Use username as email placeholder until profile is fetched
+      role: payload.role || 'user',
+      user_reseller_id: payload.user_reseller_id,
+      emailVerified: false // Will be updated when profile is fetched
+    };
+  }
+
+  /**
+   * Check if user is authenticated
+   */
+  isAuthenticated(): boolean {
+    return !!getAccessToken();
   }
 }
 

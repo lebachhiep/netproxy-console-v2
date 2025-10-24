@@ -35,7 +35,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const isProxyDetail = matchPath('/proxy/detail/:id', location.pathname);
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
-  const { user, logout } = useAuth();
+  const { user, userProfile, logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -138,7 +138,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="h-12 flex items-center justify-between">
           <LogoText className="h-8 object-contain text-center cursor-pointer dark:invert" onClick={() => navigate('/home')} />
-          <UserDropdown user={user} settings={settings} handleLogout={handleLogout} setModalOpen={setModalOpen} />
+          <UserDropdown user={user} userProfile={userProfile} settings={settings} handleLogout={handleLogout} setModalOpen={setModalOpen} />
         </div>
       </div>
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">

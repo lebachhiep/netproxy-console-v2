@@ -1,11 +1,10 @@
 import { AuthFormWrapper } from '@/components/AuthFormWrapper';
 import { Button } from '@/components/button/Button';
-import { Google } from '@/components/icons';
 import { InputField } from '@/components/input/InputField';
 import { useAuth } from '@/hooks/useAuth';
 import { RegisterFormData, registerSchema } from '@/services/auth/auth.schemas';
 import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -14,7 +13,7 @@ import { toast } from 'sonner';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register, loginWithGoogle, isAuthenticated, clearError } = useAuth();
+  const { register, isAuthenticated, clearError } = useAuth();
 
   const {
     control,
@@ -24,7 +23,9 @@ export const RegisterPage: React.FC = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      fullName: '',
       email: '',
+      username: '',
       password: '',
       confirmPassword: ''
     }
@@ -49,26 +50,16 @@ export const RegisterPage: React.FC = () => {
     try {
       await register({
         email: data.email,
+        username: data.username,
         password: data.password,
         fullName: data.fullName
       });
       toast.success(AUTH_MESSAGES.REGISTER_SUCCESS);
-      navigate(AUTH_ROUTES.LOGIN, { replace: true });
-    } catch (error) {
-      const errorMessage = mapFirebaseError(error);
-      toast.error(errorMessage);
-      setError('root', { message: errorMessage });
-    }
-  };
-
-  const handleGoogleRegister = async () => {
-    try {
-      await loginWithGoogle();
-      toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
       navigate('/', { replace: true });
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
+      setError('root', { message: errorMessage });
     }
   };
 
@@ -77,23 +68,6 @@ export const RegisterPage: React.FC = () => {
       <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
         <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-5">
-            {/* Google Button */}
-            <button
-              type="button"
-              onClick={handleGoogleRegister}
-              disabled={isSubmitting}
-              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:pseudo-border-top flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Google />
-              <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">ĐĂNG KÝ VỚI GOOGLE</span>
-            </button>
-            {/* Divider */}
-            <div className="flex items-center w-full">
-              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
-              <span className="mx-3 text-text-lo text-sm">Hoặc</span>
-              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
-            </div>
-
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
@@ -106,7 +80,6 @@ export const RegisterPage: React.FC = () => {
                           {...field}
                           type="text"
                           placeholder="Nhập họ và tên"
-                          // icon={<Person className="text-blue" />}
                           disabled={isSubmitting}
                         />
                         {errors.fullName && <span className="text-red text-sm mt-1">{errors.fullName.message}</span>}
@@ -123,10 +96,25 @@ export const RegisterPage: React.FC = () => {
                           {...field}
                           type="email"
                           placeholder="Nhập email"
-                          // icon={<EmojiLaugh className="text-blue" />}
                           disabled={isSubmitting}
                         />
                         {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="username"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <InputField
+                          {...field}
+                          type="text"
+                          placeholder="Nhập tên đăng nhập"
+                          disabled={isSubmitting}
+                        />
+                        {errors.username && <span className="text-red text-sm mt-1">{errors.username.message}</span>}
                       </div>
                     )}
                   />

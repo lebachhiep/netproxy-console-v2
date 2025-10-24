@@ -6,7 +6,7 @@ import { Modal } from '@/components/modal/Modal';
 import { Tabs } from '@/components/tabs/Tabs';
 import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
 import { UserProfile } from '@/services/user/user.types';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -37,13 +37,16 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
   } = useForm<UserProfile>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      full_name: user?.full_name ?? '',
+      id: user?.id ?? '',
       email: user?.email ?? '',
-      address: '',
-      country: '',
-      zip: '',
-      company: '',
-      vatId: ''
+      username: user?.username ?? '',
+      full_name: user?.full_name ?? null,
+      phone_number: user?.phone_number ?? null,
+      role: user?.role ?? 'user',
+      avatar_url: user?.avatar_url ?? null,
+      balance: user?.balance ?? 0,
+      is_banned: user?.is_banned ?? false,
+      ban_reason: user?.ban_reason ?? null
     }
   });
 
@@ -76,7 +79,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
       // TODO: call API reset password
       setShowSuccessModal(true); //
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
       setPasswordError('root', { message: errorMessage });
     }

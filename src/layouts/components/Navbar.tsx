@@ -32,7 +32,7 @@ export const Navbar: React.FC = () => {
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
-  const { user, logout } = useAuth();
+  const { user, userProfile, logout } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -178,7 +178,7 @@ export const Navbar: React.FC = () => {
           </Tooltip>
           {/* User info */}
 
-          <UserDropdown user={user} settings={settings} handleLogout={handleLogout} setModalOpen={setModalOpen} />
+          <UserDropdown user={user} userProfile={userProfile} settings={settings} handleLogout={handleLogout} setModalOpen={setModalOpen} />
         </div>
       </div>
 

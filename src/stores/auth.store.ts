@@ -1,14 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '@/config/firebase';
 import { authService } from '@/services/auth/auth.service';
-import { RegisterCredentials } from '@/services/auth/auth.types';
+import { RegisterCredentials, AuthUser } from '@/services/auth/auth.types';
 import { userService } from '@/services/user/user.service';
 import { UserProfile } from '@/services/user/user.types';
+import { hasTokens, getUserFromToken, clearTokens } from '@/utils/token';
 
 interface AuthState {
-  user: User | null;
+  user: AuthUser | null;
   userProfile: UserProfile | null;
   loading: boolean;
   error: string | null;
@@ -16,16 +15,15 @@ interface AuthState {
   profileLoading: boolean;
 
   // Actions
-  login: (email: string, password: string, rememberMe: boolean) => Promise<void>;
-  loginWithGoogle: () => Promise<void>;
+  login: (login: string, password: string, rememberMe: boolean) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
-  setUser: (user: User | null) => void;
+  setUser: (user: AuthUser | null) => void;
   setInitialized: (initialized: boolean) => void;
-  getIdToken: (forceRefresh?: boolean) => Promise<string | null>;
+  initializeAuth: () => Promise<void>;
   fetchUserProfile: () => Promise<void>;
   setUserProfile: (profile: UserProfile | null) => void;
   clearUserProfile: () => void;
@@ -41,31 +39,46 @@ export const useAuthStore = create<AuthState>()(
       isInitialized: false,
       profileLoading: false,
 
-      login: async (email: string, password: string, rememberMe: boolean) => {
+      initializeAuth: async () => {
+        set({ loading: true });
+        try {
+          // Check if tokens exist
+          if (hasTokens()) {
+            // Get user from stored token
+            const user = getUserFromToken();
+            if (user) {
+              set({ user, loading: false, isInitialized: true });
+
+              // Fetch user profile
+              await get().fetchUserProfile();
+            } else {
+              // Token is invalid, clear it
+              clearTokens();
+              set({ user: null, loading: false, isInitialized: true });
+            }
+          } else {
+            set({ user: null, loading: false, isInitialized: true });
+          }
+        } catch (error) {
+          console.error('Auth initialization failed:', error);
+          clearTokens();
+          set({ user: null, loading: false, isInitialized: true });
+        }
+      },
+
+      login: async (login: string, password: string, rememberMe: boolean) => {
         set({ loading: true, error: null });
         try {
-          const { user } = await authService.signInWithEmail(email, password, rememberMe);
+          await authService.login(login, password, rememberMe);
+
+          // Get user from newly stored token
+          const user = getUserFromToken();
           set({ user, loading: false });
 
           // Fetch user profile after successful login
           await get().fetchUserProfile();
         } catch (error: any) {
-          const errorMessage = error.message || 'Đăng nhập thất bại';
-          set({ error: errorMessage, loading: false });
-          throw error;
-        }
-      },
-
-      loginWithGoogle: async () => {
-        set({ loading: true, error: null });
-        try {
-          const { user } = await authService.signInWithGoogle();
-          set({ user, loading: false });
-
-          // Fetch user profile after successful Google login
-          await get().fetchUserProfile();
-        } catch (error: any) {
-          const errorMessage = error.message || 'Đăng nhập với Google thất bại';
+          const errorMessage = error.response?.data?.message || error.message || 'Đăng nhập thất bại';
           set({ error: errorMessage, loading: false });
           throw error;
         }
@@ -74,13 +87,16 @@ export const useAuthStore = create<AuthState>()(
       register: async (credentials: RegisterCredentials) => {
         set({ loading: true, error: null });
         try {
-          const { user } = await authService.createAccount(credentials);
+          await authService.register(credentials);
+
+          // Get user from newly stored token
+          const user = getUserFromToken();
           set({ user, loading: false });
 
           // Fetch user profile after successful registration
           await get().fetchUserProfile();
         } catch (error: any) {
-          const errorMessage = error.message || 'Đăng ký thất bại';
+          const errorMessage = error.response?.data?.message || error.message || 'Đăng ký thất bại';
           set({ error: errorMessage, loading: false });
           throw error;
         }
@@ -89,7 +105,7 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         set({ loading: true, error: null });
         try {
-          await authService.signOut();
+          await authService.logout();
           set({ user: null, userProfile: null, loading: false, error: null });
         } catch (error: any) {
           const errorMessage = error.message || 'Đăng xuất thất bại';
@@ -101,10 +117,10 @@ export const useAuthStore = create<AuthState>()(
       resetPassword: async (email: string) => {
         set({ loading: true, error: null });
         try {
-          await authService.sendPasswordReset(email);
+          await authService.requestPasswordReset(email);
           set({ loading: false });
         } catch (error: any) {
-          const errorMessage = error.message || 'Gửi email đặt lại mật khẩu thất bại';
+          const errorMessage = error.response?.data?.message || error.message || 'Gửi email đặt lại mật khẩu thất bại';
           set({ error: errorMessage, loading: false });
           throw error;
         }
@@ -112,25 +128,11 @@ export const useAuthStore = create<AuthState>()(
 
       clearError: () => set({ error: null }),
       setLoading: (loading: boolean) => set({ loading }),
-      setUser: (user: User | null) => set({ user }),
+      setUser: (user: AuthUser | null) => set({ user }),
       setInitialized: (initialized: boolean) => set({ isInitialized: initialized }),
 
-      getIdToken: async (forceRefresh = false) => {
-        try {
-          const currentUser = auth.currentUser;
-          if (currentUser) {
-            const idToken = await currentUser.getIdToken(forceRefresh);
-            return idToken;
-          }
-          return null;
-        } catch (error) {
-          console.error('Failed to get ID token:', error);
-          return null;
-        }
-      },
-
       fetchUserProfile: async () => {
-        const currentUser = auth.currentUser;
+        const currentUser = get().user;
         if (!currentUser) {
           console.warn('No authenticated user to fetch profile for');
           return;
@@ -158,41 +160,14 @@ export const useAuthStore = create<AuthState>()(
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => sessionStorage),
-      partialize: (state) => ({ user: state.user })
+      partialize: (state) => ({
+        // Don't persist user or tokens - they're stored separately
+        // Only persist initialization state to avoid flash
+        isInitialized: state.isInitialized
+      })
     }
   )
 );
 
-// Listen to auth state changes
-let unsubscribe: (() => void) | null = null;
-
-export const initializeAuthListener = () => {
-  if (unsubscribe) return;
-
-  unsubscribe = onAuthStateChanged(auth, async (user) => {
-    useAuthStore.setState({
-      user,
-      loading: false,
-      isInitialized: true
-    });
-
-    // If user is logged in, fetch their profile
-    if (user) {
-      await useAuthStore.getState().fetchUserProfile();
-    } else {
-      // Clear profile when user logs out
-      useAuthStore.getState().clearUserProfile();
-    }
-  });
-};
-
-// Clean up listener
-export const cleanupAuthListener = () => {
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
-};
-
-// Initialize listener immediately
-initializeAuthListener();
+// Initialize auth on app start
+useAuthStore.getState().initializeAuth();

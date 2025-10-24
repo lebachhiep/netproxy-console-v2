@@ -1,7 +1,7 @@
 import { AuthFormWrapper } from '@/components/AuthFormWrapper';
 import { Button } from '@/components/button/Button';
 import { Checkbox } from '@/components/checkbox/Checkbox';
-import { EmojiLaugh, Google, LockClosed } from '@/components/icons';
+import { EmojiLaugh, LockClosed } from '@/components/icons';
 import { InputField } from '@/components/input/InputField';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { useEffect } from 'react';
@@ -10,7 +10,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/services/auth/auth.schemas';
 import { useAuth } from '@/hooks/useAuth';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { AUTH_MESSAGES, AUTH_ROUTES, PROTECTED_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { AuthShowcase } from './components/AuthShowCase';
@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state as LocationState;
-  const { login, loginWithGoogle, isAuthenticated, clearError } = useAuth();
+  const { login, isAuthenticated, clearError } = useAuth();
 
   const {
     control,
@@ -38,7 +38,7 @@ export const LoginPage: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema) as any,
     defaultValues: {
-      email: '',
+      login: '',
       password: '',
       remember: false
     }
@@ -59,26 +59,14 @@ export const LoginPage: React.FC = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login(data.email, data.password, data.remember || false);
+      await login(data.login, data.password, data.remember || false);
       toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
       const from = locationState?.from || PROTECTED_ROUTES.HOME;
       navigate(from, { replace: true });
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
       setError('root', { message: errorMessage });
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      await loginWithGoogle();
-      toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
-      const from = locationState?.from || PROTECTED_ROUTES.HOME;
-      navigate(from, { replace: true });
-    } catch (error) {
-      const errorMessage = mapFirebaseError(error);
-      toast.error(errorMessage);
     }
   };
 
@@ -86,40 +74,23 @@ export const LoginPage: React.FC = () => {
     <AuthLayout
       left={
         <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại !">
-          {/* Google Button */}
           <div className="flex flex-col gap-5 p-5 md:p-0 shadow-lg md:shadow-none rounded-[20px] border md:border-none border-border-element dark:border-border-element-dark">
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={isSubmitting}
-              className="bg-bg-secondary h-12 dark:bg-bg-secondary-dark dark:pseudo-border-top flex items-center justify-center gap-3 w-full py-3 px-5 border-[1.25px] border-border-element dark:border-border-element-dark rounded-full shadow-xs hover:shadow-md transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Google />
-              <span className="font-bold text-text-hi dark:text-text-hi-dark text-[12px] tracking-[0.6px]">GOOGLE</span>
-            </button>
-            {/* Divider */}
-            <div className="flex items-center w-full">
-              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
-              <span className="mx-3 text-text-lo text-sm">Hoặc</span>
-              <div className="flex-grow border-t border-border-element dark:border-border-element-dark"></div>
-            </div>
-
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3">
                   <Controller
-                    name="email"
+                    name="login"
                     control={control}
                     render={({ field }) => (
                       <div>
                         <InputField
                           {...field}
-                          type="email"
-                          placeholder="Tài khoản"
+                          type="text"
+                          placeholder="Email hoặc tên đăng nhập"
                           icon={<EmojiLaugh className="text-primary" />}
                           disabled={isSubmitting}
                         />
-                        {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
+                        {errors.login && <span className="text-red text-sm mt-1">{errors.login.message}</span>}
                       </div>
                     )}
                   />

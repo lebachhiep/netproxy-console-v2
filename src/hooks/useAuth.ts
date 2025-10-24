@@ -11,15 +11,13 @@ export const useAuth = () => {
     isInitialized,
     profileLoading,
     login,
-    loginWithGoogle,
     register,
     logout,
     resetPassword,
     clearError,
     fetchUserProfile,
     setUserProfile,
-    clearUserProfile,
-    getIdToken
+    clearUserProfile
   } = useAuthStore();
 
   return {
@@ -31,7 +29,6 @@ export const useAuth = () => {
     profileLoading,
     isAuthenticated: !!user,
     login,
-    loginWithGoogle,
     register,
     logout,
     resetPassword,
@@ -39,7 +36,6 @@ export const useAuth = () => {
     fetchUserProfile,
     setUserProfile,
     clearUserProfile,
-    getIdToken,
     // Helper methods from userService
     getDisplayName: () => userProfile ? userService.getDisplayName(userProfile) : null,
     getUserInitials: () => userProfile ? userService.getUserInitials(userProfile) : null,

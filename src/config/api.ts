@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
-import { auth } from './firebase';
 import { toast } from 'sonner';
+import { getAccessToken, isTokenExpired, getRefreshToken, saveTokens, clearTokens } from '@/utils/token';
 
 // Extend AxiosRequestConfig to include our custom _retry property
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
@@ -23,18 +23,44 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        // Get the ID token from Firebase
-        const idToken = await currentUser.getIdToken();
-        if (idToken) {
-          // Add Bearer token to Authorization header
-          config.headers.Authorization = `Bearer ${idToken}`;
+      // Skip auth for public endpoints
+      if (config.url?.includes('/auth/login') ||
+          config.url?.includes('/auth/register') ||
+          config.url?.includes('/auth/request-password-reset') ||
+          config.url?.includes('/auth/reset-password') ||
+          config.url?.includes('/auth/verify-email')) {
+        return config;
+      }
+
+      // Check if token is expired and try to refresh
+      if (isTokenExpired() && !config.url?.includes('/auth/refresh')) {
+        try {
+          const refreshToken = getRefreshToken();
+          if (refreshToken) {
+            // Call refresh endpoint
+            const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+              refresh_token: refreshToken
+            });
+
+            // Save new tokens
+            const wasRemembered = !!localStorage.getItem('access_token');
+            saveTokens(response.data, wasRemembered);
+          }
+        } catch (refreshError) {
+          console.error('Token refresh failed in interceptor:', refreshError);
+          clearTokens();
+          // Let the request continue, it will fail with 401 and be handled by response interceptor
         }
       }
+
+      // Get access token and add to headers
+      const accessToken = getAccessToken();
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     } catch (error) {
-      console.error('Error getting Firebase ID token:', error);
-      // Continue with request even if token retrieval fails
+      console.error('Error in request interceptor:', error);
+      // Continue with request even if token handling fails
     }
     return config;
   },
@@ -56,19 +82,28 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const currentUser = auth.currentUser;
-        if (currentUser) {
-          // Force refresh the ID token
-          const newToken = await currentUser.getIdToken(true);
+        const refreshToken = getRefreshToken();
+        if (refreshToken && !originalRequest.url?.includes('/auth/refresh')) {
+          // Try to refresh the access token
+          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+            refresh_token: refreshToken
+          });
+
+          // Save new tokens
+          const wasRemembered = !!localStorage.getItem('access_token');
+          saveTokens(response.data, wasRemembered);
+
+          // Retry the original request with new token
           if (!originalRequest.headers) {
             originalRequest.headers = {};
           }
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
           return apiClient(originalRequest);
         }
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
-        // Redirect to login if token refresh fails
+        // Clear tokens and redirect to login
+        clearTokens();
         window.location.href = '/login';
         return Promise.reject(refreshError);
       }
@@ -109,11 +144,7 @@ apiClient.interceptors.response.use(
 // Export API configuration
 export const apiConfig = {
   baseURL: API_BASE_URL,
-  getAuthToken: async () => {
-    const currentUser = auth.currentUser;
-    if (currentUser) {
-      return await currentUser.getIdToken();
-    }
-    return null;
+  getAuthToken: () => {
+    return getAccessToken();
   },
 };

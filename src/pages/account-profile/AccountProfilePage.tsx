@@ -6,7 +6,7 @@ import { Tabs } from '@/components/tabs/Tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
 import { UserProfile } from '@/services/user/user.types';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -20,7 +20,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
   const [isHideApiValue, setIsHideApiValue] = useState(true);
-  const { user, logout } = useAuth();
+  const { user, userProfile, logout } = useAuth();
   const accountTabs = [
     { key: 'info', label: 'Thông tin chung' },
     { key: 'change-password', label: 'Đổi mật khẩu' },
@@ -35,13 +35,16 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
   } = useForm<UserProfile>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      full_name: user?.displayName ?? '',
-      email: user?.email ?? '',
-      address: '',
-      country: '',
-      zip: '',
-      company: '',
-      vatId: ''
+      id: userProfile?.id ?? user?.user_id ?? '',
+      email: userProfile?.email ?? user?.email ?? '',
+      username: userProfile?.username ?? user?.username ?? '',
+      full_name: userProfile?.full_name ?? null,
+      phone_number: userProfile?.phone_number ?? null,
+      role: userProfile?.role ?? user?.role ?? 'user',
+      avatar_url: userProfile?.avatar_url ?? null,
+      balance: userProfile?.balance ?? 0,
+      is_banned: userProfile?.is_banned ?? false,
+      ban_reason: userProfile?.ban_reason ?? null
     }
   });
 
@@ -74,7 +77,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
       // TODO: call API reset password
       setShowSuccessModal(true); //
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
       setPasswordError('root', { message: errorMessage });
     }

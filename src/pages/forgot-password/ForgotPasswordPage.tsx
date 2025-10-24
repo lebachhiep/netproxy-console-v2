@@ -7,7 +7,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ForgotPasswordFormData, forgotPasswordSchema } from '@/services/auth/auth.schemas';
 import { useAuth } from '@/hooks/useAuth';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 
@@ -50,7 +50,7 @@ export const ForgotPasswordPage: React.FC = () => {
       setEmailSent(true);
       reset(); // Clear the form
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
       setError('root', { message: errorMessage });
     }

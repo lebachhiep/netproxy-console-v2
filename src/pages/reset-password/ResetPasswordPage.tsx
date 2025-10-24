@@ -4,7 +4,7 @@ import { InputField } from '@/components/input/InputField';
 import { useAuth } from '@/hooks/useAuth';
 import { ResetPasswordFormData, resetPasswordSchema } from '@/services/auth/auth.schemas';
 import { AUTH_ROUTES } from '@/utils/constants';
-import { mapFirebaseError } from '@/utils/errors';
+import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ export const ResetPasswordPage: React.FC = () => {
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
 
-  const { register, loginWithGoogle, isAuthenticated, clearError } = useAuth();
+  const { register, isAuthenticated, clearError } = useAuth();
 
   const {
     control,
@@ -36,7 +36,7 @@ export const ResetPasswordPage: React.FC = () => {
       // TODO
       setStep(2);
     } catch (error) {
-      const errorMessage = mapFirebaseError(error);
+      const errorMessage = mapApiError(error);
       toast.error(errorMessage);
       setError('root', { message: errorMessage });
     }

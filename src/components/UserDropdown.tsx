@@ -2,24 +2,31 @@ import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Chevron, PersonOutlined, SignOut, WalletCreditCardOutlined } from './icons';
-import { User } from 'firebase/auth';
+import { AuthUser } from '@/services/auth/auth.types';
+import { UserProfile } from '@/services/user/user.types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useClickOutside } from '@/hooks/useClickOutside';
 
 interface Props {
-  user: User | null;
+  user: AuthUser | null;
+  userProfile: UserProfile | null;
   settings: { defaultAvatar: string };
   handleLogout: () => void;
   setModalOpen: (open: boolean) => void;
 }
 
-const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalOpen }) => {
+const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogout, setModalOpen }) => {
   const { isMobile, isTablet } = useResponsive();
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useClickOutside(dropdownRef, () => setMenuOpen(false));
+
+  // Get display name from userProfile or user
+  const displayName = userProfile?.full_name || user?.username || userProfile?.username || 'User';
+  const avatar = userProfile?.avatar_url || settings.defaultAvatar;
+  const balance = userProfile?.balance || 0;
 
   return (
     <div
@@ -33,18 +40,18 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
       {/* User info */}
       <div
         className="flex items-center justify-between cursor-pointer border-2 border-border-element dark:border-transparent dark:border-border-element-dark dark:pseudo-border-top
-                   pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs 
-                   bg-bg-secondary dark:bg-bg-secondary-dark 
+                   pl-2 pr-4 rounded-[100px] w-[200px] h-12 shadow-xs
+                   bg-bg-secondary dark:bg-bg-secondary-dark
                    hover:border-blue dark:hover:border-transparent transition-colors duration-300"
         onClick={() => (isMobile || isTablet) && setMenuOpen((prev) => !prev)}
       >
         <div className="flex items-center gap-2">
-          <img src={user?.photoURL || settings.defaultAvatar} className="w-9 h-9 rounded-full" />
+          <img src={avatar} className="w-9 h-9 rounded-full" alt={displayName} />
           <div className="flex flex-col items-start">
             <span className="text-xs font-medium text-text-me dark:text-text-me-dark">
-              {user?.displayName || user?.email?.split('@')[0] || 'User'}
+              {displayName}
             </span>
-            <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$ 825.97</span>
+            <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$ {balance.toFixed(2)}</span>
           </div>
         </div>
         <Chevron
@@ -75,8 +82,8 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
                     // setModalOpen(true);
                     setMenuOpen(false);
                   }}
-                  className="cursor-pointer block rounded-lg px-2 py-1 text-sm 
-                             text-text-me dark:text-text-me-dark 
+                  className="cursor-pointer block rounded-lg px-2 py-1 text-sm
+                             text-text-me dark:text-text-me-dark
                              hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
                 >
                   <div className="flex items-center gap-2">
@@ -84,7 +91,7 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
                     <div>
                       Xem hồ sơ{' '}
                       <span className="text-sm text-blue-hi dark:text-blue-hi-dark">
-                        {user?.displayName || user?.email?.split('@')[0] || 'User'}
+                        {displayName}
                       </span>
                     </div>
                   </div>
@@ -92,15 +99,15 @@ const UserDropdown: React.FC<Props> = ({ user, settings, handleLogout, setModalO
 
                 <Link
                   to="/wallet"
-                  className="block rounded-lg px-2 py-1 text-sm 
-                             text-text-me dark:text-text-me-dark 
+                  className="block rounded-lg px-2 py-1 text-sm
+                             text-text-me dark:text-text-me-dark
                              hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark"
                   onClick={() => setMenuOpen(false)}
                 >
                   <div className="flex items-center gap-2 flex-nowrap">
                     <WalletCreditCardOutlined className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
                     <div>
-                      Xem ví của tôi <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$825.97</span>
+                      Xem ví của tôi <span className="text-sm text-blue-hi dark:text-blue-hi-dark">${balance.toFixed(2)}</span>
                     </div>
                   </div>
                 </Link>

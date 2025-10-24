@@ -13,8 +13,7 @@ export const registerSchema = z
     fullName: z
       .string()
       .min(1, 'Họ tên là bắt buộc')
-      .min(2, 'Họ tên phải có ít nhất 2 ký tự')
-      .max(50, 'Họ tên không được vượt quá 50 ký tự'),
+      .max(255, 'Họ tên không được vượt quá 255 ký tự'),
     email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase(),
     username: z
       .string()

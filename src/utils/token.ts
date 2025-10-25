@@ -75,6 +75,53 @@ export const isTokenExpired = (): boolean => {
 };
 
 /**
+ * Validate access token by checking JWT expiry
+ * @returns True if token exists and is not expired
+ */
+export const isAccessTokenValid = (): boolean => {
+  const token = getAccessToken();
+  if (!token) return false;
+
+  const payload = decodeJWT(token);
+  if (!payload) return false;
+
+  // Check if token is expired (JWT exp is in seconds, Date.now() is in milliseconds)
+  // Add 60 second buffer to refresh before actual expiry
+  const expiryTime = payload.exp * 1000;
+  return Date.now() < expiryTime - 60000;
+};
+
+/**
+ * Validate refresh token by checking JWT expiry
+ * @returns True if refresh token exists and is not expired
+ */
+export const isRefreshTokenValid = (): boolean => {
+  const token = getRefreshToken();
+  if (!token) return false;
+
+  const payload = decodeJWT(token);
+  if (!payload) return false;
+
+  // Check if token is expired (JWT exp is in seconds)
+  const expiryTime = payload.exp * 1000;
+  return Date.now() < expiryTime;
+};
+
+/**
+ * Get the storage type currently being used for tokens
+ * @returns 'localStorage' if tokens are in localStorage, 'sessionStorage' if in sessionStorage, or null if no tokens
+ */
+export const getTokenStorageType = (): 'localStorage' | 'sessionStorage' | null => {
+  if (localStorage.getItem(ACCESS_TOKEN_KEY)) {
+    return 'localStorage';
+  }
+  if (sessionStorage.getItem(ACCESS_TOKEN_KEY)) {
+    return 'sessionStorage';
+  }
+  return null;
+};
+
+/**
  * Clear all authentication tokens from storage
  */
 export const clearTokens = (): void => {

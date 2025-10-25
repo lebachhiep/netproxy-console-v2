@@ -1,6 +1,6 @@
 import { apiService } from '@/services/api/api.service';
 import { AuthResponse, RegisterCredentials } from './auth.types';
-import { saveTokens, getRefreshToken, clearTokens, decodeJWT, getAccessToken } from '@/utils/token';
+import { saveTokens, getRefreshToken, clearTokens, decodeJWT, getAccessToken, getTokenStorageType } from '@/utils/token';
 
 class AuthService {
   /**
@@ -84,7 +84,8 @@ class AuthService {
       });
 
       // Update tokens in storage (preserve the storage type)
-      const wasRemembered = !!localStorage.getItem('access_token');
+      const storageType = getTokenStorageType();
+      const wasRemembered = storageType === 'localStorage';
       saveTokens(response, wasRemembered);
 
       return response;
@@ -92,6 +93,10 @@ class AuthService {
       console.error('Token refresh failed:', error);
       // Clear tokens on refresh failure
       clearTokens();
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
       throw error;
     }
   }

@@ -4,7 +4,7 @@ import { authService } from '@/services/auth/auth.service';
 import { RegisterCredentials, AuthUser } from '@/services/auth/auth.types';
 import { userService } from '@/services/user/user.service';
 import { UserProfile } from '@/services/user/user.types';
-import { hasTokens, getUserFromToken, clearTokens } from '@/utils/token';
+import { hasTokens, getUserFromToken, clearTokens, isAccessTokenValid, isRefreshTokenValid } from '@/utils/token';
 
 interface AuthState {
   user: AuthUser | null;
@@ -43,26 +43,72 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
         try {
           // Check if tokens exist
-          if (hasTokens()) {
-            // Get user from stored token
+          if (!hasTokens()) {
+            set({ user: null, loading: false, isInitialized: true });
+            return;
+          }
+
+          // Check if access token is valid
+          if (isAccessTokenValid()) {
+            // Access token is valid, get user from it
             const user = getUserFromToken();
             if (user) {
               set({ user, loading: false, isInitialized: true });
-
               // Fetch user profile
               await get().fetchUserProfile();
             } else {
-              // Token is invalid, clear it
+              // Token decode failed, clear everything
               clearTokens();
               set({ user: null, loading: false, isInitialized: true });
             }
+            return;
+          }
+
+          // Access token is expired, check if refresh token is valid
+          if (isRefreshTokenValid()) {
+            try {
+              // Try to refresh the access token
+              await authService.refreshAccessToken();
+
+              // Get user from the new token
+              const user = getUserFromToken();
+              if (user) {
+                set({ user, loading: false, isInitialized: true });
+                // Fetch user profile
+                await get().fetchUserProfile();
+              } else {
+                // Token decode failed after refresh, clear everything
+                clearTokens();
+                set({ user: null, loading: false, isInitialized: true });
+              }
+            } catch (refreshError) {
+              // Refresh failed, clear tokens and redirect to login
+              console.error('Token refresh failed during initialization:', refreshError);
+              clearTokens();
+              set({ user: null, loading: false, isInitialized: true });
+              // Redirect to login if not already there
+              if (!window.location.pathname.includes('/login')) {
+                window.location.href = '/login';
+              }
+            }
           } else {
+            // Both tokens are invalid/expired, clear everything and redirect to login
+            console.warn('Both access and refresh tokens are invalid or expired');
+            clearTokens();
             set({ user: null, loading: false, isInitialized: true });
+            // Redirect to login if not already there
+            if (!window.location.pathname.includes('/login')) {
+              window.location.href = '/login';
+            }
           }
         } catch (error) {
           console.error('Auth initialization failed:', error);
           clearTokens();
           set({ user: null, loading: false, isInitialized: true });
+          // Redirect to login on any error if not already there
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
         }
       },
 

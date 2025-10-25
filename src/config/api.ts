@@ -1,11 +1,14 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError, AxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
-import { getAccessToken, isTokenExpired, getRefreshToken, saveTokens, clearTokens } from '@/utils/token';
+import { getAccessToken, getRefreshToken, saveTokens, clearTokens, getTokenStorageType } from '@/utils/token';
 
 // Extend AxiosRequestConfig to include our custom _retry property
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;
 }
+
+// Refresh token promise to prevent multiple simultaneous refresh calls
+let refreshTokenPromise: Promise<string> | null = null;
 
 // API Base URL from environment variable
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://v2.dev.api.netproxy.io';
@@ -35,53 +38,84 @@ export const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    try {
-      // Skip auth for public endpoints
-      if (config.url?.includes('/auth/login') ||
-          config.url?.includes('/auth/register') ||
-          config.url?.includes('/auth/request-password-reset') ||
-          config.url?.includes('/auth/reset-password') ||
-          config.url?.includes('/auth/verify-email')) {
-        return config;
-      }
-
-      // Check if token is expired and try to refresh
-      if (isTokenExpired() && !config.url?.includes('/auth/refresh')) {
-        try {
-          const refreshToken = getRefreshToken();
-          if (refreshToken) {
-            // Call refresh endpoint
-            const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-              refresh_token: refreshToken
-            });
-
-            // Save new tokens
-            const wasRemembered = !!localStorage.getItem('access_token');
-            saveTokens(response.data, wasRemembered);
-          }
-        } catch (refreshError) {
-          console.error('Token refresh failed in interceptor:', refreshError);
-          clearTokens();
-          // Let the request continue, it will fail with 401 and be handled by response interceptor
-        }
-      }
-
-      // Get access token and add to headers
-      const accessToken = getAccessToken();
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
-      }
-    } catch (error) {
-      console.error('Error in request interceptor:', error);
-      // Continue with request even if token handling fails
+  (config: InternalAxiosRequestConfig) => {
+    // Skip auth for public endpoints
+    if (config.url?.includes('/auth/login') ||
+        config.url?.includes('/auth/register') ||
+        config.url?.includes('/auth/request-password-reset') ||
+        config.url?.includes('/auth/reset-password') ||
+        config.url?.includes('/auth/verify-email') ||
+        config.url?.includes('/auth/refresh')) {
+      return config;
     }
+
+    // Get access token and add to headers
+    const accessToken = getAccessToken();
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+
+/**
+ * Refresh the access token using the refresh token
+ * Uses a promise to prevent multiple simultaneous refresh calls
+ */
+const refreshAccessToken = async (): Promise<string> => {
+  // If a refresh is already in progress, wait for it
+  if (refreshTokenPromise) {
+    return refreshTokenPromise;
+  }
+
+  // Start a new refresh
+  refreshTokenPromise = (async () => {
+    try {
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
+
+      // Call refresh endpoint
+      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+        refresh_token: refreshToken
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Host': API_HOST,
+        }
+      });
+
+      // Determine if we should use localStorage or sessionStorage
+      // by checking where the tokens are currently stored
+      const storageType = getTokenStorageType();
+      const wasRemembered = storageType === 'localStorage';
+
+      // Save new tokens
+      saveTokens(response.data, wasRemembered);
+
+      return response.data.access_token;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      // Clear tokens and redirect to login on refresh failure
+      clearTokens();
+      // Redirect to login if not already there
+      if (!window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
+      throw error;
+    } finally {
+      // Clear the promise so future requests can trigger a new refresh
+      refreshTokenPromise = null;
+    }
+  })();
+
+  return refreshTokenPromise;
+};
 
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
@@ -93,32 +127,28 @@ apiClient.interceptors.response.use(
 
     // Handle 401 Unauthorized errors (token expired or invalid)
     if (error.response?.status === 401 && !originalRequest?._retry && originalRequest) {
+      // Prevent infinite retry loops
       originalRequest._retry = true;
 
+      // Skip refresh for auth endpoints
+      if (originalRequest.url?.includes('/auth/login') ||
+          originalRequest.url?.includes('/auth/register') ||
+          originalRequest.url?.includes('/auth/refresh')) {
+        return Promise.reject(error);
+      }
+
       try {
-        const refreshToken = getRefreshToken();
-        if (refreshToken && !originalRequest.url?.includes('/auth/refresh')) {
-          // Try to refresh the access token
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-            refresh_token: refreshToken
-          });
+        // Try to refresh the access token
+        const newAccessToken = await refreshAccessToken();
 
-          // Save new tokens
-          const wasRemembered = !!localStorage.getItem('access_token');
-          saveTokens(response.data, wasRemembered);
-
-          // Retry the original request with new token
-          if (!originalRequest.headers) {
-            originalRequest.headers = {};
-          }
-          originalRequest.headers.Authorization = `Bearer ${response.data.access_token}`;
-          return apiClient(originalRequest);
+        // Retry the original request with new token
+        if (!originalRequest.headers) {
+          originalRequest.headers = {};
         }
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
       } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
-        // Clear tokens and redirect to login
-        clearTokens();
-        window.location.href = '/login';
+        // Refresh failed, error already handled in refreshAccessToken
         return Promise.reject(refreshError);
       }
     }

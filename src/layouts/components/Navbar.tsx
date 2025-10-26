@@ -136,7 +136,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-canvas dark:bg-bg-canvas-dark  dark:border-border-element-dark">
+      <div className="w-full h-16 flex items-center justify-between px-5 py-2 bg-bg-canvas dark:bg-bg-canvas-dark  dark:border-border-element-dark gap-2">
         {/* Left */}
         <div className="flex items-center gap-4">
           <IconButton icon={<Chevron />} disabled={!canGoBack} onClick={handleBack} />
@@ -155,12 +155,11 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Right */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-1 justify-end">
           <HeaderSearchInput
             ref={inputRef}
             placeholder={'Nhập mã kích hoạt'}
             wrapperClassName="rounded-[100px]"
-            inputClassName="w-[194px]"
             value={code}
             onChange={(e) => handleChange(e.target.value)}
             onEnter={handleEnter}

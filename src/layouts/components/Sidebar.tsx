@@ -16,7 +16,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
-  const { isDesktop, isLargeDesktop } = useResponsive();
+  const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
   const navigate = useNavigate();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
       onMouseLeave={() => (isDesktop || isLargeDesktop ? toggle(true) : '')} // đóng khi rời chuột
     >
       {/* Nút collapse */}
-      {!isDesktop || !isLargeDesktop && (
+      {(isMobile || isTablet || isDesktop) && (
         <div className="absolute top-1/2 -right-3 z-50 -translate-y-1/2">
           {collapsed ? (
             <IconButton onClick={() => toggle(false)} className="w-6 h-6" icon={<Chevron className="rotate-180 w-4 h-4" />} />

@@ -313,7 +313,7 @@ const DashboardPage = () => {
             label: 'IP có trong pool:',
             value: (
               <div>
-                <span className="text-pink dark:text-pink-dark font-semibold text-sm">123.985</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">123.985</span>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
               </div>
             )
@@ -429,6 +429,7 @@ const DashboardPage = () => {
                 pageSize,
                 total: data.length,
                 pageSizeOptions: [2, 4, 6, 8],
+                className: '!pt-2 px-5',
                 onChange: (page, size) => {
                   setCurrentPage(page);
                   setPageSize(size);

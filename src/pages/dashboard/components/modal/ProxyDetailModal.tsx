@@ -303,7 +303,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
   return (
     <Modal
       bodyClassName="flex-1 overflow-hidden flex flex-col"
-      className="rounded-none max-w-[1085px] relative flex flex-col h-full"
+      className="rounded-none max-w-[1085px] w-[80%] relative flex flex-col h-full"
       open={open}
       onClose={onClose}
       title={item.title || 'Chi tiết'}
@@ -335,9 +335,14 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       {/* Nội dung modal */}
       <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col">
         {item.type === 'bandwidth-proxy' ? (
-          <Tabs tabs={bandwidthTabs} className="bg-bg-primary dark:bg-bg-primary-dark flex flex-col" defaultActiveKey="list" defaultWrapperClass='h-full flex flex-col'>
+          <Tabs
+            tabs={bandwidthTabs}
+            className="bg-bg-primary dark:bg-bg-primary-dark flex flex-col"
+            defaultActiveKey="list"
+            defaultWrapperClass="h-full flex flex-col"
+          >
             {/* Tab 1: Danh sách Proxy */}
-            <div className='h-full flex flex-col overflow-auto'>
+            <div className="h-full flex flex-col overflow-auto">
               {/* Header info */}
               <HeaderInfo
                 expired={item.expired}
@@ -386,6 +391,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                   current: currentPage,
                   pageSize,
                   total: tableData.length,
+                  className: '!pt-2 px-5 pb-5',
                   pageSizeOptions: [10, 20, 50, 100],
                   onChange: (page, size) => {
                     setCurrentPage(page);
@@ -406,7 +412,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
               />
               <div className="p-5">
                 <div className="flex items-center gap-2">
-                  <Select className="h-10 min-w-[179px]" placeholder="Quốc gia" options={countryOptions} />
+                  <Select className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent" placeholder="Quốc gia" options={countryOptions} />
                   <ApiInput
                     className="h-10"
                     value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
@@ -494,6 +500,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                 current: currentPage,
                 pageSize,
                 total: tableData.length,
+                className: '!pt-2 px-5 pb-5',
                 pageSizeOptions: [10, 20, 50, 100],
                 onChange: (page, size) => {
                   setCurrentPage(page);

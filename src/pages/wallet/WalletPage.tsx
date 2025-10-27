@@ -168,10 +168,7 @@ const WalletPage: React.FC = () => {
       animate="visible"
       className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col"
     >
-      <motion.div
-            variants={itemVariants}
-            initial="hidden"
-            animate="visible" className="flex flex-col md:flex-row gap-5 p-5 items-stretch">
+      <motion.div variants={itemVariants} initial="hidden" animate="visible" className="flex flex-col md:flex-row gap-5 p-5 items-stretch">
         {/* Left Panel - Top Up Form */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
@@ -305,6 +302,7 @@ const WalletPage: React.FC = () => {
             pageSize,
             total: tableData.length,
             pageSizeOptions: [5, 10, 20, 50],
+            className: '!pt-2 px-5',
             onChange: (page, size) => {
               console.log({ page, size });
               setCurrentPage(page);

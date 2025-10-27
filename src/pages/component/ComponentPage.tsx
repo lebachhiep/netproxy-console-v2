@@ -281,7 +281,12 @@ const ComponentPage = () => {
       <div>
         <h1>Select</h1>
         <div className="flex gap-4 flex-wrap">
-          <Select options={options} placeholder="Chọn option" onChange={(val) => console.log('Selected:', val)} />
+          <Select
+            className="dark:pseudo-border-top dark:border-transparent"
+            options={options}
+            placeholder="Chọn option"
+            onChange={(val) => console.log('Selected:', val)}
+          />
         </div>
         <h1>Tag Select</h1>
         <div className="flex gap-4 flex-wrap">

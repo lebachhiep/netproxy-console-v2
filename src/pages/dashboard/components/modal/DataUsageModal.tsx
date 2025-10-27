@@ -37,8 +37,8 @@ export const DataUsageModal = ({ open, onClose }: { open: boolean; onClose: () =
       <div>
         {/* Filter row */}
         <div className="grid grid-cols-2 gap-3 p-5">
-          <Select options={dataUsageOptions} value={usage} onChange={(val) => setUsage(val)} className="w-full" />
-          <Select options={billingCycleOptions} value={billing} onChange={(val) => setBilling(val)} className="w-full" />
+          <Select options={dataUsageOptions} value={usage} onChange={(val) => setUsage(val)} className="w-full dark:pseudo-border-top dark:border-transparent" />
+          <Select options={billingCycleOptions} value={billing} onChange={(val) => setBilling(val)} className="w-full dark:pseudo-border-top dark:border-transparent" />
         </div>
 
         {/* Chart */}

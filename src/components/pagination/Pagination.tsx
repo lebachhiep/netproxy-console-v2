@@ -146,7 +146,7 @@ export function Pagination({
   }
 
   return (
-    <div className={`py-3 px-5 z-[100] ${className}`}>
+    <div className={`z-[100] ${className}`}>
       <div className="flex items-center justify-between">
         {/* Left side - Page info and size changer */}
         {/* <div className="hidden md:flex items-center text-sm text-text-me dark:text-text-me-dark space-x-4">

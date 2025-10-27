@@ -132,7 +132,12 @@ export const LoginPage: React.FC = () => {
                 {errors.root && <div className="text-red text-sm text-center">{errors.root.message}</div>}
 
                 <div className="flex flex-col gap-5">
-                  <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
+                  <Button
+                    type="submit"
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                    className="w-full dark:pseudo-border-top-orange dark:border-transparent"
+                  >
                     {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
                   </Button>
                 </div>

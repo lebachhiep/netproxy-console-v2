@@ -210,19 +210,21 @@ export const ProxyDetailPage = () => {
                     scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
                     data={tableData}
                     columns={columnsBandwidth}
-                    paginationType="pagination"
-                    size="large"
-                    rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
                     pagination={{
                       current: currentPage,
                       pageSize,
                       total: tableData.length,
+                      className: 'px-5 pt-2 pb-5',
                       pageSizeOptions: [10, 20, 50, 100],
                       onChange: (page, size) => {
                         setCurrentPage(page);
                         setPageSize(size);
                       }
                     }}
+                    paginationType="pagination"
+                    size="large"
+                    bordered={false}
+                    rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
                   />
                 </motion.div>
               </div>
@@ -251,7 +253,11 @@ export const ProxyDetailPage = () => {
                 </div>
                 <div className="p-5">
                   <div className="flex items-center gap-2">
-                    <Select className="h-10 w-[100px] whitespace-nowrap dark:pseudo-border-top dark:border-transparent" placeholder="Quốc gia" options={countryOptions} />
+                    <Select
+                      className="h-10 w-[100px] whitespace-nowrap dark:pseudo-border-top dark:border-transparent"
+                      placeholder="Quốc gia"
+                      options={countryOptions}
+                    />
                     <ApiInput
                       className="h-10"
                       value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
@@ -335,6 +341,16 @@ export const ProxyDetailPage = () => {
                   selectedRowKeys,
                   onChange: (keys, rows) => setSelectedRowKeys(keys)
                 }}
+                pagination={{
+                  current: currentPage,
+                  pageSize,
+                  total: tableData.length,
+                  className: 'px-5 pt-2 ',
+                  onChange: (page, size) => {
+                    setCurrentPage(page);
+                    setPageSize(size);
+                  }
+                }}
                 paginationType="pagination"
                 rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
                 size="large"
@@ -346,7 +362,7 @@ export const ProxyDetailPage = () => {
               <ActionButtons />
             </div>
 
-            <div className="py-3">
+            <div className="px-5 pt-2 pb-5 md:pb-0">
               <Pagination
                 type="pagination"
                 current={currentPage}

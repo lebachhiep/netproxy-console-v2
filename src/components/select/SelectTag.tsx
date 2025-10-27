@@ -163,7 +163,7 @@ export const SelectTag: React.FC<SelectTagProps> = ({ options, value, defaultVal
 
       {/* Dropdown */}
       {open && (
-        <div className="p-1 absolute top-full mt-1 w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-50">
+        <div className="p-1 absolute top-full mt-1 w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101]">
           {options.map((opt) => (
             <div
               key={opt.value}

@@ -15,14 +15,14 @@ export const AdminLayout: React.FC = () => {
   const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
   return (
-    <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-[100dvh] md:pl-5 md:py-5 flex flex-col">
+    <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-[100dvh] md:pl-5 md:pt-5 flex flex-col">
       <div className="rounded-tl-[16px] border-border-element relative flex flex-col h-full">
         {/* Sidebar */}
         <motion.div
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: -20, opacity: 1 }}
           transition={{ duration: 0.4, ease: easeInOutCustom }}
-          className="fixed left-5 top-5 h-[calc(100dvh-40px)] z-20"
+          className="fixed left-5 top-5 h-[calc(100dvh-40px)] z-[101]"
         >
           <Sidebar collapsed={collapsed} toggle={toggle} />
         </motion.div>
@@ -48,7 +48,7 @@ export const AdminLayout: React.FC = () => {
         <main
           className={clsx(
             'pt-16 transition-all duration-300 flex-1 flex flex-col overflow-hidden',
-            collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]'
+                        collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]'
           )}
         >
           <Outlet />

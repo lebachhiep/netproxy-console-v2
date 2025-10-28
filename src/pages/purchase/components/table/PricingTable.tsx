@@ -19,7 +19,7 @@ const PricingTable: React.FC<PricingTableProps> = ({ items }) => {
         <div className="inline-grid min-w-full rounded-lg border-2 border-border-element dark:border-border-element-dark">
           {/* Header */}
           <div
-            className="grid divide-x-2 divide-border-element dark:divide-border-element-dark bg-yellow-bg dark:bg-yellow-bg-dark rounded-t-lg text-center"
+            className="grid divide-x-2 divide-border-element dark:divide-border-element-dark bg-yellow-bg dark:bg-[#2B405A] rounded-t-lg text-center"
             style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
           >
             {items.map((item, idx) => (

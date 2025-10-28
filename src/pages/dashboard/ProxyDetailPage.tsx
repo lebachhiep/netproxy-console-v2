@@ -204,7 +204,7 @@ export const ProxyDetailPage = () => {
                 </div>
 
                 {/* Table danh sách proxy */}
-                <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
+                <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px] pb-5">
                   <Table
                     className="h-full"
                     scroll={{ x: 300, y: 'calc(100dvh - 475px)' }}
@@ -330,7 +330,7 @@ export const ProxyDetailPage = () => {
                 <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
               </div>
             </div>
-            <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-scroll h-full min-h-[350px]">
+            <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-scroll h-full min-h-[350px] pb-5">
               <Table
                 // className="min-h-[calc(100dvh-475px)] md:min-h-[calc(100dvh-445px)]"
                 className="h-full"

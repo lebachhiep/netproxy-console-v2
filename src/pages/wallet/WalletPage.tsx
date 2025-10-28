@@ -291,7 +291,7 @@ const WalletPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px]">
+      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] pb-5">
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}

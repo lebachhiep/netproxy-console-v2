@@ -417,7 +417,7 @@ const DashboardPage = () => {
         </motion.div>
 
         {/* ====== CONTENT ====== */}
-        <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px]">
+        <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px] pb-5">
           {viewMode === 'list' ? (
             <Table
               className="h-full pr-2"

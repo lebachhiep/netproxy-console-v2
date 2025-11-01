@@ -14,6 +14,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { SuccessModal } from './components/modal/SuccessModal';
 import ProfileForm from './components/ProfileForm';
+import { motion } from 'framer-motion';
+import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
 
 interface AccountProfilePageProps {}
 
@@ -119,22 +121,27 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
 
   return (
     <>
-      <div className="h-full flex flex-col overflow-auto bg-bg-canvas dark:bg-bg-canvas-dark pt-5">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={pageVariants}
+        className="h-full flex flex-col overflow-auto bg-bg-canvas dark:bg-bg-canvas-dark pt-5"
+      >
         <Tabs tabs={accountTabs} defaultActiveKey="info">
           {/* Tab 1: Thông tin chung */}
-          <div>
-            <div className="p-5">
+          <motion.div variants={containerVariants}>
+            <motion.div variants={itemVariants} className="p-5">
               <form onSubmit={handleProfileSubmit(onSubmitProfile)}>
                 <ProfileForm control={profileControl} errors={profileErrors} isSubmitting={isProfileSubmitting} />
               </form>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Tab 2: Đổi mật khẩu */}
-          <div>
+          <motion.div variants={containerVariants}>
             <div className="p-5">
               <form onSubmit={handlePasswordSubmit(onSubmitPassword)}>
-                <div className="space-y-4">
+                <motion.div variants={itemVariants} className="space-y-4">
                   <Controller
                     name="password"
                     control={passwordControl}
@@ -178,21 +185,21 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                   <Button type="submit" disabled={isPasswordSubmitting} className="h-10 px-4 ">
                     {isPasswordSubmitting ? 'Đang lưu...' : 'ĐỔI MẬT KHẨU'}
                   </Button>
-                </div>
+                </motion.div>
               </form>
             </div>
-          </div>
+          </motion.div>
 
           {/* Tab 3: API Key */}
-          <div className="p-5 flex flex-col gap-4">
+          <motion.div variants={containerVariants} className="p-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1 text-sm">
-              <div className="flex items-center gap-1">
+              <motion.div variants={itemVariants} className="flex items-center gap-1">
                 <span className="font-semibold text-text-hi dark:text-text-hi-dark">API Key</span>
                 <div className="bg-blue rounded-[2px] text-white px-1">1 / 5</div>
-              </div>
-              <span className="text-text-me dark:text-text-me-dark mb-4">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</span>
+              </motion.div>
+              <motion.div variants={itemVariants} className="text-text-me dark:text-text-me-dark mb-4">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</motion.div>
 
-              <div className="flex flex-row justify-center items-center gap-5">
+              <motion.div variants={itemVariants} className="flex flex-row justify-center items-center gap-5">
                 <ApiInput
                   value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
                   actions={[
@@ -216,11 +223,11 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                 <Button variant="default" className="w-fit h-10 px-4 rounded-md" icon={<AddCircle />}>
                   TẠO MÃ API MỚI
                 </Button>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </Tabs>
-      </div>
+      </motion.div>
       <SuccessModal
         open={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}

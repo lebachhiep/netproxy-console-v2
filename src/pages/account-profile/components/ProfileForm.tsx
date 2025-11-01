@@ -1,6 +1,8 @@
 import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
 import { UserProfile } from '@/services/user/user.types';
+import { itemVariants } from '@/utils/animation';
+import { motion } from 'framer-motion';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
 
 interface ProfileFormProps {
@@ -13,7 +15,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
   return (
     <>
       {/* Form inputs */}
-      <div className="space-y-4">
+      <motion.div variants={itemVariants}  className="space-y-4">
         {/* Họ tên */}
         <Controller
           name="full_name"
@@ -116,7 +118,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
         <Button type="submit" disabled={isSubmitting} className="h-10 px-4">
           {isSubmitting ? 'Đang lưu...' : 'LƯU THÔNG TIN'}
         </Button>
-      </div>
+      </motion.div>
     </>
   );
 }

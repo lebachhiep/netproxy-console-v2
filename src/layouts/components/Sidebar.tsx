@@ -3,6 +3,7 @@ import { Chevron } from '@/components/icons';
 import { useResponsive } from '@/hooks/useResponsive';
 import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
 import { ReactComponent as Logo } from 'assets/images/logo.svg';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { adminSections, Route } from 'router';
@@ -18,6 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const location = useLocation();
   const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
   const navigate = useNavigate();
+  const { isAbsoluteSidebar } = useResponsive();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   };
@@ -30,8 +32,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
 
   return (
     <aside
-      className={`hidden fixed left-5 h-[calc(100dvh-40px)] z-[102] bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
-      ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[212px] lg:w-[272px]'}`}
+      className={clsx(
+        `hidden left-5 h-[calc(100dvh-40px)] z-[102] bg-bg-secondary dark:bg-bg-secondary-dark p-3 border-2 border-border-element dark:border-border-element-dark rounded-[16px] shadow-lg md:flex flex-col transition-[width] duration-300 
+      ${collapsed ? 'w-[calc(64px+4px)]' : 'w-[212px] lg:w-[272px]'}`,
+        isAbsoluteSidebar ? 'absolute !left-0 !top-0 z-20' : 'fixed'
+      )}
       // Hover auto expand / collapse
       onMouseEnter={() => (isDesktop || isLargeDesktop ? toggle(false) : '')} // mở khi hover
       onMouseLeave={() => (isDesktop || isLargeDesktop ? toggle(true) : '')} // đóng khi rời chuột

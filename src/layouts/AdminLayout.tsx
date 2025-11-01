@@ -4,9 +4,11 @@ import { useCallback, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
+  const { isAbsoluteSidebar } = useResponsive();
 
   const toggle = useCallback((collapsed: boolean) => {
     setCollapsed(collapsed);
@@ -22,7 +24,7 @@ export const AdminLayout: React.FC = () => {
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: -20, opacity: 1 }}
           transition={{ duration: 0.4, ease: easeInOutCustom }}
-          className="fixed left-5 top-5 h-[calc(100dvh-40px)] z-[101]"
+          className={clsx('left-5 top-5 h-[calc(100dvh-40px)] z-[101]', isAbsoluteSidebar ? 'absolute !top-0 z-20' : 'fixed')}
         >
           <Sidebar collapsed={collapsed} toggle={toggle} />
         </motion.div>
@@ -38,7 +40,7 @@ export const AdminLayout: React.FC = () => {
           }}
           className={clsx(
             'fixed top-5 right-0 h-16 z-40 transition-all duration-300',
-            collapsed ? 'left-[88px]' : 'left-[calc(272px+20px)]'
+            collapsed ? 'left-[88px]' : isAbsoluteSidebar ? 'left-[88px]' : 'left-[calc(272px+20px)]'
           )}
         >
           <Navbar />
@@ -48,7 +50,7 @@ export const AdminLayout: React.FC = () => {
         <main
           className={clsx(
             'pt-16 transition-all duration-300 flex-1 flex flex-col overflow-hidden',
-                        collapsed ? 'md:ml-[68px]' : 'md:ml-[272px]'
+            collapsed ? 'md:ml-[68px]' : isAbsoluteSidebar ? 'md:ml-[68px]' : 'md:ml-[272px]'
           )}
         >
           <Outlet />

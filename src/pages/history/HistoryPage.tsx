@@ -177,7 +177,7 @@ const HistoryPage: React.FC = () => {
             current: 1,
             pageSize: displayCount,
             total: tableData.length,
-            className: '!pt-2 px-5',
+            className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
             pageSizeOptions: [5, 10, 20, 50],
             onChange: (_page, newPageSize) => handlePageSizeChange(newPageSize)
           }}

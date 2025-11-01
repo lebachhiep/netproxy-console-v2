@@ -391,7 +391,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                   current: currentPage,
                   pageSize,
                   total: tableData.length,
-                  className: '!pt-2 px-5 pb-5',
+                  className: '!pt-2 px-5 pb-5 border-t-2 border-border-element dark:border-border-element-dark',
                   pageSizeOptions: [10, 20, 50, 100],
                   onChange: (page, size) => {
                     setCurrentPage(page);
@@ -500,7 +500,7 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
                 current: currentPage,
                 pageSize,
                 total: tableData.length,
-                className: '!pt-2 px-5 pb-5',
+                className: '!pt-2 px-5 pb-5 border-t-2 border-border-element dark:border-border-element-dark',
                 pageSizeOptions: [10, 20, 50, 100],
                 onChange: (page, size) => {
                   setCurrentPage(page);

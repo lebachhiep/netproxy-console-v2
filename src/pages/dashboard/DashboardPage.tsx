@@ -429,7 +429,7 @@ const DashboardPage = () => {
                 pageSize,
                 total: data.length,
                 pageSizeOptions: [2, 4, 6, 8],
-                className: '!pt-2 px-5',
+                className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
                 onChange: (page, size) => {
                   setCurrentPage(page);
                   setPageSize(size);

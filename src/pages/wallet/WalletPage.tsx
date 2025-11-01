@@ -302,7 +302,7 @@ const WalletPage: React.FC = () => {
             pageSize,
             total: tableData.length,
             pageSizeOptions: [5, 10, 20, 50],
-            className: '!pt-2 px-5',
+            className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
             onChange: (page, size) => {
               console.log({ page, size });
               setCurrentPage(page);

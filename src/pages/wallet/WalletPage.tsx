@@ -9,41 +9,21 @@ import { SectionTitle } from '@/components/SectionTitle';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { Table, TableColumn } from '@/components/table/Table';
-import { Dayjs } from 'dayjs';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DepositFlowModal from './components/modal/DepositFlowModal';
-import { Transaction } from '../history/HistoryPage';
 import { useResponsive } from '@/hooks/useResponsive';
 import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import clsx from 'clsx';
-import { motion, Variants } from 'framer-motion';
-import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
-
-const services = ['Nạp tiền', 'Gia hạn hosting', 'Mua domain', 'Thanh toán VPS', 'Gia hạn email', 'Mua SSL'];
-
-const statuses = [
-  { text: 'Đang hoạt động', color: 'green' },
-  { text: 'Hoàn thành', color: 'blue' },
-  { text: 'Đã hủy', color: 'red' }
-];
-
-export const tableData: Transaction[] = Array.from({ length: 50 }, (_, i) => {
-  const randomService = services[Math.floor(Math.random() * services.length)];
-  const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-  const randomAmount = (Math.random() * 100 + 5).toFixed(2);
-  const randomDate = new Date(2025, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1).toISOString().split('T')[0];
-
-  return {
-    id: `TX${i + 1}`,
-    service: randomService,
-    amount: parseFloat(randomAmount),
-    description: `${randomService} mô tả fake ${i + 1}`,
-    status: randomStatus,
-    date: randomDate
-  };
-});
+import { motion } from 'framer-motion';
+import { itemVariants, pageVariants } from '@/utils/animation';
+import { transactionService } from '@/services/transaction/transaction.service';
+import { TransactionDisplay } from '@/services/transaction/transaction.types';
+import { transformTransaction, formatDateForAPI } from '@/utils/transaction.utils';
+import { walletService } from '@/services/wallet/wallet.service';
+import { WalletBalance } from '@/services/wallet/wallet.types';
+import { useAuth } from '@/hooks/useAuth';
 
 const options = [
   {
@@ -76,24 +56,127 @@ const options = [
 ];
 
 const WalletPage: React.FC = () => {
-  const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [open, setOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
-
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
-  const paginatedData = tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const { userProfile, getDisplayName } = useAuth();
+
+  // Deposit form state
+  const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
   const [priceValue, setPriceValue] = useState(10);
+  const [open, setOpen] = useState(false);
+
+  // Balance state
+  const [balance, setBalance] = useState<WalletBalance | null>(null);
+  const [balanceLoading, setBalanceLoading] = useState(false);
+
+  // Transaction state
+  const [transactions, setTransactions] = useState<TransactionDisplay[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
 
-  const columns: TableColumn<Transaction>[] = [
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [total, setTotal] = useState(0);
+
+  // Fetch balance
+  const fetchBalance = useCallback(async () => {
+    try {
+      setBalanceLoading(true);
+      const balanceData = await walletService.getBalance();
+      setBalance(balanceData);
+    } catch (err: any) {
+      toast.error('Không thể tải thông tin ví');
+    } finally {
+      setBalanceLoading(false);
+    }
+  }, []);
+
+  // Fetch transactions
+  const fetchTransactions = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params: any = {
+        page: currentPage,
+        per_page: pageSize,
+      };
+
+      // Add search query if present
+      if (searchQuery.trim()) {
+        params.search = searchQuery.trim();
+      }
+
+      // Add date range if present
+      if (dateRange.from) {
+        params.start_date = formatDateForAPI(dateRange.from);
+      }
+      if (dateRange.to) {
+        params.end_date = formatDateForAPI(dateRange.to);
+      }
+
+      const response = await transactionService.getBalanceHistory(params);
+
+      // Transform data for display
+      const transformedData = response.items.map(transformTransaction);
+      setTransactions(transformedData);
+      setTotal(response.total);
+    } catch (err: any) {
+      setError(err.message || 'Không thể tải lịch sử giao dịch');
+      toast.error('Không thể tải lịch sử giao dịch');
+    } finally {
+      setLoading(false);
+    }
+  }, [currentPage, pageSize, searchQuery, dateRange]);
+
+  // Fetch data on mount
+  useEffect(() => {
+    fetchBalance();
+    fetchTransactions();
+  }, [fetchBalance, fetchTransactions]);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (currentPage !== 1) {
+        setCurrentPage(1); // Reset to first page on search
+      } else {
+        fetchTransactions();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset to first page when date range changes
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [dateRange]);
+
+  const handlePageChange = (page: number, newPageSize?: number) => {
+    setCurrentPage(page);
+    if (newPageSize && newPageSize !== pageSize) {
+      setPageSize(newPageSize);
+    }
+  };
+
+  const handleRefresh = () => {
+    fetchBalance();
+    fetchTransactions();
+    toast.success('Đã làm mới dữ liệu');
+  };
+
+  const columns: TableColumn<TransactionDisplay>[] = [
     {
       key: 'stt',
       title: 'STT',
       width: '60px',
       align: 'center',
-      render: (_value, _record, index) => index + 1
+      render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
     },
     {
       key: 'id',
@@ -103,9 +186,9 @@ const WalletPage: React.FC = () => {
       sortable: true,
       render: (value) => (
         <div className="flex items-center justify-between">
-          <span>{value}</span>
+          <span className="truncate">{value}</span>
           <ContentCopy
-            className="text-blue cursor-pointer"
+            className="text-blue cursor-pointer ml-2"
             onClick={() => {
               copyToClipboard(value);
               toast.success('Đã sao chép mã giao dịch vào clipboard');
@@ -116,16 +199,22 @@ const WalletPage: React.FC = () => {
     },
     {
       width: isMobile || isTablet ? 150 : '',
-      key: 'service',
-      title: 'Dịch vụ',
+      key: 'typeLabel',
+      title: 'Loại',
       align: 'left',
-      render: (value) => value || '...'
+      render: (value, record) => (
+        <Badge color={record.type === 'credit' ? 'green' : 'blue'}>{value}</Badge>
+      )
     },
     {
       key: 'amount',
       title: 'Số tiền',
       width: '120px',
-      render: (value) => `$ ${Number(value).toFixed(2)}`
+      render: (value, record) => (
+        <span className={record.type === 'credit' ? 'text-green' : 'text-red'}>
+          {record.type === 'credit' ? '+' : '-'} ${Number(value).toFixed(2)}
+        </span>
+      )
     },
     {
       width: isMobile || isTablet ? 150 : '',
@@ -146,18 +235,7 @@ const WalletPage: React.FC = () => {
       title: 'Thời gian',
       width: isMobile || isTablet ? 120 : 200,
       fixed: 'right',
-      render: (value) =>
-        value ? (
-          <span>
-            {new Date(value).toLocaleDateString('en-US', {
-              month: 'short',
-              day: '2-digit',
-              year: 'numeric'
-            })}
-          </span>
-        ) : (
-          '-'
-        )
+      render: (value) => value || '-'
     }
   ];
 
@@ -242,26 +320,34 @@ const WalletPage: React.FC = () => {
 
         {/* Right Panel */}
         {/* Wallet Card */}
-        {(isDesktop || isLargeDesktop || isMobile) && <BalanceCard balance={825.097} spent={20} owner="LÊ BẠCH HIỆP" variant="blue" />}
+        {(isDesktop || isLargeDesktop || isMobile) && (
+          <BalanceCard
+            balance={balance?.balance || 0}
+            spent={balance?.total_purchased || 0}
+            owner={getDisplayName()?.toUpperCase() || userProfile?.username?.toUpperCase() || 'USER'}
+            variant="blue"
+          />
+        )}
       </motion.div>
       {/* Filter section */}
       <motion.div variants={itemVariants} className="p-5 pb-2">
         <div>
-          <SectionTitle text="Lịch sử nạp tiền" />
+          <SectionTitle text="Lịch sử giao dịch" />
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
             {/* Left group (Search + Filter + Button) */}
             <div className={clsx('w-full flex flex-col gap-3', (isDesktop || isLargeDesktop) && '!flex-row')}>
               {/* Search field */}
               <Input
-                placeholder="Tìm kiếm"
+                placeholder="Tìm kiếm giao dịch..."
                 wrapperClassName={clsx(
                   'bg-bg-input border-2 h-10 w-full sm:w-[240px]',
                   isTablet && '!w-full',
                   (isDesktop || isLargeDesktop) && 'flex flex-col'
                 )}
                 icon={<MagnifyingGlass />}
-                onChange={(e) => console.log(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
 
               {/* Row below for Date + Button (on mobile) */}
@@ -270,21 +356,17 @@ const WalletPage: React.FC = () => {
                   <DateRangePicker
                     value={dateRange}
                     onChange={setDateRange}
-                    placeholder="Chọn ngày"
+                    placeholder="Chọn khoảng thời gian"
                     className={clsx('h-10 w-full sm:flex-none ', isTablet && '!w-full', (isDesktop || isLargeDesktop) && 'max-w-[220px]')}
                     triggerClassName="dark:bg-bg-primary-dark dark:pseudo-border-top dark:border-transparent"
                   />
-                  {/* <DatePicker
-                    className="h-10 w-full md:w-[220px] sm:flex-none"
-                    value={selectedDate}
-                    onChange={(date: Dayjs | null) => {
-                      setSelectedDate(date);
-                      console.log('Selected date:', date?.format('DD/MM/YYYY'));
-                    }}
-                  /> */}
                 </div>
 
-                <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+                <IconButton
+                  className="w-10 h-10"
+                  icon={<ArrowCounter />}
+                  onClick={handleRefresh}
+                />
               </div>
             </div>
           </div>
@@ -295,19 +377,16 @@ const WalletPage: React.FC = () => {
         <Table
           className="h-full"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}
-          data={paginatedData}
+          data={transactions}
           columns={columns}
+          loading={loading}
           pagination={{
             current: currentPage,
             pageSize,
-            total: tableData.length,
+            total: total,
             pageSizeOptions: [5, 10, 20, 50],
             className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
-            onChange: (page, size) => {
-              console.log({ page, size });
-              setCurrentPage(page);
-              setPageSize(size);
-            }
+            onChange: handlePageChange
           }}
           paginationType="pagination"
           rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}

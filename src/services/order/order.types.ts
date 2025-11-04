@@ -103,3 +103,64 @@ export const ORDER_STATUS_DISPLAY: Record<OrderStatus, { text: string; color: st
   refunded: { text: 'Đã hoàn tiền', color: 'yellow' },
   failed: { text: 'Thất bại', color: 'red' }
 };
+
+// Create order request item
+export interface CreateOrderItemRequest {
+  plan_id: string;
+  quantity: number;
+  country?: string; // ISO 3166-1 alpha-2 code for external provider plans
+}
+
+// Create order request
+export interface CreateOrderRequest {
+  type: OrderType;
+  items: CreateOrderItemRequest[];
+  coupon_code?: string;
+  gift_code?: string;
+}
+
+// Order item from backend (simplified - provider fields not exposed)
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  plan_id: string;
+  plan_name: string; // Snapshot of plan name at purchase time
+  quantity: number;
+  unit_price: string; // Decimal string
+  total_price: string; // Decimal string
+  created_at: string;
+}
+
+// Order with items (from create order and get order by ID responses)
+export interface OrderWithItems {
+  id: string;
+  order_number: string;
+  type: OrderType;
+  status: OrderStatus;
+  user_id: string;
+  reseller_id?: string; // Empty string when not present (omitempty)
+  currency_code: string;
+  subtotal: string;
+  tax_amount: string;
+  discount_amount: string;
+  total: string;
+  coupon_id?: string; // Empty string when not present (omitempty)
+  gift_code_id?: string; // Empty string when not present (omitempty)
+  description?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  fulfilled_at?: string;
+  items: OrderItem[];
+}
+
+// Create order response wraps the order
+export interface CreateOrderResponse {
+  order: OrderWithItems;
+}
+
+// Get order response wraps the order
+export interface GetOrderResponse {
+  order: OrderWithItems;
+}
+

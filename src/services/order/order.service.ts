@@ -1,5 +1,12 @@
 import { apiService } from '@/services/api/api.service';
-import { OrderListRequest, OrderListResponse, Order } from './order.types';
+import {
+  OrderListRequest,
+  OrderListResponse,
+  CreateOrderRequest,
+  CreateOrderResponse,
+  GetOrderResponse,
+  OrderWithItems,
+} from './order.types';
 
 class OrderService {
   /**
@@ -17,11 +24,21 @@ class OrderService {
   /**
    * Get single order by ID
    * @param id - Order ID
-   * @returns Promise with order details
+   * @returns Promise with order details including items
    */
-  async getOrderById(id: string): Promise<Order> {
-    const response = await apiService.get<Order>(`/user/orders/${id}`);
-    return response;
+  async getOrderById(id: string): Promise<OrderWithItems> {
+    const response = await apiService.get<GetOrderResponse>(`/user/orders/${id}`);
+    return response.order; // Unwrap the order from response
+  }
+
+  /**
+   * Create a new order (purchase)
+   * @param request - Order creation request with items and optional coupon
+   * @returns Promise with created order details including items
+   */
+  async createOrder(request: CreateOrderRequest): Promise<OrderWithItems> {
+    const response = await apiService.post<CreateOrderResponse>('/user/orders', request);
+    return response.order; // Unwrap the order from response
   }
 }
 

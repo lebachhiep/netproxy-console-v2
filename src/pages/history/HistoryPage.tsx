@@ -3,6 +3,7 @@ import IconButton from '@/components/button/IconButton';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
 import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
+import { Select } from '@/components/select/Select';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useResponsive } from '@/hooks/useResponsive';
 import { copyToClipboard } from '@/utils/copyToClipboard';
@@ -10,36 +11,36 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { itemVariants, pageVariants } from '@/utils/animation';
-import { transactionService } from '@/services/transaction/transaction.service';
-import { TransactionDisplay } from '@/services/transaction/transaction.types';
-import { transformTransaction, formatDateForAPI } from '@/utils/transaction.utils';
-
-export interface Transaction {
-  id: string;
-  service: string;
-  amount: number;
-  description: string;
-  status: { text: string; color: string };
-  date: string;
-}
+import { orderService } from '@/services/order/order.service';
+import { OrderDisplay, OrderType, OrderStatus, ORDER_TYPE_LABELS, ORDER_STATUS_DISPLAY } from '@/services/order/order.types';
+import { transformOrder, formatDateForAPI, getOrderTypeColor, formatOrderDate } from '@/utils/order.utils';
+import { OrderDetailsModal } from './components/OrderDetailsModal';
 
 const HistoryPage: React.FC = () => {
   const { isMobile, isTablet } = useResponsive();
 
   // State
-  const [transactions, setTransactions] = useState<TransactionDisplay[]>([]);
+  const [orders, setOrders] = useState<OrderDisplay[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
+
+  // Filter state
+  const [selectedType, setSelectedType] = useState<OrderType | ''>('');
+  const [selectedStatus, setSelectedStatus] = useState<OrderStatus | ''>('');
+
+  // Modal state
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
-  // Fetch transactions
-  const fetchTransactions = useCallback(async () => {
+  // Fetch orders
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -62,24 +63,34 @@ const HistoryPage: React.FC = () => {
         params.end_date = formatDateForAPI(dateRange.to);
       }
 
-      const response = await transactionService.getBalanceHistory(params);
+      // Add type filter if selected
+      if (selectedType) {
+        params.type = selectedType;
+      }
+
+      // Add status filter if selected
+      if (selectedStatus) {
+        params.status = selectedStatus;
+      }
+
+      const response = await orderService.getOrders(params);
 
       // Transform data for display
-      const transformedData = response.items.map(transformTransaction);
-      setTransactions(transformedData);
+      const transformedData = response.orders.map(transformOrder);
+      setOrders(transformedData);
       setTotal(response.total);
     } catch (err: any) {
-      setError(err.message || 'Không thể tải lịch sử giao dịch');
-      toast.error('Không thể tải lịch sử giao dịch');
+      setError(err.message || 'Không thể tải lịch sử đơn hàng');
+      toast.error('Không thể tải lịch sử đơn hàng');
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, searchQuery, dateRange]);
+  }, [currentPage, pageSize, searchQuery, dateRange, selectedType, selectedStatus]);
 
   // Fetch data on mount and when dependencies change
   useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+    fetchOrders();
+  }, [fetchOrders]);
 
   // Debounce search
   useEffect(() => {
@@ -87,19 +98,19 @@ const HistoryPage: React.FC = () => {
       if (currentPage !== 1) {
         setCurrentPage(1); // Reset to first page on search
       } else {
-        fetchTransactions();
+        fetchOrders();
       }
     }, 500);
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Reset to first page when date range changes
+  // Reset to first page when filters change
   useEffect(() => {
     if (currentPage !== 1) {
       setCurrentPage(1);
     }
-  }, [dateRange]);
+  }, [dateRange, selectedType, selectedStatus]);
 
   const handlePageChange = (page: number, newPageSize?: number) => {
     setCurrentPage(page);
@@ -109,11 +120,21 @@ const HistoryPage: React.FC = () => {
   };
 
   const handleRefresh = () => {
-    fetchTransactions();
+    fetchOrders();
     toast.success('Đã làm mới dữ liệu');
   };
 
-  const columns: TableColumn<TransactionDisplay>[] = [
+  const handleRowClick = (order: OrderDisplay) => {
+    setSelectedOrderId(order.id);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedOrderId(null);
+  };
+
+  const columns: TableColumn<OrderDisplay>[] = [
     {
       key: 'stt',
       title: 'STT',
@@ -122,8 +143,8 @@ const HistoryPage: React.FC = () => {
       render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
     },
     {
-      key: 'id',
-      title: 'Mã',
+      key: 'orderNumber',
+      title: 'Mã đơn hàng',
       width: '160px',
       align: 'left',
       sortable: true,
@@ -132,9 +153,10 @@ const HistoryPage: React.FC = () => {
           <span className="truncate">{value}</span>
           <ContentCopy
             className="text-blue cursor-pointer ml-2"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               copyToClipboard(value);
-              toast.success('Đã sao chép mã giao dịch vào clipboard');
+              toast.success('Đã sao chép mã đơn hàng vào clipboard');
             }}
           />
         </div>
@@ -143,20 +165,47 @@ const HistoryPage: React.FC = () => {
     {
       width: isMobile || isTablet ? 150 : '',
       key: 'typeLabel',
-      title: 'Loại',
+      title: 'Loại đơn',
       align: 'left',
       render: (value, record) => (
-        <Badge color={record.type === 'credit' ? 'green' : 'blue'}>{value}</Badge>
+        <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
       )
     },
     {
-      key: 'amount',
-      title: 'Số tiền',
+      key: 'total',
+      title: 'Tổng tiền',
       width: '120px',
       render: (value, record) => (
-        <span className={record.type === 'credit' ? 'text-green' : 'text-red'}>
-          {record.type === 'credit' ? '+' : '-'} ${Number(value).toFixed(2)}
-        </span>
+        <div className="group relative">
+          <span className="font-medium text-blue cursor-help">
+            ${Number(value).toFixed(2)}
+          </span>
+          {/* Tooltip */}
+          <div className="absolute z-50 bottom-full left-0 mb-2 hidden group-hover:block w-48 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-lg p-3">
+            <div className="space-y-1 text-xs">
+              <div className="flex justify-between">
+                <span className="text-text-lo dark:text-text-lo-dark">Tạm tính:</span>
+                <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.subtotal}</span>
+              </div>
+              {record.discountAmount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-text-lo dark:text-text-lo-dark">Giảm giá:</span>
+                  <span className="text-green">-{record.priceBreakdown.discount}</span>
+                </div>
+              )}
+              {record.taxAmount > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-text-lo dark:text-text-lo-dark">Thuế:</span>
+                  <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.tax}</span>
+                </div>
+              )}
+              <div className="border-t border-border-element dark:border-border-element-dark pt-1 mt-1 flex justify-between font-semibold">
+                <span className="text-text-hi dark:text-text-hi-dark">Tổng:</span>
+                <span className="text-blue">{record.priceBreakdown.total}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       )
     },
     {
@@ -167,18 +216,18 @@ const HistoryPage: React.FC = () => {
       render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
     },
     {
-      key: 'status',
+      key: 'statusDisplay',
       title: 'Trạng thái',
       width: '160px',
       align: 'center',
       render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
     },
     {
-      key: 'date',
+      key: 'createdAt',
       title: 'Thời gian',
       width: isMobile || isTablet ? 120 : 200,
       fixed: 'right',
-      render: (value) => value || '-'
+      render: (value) => formatOrderDate(value.toISOString())
     }
   ];
 
@@ -190,46 +239,79 @@ const HistoryPage: React.FC = () => {
       className="overflow-y-auto md:h-[calc(100dvh-104px)] flex flex-col h-full"
     >
       <motion.div variants={itemVariants} className="px-5 py-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
-          {/* Left group (Search + Filter + Button) */}
+        <div className="flex flex-col gap-3">
+          {/* First row - Search and Date Range */}
           <div className="flex flex-col md:flex-row gap-3 w-full">
             {/* Search field */}
             <Input
-              placeholder="Tìm kiếm giao dịch..."
+              placeholder="Tìm kiếm theo mã đơn hàng..."
               wrapperClassName="bg-bg-input border-2 h-10 w-full md:w-[240px]"
               icon={<MagnifyingGlass />}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            {/* Row below for Date + Button (on mobile) */}
-            <div className="flex items-center gap-3 sm:mt-0 flex-1 min-w-0 justify-between">
-              <div className="flex-1">
-                <DateRangePicker
-                  value={dateRange}
-                  onChange={setDateRange}
-                  placeholder="Chọn khoảng thời gian"
-                  className="h-10 w-full md:w-[220px] sm:flex-none"
-                  triggerClassName="dark:pseudo-border-top dark:border-transparent"
-                />
-              </div>
+            <DateRangePicker
+              value={dateRange}
+              onChange={setDateRange}
+              placeholder="Chọn khoảng thời gian"
+              className="h-10 w-full md:w-[220px]"
+              triggerClassName="dark:pseudo-border-top dark:border-transparent"
+            />
 
-              <IconButton
-                className="w-10 h-10"
-                icon={<ArrowCounter />}
-                onClick={handleRefresh}
-              />
-            </div>
+            <IconButton
+              className="w-10 h-10"
+              icon={<ArrowCounter />}
+              onClick={handleRefresh}
+            />
+          </div>
+
+          {/* Second row - Type and Status filters */}
+          <div className="flex flex-col md:flex-row gap-3 w-full">
+            {/* Order Type Filter */}
+            <Select
+              value={selectedType}
+              onChange={(val) => setSelectedType(val as OrderType | '')}
+              placeholder="Tất cả loại đơn"
+              className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
+              options={[
+                { value: '', label: 'Tất cả loại đơn' },
+                ...Object.entries(ORDER_TYPE_LABELS).map(([value, label]) => ({
+                  value,
+                  label
+                }))
+              ]}
+            />
+
+            {/* Order Status Filter */}
+            <Select
+              value={selectedStatus}
+              onChange={(val) => setSelectedStatus(val as OrderStatus | '')}
+              placeholder="Tất cả trạng thái"
+              className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
+              options={[
+                { value: '', label: 'Tất cả trạng thái' },
+                ...Object.entries(ORDER_STATUS_DISPLAY).map(([value, display]) => ({
+                  value,
+                  label: display.text
+                }))
+              ]}
+            />
           </div>
         </div>
       </motion.div>
 
       <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] pb-5">
         <Table
-          className="h-full"
-          scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 210px)' }}
-          data={transactions}
-          columns={columns}
+          className="h-full [&_tbody_tr]:cursor-pointer [&_tbody_tr:hover]:bg-bg-mute dark:[&_tbody_tr:hover]:bg-bg-mute-dark"
+          scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 270px)' }}
+          data={orders}
+          columns={columns.map((col) => ({
+            ...col,
+            onCell: (record: OrderDisplay) => ({
+              onClick: () => handleRowClick(record)
+            })
+          }))}
           loading={loading}
           pagination={{
             current: currentPage,
@@ -245,6 +327,13 @@ const HistoryPage: React.FC = () => {
           bordered={false}
         />
       </motion.div>
+
+      {/* Order Details Modal */}
+      <OrderDetailsModal
+        open={isModalOpen}
+        orderId={selectedOrderId}
+        onClose={handleModalClose}
+      />
     </motion.div>
   );
 };

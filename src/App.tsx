@@ -6,6 +6,7 @@ import './index.css';
 import './styles/App.scss';
 import './styles/custom.scss';
 import { useEffect } from 'react';
+import { CartProvider } from './contexts/CartContext';
 
 const App = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const App = () => {
   }, []);
 
   return (
-    <>
+    <CartProvider>
       {element}
       <Toaster
         position="top-right"
@@ -34,7 +35,7 @@ const App = () => {
           }
         }}
       />
-    </>
+    </CartProvider>
   );
 };
 

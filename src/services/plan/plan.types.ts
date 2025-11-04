@@ -116,3 +116,16 @@ export const PLAN_CATEGORY_COLORS: Record<PlanCategory, string> = {
   isp: 'orange',
   mixed: 'gray'
 };
+
+/**
+ * Check if a plan requires country selection
+ * Note: This should be determined by calling GET /user/plans/:id/countries
+ * which returns a country_required boolean field
+ *
+ * For Phase 2, we defer country selection implementation
+ */
+export const isCountryRequired = (_plan: Plan): boolean => {
+  // TODO: Implement country requirement check via API endpoint
+  // GET /user/plans/:id/countries returns { country_required: boolean, ... }
+  return false;
+};

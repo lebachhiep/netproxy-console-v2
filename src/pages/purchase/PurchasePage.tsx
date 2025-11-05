@@ -8,6 +8,7 @@ import CountrySelector, { Country } from './components/table/CountrySelector';
 import PricingTable from './components/table/PricingTable';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
+import { useCart } from '@/hooks/useCart';
 
 // Data riêng cho 7 ngày và 30 ngày
 const data7day = [
@@ -72,7 +73,6 @@ type StaticSubKey = 'bandwidth' | 'unlimited';
 type DedicatedSubKey = 'residential' | 'datacenter';
 type SpeedLimitGroup = '5mbps' | '10mbps' | '25mbps' | '50mbps';
 type ResidentialGroup = '7day' | '30day';
-type DatacenterGroup = '7day' | '30day';
 
 interface Plan {
   name: string;
@@ -147,6 +147,9 @@ const PurchasePage: React.FC = () => {
   const [orders, setOrders] = useState<OrderItemType[]>([]);
 
   const [cartOpen, setCartOpen] = useState(false);
+
+  // Cart integration
+  const cart = useCart();
 
   // Bảng giá theo số lượng
   const getPricePerIp = (totalIps: number) => {
@@ -274,19 +277,24 @@ const PurchasePage: React.FC = () => {
             <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
           </div>
 
-          {activeMain === 'dedicated' && (
-            <div
-              onClick={() => setCartOpen(true)}
-              className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2 
+          {/* Cart Icon - Show for all tabs now */}
+          <div
+            onClick={() => setCartOpen(true)}
+            className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2
       ${
-        orders.length > 0
+        (activeMain === 'dedicated' && orders.length > 0) || (activeMain !== 'dedicated' && cart.itemCount > 0)
           ? 'border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark'
           : 'border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark'
       }`}
-            >
-              <CartFilled className={`${orders.length > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'}`} />
-            </div>
-          )}
+          >
+            <CartFilled
+              className={`${
+                (activeMain === 'dedicated' && orders.length > 0) || (activeMain !== 'dedicated' && cart.itemCount > 0)
+                  ? 'text-white'
+                  : 'text-text-lo dark:text-text-lo-dark'
+              }`}
+            />
+          </div>
         </div>
       </div>
       {/* Main Tabs */}
@@ -295,13 +303,16 @@ const PurchasePage: React.FC = () => {
         <div key="rotating">
           <Tabs type="card" tabs={speedGroups} activeKey={activeGroup} onChange={(key) => setActiveGroup(key as SpeedLimitGroup)}>
             {speedGroups.map((g) => (
-              <motion.div
-                key={g.key}
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
-              >
+              <div key={g.key} className="flex">
+                {/* Main content area */}
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
+                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
+                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                >
                 {plansByType.rotating[g.key].map((plan, index) => (
                   <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
                     <PricingCard
@@ -362,6 +373,14 @@ const PurchasePage: React.FC = () => {
                   </motion.div>
                 ))}
               </motion.div>
+
+                {/* Cart Sidebar - Desktop only */}
+                {cart.itemCount > 0 && (
+                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                    <OrderSummary useCartContext={true} />
+                  </div>
+                )}
+              </div>
             ))}
           </Tabs>
         </div>
@@ -592,7 +611,13 @@ const PurchasePage: React.FC = () => {
 
               {/* Nội dung */}
               <div className="flex-1">
-                <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
+                <OrderSummary
+                  orders={orders}
+                  onUpdateQuantity={handleUpdateQuantity}
+                  onRemove={handleRemove}
+                  onClearAll={handleClearAll}
+                  useCartContext={activeMain !== 'dedicated'}
+                />
               </div>
             </motion.div>
           </motion.div>

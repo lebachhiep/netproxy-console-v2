@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../button/Button';
 import { Divider } from '../divider/Divider';
+import { Plan } from '@/services/plan/plan.types';
+import { useCart } from '@/hooks/useCart';
+import { toast } from 'sonner';
 
 interface Feature {
   icon?: React.ReactNode;
@@ -20,9 +23,51 @@ interface PricingCardProps {
   buttonText: string;
   onClick?: () => void;
   tag?: Tag; // label góc trên (có thể có icon)
+
+  // Cart integration (optional)
+  plan?: Plan; // Plan object for cart
+  enableCart?: boolean; // Enable cart functionality
+  cartOptions?: {
+    speedLimit?: string; // for rotating proxies
+    staticType?: 'bandwidth' | 'unlimited'; // for static proxies
+    duration?: '7day' | '30day'; // for dedicated proxies
+  };
 }
 
-export const PricingCard: React.FC<PricingCardProps> = ({ title, price, description, features, buttonText, onClick, tag }) => {
+export const PricingCard: React.FC<PricingCardProps> = ({
+  title,
+  price,
+  description,
+  features,
+  buttonText,
+  onClick,
+  tag,
+  plan,
+  enableCart = false,
+  cartOptions
+}) => {
+  const cart = enableCart ? useCart() : null;
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleClick = async (e: React.MouseEvent) => {
+    // If cart is enabled and plan is provided, add to cart
+    if (enableCart && plan && cart) {
+      e.stopPropagation();
+      setIsAdding(true);
+
+      try {
+        cart.addToCart(plan, 1, cartOptions);
+        toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+      } catch (error) {
+        toast.error('Không thể thêm vào giỏ hàng');
+      } finally {
+        setIsAdding(false);
+      }
+    } else if (onClick) {
+      // Otherwise use the provided onClick handler
+      onClick();
+    }
+  };
   return (
     <div
       onClick={onClick}
@@ -68,7 +113,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({ title, price, descript
 
         {/* Button */}
         <Button
-          onClick={onClick}
+          onClick={handleClick}
+          loading={isAdding}
+          disabled={isAdding}
           className="h-10 group-hover:bg-primary group-hover:dark:bg-primary-dark group-hover:border-primary-border group-hover:dark:border-primary-border-dark group-hover:text-white"
           variant="default"
         >

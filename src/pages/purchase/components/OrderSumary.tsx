@@ -10,6 +10,7 @@ import IconButton from '@/components/button/IconButton';
 import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
 import { CartItem } from '@/contexts/CartContext';
+import Tooltip from '@/components/tooltip/Tooltip';
 
 export type OrderItemType = {
   country: Country;
@@ -99,7 +100,7 @@ const OrderSummary: React.FC<Props> = ({
           {/* <SectionTitle text="Đơn hàng" icon={<Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={onClearAll} />} /> */}
 
           {/* Scrollable order list */}
-          <div className="flex-1 mt-5 flex flex-col min-h-28 overflow-hidden">
+          <div className="flex-1 mt-5 flex flex-col min-h-28 overflow-visible">
             {/* Header row */}
             <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 pb-3 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark">
               <span>Country</span>
@@ -119,7 +120,11 @@ const OrderSummary: React.FC<Props> = ({
                     className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
                   >
                     {/* Tên gói */}
-                    <div className="text-text-hi dark:text-text-hi-dark">{item.plan.name}</div>
+                    <div className="text-text-hi dark:text-text-hi-dark min-w-0">
+                      <Tooltip content={item.plan.name} position="top" disabled={item.plan.name.length <= 12}>
+                        <div className="truncate">{item.plan.name}</div>
+                      </Tooltip>
+                    </div>
 
                     {/* Đơn giá */}
                     <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">${item.plan.price.toFixed(2)}</div>

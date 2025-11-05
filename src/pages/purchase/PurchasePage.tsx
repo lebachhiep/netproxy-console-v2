@@ -1,11 +1,13 @@
 import { PricingCard } from '@/components/card/PricingCard';
 import {
   ArrowRotate,
+  CalendarClock,
   CartFilled,
   Clock,
   DatabaseStackOutlined,
   Dismiss,
   Fire,
+  Grid,
   ShieldCheckmark,
   TopSpeed
 } from '@/components/icons';
@@ -78,29 +80,40 @@ const PurchasePage: React.FC = () => {
   // Cart integration
   const cart = useCart();
 
+  // Shared fetch function (DRY principle)
+  const fetchPlans = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await planService.getAllPlans();
+      setPlans(data);
+    } catch (err) {
+      console.error('Failed to fetch plans:', err);
+      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch plans on mount
   useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await planService.getAllPlans();
-        setPlans(data);
-      } catch (err) {
-        console.error('Failed to fetch plans:', err);
-        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPlans();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Filter plans by type and category
-  const rotatingPlans = useMemo(() => plans.filter(p => p.type === 'rotating'), [plans]);
-  const staticPlans = useMemo(() => plans.filter(p => p.type === 'static'), [plans]);
-  const dedicatedPlans = useMemo(() => plans.filter(p => p.type === 'dedicated'), [plans]);
+  // Filter plans by type and category with explicit sorting
+  const rotatingPlans = useMemo(
+    () => plans.filter(p => p.type === 'rotating').sort((a, b) => a.sort_order - b.sort_order),
+    [plans]
+  );
+  const staticPlans = useMemo(
+    () => plans.filter(p => p.type === 'static').sort((a, b) => a.sort_order - b.sort_order),
+    [plans]
+  );
+  const dedicatedPlans = useMemo(
+    () => plans.filter(p => p.type === 'dedicated').sort((a, b) => a.sort_order - b.sort_order),
+    [plans]
+  );
 
   // Dynamic speed groups for rotating plans
   const speedGroups = useMemo(() => {
@@ -155,7 +168,7 @@ const PurchasePage: React.FC = () => {
     // Duration (for time-based plans)
     if (plan.duration) {
       features.push({
-        icon: <Clock className="w-6 h-6 text-yellow" />,
+        icon: <CalendarClock className="w-6 h-6 text-blue" />,
         label: (
           <div className="text-base">
             <label>Thời hạn: </label>
@@ -207,7 +220,7 @@ const PurchasePage: React.FC = () => {
     // Max concurrent connections
     if (plan.max_concurrent) {
       features.push({
-        icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+        icon: <Grid className="w-6 h-6 text-purple" />,
         label: (
           <div className="text-base">
             <label>Kết nối đồng thời: </label>
@@ -220,22 +233,8 @@ const PurchasePage: React.FC = () => {
     return features;
   };
 
-  // Retry handler
+  // Retry handler (reuses shared fetchPlans function)
   const handleRetry = () => {
-    const fetchPlans = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await planService.getAllPlans();
-        setPlans(data);
-      } catch (err) {
-        console.error('Failed to fetch plans:', err);
-        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPlans();
   };
 
@@ -357,7 +356,7 @@ const PurchasePage: React.FC = () => {
                               tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                               description={plan.description || ''}
                               title={plan.name}
-                              price={plan.price.toString()}
+                              price={plan.price.toFixed(2)}
                               features={buildPlanFeatures(plan)}
                               buttonText="MUA GÓI"
                               enableCart={true}
@@ -373,7 +372,7 @@ const PurchasePage: React.FC = () => {
 
                     {/* Cart Sidebar - Desktop only */}
                     {cart.itemCount > 0 && (
-                      <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                      <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                         <OrderSummary useCartContext={true} />
                       </div>
                     )}
@@ -420,7 +419,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toString()}
+                            price={plan.price.toFixed(2)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -436,7 +435,7 @@ const PurchasePage: React.FC = () => {
 
                 {/* Cart Sidebar - Desktop only */}
                 {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                     <OrderSummary useCartContext={true} />
                   </div>
                 )}
@@ -465,7 +464,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toString()}
+                            price={plan.price.toFixed(2)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -481,7 +480,7 @@ const PurchasePage: React.FC = () => {
 
                 {/* Cart Sidebar - Desktop only */}
                 {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                     <OrderSummary useCartContext={true} />
                   </div>
                 )}
@@ -526,7 +525,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toString()}
+                            price={plan.price.toFixed(2)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -542,7 +541,7 @@ const PurchasePage: React.FC = () => {
 
                 {/* Cart Sidebar - Desktop only */}
                 {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                     <OrderSummary useCartContext={true} />
                   </div>
                 )}
@@ -571,7 +570,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toString()}
+                            price={plan.price.toFixed(2)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -587,7 +586,7 @@ const PurchasePage: React.FC = () => {
 
                 {/* Cart Sidebar - Desktop only */}
                 {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                     <OrderSummary useCartContext={true} />
                   </div>
                 )}

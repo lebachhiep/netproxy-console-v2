@@ -43,12 +43,12 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
     }
   }, [open, plan.id]);
 
-  // Calculate price when country or quantity changes
+  // Calculate price when country or quantity changes (but only after countries are loaded)
   useEffect(() => {
-    if (open && (selectedCountry || !countryRequired)) {
+    if (open && !loading && (selectedCountry || !countryRequired)) {
       calculatePrice();
     }
-  }, [selectedCountry, quantity, open]);
+  }, [selectedCountry, quantity, open, loading, countryRequired]);
 
   const fetchCountries = async () => {
     try {

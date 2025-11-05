@@ -191,6 +191,19 @@ const PurchasePage: React.FC = () => {
       });
     }
 
+    // Unlimited bandwidth for external providers (price = 0)
+    if (plan.price === 0) {
+      features.push({
+        icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+        label: (
+          <div className="text-base">
+            <label>Băng thông: </label>
+            <span className="font-bold">Không giới hạn</span>
+          </div>
+        )
+      });
+    }
+
     // Rotation count (hardcoded as unlimited for rotating plans)
     if (plan.type === 'rotating') {
       features.push({
@@ -225,6 +238,19 @@ const PurchasePage: React.FC = () => {
           <div className="text-base">
             <label>Kết nối đồng thời: </label>
             <span className="font-bold">{plan.max_concurrent}</span>
+          </div>
+        )
+      });
+    }
+
+    // Dedicated proxy message (for dedicated type)
+    if (plan.type === 'dedicated') {
+      features.push({
+        icon: <Fire className="w-6 h-6 text-orange" />,
+        label: (
+          <div className="text-base">
+            <label>Riêng biệt: </label>
+            <span className="font-bold">Chỉ một mình bạn sử dụng</span>
           </div>
         )
       });

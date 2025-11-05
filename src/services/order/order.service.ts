@@ -35,6 +35,20 @@ class OrderService {
    * Create a new order (purchase)
    * @param request - Order creation request with items and optional coupon
    * @returns Promise with created order details including items
+   *
+   * @example
+   * // Map cart items to order items (for Phase 5 checkout implementation):
+   * const items = cartItems.map(item => ({
+   *   plan_id: item.plan.id,
+   *   quantity: item.quantity,
+   *   country: item.country // ISO2 country code (e.g., "US", "GB")
+   * }));
+   *
+   * const order = await orderService.createOrder({
+   *   type: 'buy',
+   *   items,
+   *   coupon_code: cart.couponCode
+   * });
    */
   async createOrder(request: CreateOrderRequest): Promise<OrderWithItems> {
     const response = await apiService.post<CreateOrderResponse>('/user/orders', request);

@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Plan } from '@/services/plan/plan.types';
-import { Country } from '@/pages/purchase/components/table/CountrySelector';
 
 // Cart item structure
 export interface CartItem {
   id: string; // unique cart item ID
   plan: Plan; // full plan object
   quantity: number;
-  country?: Country; // for dedicated proxies
+  country?: string; // ISO2 country code (e.g., "US", "GB")
   duration?: '7day' | '30day'; // for dedicated proxies
   speedLimit?: string; // for rotating (5mbps, 10mbps, 25mbps, 50mbps)
   staticType?: 'bandwidth' | 'unlimited'; // for static proxies
@@ -37,10 +36,10 @@ interface CartContextType {
   itemCount: number;
 
   // Actions
-  addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>) => void;
+  addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
-  updateCountry: (itemId: string, country: Country) => void;
+  updateCountry: (itemId: string, country: string) => void;
   clearCart: () => void;
   applyCoupon: (code: string, couponData: CouponData, discount: number) => void;
   removeCoupon: () => void;
@@ -98,9 +97,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   // Helper function to generate unique cart item ID
-  const generateItemId = (plan: Plan, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>): string => {
+  const generateItemId = (plan: Plan, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string): string => {
     const parts = [plan.id];
-    if (options?.country) parts.push(options.country.code);
+    if (country) parts.push(country);
     if (options?.duration) parts.push(options.duration);
     if (options?.speedLimit) parts.push(options.speedLimit);
     if (options?.staticType) parts.push(options.staticType);
@@ -113,7 +112,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       if (item.plan.id !== planId) return false;
 
       // Check if options match
-      if (options?.country && item.country?.code !== options.country.code) return false;
+      if (options?.country && item.country !== options.country) return false;
       if (options?.duration && item.duration !== options.duration) return false;
       if (options?.speedLimit && item.speedLimit !== options.speedLimit) return false;
       if (options?.staticType && item.staticType !== options.staticType) return false;
@@ -123,10 +122,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Add item to cart (or update quantity if exists)
-  const addToCart = (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>) => {
+  const addToCart = (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string) => {
     if (quantity < 1) return;
 
-    const itemId = generateItemId(plan, options);
+    const itemId = generateItemId(plan, options, country);
     const existingItem = items.find(item => item.id === itemId);
 
     if (existingItem) {
@@ -142,6 +141,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         id: itemId,
         plan,
         quantity,
+        country,
         ...options
       };
       setItems([...items, newItem]);
@@ -167,8 +167,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     ));
   };
 
-  // Update item country (for dedicated proxies)
-  const updateCountry = (itemId: string, country: Country) => {
+  // Update item country
+  const updateCountry = (itemId: string, country: string) => {
     setItems(items.map(item =>
       item.id === itemId
         ? { ...item, country }

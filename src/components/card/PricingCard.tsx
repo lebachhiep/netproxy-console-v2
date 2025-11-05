@@ -4,6 +4,8 @@ import { Divider } from '../divider/Divider';
 import { Plan } from '@/services/plan/plan.types';
 import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
+import { CountrySelectionModal } from '../modals/CountrySelectionModal';
+import { planService } from '@/services/plan/plan.service';
 
 interface Feature {
   icon?: React.ReactNode;
@@ -48,6 +50,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 }) => {
   const cart = enableCart ? useCart() : null;
   const [isAdding, setIsAdding] = useState(false);
+  const [showCountryModal, setShowCountryModal] = useState(false);
 
   const handleClick = async (e: React.MouseEvent) => {
     // If cart is enabled and plan is provided, add to cart
@@ -56,11 +59,24 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       setIsAdding(true);
 
       try {
+        // Check if country selection is needed
+        const countriesData = await planService.getPlanCountries(plan.id);
+
+        if (countriesData.countries.length > 0) {
+          // Show country selection modal
+          setShowCountryModal(true);
+          setIsAdding(false);
+        } else {
+          // No country selection needed, add directly to cart
+          cart.addToCart(plan, 1, cartOptions);
+          toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+          setIsAdding(false);
+        }
+      } catch (error) {
+        // If error (e.g., internal plan), add directly to cart
+        console.log('Country selection not available, adding directly to cart');
         cart.addToCart(plan, 1, cartOptions);
         toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
-      } catch (error) {
-        toast.error('Không thể thêm vào giỏ hàng');
-      } finally {
         setIsAdding(false);
       }
     } else if (onClick) {
@@ -68,11 +84,19 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       onClick();
     }
   };
+
+  const handleAddToCartWithCountry = (country: string | undefined, quantity: number) => {
+    if (cart && plan) {
+      cart.addToCart(plan, quantity, cartOptions, country);
+      toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+    }
+  };
   return (
-    <div
-      onClick={onClick}
-      className="group cursor-pointer relative w-full rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-1 transition-all hover:border-blue hover:dark:border-blue-dark"
-    >
+    <>
+      <div
+        onClick={onClick}
+        className="group cursor-pointer relative w-full rounded-xl border-2 border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-1 transition-all hover:border-blue hover:dark:border-blue-dark"
+      >
       {/* Tag */}
       {tag && (
         <span className="absolute -top-3 -left-[2px] flex items-center gap-1 bg-primary dark:bg-primary-dark text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
@@ -123,5 +147,17 @@ export const PricingCard: React.FC<PricingCardProps> = ({
         </Button>
       </div>
     </div>
+
+      {/* Country Selection Modal */}
+      {plan && (
+        <CountrySelectionModal
+          open={showCountryModal}
+          plan={plan}
+          onClose={() => setShowCountryModal(false)}
+          onAddToCart={handleAddToCartWithCountry}
+          cartOptions={cartOptions}
+        />
+      )}
+    </>
   );
 };

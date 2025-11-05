@@ -129,3 +129,31 @@ export const isCountryRequired = (_plan: Plan): boolean => {
   // GET /user/plans/:id/countries returns { country_required: boolean, ... }
   return false;
 };
+
+// Country structure from API
+export interface Country {
+  code: string; // ISO2 code (US, GB, etc.)
+  name: string; // Display name (e.g., "United States")
+  available: boolean; // Stock availability
+}
+
+// Response from GET /user/plans/:id/countries
+export interface GetCountriesResponse {
+  countries: Country[];
+  country_required: boolean;
+  total_count: number;
+}
+
+// Request parameters for calculate price API
+export interface CalculatePriceParams {
+  country?: string; // ISO2 country code
+  quantity: number; // Min=1, required
+}
+
+// Response from POST /user/plans/:id/calculate-price
+export interface CalculatePriceResponse {
+  price: number;
+  currency: string;
+  duration_seconds: number;
+  country?: string;
+}

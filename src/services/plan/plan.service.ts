@@ -1,5 +1,12 @@
 import { apiService } from '@/services/api/api.service';
-import { ListPlansParams, ListPlansResponse, Plan } from './plan.types';
+import {
+  ListPlansParams,
+  ListPlansResponse,
+  Plan,
+  GetCountriesResponse,
+  CalculatePriceParams,
+  CalculatePriceResponse
+} from './plan.types';
 
 class PlanService {
   /**
@@ -89,6 +96,35 @@ class PlanService {
       ...params,
       featured: 'true',
     });
+  }
+
+  /**
+   * Get available countries for a plan
+   * @param planId - Plan ID
+   * @returns Promise with countries list and country_required flag
+   */
+  async getPlanCountries(planId: string): Promise<GetCountriesResponse> {
+    const response = await apiService.get<GetCountriesResponse>(
+      `/user/plans/${planId}/countries`
+    );
+    return response;
+  }
+
+  /**
+   * Calculate dynamic price for a plan based on country and quantity
+   * @param planId - Plan ID
+   * @param params - Calculation parameters (country, quantity)
+   * @returns Promise with calculated price
+   */
+  async calculatePlanPrice(
+    planId: string,
+    params: CalculatePriceParams
+  ): Promise<CalculatePriceResponse> {
+    const response = await apiService.post<CalculatePriceResponse>(
+      `/user/plans/${planId}/calculate-price`,
+      params
+    );
+    return response;
   }
 }
 

@@ -11,6 +11,21 @@ import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
 import { CartItem } from '@/contexts/CartContext';
 import Tooltip from '@/components/tooltip/Tooltip';
+import countries from 'i18n-iso-countries';
+import en from 'i18n-iso-countries/langs/en.json';
+import vi from 'i18n-iso-countries/langs/vi.json';
+
+// Register locales
+countries.registerLocale(en);
+countries.registerLocale(vi);
+
+// Helper function to get country name from code
+// Uses Vietnamese by default, falls back to English
+const getCountryName = (code: string): string => {
+  return countries.getName(code, 'vi', { select: 'official' }) ||
+         countries.getName(code, 'en', { select: 'official' }) ||
+         code;
+};
 
 export type OrderItemType = {
   country: Country;
@@ -124,6 +139,16 @@ const OrderSummary: React.FC<Props> = ({
                       <Tooltip content={item.plan.name} position="top" disabled={item.plan.name.length <= 12}>
                         <div className="truncate">{item.plan.name}</div>
                       </Tooltip>
+                      {item.country && (
+                        <div className="text-xs text-text-lo dark:text-text-lo-dark mt-1 flex items-center gap-1">
+                          <img
+                            src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
+                            className="inline w-4 h-3"
+                            alt={item.country}
+                          />
+                          <span>{getCountryName(item.country)}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Đơn giá */}
@@ -219,6 +244,16 @@ const OrderSummary: React.FC<Props> = ({
                 >
                   <div className="p-2 border-b border-border dark:border-border-dark">
                     <div className="text-text-hi dark:text-text-hi-dark">{item.plan.name}</div>
+                    {item.country && (
+                      <div className="text-xs text-text-lo dark:text-text-lo-dark mt-1 flex items-center gap-1">
+                        <img
+                          src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
+                          className="inline w-4 h-3"
+                          alt={item.country}
+                        />
+                        <span>{getCountryName(item.country)}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="p-2">
                     <div className="flex items-center gap-2">

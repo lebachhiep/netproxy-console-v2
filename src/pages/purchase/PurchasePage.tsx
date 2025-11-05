@@ -1,33 +1,24 @@
 import { PricingCard } from '@/components/card/PricingCard';
-import { ArrowRotate, CartFilled, Clock, DatabaseStackOutlined, Dismiss, Fire, ShieldCheckmark, TopSpeed } from '@/components/icons';
-import { RadioGroup } from '@/components/radio/RadioGroup';
+import {
+  ArrowRotate,
+  CartFilled,
+  Clock,
+  DatabaseStackOutlined,
+  Dismiss,
+  Fire,
+  ShieldCheckmark,
+  TopSpeed
+} from '@/components/icons';
 import { Tabs } from '@/components/tabs/Tabs';
-import React, { useState } from 'react';
-import OrderSummary, { OrderItemType } from './components/OrderSumary';
-import CountrySelector, { Country } from './components/table/CountrySelector';
-import PricingTable from './components/table/PricingTable';
+import React, { useState, useEffect, useMemo } from 'react';
+import OrderSummary from './components/OrderSumary';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
 import { useCart } from '@/hooks/useCart';
-
-// Data riêng cho 7 ngày và 30 ngày
-const data7day = [
-  { range: '1-9 IPs', price: 4, desc: '$4/IP' },
-  { range: '10-24 IPs', price: 3.5, desc: '$3.5/IP' },
-  { range: '25-49 IPs', price: 3, desc: '$3/IP' },
-  { range: '51-99 IPs', price: 2.7, desc: '$2.7/IP' },
-  { range: '100-299 IPs', price: 2.5, desc: '$2.5/IP' },
-  { range: '>300 IPs', price: 2.35, desc: '$2.35/IP' }
-];
-
-const data30day = [
-  { range: '1-9 IPs', price: 5, desc: '$5/IP' },
-  { range: '10-24 IPs', price: 3.69, desc: '$3.69/IP' },
-  { range: '25-49 IPs', price: 3.2, desc: '$3.2/IP' },
-  { range: '51-99 IPs', price: 2.7, desc: '$2.9/IP' },
-  { range: '100-299 IPs', price: 2.5, desc: '$2.7/IP' },
-  { range: '>300 IPs', price: 2.35, desc: '$2.45/IP' }
-];
+import { planService } from '@/services/plan/plan.service';
+import { Plan } from '@/services/plan/plan.types';
+import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
+import { Button } from '@/components/button/Button';
 
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
@@ -71,174 +62,213 @@ const itemVariants: Variants = {
 type TabKey = 'rotating' | 'static' | 'dedicated';
 type StaticSubKey = 'bandwidth' | 'unlimited';
 type DedicatedSubKey = 'residential' | 'datacenter';
-type SpeedLimitGroup = '5mbps' | '10mbps' | '25mbps' | '50mbps';
-type ResidentialGroup = '7day' | '30day';
-
-interface Plan {
-  name: string;
-  status: string;
-}
-
-const plansByType: {
-  rotating: Record<SpeedLimitGroup, Plan[]>;
-  static: Record<StaticSubKey, Plan[]>;
-  dedicated: Plan[];
-} = {
-  rotating: {
-    '5mbps': [
-      { name: '5 Mbps Small', status: 'Đang hoạt động' },
-      { name: '5 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '5 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '5 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '5 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '5 Mbps Pro', status: 'Đang hoạt động' }
-    ],
-    '10mbps': [
-      { name: '10 Mbps Medium', status: 'Đang hoạt động' },
-      { name: '10 Mbps Plus', status: 'Đang hoạt động' },
-      { name: '10 Mbps Plus', status: 'Đang hoạt động' },
-      { name: '10 Mbps Plus', status: 'Đang hoạt động' },
-      { name: '10 Mbps Plus', status: 'Đang hoạt động' }
-    ],
-    '25mbps': [
-      { name: '25 Mbps Large', status: 'Đang hoạt động' },
-      { name: '25 Mbps Premium', status: 'Đang hoạt động' },
-      { name: '25 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '25 Mbps Plus', status: 'Đang hoạt động' },
-      { name: '25 Mbps Plus', status: 'Đang hoạt động' }
-    ],
-    '50mbps': [
-      { name: '50 Mbps Large', status: 'Đang hoạt động' },
-      { name: '50 Mbps Premium', status: 'Đang hoạt động' },
-      { name: '50 Mbps Pro', status: 'Đang hoạt động' },
-      { name: '50 Mbps Premium', status: 'Đang hoạt động' },
-      { name: '50 Mbps Plus', status: 'Đang hoạt động' }
-    ]
-  },
-  static: {
-    bandwidth: [
-      { name: 'Starter Plan: 5 Mbps', status: 'Đang hoạt động' },
-      { name: 'Pro Plan: 15 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' }
-    ],
-    unlimited: [
-      { name: 'Starter Plan: 5 Mbps', status: 'Đang hoạt động' },
-      { name: 'Pro Plan: 15 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' },
-      { name: 'Enterprise Plan: 50 Mbps', status: 'Đang hoạt động' }
-    ]
-  },
-  dedicated: [
-    { name: 'Dedicated Small', status: 'Đang hoạt động' },
-    { name: 'Dedicated Medium', status: 'Đang hoạt động' },
-    { name: 'Dedicated Large', status: 'Đang hoạt động' }
-  ]
-};
 
 const PurchasePage: React.FC = () => {
+  // API data state
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Tab state
   const [activeMain, setActiveMain] = useState<TabKey>('rotating');
-  const [activeGroup, setActiveGroup] = useState<SpeedLimitGroup>('5mbps');
   const [activeStatic, setActiveStatic] = useState<StaticSubKey>('bandwidth');
   const [activeDedicated, setActiveDedicated] = useState<DedicatedSubKey>('residential');
-  const [activeResidentialGroup, setActiveResidentialGroup] = useState<ResidentialGroup>('7day');
-  const [orders, setOrders] = useState<OrderItemType[]>([]);
-
   const [cartOpen, setCartOpen] = useState(false);
 
   // Cart integration
   const cart = useCart();
 
-  // Bảng giá theo số lượng
-  const getPricePerIp = (totalIps: number) => {
-    if (totalIps <= 10) return 3;
-    if (totalIps <= 50) return 2.5;
-    return 2;
-  };
-
-  const handleAddCountry = (country: Country) => {
-    setOrders((prev) => {
-      const exist = prev.find((o) => o.country.id === country.id);
-      let updated: OrderItemType[];
-
-      if (exist) {
-        updated = prev.map((o) => (o.country.id === country.id ? { ...o, quantity: o.quantity + 1 } : o));
-      } else {
-        updated = [...prev, { country, price: 0, quantity: 1 }]; // price sẽ set lại sau
+  // Fetch plans on mount
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await planService.getAllPlans();
+        setPlans(data);
+      } catch (err) {
+        console.error('Failed to fetch plans:', err);
+        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // Tính lại tổng số IP
-      const totalIps = updated.reduce((sum, o) => sum + o.quantity, 0);
-      const pricePerIp = getPricePerIp(totalIps);
+    fetchPlans();
+  }, []);
 
-      // Cập nhật lại price cho tất cả item
-      return updated.map((o) => ({ ...o, price: pricePerIp }));
-    });
-  };
+  // Filter plans by type and category
+  const rotatingPlans = useMemo(() => plans.filter(p => p.type === 'rotating'), [plans]);
+  const staticPlans = useMemo(() => plans.filter(p => p.type === 'static'), [plans]);
+  const dedicatedPlans = useMemo(() => plans.filter(p => p.type === 'dedicated'), [plans]);
 
-  const handleUpdateQuantity = (country: Country, quantity: number) => {
-    setOrders((prev) => {
-      // Cập nhật số lượng country vừa thay đổi
-      const updated = prev.map((o) =>
-        o.country.id === country.id
-          ? { ...o, quantity: Math.max(1, quantity) } // min = 1
-          : o
-      );
+  // Dynamic speed groups for rotating plans
+  const speedGroups = useMemo(() => {
+    const uniqueThroughputs = [...new Set(rotatingPlans.map(p => p.throughput).filter(Boolean))].sort(
+      (a, b) => (a || 0) - (b || 0)
+    );
 
-      // Tính lại tổng số IP
-      const totalIps = updated.reduce((sum, o) => sum + o.quantity, 0);
-      const pricePerIp = getPricePerIp(totalIps);
+    return uniqueThroughputs.map(throughput => ({
+      label: `${throughput} MBPS Plan`,
+      key: `${throughput}mbps`,
+      value: throughput
+    }));
+  }, [rotatingPlans]);
 
-      // Gán lại price theo tier cho tất cả item
-      return updated.map((o) => ({ ...o, price: pricePerIp }));
-    });
-  };
+  const [activeGroup, setActiveGroup] = useState(speedGroups[0]?.key || '');
 
-  const handleRemove = (country: Country) => {
-    setOrders((prev) => prev.filter((o) => o.country.id !== country.id));
-  };
+  // Update active group when speed groups change
+  useEffect(() => {
+    if (speedGroups.length > 0 && !speedGroups.find(g => g.key === activeGroup)) {
+      setActiveGroup(speedGroups[0].key);
+    }
+  }, [speedGroups, activeGroup]);
 
-  const handleClearAll = () => {
-    setOrders([]);
-  };
+  // Helper to build features for PricingCard
+  const buildPlanFeatures = (plan: Plan) => {
+    const features: Array<{ icon: React.ReactNode; label: React.ReactNode }> = [];
 
-  // Các trang con tương ứng với radio chọn
-  const residentialPages: Record<ResidentialGroup, JSX.Element> = {
-    '7day': (
-      <>
-        {/* Bên trái */}
-        <div className={`flex-1 flex flex-col p-5 gap-10 overflow-y-auto ${orders.length ? '' : 'md:w-full'}`}>
-          <PricingTable items={data7day} />
-          <CountrySelector selected={orders.map((item) => item.country)} onSelect={handleAddCountry} onUnselect={handleRemove} />
+    // Protocol support (hardcoded for now - could come from plan.package in future)
+    features.push({
+      icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
+      label: (
+        <div className="text-base">
+          <label>Hỗ trợ: </label>
+          <span className="font-bold">HTTP/HTTPS</span>
         </div>
+      )
+    });
 
-        {/* Bên phải */}
-        {orders.length > 0 && (
-          <div className="w-[473px] hidden lg:block overflow-y-hidden">
-            <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
+    // Rotation frequency (for rotating proxies)
+    if (plan.frequency) {
+      features.push({
+        icon: <Clock className="w-6 h-6 text-yellow" />,
+        label: (
+          <div className="text-base">
+            <label>Thời gian xoay IP: </label>
+            <span className="font-bold">{formatFrequency(plan.frequency)}</span>
           </div>
-        )}
-      </>
-    ),
-    '30day': (
-      <>
-        {/* Bên trái */}
-        <div className={`flex-1 flex flex-col p-5 gap-10 overflow-y-auto ${orders.length ? '' : 'md:w-full'}`}>
-          <PricingTable items={data30day} />
-          <CountrySelector selected={orders.map((item) => item.country)} onSelect={handleAddCountry} onUnselect={handleRemove} />
-        </div>
+        )
+      });
+    }
 
-        {/* Bên phải */}
-        {orders.length > 0 && (
-          <div className="w-[473px] hidden lg:block overflow-y-hidden">
-            <OrderSummary orders={orders} onUpdateQuantity={handleUpdateQuantity} onRemove={handleRemove} onClearAll={handleClearAll} />
+    // Duration (for time-based plans)
+    if (plan.duration) {
+      features.push({
+        icon: <Clock className="w-6 h-6 text-yellow" />,
+        label: (
+          <div className="text-base">
+            <label>Thời hạn: </label>
+            <span className="font-bold">{formatDuration(plan.duration)}</span>
           </div>
-        )}
-      </>
-    )
+        )
+      });
+    }
+
+    // Bandwidth
+    if (plan.bandwidth !== undefined) {
+      features.push({
+        icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+        label: (
+          <div className="text-base">
+            <label>Băng thông: </label>
+            <span className="font-bold">{formatBandwidth(plan.bandwidth)}</span>
+          </div>
+        )
+      });
+    }
+
+    // Rotation count (hardcoded as unlimited for rotating plans)
+    if (plan.type === 'rotating') {
+      features.push({
+        icon: <ArrowRotate className="w-6 h-6 text-blue" />,
+        label: (
+          <div className="text-base">
+            <label>Lượt xoay IP: </label>
+            <span className="font-bold">Không giới hạn</span>
+          </div>
+        )
+      });
+    }
+
+    // Throughput (speed limit)
+    if (plan.throughput) {
+      features.push({
+        icon: <TopSpeed className="w-6 h-6 text-pink" />,
+        label: (
+          <div className="text-base">
+            <label>Tốc độ: </label>
+            <span className="font-bold">{formatThroughput(plan.throughput)}</span>
+          </div>
+        )
+      });
+    }
+
+    // Max concurrent connections
+    if (plan.max_concurrent) {
+      features.push({
+        icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
+        label: (
+          <div className="text-base">
+            <label>Kết nối đồng thời: </label>
+            <span className="font-bold">{plan.max_concurrent}</span>
+          </div>
+        )
+      });
+    }
+
+    return features;
   };
+
+  // Retry handler
+  const handleRetry = () => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await planService.getAllPlans();
+        setPlans(data);
+      } catch (err) {
+        console.error('Failed to fetch plans:', err);
+        setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  };
+
+  // Loading skeleton
+  const LoadingSkeleton = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5">
+      {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+        <div
+          key={i}
+          className="h-64 bg-bg-secondary dark:bg-bg-secondary-dark animate-pulse rounded-xl"
+        />
+      ))}
+    </div>
+  );
+
+  // Error state
+  const ErrorState = () => (
+    <div className="flex flex-col items-center justify-center p-10 gap-4">
+      <p className="text-red dark:text-red-dark text-lg">{error}</p>
+      <Button onClick={handleRetry} variant="primary">
+        Thử lại
+      </Button>
+    </div>
+  );
+
+  // Empty state
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center p-10">
+      <p className="text-text-me dark:text-text-me-dark text-lg">
+        Không có gói nào trong danh mục này
+      </p>
+    </div>
+  );
 
   const mainTabs = [
     { label: 'Rotating', key: 'rotating' },
@@ -250,61 +280,125 @@ const PurchasePage: React.FC = () => {
     { label: 'Bandwidth', key: 'bandwidth' },
     { label: 'Unlimited', key: 'unlimited' }
   ];
+
   const dedicatedTabs = [
     { label: 'Residential', key: 'residential' },
     { label: 'Datacenter', key: 'datacenter' }
   ];
 
-  const speedGroups: { label: string; key: SpeedLimitGroup }[] = [
-    { label: 'Basic Plan: 5 MBPS', key: '5mbps' },
-    { label: 'Standard Plan: 10 MBPS', key: '10mbps' },
-    { label: 'Advanced Plan: 25 MBPS', key: '25mbps' },
-    { label: 'Premium Plan: 50 MBPS', key: '50mbps' }
-  ];
-
-  const residentialGroups: { label: string; key: ResidentialGroup }[] = [
-    { label: '7 ngày', key: '7day' },
-    { label: '30 ngày', key: '30day' }
-  ];
-
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
+      {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="flex items-center justify-between w-full">
-          {/* Dashboard / Breadcrumb */}
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
             <CartFilled width={24} height={24} className="text-yellow" />
-            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
+            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">
+              Mua hàng
+            </span>
           </div>
 
-          {/* Cart Icon - Show for all tabs now */}
+          {/* Cart Icon */}
           <div
             onClick={() => setCartOpen(true)}
-            className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2
-      ${
-        (activeMain === 'dedicated' && orders.length > 0) || (activeMain !== 'dedicated' && cart.itemCount > 0)
-          ? 'border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark'
-          : 'border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark'
-      }`}
+            className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2 ${
+              cart.itemCount > 0
+                ? 'border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark'
+                : 'border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark'
+            }`}
           >
             <CartFilled
               className={`${
-                (activeMain === 'dedicated' && orders.length > 0) || (activeMain !== 'dedicated' && cart.itemCount > 0)
-                  ? 'text-white'
-                  : 'text-text-lo dark:text-text-lo-dark'
+                cart.itemCount > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'
               }`}
             />
           </div>
         </div>
       </div>
+
       {/* Main Tabs */}
-      <Tabs tabs={mainTabs} activeKey={activeMain} onChange={(key) => setActiveMain(key as TabKey)}>
-        {/* Rotating */}
+      <Tabs tabs={mainTabs} activeKey={activeMain} onChange={key => setActiveMain(key as TabKey)}>
+        {/* Rotating Tab */}
         <div key="rotating">
-          <Tabs type="card" tabs={speedGroups} activeKey={activeGroup} onChange={(key) => setActiveGroup(key as SpeedLimitGroup)}>
-            {speedGroups.map((g) => (
-              <div key={g.key} className="flex">
-                {/* Main content area */}
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : speedGroups.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <Tabs
+              type="card"
+              tabs={speedGroups}
+              activeKey={activeGroup}
+              onChange={key => setActiveGroup(String(key))}
+            >
+              {speedGroups.map(g => {
+                const groupPlans = rotatingPlans.filter(p => p.throughput === g.value);
+
+                return (
+                  <div key={g.key} className="flex">
+                    <motion.div
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
+                        cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
+                      } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                    >
+                      {groupPlans.length === 0 ? (
+                        <div className="col-span-full">
+                          <EmptyState />
+                        </div>
+                      ) : (
+                        groupPlans.map((plan, index) => (
+                          <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                            <PricingCard
+                              tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                              description={plan.description || ''}
+                              title={plan.name}
+                              price={plan.price.toString()}
+                              features={buildPlanFeatures(plan)}
+                              buttonText="MUA GÓI"
+                              enableCart={true}
+                              plan={plan}
+                              cartOptions={{
+                                speedLimit: plan.throughput?.toString()
+                              }}
+                            />
+                          </motion.div>
+                        ))
+                      )}
+                    </motion.div>
+
+                    {/* Cart Sidebar - Desktop only */}
+                    {cart.itemCount > 0 && (
+                      <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                        <OrderSummary useCartContext={true} />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </Tabs>
+          )}
+        </div>
+
+        {/* Static Tab */}
+        <div key="static">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : (
+            <Tabs
+              type="card"
+              tabs={staticTabs}
+              activeKey={activeStatic}
+              onChange={key => setActiveStatic(key as StaticSubKey)}
+            >
+              {/* Bandwidth Sub-tab */}
+              <div key="bandwidth" className="flex">
                 <motion.div
                   variants={containerVariants}
                   initial="hidden"
@@ -313,66 +407,32 @@ const PurchasePage: React.FC = () => {
                     cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
                   } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
                 >
-                {plansByType.rotating[g.key].map((plan, index) => (
-                  <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
-                    <PricingCard
-                      tag={{ text: 'POPULAR', icon: <Fire /> }}
-                      description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                      title={plan.name}
-                      price="4.50"
-                      features={[
-                        {
-                          icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Hỗ trợ: </label>
-                              <span className="font-bold">HTTP/HTTPS</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <Clock className="w-6 h-6 text-yellow" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Thời gian xoay IP: </label>
-                              <span className="font-bold">10 phút</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Băng thông: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Lượt xoay IP: </label>
-                              <span className="font-bold">Không giới hạn</span>
-                            </div>
-                          )
-                        },
-                        {
-                          icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                          label: (
-                            <div className="text-base">
-                              <label htmlFor="">Tăng tốc: </label>
-                              <span className="font-bold">50Mbps</span>
-                            </div>
-                          )
-                        }
-                      ]}
-                      buttonText="MUA GÓI"
-                      onClick={() => alert('Mua gói')}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
+                  {staticPlans.filter(p => p.bandwidth && p.bandwidth > 0).length === 0 ? (
+                    <div className="col-span-full">
+                      <EmptyState />
+                    </div>
+                  ) : (
+                    staticPlans
+                      .filter(p => p.bandwidth && p.bandwidth > 0)
+                      .map((plan, index) => (
+                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                          <PricingCard
+                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                            description={plan.description || ''}
+                            title={plan.name}
+                            price={plan.price.toString()}
+                            features={buildPlanFeatures(plan)}
+                            buttonText="MUA GÓI"
+                            enableCart={true}
+                            plan={plan}
+                            cartOptions={{
+                              staticType: 'bandwidth'
+                            }}
+                          />
+                        </motion.div>
+                      ))
+                  )}
+                </motion.div>
 
                 {/* Cart Sidebar - Desktop only */}
                 {cart.itemCount > 0 && (
@@ -381,195 +441,163 @@ const PurchasePage: React.FC = () => {
                   </div>
                 )}
               </div>
-            ))}
-          </Tabs>
-        </div>
 
-        {/* Static */}
-        <div key="static">
-          <Tabs type="card" tabs={staticTabs} activeKey={activeStatic} onChange={(key) => setActiveStatic(key as StaticSubKey)}>
-            {[
-              // Bandwidth
-              <div key="bandwidth">
+              {/* Unlimited Sub-tab */}
+              <div key="unlimited" className="flex">
                 <motion.div
-                  key={'bandwidth'}
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
+                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
+                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
+                  } gap-5 p-5 max-h-[calc(100dvh-255px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
                 >
-                  {plansByType.static['bandwidth'].map((plan, index) => (
-                    <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
-                      <PricingCard
-                        tag={{ text: 'POPULAR', icon: <Fire /> }}
-                        description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                        title={plan.name}
-                        price="4.50"
-                        features={[
-                          {
-                            icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Hỗ trợ: </label>
-                                <span className="font-bold">HTTP/HTTPS</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <Clock className="w-6 h-6 text-yellow" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Thời gian xoay IP: </label>
-                                <span className="font-bold">10 phút</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Băng thông: </label>
-                                <span className="font-bold">Không giới hạn</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Lượt xoay IP: </label>
-                                <span className="font-bold">Không giới hạn</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Tăng tốc: </label>
-                                <span className="font-bold">50Mbps</span>
-                              </div>
-                            )
-                          }
-                        ]}
-                        buttonText="MUA GÓI"
-                        onClick={() => alert('Mua gói')}
-                      />
-                    </motion.div>
-                  ))}
+                  {staticPlans.filter(p => !p.bandwidth || p.bandwidth === 0).length === 0 ? (
+                    <div className="col-span-full">
+                      <EmptyState />
+                    </div>
+                  ) : (
+                    staticPlans
+                      .filter(p => !p.bandwidth || p.bandwidth === 0)
+                      .map((plan, index) => (
+                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                          <PricingCard
+                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                            description={plan.description || ''}
+                            title={plan.name}
+                            price={plan.price.toString()}
+                            features={buildPlanFeatures(plan)}
+                            buttonText="MUA GÓI"
+                            enableCart={true}
+                            plan={plan}
+                            cartOptions={{
+                              staticType: 'unlimited'
+                            }}
+                          />
+                        </motion.div>
+                      ))
+                  )}
                 </motion.div>
-              </div>,
-              // Unlimited
-              <div key="unlimited">
-                <motion.div
-                  key={'unlimited'}
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-255px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto"
-                >
-                  {plansByType.static['unlimited'].map((plan, index) => (
-                    <motion.div key={`${plan.name}-${index}`} variants={itemVariants}>
-                      <PricingCard
-                        tag={{ text: 'POPULAR', icon: <Fire /> }}
-                        description="Ideal proxies for any use case & purpose. By accesing our 10M+ IP pool non-subnet linked, bans and blocks are non-existent."
-                        title={plan.name}
-                        price="4.50"
-                        features={[
-                          {
-                            icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Hỗ trợ: </label>
-                                <span className="font-bold">HTTP/HTTPS</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <Clock className="w-6 h-6 text-yellow" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Thời gian xoay IP: </label>
-                                <span className="font-bold">10 phút</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Băng thông: </label>
-                                <span className="font-bold">Không giới hạn</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <ArrowRotate className="w-6 h-6 text-blue" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Lượt xoay IP: </label>
-                                <span className="font-bold">Không giới hạn</span>
-                              </div>
-                            )
-                          },
-                          {
-                            icon: <TopSpeed className="w-6 h-6 text-pink" />,
-                            label: (
-                              <div className="text-base">
-                                <label htmlFor="">Tăng tốc: </label>
-                                <span className="font-bold">50Mbps</span>
-                              </div>
-                            )
-                          }
-                        ]}
-                        buttonText="MUA GÓI"
-                        onClick={() => alert('Mua gói')}
-                      />
-                    </motion.div>
-                  ))}
-                </motion.div>
+
+                {/* Cart Sidebar - Desktop only */}
+                {cart.itemCount > 0 && (
+                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                    <OrderSummary useCartContext={true} />
+                  </div>
+                )}
               </div>
-            ]}
-          </Tabs>
+            </Tabs>
+          )}
         </div>
 
-        {/* Dedicated */}
+        {/* Dedicated Tab */}
         <div key="dedicated">
-          <div className="">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : (
             <Tabs
               type="card"
               tabs={dedicatedTabs}
               activeKey={activeDedicated}
-              onChange={(key) => setActiveDedicated(key as DedicatedSubKey)}
+              onChange={key => setActiveDedicated(key as DedicatedSubKey)}
             >
-              {[
-                <div key="residential" className="text-text-hi dark:text-text-hi-dark">
-                  Residential
-                </div>,
-                <motion.div variants={itemVariants} key="datacenter">
-                  <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
-                    <RadioGroup
-                      value={activeResidentialGroup}
-                      onChange={(value) => setActiveResidentialGroup(value as ResidentialGroup)}
-                      options={residentialGroups.map((r) => ({
-                        key: r.key,
-                        label: r.label,
-                        value: r.key,
-                        variant: 'secondary'
-                      }))}
-                      direction="row"
-                    />
-                  </div>
-                  <div className="flex flex-col md:flex-row h-[calc(100dvh-350px)] md:h-[calc(100dvh-270px)]">
-                    {residentialPages[activeResidentialGroup]}
-                  </div>
+              {/* Residential Sub-tab */}
+              <div key="residential" className="flex">
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
+                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
+                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                >
+                  {dedicatedPlans.filter(p => p.category === 'residential').length === 0 ? (
+                    <div className="col-span-full">
+                      <EmptyState />
+                    </div>
+                  ) : (
+                    dedicatedPlans
+                      .filter(p => p.category === 'residential')
+                      .map((plan, index) => (
+                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                          <PricingCard
+                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                            description={plan.description || ''}
+                            title={plan.name}
+                            price={plan.price.toString()}
+                            features={buildPlanFeatures(plan)}
+                            buttonText="MUA GÓI"
+                            enableCart={true}
+                            plan={plan}
+                            cartOptions={{
+                              duration: '7day' // Default to 7 day, could be made dynamic
+                            }}
+                          />
+                        </motion.div>
+                      ))
+                  )}
                 </motion.div>
-              ]}
+
+                {/* Cart Sidebar - Desktop only */}
+                {cart.itemCount > 0 && (
+                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                    <OrderSummary useCartContext={true} />
+                  </div>
+                )}
+              </div>
+
+              {/* Datacenter Sub-tab */}
+              <div key="datacenter" className="flex">
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
+                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
+                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                >
+                  {dedicatedPlans.filter(p => p.category === 'datacenter').length === 0 ? (
+                    <div className="col-span-full">
+                      <EmptyState />
+                    </div>
+                  ) : (
+                    dedicatedPlans
+                      .filter(p => p.category === 'datacenter')
+                      .map((plan, index) => (
+                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                          <PricingCard
+                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                            description={plan.description || ''}
+                            title={plan.name}
+                            price={plan.price.toString()}
+                            features={buildPlanFeatures(plan)}
+                            buttonText="MUA GÓI"
+                            enableCart={true}
+                            plan={plan}
+                            cartOptions={{
+                              duration: '7day' // Default to 7 day, could be made dynamic
+                            }}
+                          />
+                        </motion.div>
+                      ))
+                  )}
+                </motion.div>
+
+                {/* Cart Sidebar - Desktop only */}
+                {cart.itemCount > 0 && (
+                  <div className="w-[473px] hidden lg:block overflow-y-hidden">
+                    <OrderSummary useCartContext={true} />
+                  </div>
+                )}
+              </div>
             </Tabs>
-          </div>
+          )}
         </div>
       </Tabs>
 
+      {/* Mobile Cart Drawer */}
       <AnimatePresence>
         {cartOpen && (
           <motion.div
@@ -594,30 +622,26 @@ const PurchasePage: React.FC = () => {
               }}
               transition={{ type: 'tween', duration: 0.35, ease: easeInOutCustom }}
               className="relative w-[calc(100%-75px)] max-w-[354px] h-full bg-white dark:bg-bg-canvas-dark shadow-xl flex flex-col"
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex h-[64px] items-center justify-between p-5 border-b border-border dark:border-border-dark">
                 <div className="flex items-center gap-2">
                   <CartFilled className="text-yellow" width={24} height={24} />
-                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
+                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">
+                    Giỏ hàng
+                  </span>
                 </div>
                 <IconButton
                   className="w-10 h-10"
                   icon={<Dismiss className="text-text-me dark:text-text-me-dark" />}
                   onClick={() => setCartOpen(false)}
-                ></IconButton>
+                />
               </div>
 
-              {/* Nội dung */}
+              {/* Content */}
               <div className="flex-1">
-                <OrderSummary
-                  orders={orders}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRemove={handleRemove}
-                  onClearAll={handleClearAll}
-                  useCartContext={activeMain !== 'dedicated'}
-                />
+                <OrderSummary useCartContext={true} />
               </div>
             </motion.div>
           </motion.div>

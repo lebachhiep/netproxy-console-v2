@@ -189,10 +189,8 @@ const PurchasePage: React.FC = () => {
           </div>
         )
       });
-    }
-
-    // Unlimited bandwidth for external providers (price = 0)
-    if (plan.price === 0) {
+    } else if (!plan.max_concurrent) {
+      // Unlimited bandwidth when max_concurrent doesn't exist
       features.push({
         icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
         label: (
@@ -238,6 +236,17 @@ const PurchasePage: React.FC = () => {
           <div className="text-base">
             <label>Kết nối đồng thời: </label>
             <span className="font-bold">{plan.max_concurrent}</span>
+          </div>
+        )
+      });
+    } else {
+      // Unlimited concurrent connections when max_concurrent doesn't exist
+      features.push({
+        icon: <Grid className="w-6 h-6 text-purple" />,
+        label: (
+          <div className="text-base">
+            <label>Kết nối đồng thời: </label>
+            <span className="font-bold">Không giới hạn</span>
           </div>
         )
       });

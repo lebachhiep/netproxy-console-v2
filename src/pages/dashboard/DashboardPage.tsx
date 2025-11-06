@@ -325,9 +325,9 @@ const DashboardPage = () => {
     },
     {
       width: isMobile || isTablet ? 200 : '',
-      key: 'description',
-      title: 'Mô tả',
-      render: (value) => <div className="line-clamp-1">{value || '...'}</div>
+      key: 'id',
+      title: 'ID',
+      render: (value, record) => <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
     },
     {
       width: 150,

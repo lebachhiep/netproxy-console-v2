@@ -246,7 +246,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
           <div className="flex items-center gap-2">
             <span className="text-sm text-text-lo dark:text-text-lo-dark min-w-[80px]">Quốc gia:</span>
             <Select
-              className="h-10 flex-1 dark:pseudo-border-top dark:border-transparent"
+              className="h-10 w-[200px] dark:pseudo-border-top dark:border-transparent"
               placeholder="Chọn quốc gia (tùy chọn)"
               options={countryOptions}
               value={selectedCountry}

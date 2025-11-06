@@ -12,7 +12,7 @@ interface CountrySelectionModalProps {
   open: boolean;
   plan: Plan;
   onClose: () => void;
-  onAddToCart: (country: string | undefined, quantity: number) => void;
+  onAddToCart: (country: string | undefined, quantity: number, calculatedPrice: number) => void;
   cartOptions?: {
     speedLimit?: string;
     staticType?: 'bandwidth' | 'unlimited';
@@ -112,7 +112,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
       return;
     }
 
-    onAddToCart(selectedCountry, quantity);
+    onAddToCart(selectedCountry, quantity, calculatedPrice);
     onClose();
   };
 

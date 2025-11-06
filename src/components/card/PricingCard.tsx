@@ -85,9 +85,9 @@ export const PricingCard: React.FC<PricingCardProps> = ({
     }
   };
 
-  const handleAddToCartWithCountry = (country: string | undefined, quantity: number) => {
+  const handleAddToCartWithCountry = (country: string | undefined, quantity: number, calculatedPrice: number) => {
     if (cart && plan) {
-      cart.addToCart(plan, quantity, cartOptions, country);
+      cart.addToCart(plan, quantity, cartOptions, country, calculatedPrice);
       toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
     }
   };

@@ -152,7 +152,7 @@ const OrderSummary: React.FC<Props> = ({
                     </div>
 
                     {/* Đơn giá */}
-                    <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">${item.plan.price.toFixed(2)}</div>
+                    <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">${(item.calculatedPrice ?? item.plan.price).toFixed(2)}</div>
 
                     {/* Số lượng */}
                     <div className="w-[100px]">
@@ -174,7 +174,7 @@ const OrderSummary: React.FC<Props> = ({
                     </div>
 
                     {/* Tổng */}
-                    <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(item.plan.price * item.quantity).toFixed(2)}</div>
+                    <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}</div>
 
                     {/* Nút xóa */}
                     <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} />
@@ -258,7 +258,7 @@ const OrderSummary: React.FC<Props> = ({
                   <div className="p-2">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 min-w-0">
-                        <div className="text-primary dark:text-primary-dark font-semibold">${item.plan.price.toFixed(2)}</div>
+                        <div className="text-primary dark:text-primary-dark font-semibold">${(item.calculatedPrice ?? item.plan.price).toFixed(2)}</div>
                       </div>
 
                       {/* Quantity control */}
@@ -281,7 +281,7 @@ const OrderSummary: React.FC<Props> = ({
                       </div>
 
                       {/* Tổng */}
-                      <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(item.plan.price * item.quantity).toFixed(2)}</div>
+                      <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}</div>
 
                       {/* Xóa */}
                       <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} />

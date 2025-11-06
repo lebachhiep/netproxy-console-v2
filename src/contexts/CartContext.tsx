@@ -10,6 +10,7 @@ export interface CartItem {
   duration?: '7day' | '30day'; // for dedicated proxies
   speedLimit?: string; // for rotating (5mbps, 10mbps, 25mbps, 50mbps)
   staticType?: 'bandwidth' | 'unlimited'; // for static proxies
+  calculatedPrice?: number; // for external provider plans with dynamic pricing
 }
 
 // Coupon data structure
@@ -36,7 +37,7 @@ interface CartContextType {
   itemCount: number;
 
   // Actions
-  addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string) => void;
+  addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   updateCountry: (itemId: string, country: string) => void;
@@ -92,7 +93,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [items, couponCode, validatedCoupon, discountAmount]);
 
   // Computed values
-  const subtotal = items.reduce((sum, item) => sum + item.plan.price * item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => {
+    // Use calculatedPrice if available (for external provider plans), otherwise use plan.price
+    const itemPrice = item.calculatedPrice ?? item.plan.price;
+    return sum + itemPrice * item.quantity;
+  }, 0);
   const total = Math.max(0, subtotal - discountAmount);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -122,7 +127,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Add item to cart (or update quantity if exists)
-  const addToCart = (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string) => {
+  const addToCart = (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => {
     if (quantity < 1) return;
 
     const itemId = generateItemId(plan, options, country);
@@ -142,6 +147,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         plan,
         quantity,
         country,
+        calculatedPrice,
         ...options
       };
       setItems([...items, newItem]);

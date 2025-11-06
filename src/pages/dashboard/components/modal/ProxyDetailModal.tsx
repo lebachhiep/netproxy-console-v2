@@ -28,6 +28,8 @@ import { Tabs } from '@/components/tabs/Tabs';
 import Tooltip from '@/components/tooltip/Tooltip';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
+import { SubscriptionWithPlan } from '@/types/subscription';
+import { ProxyConnectionInfo } from './ProxyConnectionInfo';
 
 // Fake data type
 export interface ProxyData {
@@ -183,16 +185,16 @@ export const countryOptions = [
   { label: 'Anh', value: 'UK' }
 ];
 
-// Tabs cho bandwidth proxy
-export const bandwidthTabs = [
-  { key: 'list', label: 'Danh sách Proxy' },
-  { key: 'get', label: 'Lấy Proxy' },
-  { key: 'white', label: 'White list' }
+// Tabs - only connection info now since each subscription has one proxy
+export const proxyTabs = [
+  { key: 'connection', label: 'Thông tin kết nối' }
 ];
 
 interface ProxyDetailModalProps {
   open: boolean;
   item?: ProxyCardData | null;
+  subscription?: SubscriptionWithPlan | null;
+  username?: string;
   onClose: () => void;
   onPrev?: () => void;
   onNext?: () => void;
@@ -233,7 +235,7 @@ export const HeaderInfo: React.FC<HeaderInfoProps> = ({ expired, dataLeft, autoR
   );
 };
 
-export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, onClose, onPrev, onNext, nextItem, prevItem }) => {
+export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, subscription, username, onClose, onPrev, onNext, nextItem, prevItem }) => {
   if (!item) return null;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -333,190 +335,10 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       </div>
 
       {/* Nội dung modal */}
-      <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col">
-        {item.type === 'bandwidth-proxy' ? (
-          <Tabs
-            tabs={bandwidthTabs}
-            className="bg-bg-primary dark:bg-bg-primary-dark flex flex-col"
-            defaultActiveKey="list"
-            defaultWrapperClass="h-full flex flex-col"
-          >
-            {/* Tab 1: Danh sách Proxy */}
-            <div className="h-full flex flex-col overflow-auto">
-              {/* Header info */}
-              <HeaderInfo
-                expired={item.expired}
-                dataLeft={item.dataLeft}
-                autoRenew={item.autoRenew}
-                onAutoRenewChange={(val) => console.log(val)}
-              />
-
-              {/* Filter + table */}
-              <div className="py-2 px-5 bg-bg-primary dark:bg-bg-primary-dark">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Input
-                      placeholder="Tìm kiếm"
-                      wrapperClassName="bg-bg-input border-2 h-10"
-                      icon={<MagnifyingGlass />}
-                      onChange={(e) => console.log(e.target.value)}
-                    />
-                    <Select
-                      className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent"
-                      options={optionsTagSelect}
-                      placeholder="Type"
-                      onChange={(val) => console.log('Selected:', val)}
-                    />
-                    <Select
-                      className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent"
-                      options={optionsTagSelect}
-                      placeholder="ISP"
-                      onChange={(val) => console.log('Selected:', val)}
-                    />
-                  </div>
-                  <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
-                </div>
-              </div>
-
-              {/* Table danh sách proxy */}
-              <Table
-                className="min-h-[calc(100dvh-240px)]"
-                scroll={{ x: 300, y: 'calc(100dvh - 340px)' }}
-                data={tableData}
-                columns={columnsBandwidth}
-                paginationType="pagination"
-                size="large"
-                rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-                pagination={{
-                  current: currentPage,
-                  pageSize,
-                  total: tableData.length,
-                  className: '!pt-2 px-5 pb-5 border-t-2 border-border-element dark:border-border-element-dark',
-                  pageSizeOptions: [10, 20, 50, 100],
-                  onChange: (page, size) => {
-                    setCurrentPage(page);
-                    setPageSize(size);
-                  }
-                }}
-                showEmptyRows
-              />
-            </div>
-
-            {/* Tab 2 */}
-            <div>
-              <HeaderInfo
-                expired={item.expired}
-                dataLeft={item.dataLeft}
-                autoRenew={item.autoRenew}
-                onAutoRenewChange={(val) => console.log(val)}
-              />
-              <div className="p-5">
-                <div className="flex items-center gap-2">
-                  <Select className="h-10 min-w-[179px] dark:pseudo-border-top dark:border-transparent" placeholder="Quốc gia" options={countryOptions} />
-                  <ApiInput
-                    className="h-10"
-                    value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
-                    actions={[
-                      {
-                        icon: isHideApiValue ? (
-                          <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
-                        ) : (
-                          <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
-                        ),
-                        onClick: () => setIsHideApiValue(!isHideApiValue)
-                      },
-                      {
-                        icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                        onClick: () => {
-                          navigator.clipboard.writeText(apiValue);
-                          toast.success('Đã sao chép API Endpoint');
-                        }
-                      }
-                    ]}
-                  />
-                </div>
-              </div>
-            </div>
-            {/* Tab 3 */}
-            <div className="p-5">Content tab "White list"</div>
-          </Tabs>
-        ) : (
-          <>
-            <div className="border-b-[2px] border-border-element dark:border-border-element-dark bg-bg-primary dark:bg-bg-primary-dark">
-              <div className="flex items-start justify-between py-3 px-5 w-full max-w-[473px]">
-                <div className="flex flex-col space-y-1">
-                  <div className="flex items-center gap-2 text-text-hi dark:text-text-hi-dark">
-                    <label className="text-sm min-w-[106px]">Ngày hết hạn</label>
-                    <span className="font-semibold text-sm">{item.expired}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label className="text-text-hi dark:text-text-hi-dark text-sm min-w-[106px]">Data left</label>
-                    <div className="text-sm">
-                      <span className="text-primary dark:text-primary-dark font-medium">40.8</span>
-                      <span className="font-normal text-text-hi dark:text-text-hi-dark"> / </span>
-                      <span className="font-normal text-text-hi dark:text-text-hi-dark">50 GB</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-text-hi dark:text-text-hi-dark text-sm">Tự động gia hạn</span>
-                  <Switch checked={false} onChange={() => {}} />
-                </div>
-              </div>
-            </div>
-
-            {/* Filter + table */}
-            <div className="py-2 px-5 bg-bg-primary dark:bg-bg-primary-dark">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Tìm kiếm"
-                    wrapperClassName="bg-bg-input border-2 h-10"
-                    icon={<MagnifyingGlass />}
-                    onChange={(e) => console.log(e.target.value)}
-                  />
-                  <SelectTag
-                    className="h-10 dark:bg-bg-primary-dark dark:pseudo-border-top dark:border-transparent"
-                    options={optionsTagSelect}
-                    placeholder="Trạng thái"
-                    onChange={(val) => console.log('Selected:', val)}
-                  />
-                </div>
-                <IconButton className="w-10 h-10" icon={<ArrowCounter />}></IconButton>
-              </div>
-            </div>
-
-            <Table
-              className="min-h-[calc(100dvh-200px)]"
-              scroll={{ x: 300, y: 'calc(100dvh - 300px)' }}
-              data={tableData}
-              columns={columns}
-              rowSelection={{
-                selectedRowKeys,
-                onChange: (keys, rows) => setSelectedRowKeys(keys)
-              }}
-              paginationType="pagination"
-              pagination={{
-                current: currentPage,
-                pageSize,
-                total: tableData.length,
-                className: '!pt-2 px-5 pb-5 border-t-2 border-border-element dark:border-border-element-dark',
-                pageSizeOptions: [10, 20, 50, 100],
-                onChange: (page, size) => {
-                  setCurrentPage(page);
-                  setPageSize(size);
-                }
-              }}
-              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-              size="large"
-              bordered={false}
-              showEmptyRows
-            />
-          </>
-        )}
-
-        {/* Header info */}
+      <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col overflow-auto">
+        {subscription && <ProxyConnectionInfo subscription={subscription} username={username} />}
       </div>
+
 
       <div className="absolute -translate-x-1/2 bottom-[72px] left-1/2 z-50">
         <ActionButtons />

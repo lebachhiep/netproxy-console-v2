@@ -8,7 +8,7 @@ import { Select } from '@/components/select/Select';
 import { SelectTag } from '@/components/select/SelectTag';
 import { Table, TableColumn } from '@/components/table/Table';
 import {
-  bandwidthTabs,
+  proxyTabs,
   columnsBandwidth,
   countryOptions,
   HeaderInfo,
@@ -147,10 +147,10 @@ export const ProxyDetailPage = () => {
         {item.type === 'bandwidth-proxy' ? (
           <div className="flex-1 h-[calc(100dvh-190px)] md:h-auto">
             <Tabs
-              tabs={bandwidthTabs}
+              tabs={proxyTabs}
               className="bg-bg-primary dark:bg-bg-primary-dark"
               defaultWrapperClass="h-full flex flex-col"
-              defaultActiveKey="list"
+              defaultActiveKey="connection"
             >
               {/* Tab 1: Danh sách Proxy */}
               <div className="h-full flex flex-col overflow-auto">

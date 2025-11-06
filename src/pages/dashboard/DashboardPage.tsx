@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/input/Input';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
 import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
@@ -25,6 +25,78 @@ import { useNavigate } from 'react-router-dom';
 import { DataUsageModal } from './components/modal/DataUsageModal';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
+import { subscriptionService } from '@/services/subscription/subscription.service';
+import { SubscriptionWithPlan } from '@/types/subscription';
+import { StatusColor } from '@/components/badge/Badge';
+import { userService } from '@/services/user/user.service';
+import { UserProfile } from '@/services/user/user.types';
+
+// Helper function to format date to Vietnamese format
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('vi-VN', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+};
+
+// Helper function to map backend status to badge color
+const getStatusColor = (status: string): StatusColor => {
+  switch (status) {
+    case 'active':
+      return 'blue';
+    case 'paused':
+      return 'yellow';
+    case 'cancelled':
+    case 'expired':
+      return 'red';
+    default:
+      return 'gray';
+  }
+};
+
+// Helper function to map backend status to Vietnamese text
+const getStatusText = (status: string): string => {
+  switch (status) {
+    case 'active':
+      return 'Đang hoạt động';
+    case 'paused':
+      return 'Tạm dừng';
+    case 'cancelled':
+      return 'Đã hủy';
+    case 'expired':
+      return 'Hết hạn';
+    default:
+      return status;
+  }
+};
+
+// Helper function to format bytes to GB
+const formatBandwidth = (bytes?: number): string | undefined => {
+  if (!bytes) return undefined;
+  const gb = bytes / (1024 * 1024 * 1024);
+  return `${gb.toFixed(2)}GB`;
+};
+
+// Transform backend subscription to ProxyCardData
+const transformSubscriptionToCardData = (item: SubscriptionWithPlan): ProxyCardData => {
+  const plan = item.plan;
+
+  return {
+    id: item.id,
+    title: plan?.name || 'Unknown Plan',
+    status: {
+      text: getStatusText(item.status),
+      color: getStatusColor(item.status)
+    },
+    planID: plan?.id,
+    // dataLeft: Hidden for now as per user request
+    expired: formatDate(item.current_period_end),
+    autoRenew: item.auto_renew,
+    type: plan?.type === 'bandwidth' ? 'bandwidth-proxy' : 'rotating-proxy'
+  };
+};
 
 export const data: ProxyCardData[] = [
   {
@@ -167,7 +239,11 @@ const DashboardPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-  const [tableData, setTableData] = useState<ProxyCardData[]>(data);
+  const [tableData, setTableData] = useState<ProxyCardData[]>([]);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionWithPlan[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
@@ -177,8 +253,50 @@ const DashboardPage = () => {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
 
-  const handleAutoRenewChange = (id: number | string, checked: boolean) => {
-    setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
+  // Fetch data on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch subscriptions and user profile in parallel
+        const [subscriptionsResponse, profileResponse] = await Promise.all([
+          subscriptionService.getSubscriptions({ Status: 'active' }),
+          userService.getProfile()
+        ]);
+
+        setSubscriptions(subscriptionsResponse.active_subscriptions || []);
+        setUserProfile(profileResponse);
+
+        // Transform subscriptions to ProxyCardData
+        const transformedData = (subscriptionsResponse.active_subscriptions || []).map(transformSubscriptionToCardData);
+        setTableData(transformedData);
+      } catch (err) {
+        console.error('Failed to fetch data:', err);
+        setError('Không thể tải danh sách gói. Vui lòng thử lại sau.');
+        // Fallback to mock data in case of error
+        setTableData(data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleAutoRenewChange = async (id: number | string, checked: boolean) => {
+    try {
+      // Optimistically update UI
+      setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
+
+      // Call backend API
+      await subscriptionService.updateAutoRenew(id as string, checked);
+    } catch (err) {
+      console.error('Failed to update auto-renew:', err);
+      // Revert on error
+      setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: !checked } : item)));
+    }
   };
 
   const handleItemClick = (index: number, id: number | string) => {
@@ -370,11 +488,13 @@ const DashboardPage = () => {
                 title="Các gói hoạt động"
                 mainContent={
                   <div>
-                    <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
+                    <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">
+                      {loading ? '...' : tableData.length}
+                    </span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
                   </div>
                 }
-                subInfo={[{ label: 'Tổng gói', value: '10 gói' }]}
+                subInfo={[{ label: 'Tổng gói', value: `${loading ? '...' : tableData.length} gói` }]}
                 buttonText="MUA THÊM"
                 onButtonClick={() => navigate('/buy')}
               />,
@@ -427,7 +547,7 @@ const DashboardPage = () => {
               pagination={{
                 current: currentPage,
                 pageSize,
-                total: data.length,
+                total: tableData.length,
                 pageSizeOptions: [2, 4, 6, 8],
                 className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
                 onChange: (page, size) => {
@@ -474,6 +594,8 @@ const DashboardPage = () => {
         <ProxyDetailModal
           open={modalOpen}
           item={selectedIndex !== null ? sortedData[selectedIndex] : null}
+          subscription={selectedIndex !== null ? subscriptions[selectedIndex] : null}
+          username={userProfile?.username}
           prevItem={prevItem}
           nextItem={nextItem}
           onClose={() => setModalOpen(false)}

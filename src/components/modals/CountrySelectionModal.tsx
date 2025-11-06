@@ -7,6 +7,20 @@ import { Plan } from '@/services/plan/plan.types';
 import { planService } from '@/services/plan/plan.service';
 import { toast } from 'sonner';
 import { Country } from '@/services/plan/plan.types';
+import countriesLib from 'i18n-iso-countries';
+import en from 'i18n-iso-countries/langs/en.json';
+import vi from 'i18n-iso-countries/langs/vi.json';
+
+// Register locales
+countriesLib.registerLocale(en);
+countriesLib.registerLocale(vi);
+
+// Helper function to get country name from code in Vietnamese
+const getCountryName = (code: string): string => {
+  return countriesLib.getName(code, 'vi', { select: 'official' }) ||
+         countriesLib.getName(code, 'en', { select: 'official' }) ||
+         code;
+};
 
 interface CountrySelectionModalProps {
   open: boolean;
@@ -196,7 +210,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
                 {countries.map(country => (
                   <CountryTag
                     key={country.code}
-                    name={country.name}
+                    name={getCountryName(country.code)}
                     flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
                     active={selectedCountry === country.code}
                     onClick={() => handleCountrySelect(country.code)}

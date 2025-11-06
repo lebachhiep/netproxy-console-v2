@@ -77,8 +77,38 @@ const PurchasePage: React.FC = () => {
   const [activeDedicated, setActiveDedicated] = useState<DedicatedSubKey>('residential');
   const [cartOpen, setCartOpen] = useState(false);
 
+  // Default prices for external provider plans (price = 0)
+  const [defaultPrices, setDefaultPrices] = useState<Record<string, number>>({});
+
   // Cart integration
   const cart = useCart();
+
+  // Fetch default prices for external provider plans (price = 0) using US country
+  const fetchDefaultPrices = async (plans: Plan[]) => {
+    const externalProviderPlans = plans.filter(p => p.price === 0);
+
+    if (externalProviderPlans.length === 0) return;
+
+    const pricePromises = externalProviderPlans.map(async (plan) => {
+      try {
+        const result = await planService.calculatePlanPrice(plan.id, {
+          country: 'US', // Default to US for display
+          quantity: 1
+        });
+        return { planId: plan.id, price: result.price };
+      } catch (err) {
+        console.error(`Failed to fetch default price for plan ${plan.id}:`, err);
+        return { planId: plan.id, price: 0 };
+      }
+    });
+
+    const results = await Promise.all(pricePromises);
+    const pricesMap: Record<string, number> = {};
+    results.forEach(({ planId, price }) => {
+      pricesMap[planId] = price;
+    });
+    setDefaultPrices(pricesMap);
+  };
 
   // Shared fetch function (DRY principle)
   const fetchPlans = async () => {
@@ -87,6 +117,9 @@ const PurchasePage: React.FC = () => {
       setError(null);
       const data = await planService.getAllPlans();
       setPlans(data);
+
+      // Fetch default prices for external provider plans
+      await fetchDefaultPrices(data);
     } catch (err) {
       console.error('Failed to fetch plans:', err);
       setError('Không thể tải dữ liệu. Vui lòng thử lại.');
@@ -136,6 +169,16 @@ const PurchasePage: React.FC = () => {
       setActiveGroup(speedGroups[0].key);
     }
   }, [speedGroups, activeGroup]);
+
+  // Helper to get display price (for external provider plans, use default US price)
+  const getDisplayPrice = (plan: Plan): string => {
+    // If plan has price = 0 and we have a default price, use it
+    if (plan.price === 0 && defaultPrices[plan.id]) {
+      return defaultPrices[plan.id].toFixed(2);
+    }
+    // Otherwise use plan.price
+    return plan.price.toFixed(2);
+  };
 
   // Helper to build features for PricingCard
   const buildPlanFeatures = (plan: Plan) => {
@@ -391,7 +434,7 @@ const PurchasePage: React.FC = () => {
                               tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                               description={plan.description || ''}
                               title={plan.name}
-                              price={plan.price.toFixed(2)}
+                              price={getDisplayPrice(plan)}
                               features={buildPlanFeatures(plan)}
                               buttonText="MUA GÓI"
                               enableCart={true}
@@ -454,7 +497,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toFixed(2)}
+                            price={getDisplayPrice(plan)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -499,7 +542,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toFixed(2)}
+                            price={getDisplayPrice(plan)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -560,7 +603,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toFixed(2)}
+                            price={getDisplayPrice(plan)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}
@@ -605,7 +648,7 @@ const PurchasePage: React.FC = () => {
                             tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
                             description={plan.description || ''}
                             title={plan.name}
-                            price={plan.price.toFixed(2)}
+                            price={getDisplayPrice(plan)}
                             features={buildPlanFeatures(plan)}
                             buttonText="MUA GÓI"
                             enableCart={true}

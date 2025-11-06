@@ -177,7 +177,7 @@ const OrderSummary: React.FC<Props> = ({
                     <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}</div>
 
                     {/* Nút xóa */}
-                    <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} />
+                    <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} aria-label="Xóa khỏi giỏ hàng" />
                   </div>
                 ))
               ) : (
@@ -216,7 +216,7 @@ const OrderSummary: React.FC<Props> = ({
                     <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                     {/* Nút xóa */}
-                    <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => onRemove && onRemove(o.country)} />
+                    <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => onRemove && onRemove(o.country)} aria-label="Xóa khỏi giỏ hàng" />
                   </div>
                 ))
               )}
@@ -284,7 +284,7 @@ const OrderSummary: React.FC<Props> = ({
                       <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}</div>
 
                       {/* Xóa */}
-                      <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} />
+                      <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => handleRemove(item)} aria-label="Xóa khỏi giỏ hàng" />
                     </div>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ const OrderSummary: React.FC<Props> = ({
                       <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
 
                       {/* Xóa */}
-                      <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => onRemove && onRemove(o.country)} />
+                      <IconButton className="w-8 h-8" icon={<Delete className="w-5 h-5" />} onClick={() => onRemove && onRemove(o.country)} aria-label="Xóa khỏi giỏ hàng" />
                     </div>
                   </div>
                 </div>

@@ -168,6 +168,8 @@ export const DesktopSummary = ({
             className="w-6 h-6"
             icon={<Chevron className={clsx('w-4 h-4', isExpanded && '-rotate-90', !isExpanded && 'rotate-90')} />}
             onClick={() => setExpanded(!isExpanded)}
+            aria-label={isExpanded ? 'Thu gọn chi tiết' : 'Mở rộng chi tiết'}
+            aria-expanded={isExpanded}
           />
         </div>
 
@@ -185,6 +187,7 @@ export const DesktopSummary = ({
                       className="w-6 h-6"
                       icon={<DismissCircle className="w-4 h-4 text-text-lo dark:text-text-lo-dark" />}
                       onClick={handleRemoveCoupon}
+                      aria-label="Xóa mã giảm giá"
                     />
                   </div>
                 ) : (
@@ -197,6 +200,7 @@ export const DesktopSummary = ({
                       onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                       wrapperClassName="flex-1 h-10"
                       inputClassName="text-sm"
+                      aria-label="Nhập mã giảm giá"
                     />
                     <Button
                       className="text-xs h-10 px-4"

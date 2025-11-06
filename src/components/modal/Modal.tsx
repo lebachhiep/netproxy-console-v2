@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { Dismiss } from '../icons';
 
@@ -95,13 +95,34 @@ export const Modal: React.FC<ModalProps> = ({
   footerClassName = '',
   closeButtonClassName = ''
 }) => {
+  // Handle ESC key press to close modal
+  useEffect(() => {
+    if (!open) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [open, onClose]);
+
   if (!open) return null;
 
+  // Generate unique ID for aria-labelledby
+  const titleId = 'modal-title';
+
   return (
-    <div className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40`}>
+    <div className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40`} onClick={onClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className={twMerge('max-w-md bg-bg-primary dark:bg-bg-primary-dark rounded-2xl shadow-2xl w-full  animate-fadeIn', className)}
         style={{ animationDuration: '200ms' }}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
@@ -110,9 +131,9 @@ export const Modal: React.FC<ModalProps> = ({
             headerClassName
           )}
         >
-          <div className="text-text-hi dark:text-text-hi-dark text-xl font-semibold font-averta">{title}</div>
-          <button onClick={onClose} className={`rounded-full flex items-center justify-center ${closeButtonClassName}`}>
-            <Dismiss className="text-xl text-text-hi dark:text-text-hi-dark" />
+          <div id={titleId} className="text-text-hi dark:text-text-hi-dark text-xl font-semibold font-averta">{title}</div>
+          <button onClick={onClose} className={`rounded-full flex items-center justify-center ${closeButtonClassName}`} aria-label="Đóng">
+            <Dismiss className="text-xl text-text-hi dark:text-text-hi-dark" aria-hidden="true" />
           </button>
         </div>
 

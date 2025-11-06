@@ -20,7 +20,8 @@ import { useCart } from '@/hooks/useCart';
 import { planService } from '@/services/plan/plan.service';
 import { Plan } from '@/services/plan/plan.types';
 import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
-import { Button } from '@/components/button/Button';
+import { PlanCardSkeleton } from '@/components/skeleton/PlanCardSkeleton';
+import { ErrorDisplay } from '@/components/error/ErrorDisplay';
 
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
@@ -316,33 +317,34 @@ const PurchasePage: React.FC = () => {
     fetchPlans();
   };
 
-  // Loading skeleton
+  // Loading skeleton - uses PlanCardSkeleton component
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5">
-      {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-        <div
-          key={i}
-          className="h-64 bg-bg-secondary dark:bg-bg-secondary-dark animate-pulse rounded-xl"
-        />
+      {[...Array(6)].map((_, i) => (
+        <PlanCardSkeleton key={i} />
       ))}
     </div>
   );
 
-  // Error state
+  // Error state - uses ErrorDisplay component with retry
   const ErrorState = () => (
-    <div className="flex flex-col items-center justify-center p-10 gap-4">
-      <p className="text-red dark:text-red-dark text-lg">{error}</p>
-      <Button onClick={handleRetry} variant="primary">
-        Thử lại
-      </Button>
-    </div>
+    <ErrorDisplay
+      title="Không thể tải dữ liệu"
+      message={error || 'Vui lòng kiểm tra kết nối mạng và thử lại.'}
+      onRetry={handleRetry}
+      retryText="Thử lại"
+    />
   );
 
-  // Empty state
+  // Empty state - enhanced with icon matching OrderSummary pattern
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center p-10">
-      <p className="text-text-me dark:text-text-me-dark text-lg">
-        Không có gói nào trong danh mục này
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
+      <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark opacity-70 mb-4" aria-hidden="true" />
+      <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">
+        Không có gói nào
+      </h2>
+      <p className="text-text-me dark:text-text-me-dark text-sm">
+        Hiện tại chưa có gói dịch vụ trong danh mục này.
       </p>
     </div>
   );
@@ -376,8 +378,9 @@ const PurchasePage: React.FC = () => {
           </div>
 
           {/* Cart Icon */}
-          <div
+          <button
             onClick={() => setCartOpen(true)}
+            aria-label={`Giỏ hàng${cart.itemCount > 0 ? ` (${cart.itemCount} sản phẩm)` : ' (trống)'}`}
             className={`flex rounded-full shadow-xs items-center justify-center w-10 h-10 border-2 ${
               cart.itemCount > 0
                 ? 'border-blue-border dark:border-blue-border-dark bg-blue dark:bg-blue-dark'
@@ -388,8 +391,9 @@ const PurchasePage: React.FC = () => {
               className={`${
                 cart.itemCount > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'
               }`}
+              aria-hidden="true"
             />
-          </div>
+          </button>
         </div>
       </div>
 
@@ -713,6 +717,7 @@ const PurchasePage: React.FC = () => {
                   className="w-10 h-10"
                   icon={<Dismiss className="text-text-me dark:text-text-me-dark" />}
                   onClick={() => setCartOpen(false)}
+                  aria-label="Đóng giỏ hàng"
                 />
               </div>
 

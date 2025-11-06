@@ -226,19 +226,22 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
               Số lượng:
             </label>
             <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] rounded-md w-32">
-              <div
+              <button
                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-8 h-8 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                 onClick={() => handleQuantityChange(quantity - 1)}
+                aria-label="Giảm số lượng"
+                disabled={quantity <= 1}
               >
-                <Subtract className="text-text-lo dark:text-text-lo-dark" />
-              </div>
-              <span className="text-text-hi dark:text-text-hi-dark font-medium">{quantity}</span>
-              <div
+                <Subtract className="text-text-lo dark:text-text-lo-dark" aria-hidden="true" />
+              </button>
+              <span className="text-text-hi dark:text-text-hi-dark font-medium" aria-label={`Số lượng: ${quantity}`}>{quantity}</span>
+              <button
                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-8 h-8 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                 onClick={() => handleQuantityChange(quantity + 1)}
+                aria-label="Tăng số lượng"
               >
-                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4" />
-              </div>
+                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4" aria-hidden="true" />
+              </button>
             </div>
           </div>
 

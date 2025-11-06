@@ -8,7 +8,10 @@ import { Input } from '@/components/input/Input';
 import { useCart } from '@/hooks/useCart';
 import { useAuthStore } from '@/stores/auth.store';
 import { couponService } from '@/services/coupon/coupon.service';
+import { orderService } from '@/services/order/order.service';
+import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export const DesktopSummary = ({
   orders,
@@ -26,10 +29,12 @@ export const DesktopSummary = ({
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [couponInput, setCouponInput] = useState<string>('');
   const [isValidatingCoupon, setIsValidatingCoupon] = useState<boolean>(false);
+  const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
 
   const cart = useCartContext ? useCart() : null;
   const userProfile = useAuthStore((state) => state.userProfile);
   const balance = userProfile?.balance ?? 0;
+  const navigate = useNavigate();
 
   // Calculate final total with discount
   const discount = cart?.discountAmount ?? 0;
@@ -69,6 +74,71 @@ export const DesktopSummary = ({
     if (cart) {
       cart.removeCoupon();
       toast.info('Đã xóa mã giảm giá');
+    }
+  };
+
+  // Handle checkout
+  const handleCheckout = async () => {
+    if (!cart || !useCartContext) return;
+
+    // Validate cart not empty
+    if (cart.items.length === 0) {
+      toast.error('Giỏ hàng trống');
+      return;
+    }
+
+    // Validate sufficient balance (already checked in UI, but double-check)
+    if (hasInsufficientFunds) {
+      toast.error('Số dư không đủ. Vui lòng nạp thêm tiền.');
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      // Build order request from cart
+      const orderRequest: CreateOrderRequest = {
+        type: 'buy',
+        items: cart.items.map(item => ({
+          plan_id: item.plan.id,
+          quantity: item.quantity,
+          country: item.country
+        })),
+        coupon_code: cart.couponCode
+      };
+
+      // Create order
+      const order = await orderService.createOrder(orderRequest);
+
+      // Success!
+      toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
+
+      // Clear cart
+      cart.clearCart();
+
+      // Navigate to home after a short delay
+      setTimeout(() => {
+        navigate('/home');
+      }, 1000);
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+
+      // Handle specific error messages
+      const errorMessage = error.response?.data?.message || error.message || '';
+
+      if (errorMessage.includes('insufficient balance')) {
+        toast.error('Số dư không đủ. Vui lòng nạp thêm tiền.');
+      } else if (errorMessage.includes('Coupon') || errorMessage.includes('coupon')) {
+        toast.error('Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+        cart.removeCoupon(); // Remove invalid coupon
+      } else if (errorMessage.includes('plan') && errorMessage.includes('not active')) {
+        toast.error('Một số gói đã ngừng cung cấp. Vui lòng làm mới trang.');
+      } else if (error.code === 'ERR_NETWORK' || errorMessage.includes('network')) {
+        toast.error('Không thể kết nối. Vui lòng thử lại.');
+      } else {
+        toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
+      }
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -196,6 +266,8 @@ export const DesktopSummary = ({
             <Button
               className="w-full text-[12px]"
               disabled={useCartContext ? hasInsufficientFunds || (cart?.items.length === 0) : false}
+              loading={isCheckingOut}
+              onClick={useCartContext ? handleCheckout : undefined}
             >
               THANH TOÁN
             </Button>

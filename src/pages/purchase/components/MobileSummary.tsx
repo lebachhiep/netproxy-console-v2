@@ -109,16 +109,34 @@ export const MobileSummary = ({
       // Create order
       const order = await orderService.createOrder(orderRequest);
 
-      // Success!
-      toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
-
-      // Clear cart
+      // Clear cart immediately (payment successful)
       cart.clearCart();
 
-      // Navigate to home after a short delay
-      setTimeout(() => {
-        navigate('/home');
-      }, 1000);
+      // Handle different order statuses
+      if (order.status === 'fulfilled') {
+        // Fast provider - subscriptions ready immediately
+        toast.success(`Đơn hàng #${order.order_number} đã hoàn thành! Đang chuyển đến dịch vụ...`);
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
+
+      } else if (order.status === 'processing') {
+        // Slow provider - async fulfillment
+        toast.success(`Đơn hàng #${order.order_number} đang được xử lý...`, {
+          description: 'Bạn sẽ nhận được thông báo khi proxy sẵn sàng (30-90 giây)',
+          duration: 5000
+        });
+        setTimeout(() => {
+          navigate('/home');
+        }, 1500);
+
+      } else {
+        // Other statuses (shouldn't happen, but handle gracefully)
+        toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
+      }
     } catch (error: any) {
       console.error('Checkout error:', error);
 

@@ -14,6 +14,7 @@ import {
 import { Tabs } from '@/components/tabs/Tabs';
 import React, { useState, useEffect, useMemo } from 'react';
 import OrderSummary from './components/OrderSumary';
+import { DedicatedPlanSelector } from './components/DedicatedPlanSelector';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
 import { useCart } from '@/hooks/useCart';
@@ -62,9 +63,7 @@ const itemVariants: Variants = {
   }
 };
 
-type TabKey = 'rotating' | 'static' | 'dedicated';
-type StaticSubKey = 'bandwidth' | 'unlimited';
-type DedicatedSubKey = 'residential' | 'datacenter';
+type TabKey = 'rotating' | 'dedicated';
 
 const PurchasePage: React.FC = () => {
   // API data state
@@ -74,8 +73,7 @@ const PurchasePage: React.FC = () => {
 
   // Tab state
   const [activeMain, setActiveMain] = useState<TabKey>('rotating');
-  const [activeStatic, setActiveStatic] = useState<StaticSubKey>('bandwidth');
-  const [activeDedicated, setActiveDedicated] = useState<DedicatedSubKey>('residential');
+  const [activeDedicated, setActiveDedicated] = useState<string>('');
   const [cartOpen, setCartOpen] = useState(false);
 
   // Default prices for external provider plans (price = 0)
@@ -140,14 +138,28 @@ const PurchasePage: React.FC = () => {
     () => plans.filter(p => p.type === 'rotating').sort((a, b) => a.sort_order - b.sort_order),
     [plans]
   );
-  const staticPlans = useMemo(
-    () => plans.filter(p => p.type === 'static').sort((a, b) => a.sort_order - b.sort_order),
-    [plans]
-  );
   const dedicatedPlans = useMemo(
     () => plans.filter(p => p.type === 'dedicated').sort((a, b) => a.sort_order - b.sort_order),
     [plans]
   );
+
+  // Dynamic tabs for dedicated plans - each plan is a tab
+  const dedicatedTabs = useMemo(() => {
+    return dedicatedPlans.map(plan => ({
+      label: plan.name,
+      key: plan.id
+    }));
+  }, [dedicatedPlans]);
+
+  // Set active dedicated tab when plans load
+  useEffect(() => {
+    if (dedicatedPlans.length > 0 && !activeDedicated) {
+      setActiveDedicated(dedicatedPlans[0].id);
+    } else if (dedicatedPlans.length > 0 && !dedicatedPlans.find(p => p.id === activeDedicated)) {
+      // If current active tab doesn't exist anymore, switch to first plan
+      setActiveDedicated(dedicatedPlans[0].id);
+    }
+  }, [dedicatedPlans, activeDedicated]);
 
   // Dynamic speed groups for rotating plans
   const speedGroups = useMemo(() => {
@@ -351,18 +363,7 @@ const PurchasePage: React.FC = () => {
 
   const mainTabs = [
     { label: 'Rotating', key: 'rotating' },
-    { label: 'Static', key: 'static' },
-    { label: 'Dedicated', key: 'dedicated' }
-  ];
-
-  const staticTabs = [
-    { label: 'Bandwidth', key: 'bandwidth' },
-    { label: 'Unlimited', key: 'unlimited' }
-  ];
-
-  const dedicatedTabs = [
-    { label: 'Residential', key: 'residential' },
-    { label: 'Datacenter', key: 'datacenter' }
+    { label: 'Server', key: 'dedicated' }
   ];
 
   return (
@@ -465,214 +466,31 @@ const PurchasePage: React.FC = () => {
           )}
         </div>
 
-        {/* Static Tab */}
-        <div key="static">
-          {loading ? (
-            <LoadingSkeleton />
-          ) : error ? (
-            <ErrorState />
-          ) : (
-            <Tabs
-              type="card"
-              tabs={staticTabs}
-              activeKey={activeStatic}
-              onChange={key => setActiveStatic(key as StaticSubKey)}
-            >
-              {/* Bandwidth Sub-tab */}
-              <div key="bandwidth" className="flex">
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
-                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
-                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
-                >
-                  {staticPlans.filter(p => p.bandwidth && p.bandwidth > 0).length === 0 ? (
-                    <div className="col-span-full">
-                      <EmptyState />
-                    </div>
-                  ) : (
-                    staticPlans
-                      .filter(p => p.bandwidth && p.bandwidth > 0)
-                      .map((plan, index) => (
-                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                          <PricingCard
-                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                            description={plan.description || ''}
-                            title={plan.name}
-                            price={getDisplayPrice(plan)}
-                            features={buildPlanFeatures(plan)}
-                            buttonText="MUA GÓI"
-                            enableCart={true}
-                            plan={plan}
-                            cartOptions={{
-                              staticType: 'bandwidth'
-                            }}
-                          />
-                        </motion.div>
-                      ))
-                  )}
-                </motion.div>
-
-                {/* Cart Sidebar - Desktop only */}
-                {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                    <OrderSummary useCartContext={true} />
-                  </div>
-                )}
-              </div>
-
-              {/* Unlimited Sub-tab */}
-              <div key="unlimited" className="flex">
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
-                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
-                  } gap-5 p-5 max-h-[calc(100dvh-255px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
-                >
-                  {staticPlans.filter(p => !p.bandwidth || p.bandwidth === 0).length === 0 ? (
-                    <div className="col-span-full">
-                      <EmptyState />
-                    </div>
-                  ) : (
-                    staticPlans
-                      .filter(p => !p.bandwidth || p.bandwidth === 0)
-                      .map((plan, index) => (
-                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                          <PricingCard
-                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                            description={plan.description || ''}
-                            title={plan.name}
-                            price={getDisplayPrice(plan)}
-                            features={buildPlanFeatures(plan)}
-                            buttonText="MUA GÓI"
-                            enableCart={true}
-                            plan={plan}
-                            cartOptions={{
-                              staticType: 'unlimited'
-                            }}
-                          />
-                        </motion.div>
-                      ))
-                  )}
-                </motion.div>
-
-                {/* Cart Sidebar - Desktop only */}
-                {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                    <OrderSummary useCartContext={true} />
-                  </div>
-                )}
-              </div>
-            </Tabs>
-          )}
-        </div>
-
-        {/* Dedicated Tab */}
+        {/* Server Tab */}
         <div key="dedicated">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
+          ) : dedicatedTabs.length === 0 ? (
+            <EmptyState />
           ) : (
             <Tabs
               type="card"
               tabs={dedicatedTabs}
               activeKey={activeDedicated}
-              onChange={key => setActiveDedicated(key as DedicatedSubKey)}
+              onChange={key => setActiveDedicated(String(key))}
             >
-              {/* Residential Sub-tab */}
-              <div key="residential" className="flex">
+              {dedicatedPlans.map(plan => (
                 <motion.div
+                  key={plan.id}
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
-                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
-                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
                 >
-                  {dedicatedPlans.filter(p => p.category === 'residential').length === 0 ? (
-                    <div className="col-span-full">
-                      <EmptyState />
-                    </div>
-                  ) : (
-                    dedicatedPlans
-                      .filter(p => p.category === 'residential')
-                      .map((plan, index) => (
-                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                          <PricingCard
-                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                            description={plan.description || ''}
-                            title={plan.name}
-                            price={getDisplayPrice(plan)}
-                            features={buildPlanFeatures(plan)}
-                            buttonText="MUA GÓI"
-                            enableCart={true}
-                            plan={plan}
-                            cartOptions={{
-                              duration: '7day' // Default to 7 day, could be made dynamic
-                            }}
-                          />
-                        </motion.div>
-                      ))
-                  )}
+                  <DedicatedPlanSelector plan={plan} />
                 </motion.div>
-
-                {/* Cart Sidebar - Desktop only */}
-                {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                    <OrderSummary useCartContext={true} />
-                  </div>
-                )}
-              </div>
-
-              {/* Datacenter Sub-tab */}
-              <div key="datacenter" className="flex">
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
-                    cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
-                  } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
-                >
-                  {dedicatedPlans.filter(p => p.category === 'datacenter').length === 0 ? (
-                    <div className="col-span-full">
-                      <EmptyState />
-                    </div>
-                  ) : (
-                    dedicatedPlans
-                      .filter(p => p.category === 'datacenter')
-                      .map((plan, index) => (
-                        <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                          <PricingCard
-                            tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                            description={plan.description || ''}
-                            title={plan.name}
-                            price={getDisplayPrice(plan)}
-                            features={buildPlanFeatures(plan)}
-                            buttonText="MUA GÓI"
-                            enableCart={true}
-                            plan={plan}
-                            cartOptions={{
-                              duration: '7day' // Default to 7 day, could be made dynamic
-                            }}
-                          />
-                        </motion.div>
-                      ))
-                  )}
-                </motion.div>
-
-                {/* Cart Sidebar - Desktop only */}
-                {cart.itemCount > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                    <OrderSummary useCartContext={true} />
-                  </div>
-                )}
-              </div>
+              ))}
             </Tabs>
           )}
         </div>

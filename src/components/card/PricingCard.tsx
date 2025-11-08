@@ -58,6 +58,15 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       e.stopPropagation();
       setIsAdding(true);
 
+      // For rotating plans, skip country selection and add directly to cart
+      if (plan.type === 'rotating') {
+        cart.addToCart(plan, 1, cartOptions);
+        toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+        setIsAdding(false);
+        return;
+      }
+
+      // For other plan types (dedicated, etc.), check if country selection is needed
       try {
         // Check if country selection is needed
         const countriesData = await planService.getPlanCountries(plan.id);

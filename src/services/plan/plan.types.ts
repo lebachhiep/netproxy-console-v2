@@ -24,6 +24,8 @@ export interface Plan {
   frequency?: number; // Rotation frequency
   max_concurrent?: number; // Max concurrent connections
   package?: any; // Additional package data as JSON
+  provider_name?: string; // Provider/server name
+  metadata?: Record<string, any>; // Additional metadata
 
   // Status
   featured: boolean;
@@ -41,12 +43,18 @@ export interface ListPlansParams {
   featured?: 'true' | 'false' | boolean; // Backend accepts string
 }
 
-// Response from list plans API
+// Response from list plans API (old format - kept for backward compatibility)
 export interface ListPlansResponse {
   items: Plan[]; // Backend returns "items" not "plans"
   total: number;
   page: number;
   per_page: number;
+}
+
+// New response format from /user/plans API
+export interface PlansResponse {
+  dedicated: Record<string, Plan[]>; // Key: proxy type (IPv6, Private IPv4, etc.), Value: array of plans
+  rotate: Plan[]; // Array of rotating plans
 }
 
 // Frontend display structure for plan

@@ -131,8 +131,7 @@ export const Navbar: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
-
-  console.log({ modalOpen });
+  
 
   return (
     <>

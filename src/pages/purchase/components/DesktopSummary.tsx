@@ -18,13 +18,17 @@ export const DesktopSummary = ({
   totalIps,
   totalLocation,
   total,
-  useCartContext = false
+  useCartContext = false,
+  proxyType,
+  duration
 }: {
   total: number;
   orders: OrderItemType[];
   totalIps: number;
   totalLocation: number;
   useCartContext?: boolean;
+  proxyType?: string;
+  duration?: number;
 }) => {
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [couponInput, setCouponInput] = useState<string>('');
@@ -37,8 +41,13 @@ export const DesktopSummary = ({
   const navigate = useNavigate();
 
   // Calculate final total with discount
+  // For dedicated tabs (when orders prop is provided), use the passed total (which is already filtered)
+  // For rotating tabs, use cart.subtotal and cart.total (which includes discount)
   const discount = cart?.discountAmount ?? 0;
-  const finalTotal = cart ? cart.total : total;
+  // If orders prop is provided and has items, it means we're in a dedicated tab with filtered items
+  const isDedicatedTab = orders.length > 0 && useCartContext;
+  const subtotalForCalculation = cart ? (isDedicatedTab ? total : cart.subtotal) : total;
+  const finalTotal = cart ? (subtotalForCalculation - discount) : total;
   const balanceAfter = balance - finalTotal;
   const hasInsufficientFunds = balanceAfter < 0;
 
@@ -53,7 +62,9 @@ export const DesktopSummary = ({
 
     setIsValidatingCoupon(true);
     try {
-      const result = await couponService.validateCoupon(couponInput.trim(), cart.subtotal);
+      // Use subtotalForCalculation for dedicated tabs, cart.subtotal for rotating tabs
+      const subtotalToValidate = isDedicatedTab ? subtotalForCalculation : cart.subtotal;
+      const result = await couponService.validateCoupon(couponInput.trim(), subtotalToValidate);
 
       if (result.success && result.coupon && result.discount !== undefined) {
         cart.applyCoupon(couponInput.trim(), result.coupon, result.discount);
@@ -215,20 +226,18 @@ export const DesktopSummary = ({
               </div>
             )}
 
-            <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-              <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP type:</span>
-              <span className="font-semibold text-text-hi dark:text-text-hi-dark">Standard ISP IP</span>
-            </div>
-            <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-              <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP Duration:</span>
-              <span className="font-semibold text-text-hi dark:text-text-hi-dark">30 days</span>
-            </div>
-            <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-              <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP Unit Price:</span>
-              <span className="font-semibold text-text-hi dark:text-text-hi-dark">
-                ${orders.length > 0 ? orders[0]?.price.toFixed(2) : '0.00'}
-              </span>
-            </div>
+            {proxyType && (
+              <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
+                <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP type:</span>
+                <span className="font-semibold text-text-hi dark:text-text-hi-dark">{proxyType}</span>
+              </div>
+            )}
+            {duration && (
+              <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
+                <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP Duration:</span>
+                <span className="font-semibold text-text-hi dark:text-text-hi-dark">{duration} days</span>
+              </div>
+            )}
             <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
               <span className="text-text-me dark:text-text-me-dark text-sm font-medium">Total location:</span>
               <span className="font-semibold text-text-hi dark:text-text-hi-dark">{totalLocation}</span>
@@ -246,7 +255,7 @@ export const DesktopSummary = ({
             <div className="flex flex-col gap-2 border-b border-border-element dark:border-border-element-dark pb-4">
               <div className="flex justify-between text-sm">
                 <span className="text-text-me dark:text-text-me-dark">Tổng phụ:</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold">${cart.subtotal.toFixed(2)}</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold">${subtotalForCalculation.toFixed(2)}</span>
               </div>
               {cart.discountAmount > 0 && (
                 <div className="flex justify-between text-sm">

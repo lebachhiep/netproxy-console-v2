@@ -40,6 +40,7 @@ interface CartContextType {
   addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => void;
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
+  updateCartItem: (itemId: string, quantity: number, calculatedPrice?: number) => void;
   updateCountry: (itemId: string, country: string) => void;
   clearCart: () => void;
   applyCoupon: (code: string, couponData: CouponData, discount: number) => void;
@@ -173,6 +174,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     ));
   };
 
+  // Update item quantity and calculatedPrice atomically
+  const updateCartItem = (itemId: string, quantity: number, calculatedPrice?: number) => {
+    if (quantity < 1) {
+      removeItem(itemId);
+      return;
+    }
+
+    setItems(items.map(item =>
+      item.id === itemId
+        ? { ...item, quantity, ...(calculatedPrice !== undefined && { calculatedPrice }) }
+        : item
+    ));
+  };
+
   // Update item country
   const updateCountry = (itemId: string, country: string) => {
     setItems(items.map(item =>
@@ -215,6 +230,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     addToCart,
     removeItem,
     updateQuantity,
+    updateCartItem,
     updateCountry,
     clearCart,
     applyCoupon,

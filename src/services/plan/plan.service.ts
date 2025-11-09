@@ -2,6 +2,7 @@ import { apiService } from '@/services/api/api.service';
 import {
   ListPlansParams,
   ListPlansResponse,
+  PlansResponse,
   Plan,
   GetCountriesResponse,
   CalculatePriceParams,
@@ -10,22 +11,11 @@ import {
 
 class PlanService {
   /**
-   * Get plans list with filtering support
-   * @param params - Filter parameters (category, featured, pagination)
-   * @returns Promise with plan items and pagination info
+   * Get plans list - new format with server and rotate
+   * @returns Promise with plans grouped by server and rotating plans
    */
-  async listPlans(params?: ListPlansParams): Promise<ListPlansResponse> {
-    // Convert boolean featured to string if needed
-    const queryParams = params ? {
-      ...params,
-      featured: params.featured !== undefined
-        ? String(params.featured)
-        : undefined
-    } : undefined;
-
-    const response = await apiService.get<ListPlansResponse>('/user/plans', {
-      params: queryParams,
-    });
+  async listPlans(): Promise<PlansResponse> {
+    const response = await apiService.get<PlansResponse>('/user/plans');
     return response;
   }
 
@@ -40,62 +30,62 @@ class PlanService {
   }
 
   /**
-   * Get all plans without pagination
-   * Convenience method that fetches all pages
-   * @param params - Filter parameters (category, featured)
-   * @returns Promise with all plans
+   * Get all plans - returns new format with server and rotate
+   * @returns Promise with plans grouped by server and rotating plans
    */
-  async getAllPlans(params?: Omit<ListPlansParams, 'page' | 'per_page'>): Promise<Plan[]> {
-    const response = await this.listPlans({
-      ...params,
-      per_page: 100, // Get large page size to minimize requests
-    });
-    return response.items;
+  async getAllPlans(): Promise<PlansResponse> {
+    return this.listPlans();
   }
 
   /**
    * Get plans filtered by type
-   * Note: Type is not a backend filter, so we filter client-side
+   * Note: Filters from the new response format
    * @param type - Plan type ('static', 'rotating', 'dedicated')
-   * @param params - Additional filter parameters
    * @returns Promise with filtered plans
    */
   async getPlansByType(
-    type: 'static' | 'rotating' | 'dedicated',
-    params?: Omit<ListPlansParams, 'page' | 'per_page'>
+    type: 'static' | 'rotating' | 'dedicated'
   ): Promise<Plan[]> {
-    const allPlans = await this.getAllPlans(params);
-    return allPlans.filter(plan => plan.type === type);
+    const data = await this.getAllPlans();
+    
+    if (type === 'rotating') {
+      return data.rotate;
+    }
+    
+    // For dedicated/static, get from dedicated object
+    const allDedicatedPlans = Object.values(data.dedicated).flat();
+    return allDedicatedPlans.filter(plan => plan.type === type);
   }
 
   /**
    * Get plans filtered by category
+   * Note: Filters from the new response format
    * @param category - Plan category
-   * @param params - Additional filter parameters
    * @returns Promise with filtered plans
    */
   async getPlansByCategory(
-    category: 'datacenter' | 'mobile' | 'residential' | 'isp' | 'mixed',
-    params?: Omit<ListPlansParams, 'category'>
-  ): Promise<ListPlansResponse> {
-    return this.listPlans({
-      ...params,
-      category,
-    });
+    category: 'datacenter' | 'mobile' | 'residential' | 'isp' | 'mixed'
+  ): Promise<Plan[]> {
+    const data = await this.getAllPlans();
+    const allPlans = [
+      ...data.rotate,
+      ...Object.values(data.dedicated).flat()
+    ];
+    return allPlans.filter(plan => plan.category === category);
   }
 
   /**
    * Get featured plans only
-   * @param params - Additional filter parameters
+   * Note: Filters from the new response format
    * @returns Promise with featured plans
    */
-  async getFeaturedPlans(
-    params?: Omit<ListPlansParams, 'featured'>
-  ): Promise<ListPlansResponse> {
-    return this.listPlans({
-      ...params,
-      featured: 'true',
-    });
+  async getFeaturedPlans(): Promise<Plan[]> {
+    const data = await this.getAllPlans();
+    const allPlans = [
+      ...data.rotate,
+      ...Object.values(data.dedicated).flat()
+    ];
+    return allPlans.filter(plan => plan.featured);
   }
 
   /**

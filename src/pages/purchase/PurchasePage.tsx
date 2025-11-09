@@ -15,11 +15,12 @@ import { Tabs } from '@/components/tabs/Tabs';
 import React, { useState, useEffect, useMemo } from 'react';
 import OrderSummary from './components/OrderSumary';
 import { DedicatedPlanSelector } from './components/DedicatedPlanSelector';
+import { DedicatedPlanFilter } from './components/DedicatedPlanFilter';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
 import { useCart } from '@/hooks/useCart';
 import { planService } from '@/services/plan/plan.service';
-import { Plan } from '@/services/plan/plan.types';
+import { Plan, PlansResponse } from '@/services/plan/plan.types';
 import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
 import { PlanCardSkeleton } from '@/components/skeleton/PlanCardSkeleton';
 import { ErrorDisplay } from '@/components/error/ErrorDisplay';
@@ -63,17 +64,17 @@ const itemVariants: Variants = {
   }
 };
 
-type TabKey = 'rotating' | 'dedicated';
+type TabKey = 'rotating' | string; // string for dedicated proxy types
 
 const PurchasePage: React.FC = () => {
   // API data state
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plansData, setPlansData] = useState<PlansResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Tab state
   const [activeMain, setActiveMain] = useState<TabKey>('rotating');
-  const [activeDedicated, setActiveDedicated] = useState<string>('');
+  const [activeDedicatedTab, setActiveDedicatedTab] = useState<string>('');
   const [cartOpen, setCartOpen] = useState(false);
 
   // Default prices for external provider plans (price = 0)
@@ -115,10 +116,8 @@ const PurchasePage: React.FC = () => {
       setLoading(true);
       setError(null);
       const data = await planService.getAllPlans();
-      setPlans(data);
-
-      // Fetch default prices for external provider plans
-      await fetchDefaultPrices(data);
+      setPlansData(data);
+      // Không tự động gọi calculate-price, chỉ fetch khi user yêu cầu
     } catch (err) {
       console.error('Failed to fetch plans:', err);
       setError('Không thể tải dữ liệu. Vui lòng thử lại.');
@@ -133,33 +132,26 @@ const PurchasePage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Filter plans by type and category with explicit sorting
+  // Rotating plans from API response
   const rotatingPlans = useMemo(
-    () => plans.filter(p => p.type === 'rotating').sort((a, b) => a.sort_order - b.sort_order),
-    [plans]
-  );
-  const dedicatedPlans = useMemo(
-    () => plans.filter(p => p.type === 'dedicated').sort((a, b) => a.sort_order - b.sort_order),
-    [plans]
+    () => plansData?.rotate.sort((a, b) => a.sort_order - b.sort_order) || [],
+    [plansData]
   );
 
-  // Dynamic tabs for dedicated plans - each plan is a tab
-  const dedicatedTabs = useMemo(() => {
-    return dedicatedPlans.map(plan => ({
-      label: plan.name,
-      key: plan.id
-    }));
-  }, [dedicatedPlans]);
+  // Dedicated tabs cố định
+  const dedicatedTabs = [
+    { label: 'Premium ISP', key: 'premium_isp' },
+    { label: 'Private IPv4', key: 'private_ipv4' },
+    { label: 'Shared IPv4', key: 'shared_ipv4' },
+    { label: 'IPv6', key: 'ipv6' }
+  ];
 
   // Set active dedicated tab when plans load
   useEffect(() => {
-    if (dedicatedPlans.length > 0 && !activeDedicated) {
-      setActiveDedicated(dedicatedPlans[0].id);
-    } else if (dedicatedPlans.length > 0 && !dedicatedPlans.find(p => p.id === activeDedicated)) {
-      // If current active tab doesn't exist anymore, switch to first plan
-      setActiveDedicated(dedicatedPlans[0].id);
+    if (dedicatedTabs.length > 0 && !activeDedicatedTab) {
+      setActiveDedicatedTab(dedicatedTabs[0].key);
     }
-  }, [dedicatedPlans, activeDedicated]);
+  }, []);
 
   // Dynamic speed groups for rotating plans
   const speedGroups = useMemo(() => {
@@ -183,13 +175,13 @@ const PurchasePage: React.FC = () => {
     }
   }, [speedGroups, activeGroup]);
 
-  // Helper to get display price (for external provider plans, use default US price)
+  // Helper to get display price
   const getDisplayPrice = (plan: Plan): string => {
-    // If plan has price = 0 and we have a default price, use it
+    // If plan has price = 0 and we have a cached default price, use it
     if (plan.price === 0 && defaultPrices[plan.id]) {
       return defaultPrices[plan.id].toFixed(2);
     }
-    // Otherwise use plan.price
+    // Otherwise use plan.price (có thể là 0 nếu chưa fetch price)
     return plan.price.toFixed(2);
   };
 
@@ -361,9 +353,10 @@ const PurchasePage: React.FC = () => {
     </div>
   );
 
+  // Build main tabs: Rotating + dedicated tabs cố định
   const mainTabs = [
     { label: 'Rotating', key: 'rotating' },
-    { label: 'Server', key: 'dedicated' }
+    ...dedicatedTabs
   ];
 
   return (
@@ -400,7 +393,7 @@ const PurchasePage: React.FC = () => {
 
       {/* Main Tabs */}
       <Tabs tabs={mainTabs} activeKey={activeMain} onChange={key => setActiveMain(key as TabKey)}>
-        {/* Rotating Tab */}
+        {/* Rotating Tab - index 0, key: 'rotating' */}
         <div key="rotating">
           {loading ? (
             <LoadingSkeleton />
@@ -453,10 +446,10 @@ const PurchasePage: React.FC = () => {
                       )}
                     </motion.div>
 
-                    {/* Cart Sidebar - Desktop only */}
-                    {cart.itemCount > 0 && (
+                    {/* Cart Sidebar - Desktop only - Only show if there are rotating items */}
+                    {cart.items.filter(item => item.plan.type === 'rotating').length > 0 && (
                       <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                        <OrderSummary useCartContext={true} />
+                        <OrderSummary useCartContext={true} filterPlanType="rotating" />
                       </div>
                     )}
                   </div>
@@ -466,32 +459,91 @@ const PurchasePage: React.FC = () => {
           )}
         </div>
 
-        {/* Server Tab */}
-        <div key="dedicated">
+        {/* Premium ISP Tab - index 1, key: 'premium_isp' */}
+        <div key="premium_isp">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
-          ) : dedicatedTabs.length === 0 ? (
-            <EmptyState />
           ) : (
-            <Tabs
-              type="card"
-              tabs={dedicatedTabs}
-              activeKey={activeDedicated}
-              onChange={key => setActiveDedicated(String(key))}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
             >
-              {dedicatedPlans.map(plan => (
-                <motion.div
-                  key={plan.id}
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  <DedicatedPlanSelector plan={plan} />
-                </motion.div>
-              ))}
-            </Tabs>
+              <DedicatedPlanFilter
+                plans={plansData?.dedicated?.['premium_isp'] || []}
+                getDisplayPrice={getDisplayPrice}
+                buildPlanFeatures={buildPlanFeatures}
+                proxyType="Premium ISP"
+              />
+            </motion.div>
+          )}
+        </div>
+
+        {/* Private IPv4 Tab - index 2, key: 'private_ipv4' */}
+        <div key="private_ipv4">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <DedicatedPlanFilter
+                plans={plansData?.dedicated?.['private_ipv4'] || []}
+                getDisplayPrice={getDisplayPrice}
+                buildPlanFeatures={buildPlanFeatures}
+                proxyType="Private IPv4"
+              />
+            </motion.div>
+          )}
+        </div>
+
+        {/* Shared IPv4 Tab - index 3, key: 'shared_ipv4' */}
+        <div key="shared_ipv4">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <DedicatedPlanFilter
+                plans={plansData?.dedicated?.['shared_ipv4'] || []}
+                getDisplayPrice={getDisplayPrice}
+                buildPlanFeatures={buildPlanFeatures}
+                proxyType="Shared IPv4"
+              />
+            </motion.div>
+          )}
+        </div>
+
+        {/* IPv6 Tab - index 4, key: 'ipv6' */}
+        <div key="ipv6">
+          {loading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              <DedicatedPlanFilter
+                plans={plansData?.dedicated?.['ipv6'] || []}
+                getDisplayPrice={getDisplayPrice}
+                buildPlanFeatures={buildPlanFeatures}
+                proxyType="IPv6"
+              />
+            </motion.div>
           )}
         </div>
       </Tabs>
@@ -539,10 +591,23 @@ const PurchasePage: React.FC = () => {
                 />
               </div>
 
-              {/* Content */}
-              <div className="flex-1">
-                <OrderSummary useCartContext={true} />
-              </div>
+              {/* Content - Only show if there are rotating items */}
+              {cart.items.filter(item => item.plan.type === 'rotating').length > 0 && (
+                <div className="flex-1">
+                  <OrderSummary useCartContext={true} filterPlanType="rotating" />
+                </div>
+              )}
+              {cart.items.filter(item => item.plan.type === 'rotating').length === 0 && (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70 mx-auto" />
+                    <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
+                    <p className="text-text-me dark:text-text-me-dark text-sm">
+                      Hãy chọn gói rotating để thêm vào giỏ hàng.
+                    </p>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}

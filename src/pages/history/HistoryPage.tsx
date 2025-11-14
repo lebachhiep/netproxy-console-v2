@@ -32,6 +32,7 @@ const HistoryPage: React.FC = () => {
 
   // Modal state
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [selectedOrderItems, setSelectedOrderItems] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Pagination state
@@ -126,12 +127,21 @@ const HistoryPage: React.FC = () => {
 
   const handleRowClick = (order: OrderDisplay) => {
     setSelectedOrderId(order.id);
+    setSelectedOrderItems(order.items || []);
+    setIsModalOpen(true);
+  };
+
+  const handleViewItems = (e: React.MouseEvent, order: OrderDisplay) => {
+    e.stopPropagation(); // Prevent row click
+    setSelectedOrderId(order.id);
+    setSelectedOrderItems(order.items || []);
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedOrderId(null);
+    setSelectedOrderItems([]);
   };
 
   const columns: TableColumn<OrderDisplay>[] = [
@@ -207,6 +217,25 @@ const HistoryPage: React.FC = () => {
           </div>
         </div>
       )
+    },
+    {
+      key: 'items',
+      title: 'Items',
+      width: '100px',
+      align: 'center',
+      render: (_value, record) => {
+        const itemsCount = record.items?.length || 0;
+        return itemsCount > 0 ? (
+          <button
+            onClick={(e) => handleViewItems(e, record)}
+            className="px-3 py-1 bg-blue text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
+          >
+            {itemsCount} items
+          </button>
+        ) : (
+          <span className="text-text-lo dark:text-text-lo-dark">-</span>
+        );
+      }
     },
     {
       width: isMobile || isTablet ? 150 : '',
@@ -333,6 +362,7 @@ const HistoryPage: React.FC = () => {
         open={isModalOpen}
         orderId={selectedOrderId}
         onClose={handleModalClose}
+        initialItems={selectedOrderItems}
       />
     </motion.div>
   );

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@/components/modal/Modal';
 import { Badge } from '@/components/badge/Badge';
-import { OrderDisplay } from '@/services/order/order.types';
+import { Table, TableColumn } from '@/components/table/Table';
+import { OrderDisplay, OrderItem, OrderWithItems } from '@/services/order/order.types';
 import { orderService } from '@/services/order/order.service';
 import { transformOrder, formatOrderDate, getOrderTypeColor } from '@/utils/order.utils';
 import { toast } from 'sonner';
@@ -10,17 +11,23 @@ interface OrderDetailsModalProps {
   open: boolean;
   orderId: string | null;
   onClose: () => void;
+  initialItems?: OrderItem[]; // Optional: items passed from parent to avoid refetching
 }
 
-export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orderId, onClose }) => {
+export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orderId, onClose, initialItems }) => {
   const [order, setOrder] = useState<OrderDisplay | null>(null);
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open && orderId) {
+      // If initialItems provided, use them; otherwise fetch from API
+      if (initialItems && initialItems.length > 0) {
+        setOrderItems(initialItems);
+      }
       fetchOrderDetails();
     }
-  }, [open, orderId]);
+  }, [open, orderId, initialItems]);
 
   const fetchOrderDetails = async () => {
     if (!orderId) return;
@@ -29,6 +36,10 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
       setLoading(true);
       const orderData = await orderService.getOrderById(orderId);
       setOrder(transformOrder(orderData));
+      // Only update items if not already provided
+      if (!initialItems || initialItems.length === 0) {
+        setOrderItems(orderData.items || []);
+      }
     } catch (err: any) {
       toast.error('Không thể tải chi tiết đơn hàng');
     } finally {
@@ -40,12 +51,69 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
     return null;
   }
 
+  // Define columns for items table
+  const itemColumns: TableColumn<OrderItem>[] = [
+    {
+      key: 'stt',
+      title: 'STT',
+      width: '60px',
+      align: 'center',
+      render: (_value, _record, index) => index + 1
+    },
+    {
+      key: 'plan_name',
+      title: 'Tên gói',
+      align: 'left',
+      render: (value) => (
+        <span className="font-medium text-text-hi dark:text-text-hi-dark">{value}</span>
+      )
+    },
+    {
+      key: 'country',
+      title: 'Quốc gia',
+      width: '100px',
+      align: 'center',
+      render: (value) => value ? (
+        <Badge color="gray">{value}</Badge>
+      ) : (
+        <span className="text-text-lo dark:text-text-lo-dark">-</span>
+      )
+    },
+    {
+      key: 'quantity',
+      title: 'SL',
+      width: '70px',
+      align: 'center',
+      render: (value) => (
+        <span className="font-medium text-text-hi dark:text-text-hi-dark">{value}</span>
+      )
+    },
+    {
+      key: 'unit_price',
+      title: 'Đơn giá',
+      width: '100px',
+      align: 'right',
+      render: (value) => (
+        <span className="text-text-med dark:text-text-med-dark">${Number(value).toFixed(2)}</span>
+      )
+    },
+    {
+      key: 'total_price',
+      title: 'Thành tiền',
+      width: '110px',
+      align: 'right',
+      render: (value) => (
+        <span className="font-medium text-blue">${Number(value).toFixed(2)}</span>
+      )
+    }
+  ];
+
   return (
     <Modal
       open={open}
       title="Chi tiết đơn hàng"
       onClose={onClose}
-      className="max-w-2xl"
+      className="max-w-5xl"
       bodyClassName="p-6"
     >
       {loading ? (
@@ -70,9 +138,27 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
             </div>
           </div>
 
+          {/* Order Items Table */}
+          {orderItems.length > 0 && (
+            <div className="border-t border-border-element dark:border-border-element-dark pt-4">
+              <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-3">
+                Danh sách sản phẩm ({orderItems.length} mục)
+              </h4>
+              <div className="rounded-lg border border-border-element dark:border-border-element-dark overflow-hidden">
+                <Table
+                  data={orderItems}
+                  columns={itemColumns}
+                  size="small"
+                  bordered={false}
+                  className="[&_thead]:bg-bg-mute [&_thead]:dark:bg-bg-mute-dark"
+                />
+              </div>
+            </div>
+          )}
+
           {/* Description */}
           {order.description && (
-            <div>
+            <div className="border-t border-border-element dark:border-border-element-dark pt-4">
               <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2">Mô tả</h4>
               <p className="text-sm text-text-med dark:text-text-med-dark">{order.description}</p>
             </div>

@@ -24,6 +24,7 @@ export interface Order {
   created_at: string;
   updated_at: string;
   fulfilled_at?: string;
+  items?: OrderItem[]; // Order items included in list response
 }
 
 // Request parameters for list orders API
@@ -68,6 +69,7 @@ export interface OrderDisplay {
   createdAt: Date;
   updatedAt: Date;
   fulfilledAt?: Date;
+  items?: OrderItem[]; // Order items from list response
   // For tooltip display
   priceBreakdown: {
     subtotal: string;
@@ -128,6 +130,7 @@ export interface OrderItem {
   quantity: number;
   unit_price: string; // Decimal string
   total_price: string; // Decimal string
+  country?: string; // ISO 3166-1 alpha-2 country code (e.g., 'US', 'NL')
   created_at: string;
 }
 

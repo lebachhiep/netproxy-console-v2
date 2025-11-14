@@ -108,6 +108,7 @@ export const transformOrder = (order: Order): OrderDisplay => {
     createdAt: new Date(order.created_at),
     updatedAt: new Date(order.updated_at),
     fulfilledAt: order.fulfilled_at ? new Date(order.fulfilled_at) : undefined,
+    items: order.items, // Pass through items if present
     priceBreakdown: {
       subtotal: formatCurrency(subtotal, order.currency_code),
       tax: formatCurrency(taxAmount, order.currency_code),

@@ -15,8 +15,10 @@ import { orderService } from '@/services/order/order.service';
 import { OrderDisplay, OrderType, OrderStatus, ORDER_TYPE_LABELS, ORDER_STATUS_DISPLAY } from '@/services/order/order.types';
 import { transformOrder, formatDateForAPI, getOrderTypeColor, formatOrderDate } from '@/utils/order.utils';
 import { OrderDetailsModal } from './components/OrderDetailsModal';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const HistoryPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Lịch sử' });
   const { isMobile, isTablet } = useResponsive();
 
   // State
@@ -267,6 +269,7 @@ const HistoryPage: React.FC = () => {
       variants={pageVariants}
       className="overflow-y-auto md:h-[calc(100dvh-104px)] flex flex-col h-full"
     >
+      {pageTitle}
       <motion.div variants={itemVariants} className="px-5 py-2">
         <div className="flex flex-col gap-3">
           {/* First row - Search and Date Range */}

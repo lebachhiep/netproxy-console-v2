@@ -27,8 +27,10 @@ import { Pagination } from '@/components/pagination/Pagination';
 import { toast } from 'sonner';
 import { motion, Variants } from 'framer-motion';
 import { sectionVariants } from '@/utils/animation';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const ProxyDetailPage = () => {
+  const pageTitle = usePageTitle({ pageName: 'Chi tiết proxy' });
   const { id } = useParams();
   const navigate = useNavigate();
   const [autoRenew, setAutoRenew] = useState(false);
@@ -135,6 +137,7 @@ export const ProxyDetailPage = () => {
   return (
     <>
       <div className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col">
+        {pageTitle}
         <div className="md:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark dark:bg-bg-primary-dark">
           <div className="flex items-center gap-1">
             <span className="text-sm text-text-hi dark:text-text-hi-dark font-medium" onClick={() => navigate('/home')}>

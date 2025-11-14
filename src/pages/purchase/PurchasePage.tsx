@@ -24,6 +24,7 @@ import { Plan, PlansResponse } from '@/services/plan/plan.types';
 import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
 import { PlanCardSkeleton } from '@/components/skeleton/PlanCardSkeleton';
 import { ErrorDisplay } from '@/components/error/ErrorDisplay';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
@@ -67,6 +68,7 @@ const itemVariants: Variants = {
 type TabKey = 'rotating' | string; // string for dedicated proxy types
 
 const PurchasePage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Mua hàng' });
   // API data state
   const [plansData, setPlansData] = useState<PlansResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -361,6 +363,7 @@ const PurchasePage: React.FC = () => {
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
+      {pageTitle}
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="flex items-center justify-between w-full">

@@ -10,8 +10,10 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const RegisterPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Đăng ký' });
   const navigate = useNavigate();
   const { register, isAuthenticated, clearError } = useAuth();
 
@@ -64,8 +66,10 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
-      <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
+    <>
+      {pageTitle}
+      <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
+        <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
         <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
           <div className="flex flex-col gap-5">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -175,6 +179,7 @@ export const RegisterPage: React.FC = () => {
         </p>
       </AuthFormWrapper>
       <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
-    </div>
+      </div>
+    </>
   );
 };

@@ -16,10 +16,12 @@ import { SuccessModal } from './components/modal/SuccessModal';
 import ProfileForm from './components/ProfileForm';
 import { motion } from 'framer-motion';
 import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface AccountProfilePageProps {}
 
 export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
+  const pageTitle = usePageTitle({ pageName: 'Tài khoản' });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
   const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
   const [isHideApiValue, setIsHideApiValue] = useState(true);
@@ -127,6 +129,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
         variants={pageVariants}
         className="h-full flex flex-col overflow-auto bg-bg-canvas dark:bg-bg-canvas-dark pt-5"
       >
+        {pageTitle}
         <Tabs tabs={accountTabs} defaultActiveKey="info">
           {/* Tab 1: Thông tin chung */}
           <motion.div variants={containerVariants}>

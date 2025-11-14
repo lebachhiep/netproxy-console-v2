@@ -37,6 +37,7 @@ import { useState } from 'react';
 import { FaDatabase, FaRegCalendar, FaShoppingCart, FaWallet } from 'react-icons/fa';
 import { IoFlame, IoLanguage } from 'react-icons/io5';
 import { ColorPalette } from './ColorPallete';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export interface ProxyData {
   id: number;
@@ -48,6 +49,7 @@ export interface ProxyData {
 }
 
 const ComponentPage = () => {
+  const pageTitle = usePageTitle({ pageName: 'Components' });
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -222,6 +224,7 @@ const ComponentPage = () => {
 
   return (
     <div className="flex flex-col gap-10 p-5 max-h-[calc(100vh-104px)] overflow-y-auto">
+      {pageTitle}
       <div>
         <h1>Color pallete</h1>
         <ColorPalette />

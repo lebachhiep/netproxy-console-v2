@@ -10,8 +10,10 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const ResetPasswordPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Đặt lại mật khẩu' });
   const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
@@ -43,8 +45,10 @@ export const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
-      {step == 1 ? (
+    <>
+      {pageTitle}
+      <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
+        {step == 1 ? (
         <AuthFormWrapper title="Đặt lại mật khẩu" subtitle="Vui lòng nhập mật khẩu mới">
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -108,9 +112,10 @@ export const ResetPasswordPage: React.FC = () => {
             </Button>
           </div>
         </div>
-      )}
+        )}
 
       <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
-    </div>
+      </div>
+    </>
   );
 };

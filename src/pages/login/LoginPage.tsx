@@ -19,12 +19,14 @@ import group7 from '@/assets/images/group-7.png';
 import img9 from '@/assets/images/image-9.png';
 import productCardImg from '@/assets/images/product-card.png';
 import pcImg from '@/assets/images/pc.png';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface LocationState {
   from?: string;
 }
 
 export const LoginPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Đăng nhập' });
   const navigate = useNavigate();
   const location = useLocation();
   const locationState = location.state as LocationState;
@@ -71,8 +73,10 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout
-      left={
+    <>
+      {pageTitle}
+      <AuthLayout
+        left={
         <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại !">
           <div className="flex flex-col gap-5 p-5 md:p-0 shadow-lg md:shadow-none rounded-[20px] border md:border-none border-border-element dark:border-border-element-dark">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -187,6 +191,7 @@ export const LoginPage: React.FC = () => {
           />
         </div>
       }
-    />
+      />
+    </>
   );
 };

@@ -10,8 +10,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { mapApiError } from '@/utils/errors';
 import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const ForgotPasswordPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Quên mật khẩu' });
   const navigate = useNavigate();
   const { resetPassword, isAuthenticated, clearError } = useAuth();
   const [emailSent, setEmailSent] = useState(false);
@@ -59,8 +61,10 @@ export const ForgotPasswordPage: React.FC = () => {
   console.log('isEmailSent', emailSent);
 
   return (
-    <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
-      {!emailSent ? (
+    <>
+      {pageTitle}
+      <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
+        {!emailSent ? (
         <AuthFormWrapper title="Lấy lại mật khẩu" subtitle="Vui lòng nhập email đã đăng ký">
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -117,8 +121,9 @@ export const ForgotPasswordPage: React.FC = () => {
             </div>
           </div>
         </div>
-      )}
+        )}
       <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
-    </div>
+      </div>
+    </>
   );
 };

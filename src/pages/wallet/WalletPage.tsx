@@ -24,6 +24,7 @@ import { transformTransaction, formatDateForAPI } from '@/utils/transaction.util
 import { walletService } from '@/services/wallet/wallet.service';
 import { WalletBalance } from '@/services/wallet/wallet.types';
 import { useAuth } from '@/hooks/useAuth';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const options = [
   {
@@ -56,6 +57,7 @@ const options = [
 ];
 
 const WalletPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: 'Xem ví' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
 
@@ -246,6 +248,7 @@ const WalletPage: React.FC = () => {
       animate="visible"
       className="overflow-y-auto h-[calc(100dvh)] md:h-[calc(100dvh-104px)] flex flex-col"
     >
+      {pageTitle}
       <motion.div variants={itemVariants} initial="hidden" animate="visible" className="flex flex-col md:flex-row gap-5 p-5 items-stretch">
         {/* Left Panel - Top Up Form */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">

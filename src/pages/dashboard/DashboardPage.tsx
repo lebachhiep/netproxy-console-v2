@@ -30,6 +30,7 @@ import { SubscriptionWithPlan } from '@/types/subscription';
 import { StatusColor } from '@/components/badge/Badge';
 import { userService } from '@/services/user/user.service';
 import { UserProfile } from '@/services/user/user.types';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 // Helper function to format date to Vietnamese format
 const formatDate = (dateString: string): string => {
@@ -236,6 +237,7 @@ const pageVariants: Variants = {
 };
 
 const DashboardPage = () => {
+  const pageTitle = usePageTitle({ pageName: 'Trang chủ' });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
@@ -445,6 +447,7 @@ const DashboardPage = () => {
 
   return (
     <div className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
+      {pageTitle}
       <motion.div
         variants={pageVariants}
         initial="hidden"

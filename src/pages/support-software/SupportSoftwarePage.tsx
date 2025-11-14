@@ -6,8 +6,10 @@ import windowsIcon from '@/assets/images/windows.png';
 import { AppCard } from '@/components/card/AppCard';
 import { pageVariants } from '@/utils/animation';
 import { motion } from 'framer-motion';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 const SupportSoftwarePage = () => {
+  const pageTitle = usePageTitle({ pageName: 'Phần mềm hỗ trợ' });
   const apps = [
     {
       icon: <img src={chromeIcon} alt="Chrome" className="w-10 h-10" />,
@@ -38,6 +40,7 @@ const SupportSoftwarePage = () => {
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="p-5 h-full overflow-auto">
+      {pageTitle}
       <div className="grid grid-cols-2 md:flex md:flex-wrap gap-5">
         {apps.map((app, idx) => (
           <AppCard

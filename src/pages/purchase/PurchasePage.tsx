@@ -450,7 +450,7 @@ const PurchasePage: React.FC = () => {
                     </motion.div>
 
                     {/* Cart Sidebar - Desktop only - Only show if there are rotating items */}
-                    {cart.items.filter(item => item.plan.type === 'rotating').length > 0 && (
+                    {cart.getAllItems().filter(item => item.plan.type === 'rotating').length > 0 && (
                       <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                         <OrderSummary useCartContext={true} filterPlanType="rotating" />
                       </div>
@@ -595,12 +595,12 @@ const PurchasePage: React.FC = () => {
               </div>
 
               {/* Content - Only show if there are rotating items */}
-              {cart.items.filter(item => item.plan.type === 'rotating').length > 0 && (
+              {cart.getAllItems().filter(item => item.plan.type === 'rotating').length > 0 && (
                 <div className="flex-1">
                   <OrderSummary useCartContext={true} filterPlanType="rotating" />
                 </div>
               )}
-              {cart.items.filter(item => item.plan.type === 'rotating').length === 0 && (
+              {cart.getAllItems().filter(item => item.plan.type === 'rotating').length === 0 && (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70 mx-auto" />

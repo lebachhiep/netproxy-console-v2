@@ -10,7 +10,7 @@ import { AUTH_MESSAGES } from '@/utils/constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Route, adminSections } from 'router';
+import { Route, adminSections } from '@/router';
 import { toast } from 'sonner';
 
 interface Breadcrumb {

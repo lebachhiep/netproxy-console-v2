@@ -5,12 +5,12 @@ import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
 import { MdDashboard } from 'react-icons/md';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
-import { Route, adminSections } from 'router';
+import { Route, adminSections } from '@/router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { AUTH_MESSAGES } from '@/utils/constants';
 import UserDropdown from '@/components/UserDropdown';
-import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
+import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
 import { motion } from 'framer-motion';
 
 interface Breadcrumb {

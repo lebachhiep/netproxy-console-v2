@@ -1,12 +1,12 @@
 import IconButton from '@/components/button/IconButton';
 import { Chevron } from '@/components/icons';
 import { useResponsive } from '@/hooks/useResponsive';
-import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
-import { ReactComponent as Logo } from 'assets/images/logo.svg';
+import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
+import { ReactComponent as Logo } from '@/assets/images/logo.svg';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { adminSections, Route } from 'router';
+import { adminSections, Route } from '@/router';
 import { twMerge } from 'tailwind-merge';
 
 interface SidebarProps {

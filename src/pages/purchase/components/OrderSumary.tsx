@@ -9,7 +9,7 @@ import { DesktopSummary } from './DesktopSummary';
 import IconButton from '@/components/button/IconButton';
 import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
-import { CartItem } from '@/contexts/CartContext';
+import { CartItem, getTabKeyFromPlan, CartTabKey } from '@/contexts/CartContext';
 import Tooltip from '@/components/tooltip/Tooltip';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
@@ -69,9 +69,10 @@ const OrderSummary: React.FC<Props> = ({
       // If propOrders is provided, use it (for dedicated tabs)
       orders = propOrders;
     } else if (filterPlanType) {
-      orders = cart.items.filter(item => item.plan.type === filterPlanType);
+      const allItems = cart.getAllItems();
+      orders = allItems.filter(item => item.plan.type === filterPlanType);
     } else {
-      orders = cart.items;
+      orders = cart.getAllItems();
     }
   } else {
     orders = propOrders;
@@ -102,9 +103,10 @@ const OrderSummary: React.FC<Props> = ({
     if (propOrders.length > 0) {
       // If propOrders is provided (for dedicated tabs), calculate from orders
       // We need to map back to cart items to get calculatedPrice
+      const allItems = cart.getAllItems();
       filteredItems = orders.map(orderItem => {
         // Find corresponding cart item
-        const cartItem = cart.items.find(item => {
+        const cartItem = allItems.find(item => {
           if (orderItem.country) {
             return item.country?.toLowerCase() === orderItem.country.code;
           }
@@ -112,7 +114,7 @@ const OrderSummary: React.FC<Props> = ({
         });
         return cartItem;
       }).filter(Boolean) as any[];
-      
+
       // If we can't find cart items, calculate from orderItems directly
       if (filteredItems.length === 0) {
         total = (propOrders as OrderItemType[]).reduce((sum, o) => sum + o.price * o.quantity, 0);
@@ -127,10 +129,11 @@ const OrderSummary: React.FC<Props> = ({
         totalLocation = filteredItems.length;
       }
     } else {
-      filteredItems = filterPlanType 
-        ? cart.items.filter(item => item.plan.type === filterPlanType)
-        : cart.items;
-      
+      const allItems = cart.getAllItems();
+      filteredItems = filterPlanType
+        ? allItems.filter(item => item.plan.type === filterPlanType)
+        : allItems;
+
       total = filteredItems.reduce((sum, item) => {
         const itemPrice = item.calculatedPrice ?? item.plan.price;
         return sum + itemPrice * item.quantity;
@@ -150,24 +153,28 @@ const OrderSummary: React.FC<Props> = ({
   const handleUpdateQuantity = (itemOrCountry: CartItem | Country, newQuantity: number) => {
     if (useCartContext && cart) {
       const item = itemOrCountry as CartItem;
-      
+
       // Prevent multiple simultaneous updates for the same item
       if (updatingItemsRef.current.has(item.id)) {
         return;
       }
-      
+
       // Ensure quantity is valid
       if (newQuantity < 1) {
-        cart.removeItem(item.id);
+        // Determine tabKey from item's plan
+        const tabKey = getTabKeyFromPlan(item.plan);
+        cart.removeItem(tabKey, item.id);
         return;
       }
-      
+
       // Mark as updating
       updatingItemsRef.current.add(item.id);
-      
+
+      // Determine tabKey from item's plan
+      const tabKey = getTabKeyFromPlan(item.plan);
       // Use updateQuantity to set the exact quantity (not add/subtract)
-      cart.updateQuantity(item.id, newQuantity);
-      
+      cart.updateQuantity(tabKey, item.id, newQuantity);
+
       // Clear updating flag after a short delay
       setTimeout(() => {
         updatingItemsRef.current.delete(item.id);
@@ -181,7 +188,9 @@ const OrderSummary: React.FC<Props> = ({
   const handleRemove = (itemOrCountry: CartItem | Country) => {
     if (useCartContext && cart) {
       const item = itemOrCountry as CartItem;
-      cart.removeItem(item.id);
+      // Determine tabKey from item's plan
+      const tabKey = getTabKeyFromPlan(item.plan);
+      cart.removeItem(tabKey, item.id);
     } else if (onRemove) {
       onRemove(itemOrCountry as Country);
     }
@@ -207,15 +216,16 @@ const OrderSummary: React.FC<Props> = ({
   // Handle quantity input blur/enter
   const handleQuantityInputBlur = () => {
     if (!editingItemId || !useCartContext || !cart) return;
-    
+
     const quantity = parseInt(editValue, 10);
     if (!isNaN(quantity) && quantity >= 1) {
-      const item = cart.items.find(i => i.id === editingItemId);
+      const allItems = cart.getAllItems();
+      const item = allItems.find(i => i.id === editingItemId);
       if (item) {
         handleUpdateQuantity(item, quantity);
       }
     }
-    
+
     setEditingItemId(null);
     setEditValue('');
   };
@@ -423,6 +433,7 @@ const OrderSummary: React.FC<Props> = ({
             useCartContext={useCartContext}
             proxyType={proxyType}
             duration={duration}
+            filterPlanType={filterPlanType}
           />
         </div>
       ) : (
@@ -610,6 +621,7 @@ const OrderSummary: React.FC<Props> = ({
             useCartContext={useCartContext}
             proxyType={proxyType}
             duration={duration}
+            filterPlanType={filterPlanType}
           />
         </div>
       )}

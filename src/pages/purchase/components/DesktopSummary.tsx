@@ -7,6 +7,7 @@ import { Chevron, DismissCircle } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { useCart } from '@/hooks/useCart';
 import { useAuthStore } from '@/stores/auth.store';
+import { CartTabKey, getTabKeyFromPlan } from '@/contexts/CartContext';
 import { couponService } from '@/services/coupon/coupon.service';
 import { orderService } from '@/services/order/order.service';
 import { CreateOrderRequest } from '@/services/order/order.types';
@@ -20,7 +21,8 @@ export const DesktopSummary = ({
   total,
   useCartContext = false,
   proxyType,
-  duration
+  duration,
+  filterPlanType
 }: {
   total: number;
   orders: OrderItemType[];
@@ -29,6 +31,7 @@ export const DesktopSummary = ({
   useCartContext?: boolean;
   proxyType?: string;
   duration?: number;
+  filterPlanType?: 'rotating' | 'dedicated' | 'static';
 }) => {
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [couponInput, setCouponInput] = useState<string>('');
@@ -42,11 +45,12 @@ export const DesktopSummary = ({
 
   // Calculate final total with discount
   // For dedicated tabs (when orders prop is provided), use the passed total (which is already filtered)
-  // For rotating tabs, use cart.subtotal and cart.total (which includes discount)
+  // For rotating tabs, use the passed total (which is already filtered by OrderSummary)
   const discount = cart?.discountAmount ?? 0;
   // If orders prop is provided and has items, it means we're in a dedicated tab with filtered items
   const isDedicatedTab = orders.length > 0 && useCartContext;
-  const subtotalForCalculation = cart ? (isDedicatedTab ? total : cart.subtotal) : total;
+  // Always use the passed total since OrderSummary already filters items by filterPlanType
+  const subtotalForCalculation = total;
   const finalTotal = cart ? (subtotalForCalculation - discount) : total;
   const balanceAfter = balance - finalTotal;
   const hasInsufficientFunds = balanceAfter < 0;
@@ -62,8 +66,8 @@ export const DesktopSummary = ({
 
     setIsValidatingCoupon(true);
     try {
-      // Use subtotalForCalculation for dedicated tabs, cart.subtotal for rotating tabs
-      const subtotalToValidate = isDedicatedTab ? subtotalForCalculation : cart.subtotal;
+      // Use subtotalForCalculation (which is already filtered by tab)
+      const subtotalToValidate = subtotalForCalculation;
       const result = await couponService.validateCoupon(couponInput.trim(), subtotalToValidate);
 
       if (result.success && result.coupon && result.discount !== undefined) {
@@ -92,8 +96,22 @@ export const DesktopSummary = ({
   const handleCheckout = async () => {
     if (!cart || !useCartContext) return;
 
+    // Get filtered items based on current tab
+    const allItems = cart.getAllItems();
+    let itemsToCheckout = allItems;
+    if (isDedicatedTab && orders.length > 0) {
+      // For dedicated tabs, only checkout items that are in the orders list (already filtered)
+      const orderCountries = orders.map(o => o.country.code?.toLowerCase()).filter(Boolean);
+      itemsToCheckout = allItems.filter(item =>
+        item.country && orderCountries.includes(item.country.toLowerCase())
+      );
+    } else if (filterPlanType) {
+      // For rotating tabs or when filterPlanType is provided
+      itemsToCheckout = allItems.filter(item => item.plan.type === filterPlanType);
+    }
+
     // Validate cart not empty
-    if (cart.items.length === 0) {
+    if (itemsToCheckout.length === 0) {
       toast.error('Giỏ hàng trống');
       return;
     }
@@ -106,10 +124,10 @@ export const DesktopSummary = ({
 
     setIsCheckingOut(true);
     try {
-      // Build order request from cart
+      // Build order request from filtered cart items only
       const orderRequest: CreateOrderRequest = {
         type: 'buy',
-        items: cart.items.map(item => ({
+        items: itemsToCheckout.map(item => ({
           plan_id: item.plan.id,
           quantity: item.quantity,
           country: item.country
@@ -120,33 +138,35 @@ export const DesktopSummary = ({
       // Create order
       const order = await orderService.createOrder(orderRequest);
 
-      // Clear cart immediately (payment successful)
-      cart.clearCart();
+      // Clear only the items that were checked out
+      // Group items by tab and clear them from respective tabs
+      const itemsByTab = new Map<CartTabKey, string[]>();
+      itemsToCheckout.forEach(item => {
+        const tabKey = getTabKeyFromPlan(item.plan);
+        if (!itemsByTab.has(tabKey)) {
+          itemsByTab.set(tabKey, []);
+        }
+        itemsByTab.get(tabKey)!.push(item.id);
+      });
+
+      // Clear items from each tab
+      itemsByTab.forEach((itemIds, tabKey) => {
+        cart.clearCartByItemIds(tabKey, itemIds);
+      });
 
       // Handle different order statuses
       if (order.status === 'fulfilled') {
         // Fast provider - subscriptions ready immediately
-        toast.success(`Đơn hàng #${order.order_number} đã hoàn thành! Đang chuyển đến dịch vụ...`);
-        setTimeout(() => {
-          navigate('/home');
-        }, 1000);
-
+        toast.success(`Đơn hàng #${order.order_number} đã hoàn thành!`);
       } else if (order.status === 'processing') {
         // Slow provider - async fulfillment
         toast.success(`Đơn hàng #${order.order_number} đang được xử lý...`, {
           description: 'Bạn sẽ nhận được thông báo khi proxy sẵn sàng (30-90 giây)',
           duration: 5000
         });
-        setTimeout(() => {
-          navigate('/home');
-        }, 1500);
-
       } else {
         // Other statuses (shouldn't happen, but handle gracefully)
         toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
-        setTimeout(() => {
-          navigate('/home');
-        }, 1000);
       }
     } catch (error: any) {
       console.error('Checkout error:', error);
@@ -296,7 +316,7 @@ export const DesktopSummary = ({
           <div>
             <Button
               className="w-full text-[12px]"
-              disabled={useCartContext ? hasInsufficientFunds || (cart?.items.length === 0) : false}
+              disabled={useCartContext ? hasInsufficientFunds || (cart?.itemCount === 0) : false}
               loading={isCheckingOut}
               onClick={useCartContext ? handleCheckout : undefined}
             >

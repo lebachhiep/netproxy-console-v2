@@ -10,6 +10,7 @@ import countriesLib from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
 import { useCart } from '@/hooks/useCart';
+import { getTabKeyFromPlan } from '@/contexts/CartContext';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -251,8 +252,9 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
     }
 
     // Add each selected country as a separate cart item
+    const tabKey = getTabKeyFromPlan(plan);
     selectedCountries.forEach((selected) => {
-      cart.addToCart(plan, selected.quantity, {
+      cart.addToCart(tabKey, plan, selected.quantity, {
         duration: duration
       }, selected.code, selected.total);
     });

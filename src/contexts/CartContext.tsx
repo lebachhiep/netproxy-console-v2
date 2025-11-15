@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Plan } from '@/services/plan/plan.types';
+import { useAuthStore } from '@/stores/auth.store';
+
+// Tab keys for organizing cart items
+export type CartTabKey = 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6' | 'static';
 
 // Cart item structure
 export interface CartItem {
@@ -11,6 +15,16 @@ export interface CartItem {
   speedLimit?: string; // for rotating (5mbps, 10mbps, 25mbps, 50mbps)
   staticType?: 'bandwidth' | 'unlimited'; // for static proxies
   calculatedPrice?: number; // for external provider plans with dynamic pricing
+}
+
+// Cart items organized by tab
+export interface CartItemsByTab {
+  rotating: CartItem[];
+  premium_isp: CartItem[];
+  private_ipv4: CartItem[];
+  shared_ipv4: CartItem[];
+  ipv6: CartItem[];
+  static: CartItem[];
 }
 
 // Coupon data structure
@@ -26,7 +40,7 @@ export interface CouponData {
 }
 
 interface CartContextType {
-  items: CartItem[];
+  itemsByTab: CartItemsByTab;
   couponCode?: string;
   validatedCoupon?: CouponData;
   discountAmount: number;
@@ -36,16 +50,23 @@ interface CartContextType {
   total: number;
   itemCount: number;
 
+  // Helper to get items from specific tab
+  getTabItems: (tabKey: CartTabKey) => CartItem[];
+  // Helper to get all items as flat array (for backward compatibility)
+  getAllItems: () => CartItem[];
+
   // Actions
-  addToCart: (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => void;
-  removeItem: (itemId: string) => void;
-  updateQuantity: (itemId: string, quantity: number) => void;
-  updateCartItem: (itemId: string, quantity: number, calculatedPrice?: number) => void;
-  updateCountry: (itemId: string, country: string) => void;
+  addToCart: (tabKey: CartTabKey, plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => void;
+  removeItem: (tabKey: CartTabKey, itemId: string) => void;
+  updateQuantity: (tabKey: CartTabKey, itemId: string, quantity: number) => void;
+  updateCartItem: (tabKey: CartTabKey, itemId: string, quantity: number, calculatedPrice?: number) => void;
+  updateCountry: (tabKey: CartTabKey, itemId: string, country: string) => void;
   clearCart: () => void;
+  clearTabCart: (tabKey: CartTabKey) => void;
+  clearCartByItemIds: (tabKey: CartTabKey, itemIds: string[]) => void;
   applyCoupon: (code: string, couponData: CouponData, discount: number) => void;
   removeCoupon: () => void;
-  getItemByPlan: (planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>) => CartItem | undefined;
+  getItemByPlan: (tabKey: CartTabKey, planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>) => CartItem | undefined;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -56,11 +77,40 @@ interface CartProviderProps {
   children: ReactNode;
 }
 
+// Helper to create empty cart structure
+const createEmptyCart = (): CartItemsByTab => ({
+  rotating: [],
+  premium_isp: [],
+  private_ipv4: [],
+  shared_ipv4: [],
+  ipv6: [],
+  static: []
+});
+
+// Helper to determine tab key from plan metadata
+const getTabKeyFromPlan = (plan: Plan): CartTabKey => {
+  if (plan.type === 'rotating') return 'rotating';
+  if (plan.type === 'static') return 'static';
+
+  // For dedicated plans, use metadata.proxy_type to determine tab
+  const proxyType = plan.metadata?.proxy_type;
+  if (proxyType === 'Premium (ISP)' || proxyType === 'Premium ISP') return 'premium_isp';
+  if (proxyType === 'Private IPv4') return 'private_ipv4';
+  if (proxyType === 'Shared IPv4') return 'shared_ipv4';
+  if (proxyType === 'IPv6') return 'ipv6';
+
+  // Default fallback based on plan type
+  return 'private_ipv4'; // Default for dedicated
+};
+
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [itemsByTab, setItemsByTab] = useState<CartItemsByTab>(createEmptyCart());
   const [couponCode, setCouponCode] = useState<string | undefined>();
   const [validatedCoupon, setValidatedCoupon] = useState<CouponData | undefined>();
   const [discountAmount, setDiscountAmount] = useState<number>(0);
+
+  // Get user from auth store to detect login/logout
+  const user = useAuthStore((state) => state.user);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -68,7 +118,21 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.items) setItems(parsed.items);
+
+        // Handle both old format (items array) and new format (itemsByTab object)
+        if (parsed.itemsByTab) {
+          // New format
+          setItemsByTab(parsed.itemsByTab);
+        } else if (parsed.items && Array.isArray(parsed.items)) {
+          // Old format - migrate to new format
+          const migratedCart = createEmptyCart();
+          parsed.items.forEach((item: CartItem) => {
+            const tabKey = getTabKeyFromPlan(item.plan);
+            migratedCart[tabKey].push(item);
+          });
+          setItemsByTab(migratedCart);
+        }
+
         if (parsed.couponCode) setCouponCode(parsed.couponCode);
         if (parsed.validatedCoupon) setValidatedCoupon(parsed.validatedCoupon);
         if (parsed.discountAmount) setDiscountAmount(parsed.discountAmount);
@@ -78,11 +142,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   }, []);
 
+  // Clear cart when user logs in or logs out (auth state changes)
+  useEffect(() => {
+    // Clear cart on auth change (login/logout)
+    setItemsByTab(createEmptyCart());
+    setCouponCode(undefined);
+    setValidatedCoupon(undefined);
+    setDiscountAmount(0);
+  }, [user?.user_id]); // Only trigger when user ID changes (login/logout)
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     try {
       const toSave = {
-        items,
+        itemsByTab,
         couponCode,
         validatedCoupon,
         discountAmount
@@ -91,16 +164,27 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Failed to save cart to localStorage:', error);
     }
-  }, [items, couponCode, validatedCoupon, discountAmount]);
+  }, [itemsByTab, couponCode, validatedCoupon, discountAmount]);
+
+  // Helper to get all items as flat array
+  const getAllItems = (): CartItem[] => {
+    return Object.values(itemsByTab).flat();
+  };
+
+  // Helper to get items from specific tab
+  const getTabItems = (tabKey: CartTabKey): CartItem[] => {
+    return itemsByTab[tabKey] || [];
+  };
 
   // Computed values
-  const subtotal = items.reduce((sum, item) => {
+  const allItems = getAllItems();
+  const subtotal = allItems.reduce((sum, item) => {
     // Use calculatedPrice if available (for external provider plans), otherwise use plan.price
     const itemPrice = item.calculatedPrice ?? item.plan.price;
     return sum + itemPrice * item.quantity;
   }, 0);
   const total = Math.max(0, subtotal - discountAmount);
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = allItems.reduce((sum, item) => sum + item.quantity, 0);
 
   // Helper function to generate unique cart item ID
   const generateItemId = (plan: Plan, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string): string => {
@@ -112,9 +196,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     return parts.join('-');
   };
 
-  // Get item by plan ID and options
-  const getItemByPlan = (planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>): CartItem | undefined => {
-    return items.find(item => {
+  // Get item by plan ID and options from specific tab
+  const getItemByPlan = (tabKey: CartTabKey, planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>): CartItem | undefined => {
+    const tabItems = itemsByTab[tabKey];
+    return tabItems.find(item => {
       if (item.plan.id !== planId) return false;
 
       // Check if options match
@@ -128,19 +213,23 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Add item to cart (or update quantity if exists)
-  const addToCart = (plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => {
+  const addToCart = (tabKey: CartTabKey, plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => {
     if (quantity < 1) return;
 
     const itemId = generateItemId(plan, options, country);
-    const existingItem = items.find(item => item.id === itemId);
+    const tabItems = itemsByTab[tabKey];
+    const existingItem = tabItems.find(item => item.id === itemId);
 
     if (existingItem) {
       // Update existing item quantity
-      setItems(items.map(item =>
-        item.id === itemId
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      ));
+      setItemsByTab({
+        ...itemsByTab,
+        [tabKey]: tabItems.map(item =>
+          item.id === itemId
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        )
+      });
     } else {
       // Add new item
       const newItem: CartItem = {
@@ -151,58 +240,119 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         calculatedPrice,
         ...options
       };
-      setItems([...items, newItem]);
+      setItemsByTab({
+        ...itemsByTab,
+        [tabKey]: [...tabItems, newItem]
+      });
     }
   };
 
   // Remove item from cart
-  const removeItem = (itemId: string) => {
-    setItems(items.filter(item => item.id !== itemId));
+  const removeItem = (tabKey: CartTabKey, itemId: string) => {
+    const tabItems = itemsByTab[tabKey];
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: tabItems.filter(item => item.id !== itemId)
+    });
   };
 
   // Update item quantity
-  const updateQuantity = (itemId: string, quantity: number) => {
+  const updateQuantity = (tabKey: CartTabKey, itemId: string, quantity: number) => {
     if (quantity < 1) {
-      removeItem(itemId);
+      removeItem(tabKey, itemId);
       return;
     }
 
-    setItems(items.map(item =>
-      item.id === itemId
-        ? { ...item, quantity }
-        : item
-    ));
+    const tabItems = itemsByTab[tabKey];
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: tabItems.map(item =>
+        item.id === itemId
+          ? { ...item, quantity }
+          : item
+      )
+    });
   };
 
   // Update item quantity and calculatedPrice atomically
-  const updateCartItem = (itemId: string, quantity: number, calculatedPrice?: number) => {
+  const updateCartItem = (tabKey: CartTabKey, itemId: string, quantity: number, calculatedPrice?: number) => {
     if (quantity < 1) {
-      removeItem(itemId);
+      removeItem(tabKey, itemId);
       return;
     }
 
-    setItems(items.map(item =>
-      item.id === itemId
-        ? { ...item, quantity, ...(calculatedPrice !== undefined && { calculatedPrice }) }
-        : item
-    ));
+    const tabItems = itemsByTab[tabKey];
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: tabItems.map(item =>
+        item.id === itemId
+          ? { ...item, quantity, ...(calculatedPrice !== undefined && { calculatedPrice }) }
+          : item
+      )
+    });
   };
 
   // Update item country
-  const updateCountry = (itemId: string, country: string) => {
-    setItems(items.map(item =>
-      item.id === itemId
-        ? { ...item, country }
-        : item
-    ));
+  const updateCountry = (tabKey: CartTabKey, itemId: string, country: string) => {
+    const tabItems = itemsByTab[tabKey];
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: tabItems.map(item =>
+        item.id === itemId
+          ? { ...item, country }
+          : item
+      )
+    });
   };
 
-  // Clear all items from cart
+  // Clear all items from cart (all tabs)
   const clearCart = () => {
-    setItems([]);
+    setItemsByTab(createEmptyCart());
     setCouponCode(undefined);
     setValidatedCoupon(undefined);
     setDiscountAmount(0);
+  };
+
+  // Clear items from specific tab
+  const clearTabCart = (tabKey: CartTabKey) => {
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: []
+    });
+
+    // If all items are cleared, also clear coupon
+    const remainingItems = Object.entries(itemsByTab)
+      .filter(([key]) => key !== tabKey)
+      .flatMap(([, items]) => items);
+
+    if (remainingItems.length === 0) {
+      setCouponCode(undefined);
+      setValidatedCoupon(undefined);
+      setDiscountAmount(0);
+    }
+  };
+
+  // Clear cart by item IDs (for clearing only specific items after checkout)
+  const clearCartByItemIds = (tabKey: CartTabKey, itemIds: string[]) => {
+    const tabItems = itemsByTab[tabKey];
+    const updatedTabItems = tabItems.filter(item => !itemIds.includes(item.id));
+
+    setItemsByTab({
+      ...itemsByTab,
+      [tabKey]: updatedTabItems
+    });
+
+    // If all items are cleared, also clear coupon
+    const allRemainingItems = Object.entries({
+      ...itemsByTab,
+      [tabKey]: updatedTabItems
+    }).flatMap(([, items]) => items);
+
+    if (allRemainingItems.length === 0) {
+      setCouponCode(undefined);
+      setValidatedCoupon(undefined);
+      setDiscountAmount(0);
+    }
   };
 
   // Apply coupon
@@ -220,19 +370,23 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const value: CartContextType = {
-    items,
+    itemsByTab,
     couponCode,
     validatedCoupon,
     discountAmount,
     subtotal,
     total,
     itemCount,
+    getTabItems,
+    getAllItems,
     addToCart,
     removeItem,
     updateQuantity,
     updateCartItem,
     updateCountry,
     clearCart,
+    clearTabCart,
+    clearCartByItemIds,
     applyCoupon,
     removeCoupon,
     getItemByPlan
@@ -249,3 +403,6 @@ export const useCartContext = () => {
   }
   return context;
 };
+
+// Export helper function to determine tab key from plan (for use in components)
+export { getTabKeyFromPlan };

@@ -6,6 +6,7 @@ import { useCart } from '@/hooks/useCart';
 import { toast } from 'sonner';
 import { CountrySelectionModal } from '../modals/CountrySelectionModal';
 import { planService } from '@/services/plan/plan.service';
+import { getTabKeyFromPlan } from '@/contexts/CartContext';
 
 interface Feature {
   icon?: React.ReactNode;
@@ -58,9 +59,11 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       e.stopPropagation();
       setIsAdding(true);
 
+      const tabKey = getTabKeyFromPlan(plan);
+
       // For rotating plans, skip country selection and add directly to cart
       if (plan.type === 'rotating') {
-        cart.addToCart(plan, 1, cartOptions);
+        cart.addToCart(tabKey, plan, 1, cartOptions);
         toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
         setIsAdding(false);
         return;
@@ -77,14 +80,14 @@ export const PricingCard: React.FC<PricingCardProps> = ({
           setIsAdding(false);
         } else {
           // No country selection needed, add directly to cart
-          cart.addToCart(plan, 1, cartOptions);
+          cart.addToCart(tabKey, plan, 1, cartOptions);
           toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
           setIsAdding(false);
         }
       } catch (error) {
         // If error (e.g., internal plan), add directly to cart
         console.log('Country selection not available, adding directly to cart');
-        cart.addToCart(plan, 1, cartOptions);
+        cart.addToCart(tabKey, plan, 1, cartOptions);
         toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
         setIsAdding(false);
       }
@@ -96,7 +99,8 @@ export const PricingCard: React.FC<PricingCardProps> = ({
 
   const handleAddToCartWithCountry = (country: string | undefined, quantity: number, calculatedPrice: number) => {
     if (cart && plan) {
-      cart.addToCart(plan, quantity, cartOptions, country, calculatedPrice);
+      const tabKey = getTabKeyFromPlan(plan);
+      cart.addToCart(tabKey, plan, quantity, cartOptions, country, calculatedPrice);
       toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
     }
   };

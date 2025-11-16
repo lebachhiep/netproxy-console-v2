@@ -1,8 +1,6 @@
-import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { OverViewCard } from '@/components/card/OverViewCard';
-import { ProxyCard, ProxyCardData } from '@/components/card/ProxyCard';
 import {
   Add,
   ArrowCounter,
@@ -15,91 +13,18 @@ import {
   WalletCreditCardFilled
 } from '@/components/icons';
 import { Input } from '@/components/input/Input';
-import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useMemo, useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
 import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
-import { ProxyDetailModal } from './components/modal/ProxyDetailModal';
 import { useNavigate } from 'react-router-dom';
-import { DataUsageModal } from './components/modal/DataUsageModal';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
 import { subscriptionService } from '@/services/subscription/subscription.service';
-import { SubscriptionWithPlan } from '@/types/subscription';
-import { StatusColor } from '@/components/badge/Badge';
-import { userService } from '@/services/user/user.service';
-import { UserProfile } from '@/services/user/user.types';
+import { Order } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
-// Helper function to format date to Vietnamese format
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('vi-VN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
-
-// Helper function to map backend status to badge color
-const getStatusColor = (status: string): StatusColor => {
-  switch (status) {
-    case 'active':
-      return 'blue';
-    case 'paused':
-      return 'yellow';
-    case 'cancelled':
-    case 'expired':
-      return 'red';
-    default:
-      return 'gray';
-  }
-};
-
-// Helper function to map backend status to Vietnamese text
-const getStatusText = (status: string): string => {
-  switch (status) {
-    case 'active':
-      return 'Đang hoạt động';
-    case 'paused':
-      return 'Tạm dừng';
-    case 'cancelled':
-      return 'Đã hủy';
-    case 'expired':
-      return 'Hết hạn';
-    default:
-      return status;
-  }
-};
-
-// Helper function to format bytes to GB
-const formatBandwidth = (bytes?: number): string | undefined => {
-  if (!bytes) return undefined;
-  const gb = bytes / (1024 * 1024 * 1024);
-  return `${gb.toFixed(2)}GB`;
-};
-
-// Transform backend subscription to ProxyCardData
-const transformSubscriptionToCardData = (item: SubscriptionWithPlan): ProxyCardData => {
-  const plan = item.plan;
-
-  return {
-    id: item.id,
-    title: plan?.name || 'Unknown Plan',
-    status: {
-      text: getStatusText(item.status),
-      color: getStatusColor(item.status)
-    },
-    planID: plan?.id,
-    // dataLeft: Hidden for now as per user request
-    expired: formatDate(item.current_period_end),
-    autoRenew: item.auto_renew,
-    type: plan?.type === 'bandwidth' ? 'bandwidth-proxy' : 'rotating-proxy'
-  };
-};
-
-export const data: ProxyCardData[] = [
+export const data = [
   {
     id: 1,
     title: 'UK Bandwidth Proxy - 5GB / 30 ngày',
@@ -236,23 +161,28 @@ const pageVariants: Variants = {
   }
 };
 
+// Order table data type
+interface OrderTableData {
+  id: string;
+  order_number: string;
+  plan_name: string;
+  subscription_count: number;
+  order: Order;
+}
+
 const DashboardPage = () => {
   const pageTitle = usePageTitle({ pageName: 'Trang chủ' });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(2);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
-  const [tableData, setTableData] = useState<ProxyCardData[]>([]);
-  const [subscriptions, setSubscriptions] = useState<SubscriptionWithPlan[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [tableData, setTableData] = useState<OrderTableData[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const [openDataUsageModal, setOpenDataUsageModal] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
 
   // Fetch data on mount
@@ -262,23 +192,27 @@ const DashboardPage = () => {
         setLoading(true);
         setError(null);
 
-        // Fetch subscriptions and user profile in parallel
-        const [subscriptionsResponse, profileResponse] = await Promise.all([
-          subscriptionService.getSubscriptions({ Status: 'active' }),
-          userService.getProfile()
-        ]);
+        // Fetch orders
+        const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active' });
 
-        setSubscriptions(subscriptionsResponse.active_subscriptions || []);
-        setUserProfile(profileResponse);
+        setOrders(ordersResponse.orders || []);
 
-        // Transform subscriptions to ProxyCardData
-        const transformedData = (subscriptionsResponse.active_subscriptions || []).map(transformSubscriptionToCardData);
+        // Transform orders to table data
+        const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
+          const firstSubscription = order.subscriptions[0];
+          return {
+            id: order.id,
+            order_number: order.order_number,
+            plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
+            subscription_count: order.subscriptions.length,
+            order: order
+          };
+        });
         setTableData(transformedData);
       } catch (err) {
         console.error('Failed to fetch data:', err);
-        setError('Không thể tải danh sách gói. Vui lòng thử lại sau.');
-        // Fallback to mock data in case of error
-        setTableData(data);
+        setError('Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.');
+        setTableData([]);
       } finally {
         setLoading(false);
       }
@@ -287,29 +221,11 @@ const DashboardPage = () => {
     fetchData();
   }, []);
 
-  const handleAutoRenewChange = async (id: number | string, checked: boolean) => {
-    try {
-      // Optimistically update UI
-      setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: checked } : item)));
-
-      // Call backend API
-      await subscriptionService.updateAutoRenew(id as string, checked);
-    } catch (err) {
-      console.error('Failed to update auto-renew:', err);
-      // Revert on error
-      setTableData((prev) => prev.map((item) => (item.id === id ? { ...item, autoRenew: !checked } : item)));
-    }
+  const handleItemClick = (id: string) => {
+    navigate(`/order/${id}`);
   };
 
-  const handleItemClick = (index: number, id: number | string) => {
-    if (isMobile || isTablet) navigate(`/proxy/detail/${id}`);
-    else {
-      setModalOpen(true);
-      setSelectedIndex(index);
-    }
-  };
-
-  const columns: TableColumn<ProxyCardData>[] = [
+  const columns: TableColumn<OrderTableData>[] = [
     {
       key: 'id',
       title: 'STT',
@@ -319,38 +235,27 @@ const DashboardPage = () => {
     },
     {
       width: isMobile || isTablet ? 200 : '',
-      key: 'title',
-      title: 'Tên Gói',
+      key: 'order_number',
+      title: 'Mã đơn hàng',
+      align: 'left',
+      sortable: true,
+      render: (value) => <div className="line-clamp-1 font-mono text-xs">{value}</div>
+    },
+    {
+      width: isMobile || isTablet ? 200 : '',
+      key: 'plan_name',
+      title: 'Gói',
       align: 'left',
       sortable: true,
       render: (value) => <div className="line-clamp-1">{value}</div>
     },
     {
-      width: isMobile || isTablet ? 200 : '',
-      key: 'id',
-      title: 'ID',
-      render: (value, record) => <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
-    },
-    {
       width: 150,
-      key: 'autoRenew',
-      title: 'Tự động gia hạn',
+      key: 'subscription_count',
+      title: 'Số lượng',
       align: 'center',
-      render: (_, record) => (
-        <Switch size="md" checked={record.autoRenew} onChange={(checked) => handleAutoRenewChange(record.id, checked)} />
-      )
-    },
-    {
-      width: 150,
-      key: 'status',
-      title: 'Trạng thái',
-      align: 'center',
-      render: (status) => <Badge color={status.color}>{status?.text || '-'}</Badge>
-    },
-    {
-      key: 'expired',
-      title: 'Hết hạn',
-      render: (value) => <div className="line-clamp-1">{value || '...'}</div>
+      sortable: true,
+      render: (value) => <div className="font-semibold">{value}</div>
     },
     {
       width: isMobile || isTablet ? 150 : 200,
@@ -358,11 +263,11 @@ const DashboardPage = () => {
       key: 'buttonText',
       title: 'Hành động',
       align: 'center',
-      render: (_, record, index) => (
+      render: (_, record) => (
         <Button
           variant="default"
           className="px-3 py-[7.5px] h-[32px] dark:text-text-lo-dark"
-          onClick={() => handleItemClick(index, record.id)}
+          onClick={() => handleItemClick(record.id)}
         >
           QUẢN LÝ
         </Button>
@@ -373,17 +278,14 @@ const DashboardPage = () => {
   const sortedData = useMemo(() => {
     if (!sortField || !sortOrder) return tableData;
     return [...tableData].sort((a, b) => {
-      const v1 = a[sortField as keyof ProxyCardData];
-      const v2 = b[sortField as keyof ProxyCardData];
+      const v1 = a[sortField as keyof OrderTableData];
+      const v2 = b[sortField as keyof OrderTableData];
       if (typeof v1 === 'number' && typeof v2 === 'number') {
         return sortOrder === 'asc' ? v1 - v2 : v2 - v1;
       }
       return sortOrder === 'asc' ? String(v1).localeCompare(String(v2)) : String(v2).localeCompare(String(v1));
     });
   }, [sortField, sortOrder, tableData]);
-
-  const prevItem = selectedIndex !== null && selectedIndex > 0 ? sortedData[selectedIndex - 1] : null;
-  const nextItem = selectedIndex !== null && selectedIndex < sortedData.length - 1 ? sortedData[selectedIndex + 1] : null;
 
   const last2Items = useMemo(() => {
     const items = [
@@ -541,73 +443,37 @@ const DashboardPage = () => {
 
         {/* ====== CONTENT ====== */}
         <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px] pb-5">
-          {viewMode === 'list' ? (
-            <Table
-              className="h-full pr-2"
-              scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
-              data={sortedData}
-              columns={columns}
-              pagination={{
-                current: currentPage,
-                pageSize,
-                total: tableData.length,
-                pageSizeOptions: [2, 4, 6, 8],
-                className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
-                onChange: (page, size) => {
-                  setCurrentPage(page);
-                  setPageSize(size);
-                }
-              }}
-              paginationType="pagination"
-              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-              size="large"
-              bordered={false}
-              sortField={sortField}
-              sortOrder={sortOrder}
-              onSort={(field, order) => {
-                setSortField(field);
-                setSortOrder(order);
-              }}
-            />
-          ) : (
-            <div className="relative">
-              <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="overflow-y-auto h-[calc(100dvh-460px)] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
-              >
-                {tableData.map((item, index) => (
-                  <motion.div key={item.id} variants={itemVariants}>
-                    <ProxyCard
-                      data={item}
-                      buttonText="QUẢN LÝ"
-                      onRenewChange={handleAutoRenewChange}
-                      onClick={() => handleItemClick(index, item.id)}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
-          )}
+          <Table
+            className="h-full pr-2"
+            scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
+            data={sortedData}
+            columns={columns}
+            pagination={{
+              current: currentPage,
+              pageSize,
+              total: tableData.length,
+              pageSizeOptions: [2, 4, 6, 8],
+              className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
+              onChange: (page, size) => {
+                setCurrentPage(page);
+                setPageSize(size);
+              }
+            }}
+            paginationType="pagination"
+            rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+            size="large"
+            bordered={false}
+            sortField={sortField}
+            sortOrder={sortOrder}
+            onSort={(field, order) => {
+              setSortField(field);
+              setSortOrder(order);
+            }}
+          />
         </motion.div>
 
         {/* ====== MODALS ====== */}
-        <ProxyDetailModal
-          open={modalOpen}
-          item={selectedIndex !== null ? sortedData[selectedIndex] : null}
-          subscription={selectedIndex !== null ? subscriptions[selectedIndex] : null}
-          username={userProfile?.username}
-          prevItem={prevItem}
-          nextItem={nextItem}
-          onClose={() => setModalOpen(false)}
-          onPrev={prevItem ? () => setSelectedIndex((prev) => (prev !== null ? prev - 1 : prev)) : undefined}
-          onNext={nextItem ? () => setSelectedIndex((prev) => (prev !== null ? prev + 1 : prev)) : undefined}
-        />
-
         <DepositFlowModal open={open} onClose={() => setOpen(false)} />
-        <DataUsageModal open={openDataUsageModal} onClose={() => setOpenDataUsageModal(false)} />
       </motion.div>
     </div>
   );

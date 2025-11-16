@@ -57,8 +57,25 @@ export interface Subscription {
 // Alias since API returns subscription with plan embedded directly
 export type SubscriptionWithPlan = Subscription;
 
+export interface Order {
+  id: string;
+  order_number: string;
+  type: string;
+  status: string;
+  user_id: string;
+  currency_code: string;
+  subtotal: string;
+  tax_amount: string;
+  discount_amount: string;
+  total: string;
+  created_at: string;
+  updated_at: string;
+  fulfilled_at?: string;
+  subscriptions: Subscription[];
+}
+
 export interface ListSubscriptionsResponse {
-  active_subscriptions: Subscription[];
+  orders: Order[];
   total_subscriptions: number;
   active_count: number;
   page: number;
@@ -71,8 +88,29 @@ export interface ListSubscriptionsRequest {
   Status?: 'active' | 'paused' | 'cancelled' | 'expired';
 }
 
+export interface OrderSubscriptionsResponse {
+  subscriptions: Subscription[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
 export interface UpdateAutoRenewRequest {
   auto_renew: boolean;
+}
+
+export interface SwitchProtocolRequest {
+  protocol: 'http' | 'socks5';
+}
+
+export interface SwitchProtocolResponse {
+  success: boolean;
+  message: string;
+  proxy_ip: string;
+  http_port: number;
+  socks5_port: number;
+  username: string;
+  password: string;
 }
 
 // Helper type for determining plan type

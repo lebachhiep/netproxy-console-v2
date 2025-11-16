@@ -9,6 +9,7 @@ import { ProxyDetailPage } from '@/pages/dashboard/ProxyDetailPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { LoginPage } from '@/pages/login/LoginPage';
+import OrderDetailPage from '@/pages/order/OrderDetailPage';
 import PurchasePage from '@/pages/purchase/PurchasePage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
@@ -96,7 +97,12 @@ const routes: Route[] = [
         index: true, // Route mặc định khi vào /
         element: <Navigate to="/home" replace />
       },
-      ...adminSections.flatMap((section) => section.routes)
+      ...adminSections.flatMap((section) => section.routes),
+      {
+        path: '/order/:id',
+        name: '/order/:id',
+        element: <OrderDetailPage />
+      }
     ]
   },
   {

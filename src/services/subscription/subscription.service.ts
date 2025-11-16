@@ -4,6 +4,9 @@ import {
   ListSubscriptionsRequest,
   UpdateAutoRenewRequest,
   SubscriptionWithPlan,
+  OrderSubscriptionsResponse,
+  SwitchProtocolRequest,
+  SwitchProtocolResponse,
 } from '@/types/subscription';
 
 class SubscriptionService {
@@ -66,6 +69,36 @@ class SubscriptionService {
   async cancelSubscription(id: string): Promise<SubscriptionWithPlan> {
     const response = await apiService.post<SubscriptionWithPlan>(
       `${this.BASE_PATH}/${id}/cancel`
+    );
+    return response;
+  }
+
+  /**
+   * Switch protocol for a subscription (HTTP <-> SOCKS5)
+   * @param id - Subscription ID
+   * @param protocol - New protocol ('http' or 'socks5')
+   * @returns Promise with updated proxy credentials
+   */
+  async switchProtocol(id: string, protocol: 'http' | 'socks5'): Promise<SwitchProtocolResponse> {
+    const data: SwitchProtocolRequest = {
+      protocol,
+    };
+
+    const response = await apiService.post<SwitchProtocolResponse>(
+      `${this.BASE_PATH}/${id}/switch-protocol`,
+      data
+    );
+    return response;
+  }
+
+  /**
+   * Get all subscriptions for a specific order
+   * @param orderId - Order ID
+   * @returns Promise with response containing subscriptions array
+   */
+  async getOrderSubscriptions(orderId: string): Promise<OrderSubscriptionsResponse> {
+    const response = await apiService.get<OrderSubscriptionsResponse>(
+      `/user/orders/${orderId}/subscriptions`
     );
     return response;
   }

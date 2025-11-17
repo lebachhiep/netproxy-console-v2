@@ -41,7 +41,7 @@ export const ProxyDetailPage = () => {
   const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
   const [isHideApiValue, setIsHideApiValue] = useState(true);
 
-  const item = data.find((item) => item.id == id);
+  const item = data.find((item) => item.id === Number(id));
 
   console.log({ item });
   if (!item) {

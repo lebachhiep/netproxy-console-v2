@@ -36,7 +36,7 @@ const OrderDetailPage = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string | null>(null);
   const [selectedProtocol, setSelectedProtocol] = useState<'http' | 'socks5'>('http');
   const [showAutoRenewModal, setShowAutoRenewModal] = useState(false);
-  const [selectedAutoRenew, setSelectedAutoRenew] = useState<boolean>(true);
+  const [selectedAutoRenew, setSelectedAutoRenew] = useState<string>('true');
 
   useEffect(() => {
     const fetchOrderSubscriptions = async () => {
@@ -242,16 +242,19 @@ const OrderDetailPage = () => {
     try {
       const selectedSubscriptions = subscriptions.filter((sub) => selectedIds.includes(sub.id));
 
+      // Convert string to boolean
+      const autoRenewValue = selectedAutoRenew === 'true';
+
       // Process all subscriptions with selected auto-renew value
       const promises = selectedSubscriptions.map(sub =>
-        handleAutoRenewChange(sub.id, selectedAutoRenew)
+        handleAutoRenewChange(sub.id, autoRenewValue)
       );
 
       await Promise.all(promises);
 
       // Close modal and reset
       setShowAutoRenewModal(false);
-      setSelectedAutoRenew(true);
+      setSelectedAutoRenew('true');
     } catch (err) {
       console.error('Failed to update bulk auto-renew:', err);
     }
@@ -462,7 +465,7 @@ const OrderDetailPage = () => {
                 Mã đơn hàng: <span className="font-mono font-semibold">{id}</span>
               </p>
             </div>
-            <Button variant="outline" onClick={() => navigate('/home')}>
+            <Button variant="outlined" onClick={() => navigate('/home')}>
               Quay lại
             </Button>
           </div>
@@ -484,7 +487,7 @@ const OrderDetailPage = () => {
             </div>
             <div className="flex items-center gap-2">
               <Button
-                variant="outline"
+                variant="outlined"
                 size="sm"
                 onClick={handleBulkGetProxy}
                 disabled={selectedIds.length === 0}
@@ -492,7 +495,7 @@ const OrderDetailPage = () => {
                 Get proxy ({selectedIds.length})
               </Button>
               <Button
-                variant="outline"
+                variant="outlined"
                 size="sm"
                 onClick={handleBulkAutoRenew}
                 disabled={selectedIds.length === 0}
@@ -500,7 +503,7 @@ const OrderDetailPage = () => {
                 Bật / Tắt tự động gia hạn ({selectedIds.length})
               </Button>
               <Button
-                variant="outline"
+                variant="outlined"
                 size="sm"
                 onClick={handleBulkSwitchProtocol}
                 disabled={selectedIds.length === 0}
@@ -575,7 +578,7 @@ const OrderDetailPage = () => {
         className="max-w-md"
         bodyClassName="p-5"
         actions={[
-          <Button key="cancel" variant="outline" onClick={() => {
+          <Button key="cancel" variant="outlined" onClick={() => {
             setShowProtocolModal(false);
             setSelectedSubscriptionId(null);
             setSelectedProtocol('http');
@@ -611,14 +614,14 @@ const OrderDetailPage = () => {
         title="Edit Auto Renew"
         onClose={() => {
           setShowAutoRenewModal(false);
-          setSelectedAutoRenew(true);
+          setSelectedAutoRenew('true');
         }}
         className="max-w-md"
         bodyClassName="p-5"
         actions={[
-          <Button key="cancel" variant="outline" onClick={() => {
+          <Button key="cancel" variant="outlined" onClick={() => {
             setShowAutoRenewModal(false);
-            setSelectedAutoRenew(true);
+            setSelectedAutoRenew('true');
           }}>
             Cancel
           </Button>,
@@ -634,11 +637,11 @@ const OrderDetailPage = () => {
             </label>
             <Select
               options={[
-                { value: true, label: 'Bật' },
-                { value: false, label: 'Tắt' }
+                { value: 'true', label: 'Bật' },
+                { value: 'false', label: 'Tắt' }
               ]}
               value={selectedAutoRenew}
-              onChange={(value) => setSelectedAutoRenew(value as boolean)}
+              onChange={(value) => setSelectedAutoRenew(String(value))}
               placeholder="Select auto renew"
             />
           </div>

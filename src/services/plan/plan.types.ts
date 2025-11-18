@@ -55,6 +55,7 @@ export interface ListPlansResponse {
 export interface PlansResponse {
   dedicated: Record<string, Plan[]>; // Key: proxy type (IPv6, Private IPv4, etc.), Value: array of plans
   rotate: Plan[]; // Array of rotating plans
+  servers?: string[]; // Ordered list of server names (e.g., ["Blue Server", "Dawn Server", "Noon Server"])
 }
 
 // Frontend display structure for plan

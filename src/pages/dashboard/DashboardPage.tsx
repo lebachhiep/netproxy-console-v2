@@ -23,6 +23,7 @@ import { sectionVariants, itemVariants, containerVariants } from '@/utils/animat
 import { subscriptionService } from '@/services/subscription/subscription.service';
 import { Order } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import moment from 'moment';
 
 export const data = [
   {
@@ -161,13 +162,13 @@ const pageVariants: Variants = {
   }
 };
 
-// Order table data type
+// Order table data type - mapped directly from API response
 interface OrderTableData {
-  id: string;
-  order_number: string;
-  plan_name: string;
-  subscription_count: number;
-  order: Order;
+  id: string; // Order ID from API
+  order_number: string; // Order number for display
+  plan_name: string; // First subscription's plan name
+  subscription_count: number; // Total subscriptions in order
+  fulfilled_at: string; // Order fulfillment date (or created_at if not fulfilled)
 }
 
 const DashboardPage = () => {
@@ -199,13 +200,13 @@ const DashboardPage = () => {
 
         // Transform orders to table data
         const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
-          const firstSubscription = order.subscriptions[0];
+          const firstSubscription = order.subscriptions?.[0];
           return {
             id: order.id,
             order_number: order.order_number,
             plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
-            subscription_count: order.subscriptions.length,
-            order: order
+            subscription_count: order.subscriptions?.length || 0,
+            fulfilled_at: order.fulfilled_at || order.created_at
           };
         });
         setTableData(transformedData);
@@ -256,6 +257,13 @@ const DashboardPage = () => {
       align: 'center',
       sortable: true,
       render: (value) => <div className="font-semibold">{value}</div>
+    },
+    {
+      width: 150,
+      key: 'fulfilled_at',
+      title: 'Ngày mua',
+      sortable: true,
+      render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
     },
     {
       width: isMobile || isTablet ? 150 : 200,

@@ -479,6 +479,7 @@ const PurchasePage: React.FC = () => {
                 getDisplayPrice={getDisplayPrice}
                 buildPlanFeatures={buildPlanFeatures}
                 proxyType="Premium ISP"
+                servers={plansData?.servers}
               />
             </motion.div>
           )}
@@ -501,6 +502,7 @@ const PurchasePage: React.FC = () => {
                 getDisplayPrice={getDisplayPrice}
                 buildPlanFeatures={buildPlanFeatures}
                 proxyType="Private IPv4"
+                servers={plansData?.servers}
               />
             </motion.div>
           )}
@@ -523,6 +525,7 @@ const PurchasePage: React.FC = () => {
                 getDisplayPrice={getDisplayPrice}
                 buildPlanFeatures={buildPlanFeatures}
                 proxyType="Shared IPv4"
+                servers={plansData?.servers}
               />
             </motion.div>
           )}
@@ -545,6 +548,7 @@ const PurchasePage: React.FC = () => {
                 getDisplayPrice={getDisplayPrice}
                 buildPlanFeatures={buildPlanFeatures}
                 proxyType="IPv6"
+                servers={plansData?.servers}
               />
             </motion.div>
           )}

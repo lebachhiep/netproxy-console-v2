@@ -29,6 +29,7 @@ interface DedicatedPlanFilterProps {
   getDisplayPrice: (plan: Plan) => string;
   buildPlanFeatures: (plan: Plan) => Array<{ icon: React.ReactNode; label: React.ReactNode }>;
   proxyType?: string; // Proxy type name (tab name) like "Premium ISP", "Private IPv4", etc.
+  servers?: string[]; // Ordered list of servers from API
 }
 
 interface SelectedCountry {
@@ -52,7 +53,8 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   plans,
   getDisplayPrice,
   buildPlanFeatures,
-  proxyType
+  proxyType,
+  servers
 }) => {
   const cart = useCart();
 
@@ -86,16 +88,22 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const isUpdatingCartRef = React.useRef<Set<string>>(new Set()); // Track countries being updated to prevent sync loop
 
-  // Extract available servers from plans
+  // Extract available servers from API prop or fallback to extracting from plans
   const availableServers = useMemo(() => {
-    const servers = new Set<string>();
+    // If servers prop is provided (from API), use it in the provided order
+    if (servers && servers.length > 0) {
+      return servers;
+    }
+
+    // Fallback: extract from plans and sort alphabetically
+    const serverSet = new Set<string>();
     plans.forEach(plan => {
       if (plan.provider_name) {
-        servers.add(plan.provider_name);
+        serverSet.add(plan.provider_name);
       }
     });
-    return Array.from(servers).sort();
-  }, [plans]);
+    return Array.from(serverSet).sort();
+  }, [plans, servers]);
 
   // Filter plans by server để tính available periods
   const plansFilteredByServer = useMemo(() => {

@@ -447,7 +447,7 @@ const OrderDetailPage = () => {
       render: (_, __, index) => index + 1
     },
     {
-      width: isMobile || isTablet ? 200 : '',
+      width: isMobile || isTablet ? 200 : 180,
       key: 'country_code',
       title: 'Country',
       align: 'center',

@@ -45,9 +45,6 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
       case '/home':
         element = <DashboardPage />;
         break;
-      // case '/proxy/detail/:id':
-      //   element = <ProxyDetailPage />;
-      //   break;
       case '/buy':
         element = <PurchasePage />;
         break;

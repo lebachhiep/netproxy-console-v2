@@ -47,6 +47,7 @@ export interface Subscription {
   renewal_price: string;
   currency_code: string;
   reseller_id?: string;
+  country?: string; // Country code (e.g., 'US', 'VN', 'JP')
   provider_credentials?: ProxyCredentials | Record<string, any>;
   notes?: string;
   created_at: string; // ISO timestamp

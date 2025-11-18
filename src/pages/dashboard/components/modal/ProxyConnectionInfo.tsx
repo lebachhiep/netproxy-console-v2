@@ -1,10 +1,13 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/input/Input';
 import { ApiInput } from '@/components/input/ApiInput';
 import { Select } from '@/components/select/Select';
-import { Eye, EyeOff, FileCopy, Person } from '@/components/icons';
+import { Eye, EyeOff, FileCopy, Person, ArrowRotate } from '@/components/icons';
+import IconButton from '@/components/button/IconButton';
 import { toast } from 'sonner';
 import { SubscriptionWithPlan, ProxyCredentials } from '@/types/subscription';
+import { useSubscriptionData } from '@/stores/subscription.store';
+import { useAuthStore } from '@/stores/auth.store';
 
 interface ProxyConnectionInfoProps {
   subscription: SubscriptionWithPlan;
@@ -34,28 +37,70 @@ const countryOptions = [
   { label: 'Úc', value: 'au' }
 ];
 
-export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscription, username = 'user' }) => {
+export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscription, username: propUsername }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
+  const [selectedCountry, setSelectedCountry] = useState<string>('us'); // Default US
   const [sessionId, setSessionId] = useState('');
 
+  // Load subscription data from store
+  const subscriptionData = useSubscriptionData(subscription.id);
+
+  // Get username from auth store
+  const authUser = useAuthStore((state) => state.user);
+  const authUsername = authUser?.username || propUsername || 'user';
+
   const hasExternalCredentials = hasValidCredentials(subscription.provider_credentials);
+  const isRotatingProxy = subscription.plan?.type === 'rotating' || subscription.plan?.category === 'rotating';
+
+  // Load saved country and sessionId from store on mount
+  useEffect(() => {
+    // Set country from store or default to US
+    setSelectedCountry(subscriptionData.country || 'us');
+    // Set sessionId from store or will be generated on demand
+    setSessionId(subscriptionData.sessionId);
+  }, []);
+
+  // Save country to store when changed
+  const handleCountryChange = (value: string | number | undefined) => {
+    const countryValue = (value as string) || 'us';
+    setSelectedCountry(countryValue);
+    subscriptionData.updateCountry(countryValue);
+  };
+
+  // Save sessionId to store when changed
+  const handleSessionIdChange = (value: string) => {
+    setSessionId(value);
+    if (value) {
+      subscriptionData.setData({ sessionId: value });
+    }
+  };
+
+  // Refresh sessionId (generate new random one)
+  const handleRefreshSessionId = () => {
+    const newSessionId = subscriptionData.generateNewSessionId();
+    setSessionId(newSessionId);
+    toast.success('Session ID refreshed');
+  };
 
   // Build username for internal plans
+  // Format: npx-customer-{username}-country-{country_code}-session-{session_id}
   const generatedUsername = useMemo(() => {
-    let base = `npx-customer-${username}`;
+    let base = `npx-customer-${authUsername}`;
     const parts: string[] = [];
 
+    // Always add country (default or selected)
     if (selectedCountry) {
       parts.push(`country-${selectedCountry}`);
     }
 
-    if (sessionId.trim()) {
-      parts.push(`session-${sessionId.trim()}`);
+    // Always add sessionId (generate if empty)
+    const finalSessionId = sessionId || subscriptionData.sessionId;
+    if (finalSessionId) {
+      parts.push(`session-${finalSessionId}`);
     }
 
     return parts.length > 0 ? `${base}-${parts.join('-')}` : base;
-  }, [username, selectedCountry, sessionId]);
+  }, [authUsername, selectedCountry, sessionId, subscriptionData.sessionId]);
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -250,20 +295,28 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
               placeholder="Chọn quốc gia (tùy chọn)"
               options={countryOptions}
               value={selectedCountry}
-              onChange={(value) => setSelectedCountry(value as string)}
+              onChange={handleCountryChange}
             />
           </div>
 
           {/* Session ID input */}
           <div className="flex items-center gap-2">
             <span className="text-sm text-text-lo dark:text-text-lo-dark min-w-[80px]">Session ID:</span>
-            <Input
-              icon={<></>}
-              placeholder="Nhập session ID (tùy chọn)"
-              value={sessionId}
-              onChange={(e) => setSessionId(e.target.value)}
-              wrapperClassName="flex-1 h-10"
-            />
+            <div className="flex-1 flex items-center gap-2">
+              <Input
+                icon={<></>}
+                placeholder="Nhập session ID (tùy chọn)"
+                value={sessionId}
+                onChange={(e) => handleSessionIdChange(e.target.value)}
+                wrapperClassName="flex-1 h-10"
+              />
+              <IconButton
+                icon={<ArrowRotate className="text-green-600 dark:text-green-400" />}
+                className="w-8 h-8 hover:bg-green-50 dark:hover:bg-green-900/30"
+                onClick={handleRefreshSessionId}
+                title="Refresh Session ID"
+              />
+            </div>
           </div>
 
           {/* Generated username display */}

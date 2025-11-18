@@ -1,6 +1,6 @@
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
-import { ArrowRotate, CloudSwapFilled, ContentCopy, CheckMark } from '@/components/icons';
+import { ArrowRotate, CloudSwapFilled, ContentCopy, CheckMark, Replay } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Checkbox } from '@/components/checkbox/Checkbox';
@@ -9,12 +9,69 @@ import { Select } from '@/components/select/Select';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 import { subscriptionService } from '@/services/subscription/subscription.service';
 import { Subscription } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants } from '@/utils/animation';
 import { copyToClipboard } from '@/utils/copyToClipboard';
+import { useSubscriptionStore } from '@/stores/subscription.store';
+import { useAuthStore } from '@/stores/auth.store';
+
+// ISO alpha-2 country codes
+const COUNTRY_OPTIONS = [
+  { label: 'Vietnam', value: 'VN' },
+  { label: 'United States', value: 'US' },
+  { label: 'United Kingdom', value: 'GB' },
+  { label: 'Japan', value: 'JP' },
+  { label: 'Singapore', value: 'SG' },
+  { label: 'South Korea', value: 'KR' },
+  { label: 'Germany', value: 'DE' },
+  { label: 'France', value: 'FR' },
+  { label: 'Canada', value: 'CA' },
+  { label: 'Australia', value: 'AU' },
+  { label: 'India', value: 'IN' },
+  { label: 'Brazil', value: 'BR' },
+  { label: 'Mexico', value: 'MX' },
+  { label: 'Thailand', value: 'TH' },
+  { label: 'Philippines', value: 'PH' },
+  { label: 'Malaysia', value: 'MY' },
+  { label: 'Indonesia', value: 'ID' },
+  { label: 'Hong Kong', value: 'HK' },
+  { label: 'Taiwan', value: 'TW' },
+  { label: 'Pakistan', value: 'PK' },
+];
+
+// Country Select Cell Component for Table
+interface CountrySelectCellProps {
+  subscriptionId: string;
+  currentCountry?: string;
+}
+
+const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry }) => {
+  const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
+  const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
+
+  const handleCountryChange = (value: string | number | undefined) => {
+    const countryCode = String(value);
+    setSelectedCountry(countryCode);
+    useSubscriptionStore.getState().setSubscriptionData(subscriptionId, { country: countryCode });
+    toast.success(`Country changed to ${countryCode}`);
+  };
+
+  return (
+    <Select
+      value={selectedCountry}
+      onChange={handleCountryChange}
+      options={COUNTRY_OPTIONS}
+      placeholder="Select country"
+      className="h-8 min-w-[140px]"
+      placement="top"
+      optionClassName="max-h-60 overflow-y-auto"
+    />
+  );
+};
 
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +126,12 @@ const OrderDetailPage = () => {
     fetchOrderSubscriptions();
   }, [id]);
 
+  // Helper function to check if subscription is rotating proxy
+  const isRotatingProxy = (record: Subscription) => {
+    // Rotating proxies have plan type 'rotating' or category 'rotating'
+    return record.plan?.type === 'rotating' || record.plan?.category === 'rotating';
+  };
+
   const handleChangeProtocol = (subscriptionId: string) => {
     setSelectedSubscriptionId(subscriptionId);
     setProtocolModalType('single');
@@ -100,6 +163,7 @@ const OrderDetailPage = () => {
                 : s
             )
           );
+          toast.success('Protocol switched successfully');
         }
       } else if (protocolModalType === 'bulk') {
         // Bulk switch - filter out rotating proxies
@@ -107,11 +171,15 @@ const OrderDetailPage = () => {
           .filter((sub) => selectedIds.includes(sub.id))
           .filter((sub) => !isRotatingProxy(sub)); // Skip rotating proxies
 
+        let successCount = 0;
+        let failureCount = 0;
+
         for (const sub of selectedSubscriptions) {
           try {
             const response = await subscriptionService.switchProtocol(sub.id, protocol);
 
             if (response.success) {
+              successCount++;
               setSubscriptions((prev) =>
                 prev.map((s) =>
                   s.id === sub.id
@@ -130,8 +198,16 @@ const OrderDetailPage = () => {
               );
             }
           } catch (err) {
+            failureCount++;
             console.error(`Failed to switch protocol for subscription ${sub.id}:`, err);
           }
+        }
+
+        // Show appropriate toast message
+        if (failureCount === 0) {
+          toast.success(`Protocol switched successfully for ${successCount} subscription(s)`);
+        } else {
+          toast.error(`Failed to switch protocol for ${failureCount} subscription(s). ${successCount} succeeded.`);
         }
       }
 
@@ -141,35 +217,111 @@ const OrderDetailPage = () => {
       setSelectedProtocol('http');
     } catch (err) {
       console.error('Failed to switch protocol:', err);
+      toast.error('Failed to switch protocol');
     }
   };
 
-  const handleRefresh = (subscriptionId: string) => {
-    console.log('Refresh subscription:', subscriptionId);
-    // TODO: Implement later
+  const handleGetProxy = async (subscriptionId: string) => {
+    try {
+      const subscription = subscriptions.find((sub) => sub.id === subscriptionId);
+      if (!subscription) {
+        toast.error('Subscription not found');
+        return;
+      }
+
+      // Only allow for non-rotating proxies
+      const isRotating = isRotatingProxy(subscription);
+      if (isRotating) {
+        toast.error('Get Proxy is not available for rotating proxies');
+        return;
+      }
+
+      console.log('Getting proxy information for subscription:', subscriptionId);
+      const response = await subscriptionService.getProxy(subscriptionId);
+
+      // Update subscriptions state with new proxy credentials
+      setSubscriptions((prev) =>
+        prev.map((sub) =>
+          sub.id === subscriptionId
+            ? {
+                ...sub,
+                provider_credentials: {
+                  ProxyIP: response.proxy_ip,
+                  HTTPPort: response.http_port,
+                  SOCKS5Port: response.socks5_port,
+                  Username: response.username,
+                  Password: response.password,
+                } as any,
+              }
+            : sub
+        )
+      );
+
+      toast.success('Proxy information retrieved successfully');
+    } catch (err) {
+      console.error('Failed to get proxy:', err);
+      toast.error('Failed to get proxy information');
+    }
+  };
+
+  const handleRefreshSessionId = (subscriptionId: string) => {
+    const newSessionId = useSubscriptionStore.getState().generateNewSessionId(subscriptionId);
+    toast.success(`Session ID refreshed: ${newSessionId}`);
   };
 
   const handleCopyProxy = async (record: Subscription) => {
-    // Format: protocol://username:password@ip:port
-    const credentials = record.provider_credentials as any;
-    if (!credentials || !credentials.ProxyIP) {
-      console.error('No credentials available');
-      return;
+    const isRotating = isRotatingProxy(record);
+
+    if (isRotating) {
+      // For rotating proxy: relay.prx.network:80:username:password
+      // Format: npx-customer-{authUsername}-country-{country}-session-{sessionId}
+      const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
+      const authUser = useAuthStore.getState().user;
+      const authUsername = authUser?.username || 'user';
+
+      // Build username with auth username, default country (US), and sessionId
+      const country = subscriptionData?.country || 'us';
+      let sessionId = subscriptionData?.sessionId;
+
+      // Generate session ID if it doesn't exist
+      if (!sessionId) {
+        sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
+      }
+
+      let username = `npx-customer-${authUsername}-country-${country}`;
+      if (sessionId) {
+        username += `-session-${sessionId}`;
+      }
+
+      const proxyString = `relay.prx.network:80:${username}:${record.api_key}`;
+
+      console.log('Copying rotating proxy string:', proxyString);
+      await copyToClipboard(proxyString);
+
+      setCopiedId(record.id);
+      toast.success('Rotating proxy copied to clipboard');
+    } else {
+      // For fixed proxy: protocol://username:password@ip:port
+      const credentials = record.provider_credentials as any;
+      if (!credentials || !credentials.ProxyIP) {
+        toast.error('No credentials available');
+        return;
+      }
+
+      const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
+      const username = credentials.Username || '';
+      const password = credentials.Password || '';
+      const ip = credentials.ProxyIP || '';
+      const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
+
+      const proxyString = `${protocol}://${username}:${password}@${ip}:${port}`;
+
+      console.log('Copying proxy string:', proxyString);
+      await copyToClipboard(proxyString);
+
+      setCopiedId(record.id);
+      toast.success('Proxy copied to clipboard');
     }
-
-    const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
-    const username = credentials.Username || '';
-    const password = credentials.Password || '';
-    const ip = credentials.ProxyIP || '';
-    const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
-
-    const proxyString = `${protocol}://${username}:${password}@${ip}:${port}`;
-
-    console.log('Copying proxy string:', proxyString);
-    await copyToClipboard(proxyString);
-
-    // Show success feedback
-    setCopiedId(record.id);
 
     // Reset after 2 seconds
     setTimeout(() => {
@@ -268,12 +420,6 @@ const OrderDetailPage = () => {
   const isAllSelected = subscriptions.length > 0 && selectedIds.length === subscriptions.length;
   const isIndeterminate = selectedIds.length > 0 && selectedIds.length < subscriptions.length;
 
-  // Helper function to check if subscription is rotating proxy
-  const isRotatingProxy = (record: Subscription) => {
-    // Rotating proxies have plan type 'rotating' or category 'rotating'
-    return record.plan?.type === 'rotating' || record.plan?.category === 'rotating';
-  };
-
   const columns: TableColumn<Subscription>[] = [
     {
       key: 'checkbox',
@@ -302,20 +448,51 @@ const OrderDetailPage = () => {
     },
     {
       width: isMobile || isTablet ? 200 : '',
-      key: 'id',
+      key: 'country_code',
+      title: 'Country',
+      align: 'center',
+      render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
+        }
+        // For non-rotating proxies, show as plain text
+        return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
+      }
+    },
+    {
+      width: isMobile || isTablet ? 200 : '',
+      key: 'subscription_id',
+      title: 'ID',
+      align: 'left',
+      render: (_, record) => (
+        <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
+      )
+    },
+    {
+      width: isMobile || isTablet ? 200 : '',
+      key: 'ip',
       title: 'IP Address',
       align: 'left',
       render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          return <div className="line-clamp-1 font-mono text-xs">relay.prx.network</div>;
+        }
         const credentials = record.provider_credentials as any;
         return <div className="line-clamp-1 font-mono text-xs">{credentials?.ProxyIP || '-'}</div>;
       }
     },
     {
       width: isMobile || isTablet ? 150 : '',
-      key: 'api_key',
+      key: 'port',
       title: 'Port',
       align: 'left',
       render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          return <div className="line-clamp-1 font-mono text-xs">80</div>;
+        }
         const credentials = record.provider_credentials as any;
         const port = credentials?.HTTPPort > 0 ? credentials.HTTPPort : credentials?.SOCKS5Port;
         return <div className="line-clamp-1 font-mono text-xs">{port || '-'}</div>;
@@ -327,31 +504,76 @@ const OrderDetailPage = () => {
       title: 'Username',
       align: 'left',
       render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
+          const authUser = useAuthStore.getState().user;
+          const authUsername = authUser?.username || 'user';
+          const country = subscriptionData?.country || 'us';
+          let sessionId = subscriptionData?.sessionId;
+
+          // Generate session ID if it doesn't exist
+          if (!sessionId) {
+            sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
+          }
+
+          let username = `npx-customer-${authUsername}-country-${country}`;
+          if (sessionId) {
+            username += `-session-${sessionId}`;
+          }
+          return <div className="line-clamp-1 font-mono text-xs">{username}</div>;
+        }
         const credentials = record.provider_credentials as any;
         return <div className="line-clamp-1 font-mono text-xs">{credentials?.Username || '-'}</div>;
       }
     },
     {
       width: isMobile || isTablet ? 150 : '',
-      key: 'country',
+      key: 'password',
       title: 'Password',
       align: 'left',
       render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          return <div className="line-clamp-1 font-mono text-xs">{record.api_key.substring(0, 20)}...</div>;
+        }
         const credentials = record.provider_credentials as any;
         return <div className="line-clamp-1 font-mono text-xs">{credentials?.Password || '********'}</div>;
       }
     },
     {
       width: isMobile || isTablet ? 150 : '',
-      key: 'plan',
+      key: 'connection_type',
       title: 'Connection Type',
       align: 'center',
       render: (_, record) => {
-        const credentials = record.provider_credentials as any;
-        const connectionType = credentials?.HTTPPort > 0 ? 'HTTP' : credentials?.SOCKS5Port > 0 ? 'SOCKS5' : '-';
-        const colorClass = connectionType === 'HTTP' ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300';
+        const isRotating = isRotatingProxy(record);
+        let connectionType = '-';
+
+        let bgColor = '#f3f4f6';
+        let textColor = '#374151';
+
+        if (isRotating) {
+          connectionType = 'Rotating';
+          bgColor = '#fef3c7';
+          textColor = '#b45309';
+        } else {
+          const credentials = record.provider_credentials as any;
+          connectionType = credentials?.HTTPPort > 0 ? 'HTTP' : credentials?.SOCKS5Port > 0 ? 'SOCKS5' : '-';
+          if (connectionType === 'HTTP') {
+            bgColor = '#dbeafe';
+            textColor = '#1e40af';
+          } else if (connectionType === 'SOCKS5') {
+            bgColor = '#e9d5ff';
+            textColor = '#7e22ce';
+          }
+        }
+
         return (
-          <div className={`px-2 py-1 rounded ${colorClass} text-xs font-semibold`}>
+          <div
+            className="px-2 py-1 rounded text-xs font-semibold"
+            style={{ backgroundColor: bgColor, color: textColor }}
+          >
             {connectionType}
           </div>
         );
@@ -363,6 +585,13 @@ const OrderDetailPage = () => {
       title: 'Plan',
       align: 'left',
       render: (_, record) => <div className="line-clamp-1 text-xs">{record.plan?.name || '-'}</div>
+    },
+    {
+      width: isMobile || isTablet ? 150 : '',
+      key: 'api_key',
+      title: 'API Key',
+      align: 'left',
+      render: (_, record) => <div className="line-clamp-1 font-mono text-xs">{record.api_key || '-'}</div>
     },
     {
       width: 150,
@@ -403,7 +632,14 @@ const OrderDetailPage = () => {
               onClick={() => handleCopyProxy(record)}
               title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
             />
-            {!isRotating && (
+            {isRotating ? (
+              <IconButton
+                icon={<ArrowRotate className="text-blue-600 dark:text-blue-400" />}
+                className="w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                onClick={() => handleRefreshSessionId(record.id)}
+                title="Refresh Session ID"
+              />
+            ) : (
               <>
                 <IconButton
                   icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400" />}
@@ -412,10 +648,10 @@ const OrderDetailPage = () => {
                   title="Change Protocol"
                 />
                 <IconButton
-                  icon={<ArrowRotate className="text-green-600 dark:text-green-400" />}
-                  className="w-8 h-8 hover:bg-green-50 dark:hover:bg-green-900/30"
-                  onClick={() => handleRefresh(record.id)}
-                  title="Refresh"
+                  icon={<Replay className="text-orange-600 dark:text-orange-400" />}
+                  className="w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
+                  onClick={() => handleGetProxy(record.id)}
+                  title="Get Proxy"
                 />
               </>
             )}

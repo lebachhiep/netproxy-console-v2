@@ -157,30 +157,31 @@ export const Select: React.FC<SelectProps> = ({
       </button>
 
       {/* Dropdown */}
-      {open && (
-        <div
-          className={twMerge(
-            'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101]',
-            placement === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1',
-            optionClassName
-          )}
-        >
-          {options.map((opt) => (
-            <div
-              key={opt.value}
-              onClick={() => handleSelect(opt)}
-              className={twMerge(
-                clsx(
-                  'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold ',
-                  selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
-                )
-              )}
-            >
-              {opt.label}
-            </div>
-          ))}
-        </div>
-      )}
+      <div
+        className={twMerge(
+          'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-hidden',
+          placement === 'bottom' ? 'bottom-full mt-1' : 'top-full mb-1',
+          open
+            ? 'opacity-100 max-h-[500px] translate-y-0 pointer-events-auto'
+            : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
+          optionClassName
+        )}
+      >
+        {options.map((opt) => (
+          <div
+            key={opt.value}
+            onClick={() => handleSelect(opt)}
+            className={twMerge(
+              clsx(
+                'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold ',
+                selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
+              )
+            )}
+          >
+            {opt.label}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -52,10 +52,10 @@ interface SelectProps {
   onChange?: (value: string | number) => void;
 
   /**
-   * Vị trí hiển thị dropdown: 'top' hoặc 'bottom'.
+   * Vị trí hiển thị dropdown: 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right'.
    * @default "bottom"
    */
-  placement?: 'top' | 'bottom';
+  placement?: 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
 /**
@@ -65,30 +65,9 @@ interface SelectProps {
  * - Hỗ trợ controlled và uncontrolled value
  * - Hiển thị placeholder khi chưa chọn
  * - Hỗ trợ click outside để đóng dropdown
- * - Tùy chỉnh vị trí hiển thị: 'top' hoặc 'bottom'
+ * - Tùy chỉnh vị trí hiển thị: 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right'
  *
  * @component
- *
- * @example
- * const options = [
- *   { value: '1', label: 'Lựa chọn 1' },
- *   { value: '2', label: 'Lựa chọn 2' },
- * ];
- *
- * <Select
- *   options={options}
- *   value={selectedValue}
- *   onChange={(val) => setSelectedValue(val)}
- *   placeholder="Chọn một lựa chọn"
- *   placement="bottom"
- * />
- *
- * <Select
- *   options={options}
- *   defaultValue="1"
- *   placeholder="Chọn một lựa chọn"
- * />
- *
  */
 export const Select: React.FC<SelectProps> = ({
   options,
@@ -132,8 +111,28 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
+  // Determine position classes based on placement
+  const getPositionClasses = () => {
+    switch (placement) {
+      case 'top':
+        return 'bottom-full mb-1 left-0 right-0';
+      case 'bottom':
+        return 'top-full mt-1 left-0 right-0';
+      case 'top-left':
+        return 'bottom-full mb-1 right-0';
+      case 'top-right':
+        return 'bottom-full mb-1 left-0';
+      case 'bottom-left':
+        return 'top-full mt-1 right-0';
+      case 'bottom-right':
+        return 'top-full mt-1 left-0';
+      default:
+        return 'top-full mt-1 left-0 right-0';
+    }
+  };
+
   return (
-    <div ref={ref} className={twMerge('relative ')}>
+    <div ref={ref} className={twMerge('relative')}>
       {/* Trigger */}
       <button
         type="button"
@@ -159,11 +158,11 @@ export const Select: React.FC<SelectProps> = ({
       {/* Dropdown */}
       <div
         className={twMerge(
-          'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-hidden',
-          placement === 'bottom' ? 'bottom-full mt-1' : 'top-full mb-1',
-          open
-            ? 'opacity-100 max-h-[500px] translate-y-0 pointer-events-auto'
-            : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
+          'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-hidden',
+          getPositionClasses(),
+          open ? 'opacity-100 max-h-[500px] translate-y-0 pointer-events-auto' : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
+          // Add width constraint for corner placements
+          placement.includes('left') || placement.includes('right') ? 'w-auto min-w-full' : 'w-full',
           optionClassName
         )}
       >
@@ -173,7 +172,7 @@ export const Select: React.FC<SelectProps> = ({
             onClick={() => handleSelect(opt)}
             className={twMerge(
               clsx(
-                'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold ',
+                'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap',
                 selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
               )
             )}

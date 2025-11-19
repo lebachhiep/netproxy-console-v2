@@ -7,7 +7,7 @@ import {
   CartFilled,
   GridDots,
   MagnifyingGlass,
-  Storage,
+  Person,
   TextColumnOne,
   TopSpeed,
   WalletCreditCardFilled
@@ -272,11 +272,7 @@ const DashboardPage = () => {
       title: 'Hành động',
       align: 'center',
       render: (_, record) => (
-        <Button
-          variant="default"
-          className="px-3 py-[7.5px] h-[32px] dark:text-text-lo-dark"
-          onClick={() => handleItemClick(record.id)}
-        >
+        <Button variant="default" className="px-3 py-[7.5px] h-[32px] dark:text-text-lo-dark" onClick={() => handleItemClick(record.id)}>
           QUẢN LÝ
         </Button>
       )
@@ -298,6 +294,32 @@ const DashboardPage = () => {
   const last2Items = useMemo(() => {
     const items = [
       <OverViewCard
+        key="4"
+        icon={
+          <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
+            <Person className="text-text-hi-dark" />
+          </div>
+        }
+        title="Người dùng & Đơn hàng"
+        mainContent={
+          <div>
+            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">2500</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Khách hàng</span>
+          </div>
+        }
+        subInfo={[
+          {
+            label: 'Tổng đơn hàng :',
+            value: (
+              <div>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">155.231</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Orders</span>
+              </div>
+            )
+          }
+        ]}
+      />,
+      <OverViewCard
         key="3"
         icon={
           <div className="flex justify-center items-center w-10 h-10 bg-green-gradient rounded-[4px] text-white">
@@ -318,33 +340,6 @@ const DashboardPage = () => {
               <div>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">23222</span>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Ports</span>
-              </div>
-            )
-          }
-        ]}
-      />,
-      <OverViewCard
-        key="4"
-        icon={
-          <div className="flex justify-center items-center w-10 h-10 bg-purple-gradient rounded-[4px] text-white">
-            <Storage />
-          </div>
-        }
-        title="Máy chủ & IP"
-        mainContent={
-          <div>
-            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">5</span>
-            <span className="text-text-lo dark:text-text-lo-dark font-semibold text-sm font-averta"> / 20</span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
-          </div>
-        }
-        subInfo={[
-          {
-            label: 'IP có trong pool:',
-            value: (
-              <div>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">123.985</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> IPs</span>
               </div>
             )
           }

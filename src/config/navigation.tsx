@@ -119,7 +119,12 @@ export const navigationSections: NavigationSection[] = [
     title: 'KHÁC',
     routes: [
       {
-        title: 'Chương trình đại lý',
+        title: (
+          <div className="flex items-center flex-1 justify-between w-full">
+            <span>Chương trình đại lý</span>
+            <Open className="text-blue dark:text-blue-dark" />
+          </div>
+        ),
         icon: <CloudSwapFilled />,
         collapsedIcon: <CloudSwapOutlined />,
         iconClass: 'text-pink',

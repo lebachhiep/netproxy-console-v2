@@ -113,7 +113,9 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     adminSections.forEach((section) => {
       section.routes.forEach((router: Route) => {
-        if (router.path === location.pathname) {
+        console.log('Checking route:', router);
+        if (router.path === location.pathname || location.pathname.startsWith(router.path + '/')) {
+          console.log('Found route for breadcrumb:', router);
           return handleSetBreadcrumbs(router);
         }
       });
@@ -131,7 +133,6 @@ export const Navbar: React.FC = () => {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
-  
 
   return (
     <>

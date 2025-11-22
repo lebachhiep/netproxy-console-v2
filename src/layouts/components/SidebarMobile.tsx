@@ -1,10 +1,7 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { adminSections, Route } from '@/router';
-import { ReactComponent as Logo } from '@/assets/images/logo.svg';
-import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
 import { Chevron } from '@/components/icons';
-import IconButton from '@/components/button/IconButton';
 import { twMerge } from 'tailwind-merge';
 
 interface SidebarMobileProps {

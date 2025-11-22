@@ -186,9 +186,7 @@ export const countryOptions = [
 ];
 
 // Tabs - only connection info now since each subscription has one proxy
-export const proxyTabs = [
-  { key: 'connection', label: 'Thông tin kết nối' }
-];
+export const proxyTabs = [{ key: 'connection', label: 'Thông tin kết nối' }];
 
 interface ProxyDetailModalProps {
   open: boolean;
@@ -235,7 +233,17 @@ export const HeaderInfo: React.FC<HeaderInfoProps> = ({ expired, dataLeft, autoR
   );
 };
 
-export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, subscription, username, onClose, onPrev, onNext, nextItem, prevItem }) => {
+export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({
+  open,
+  item,
+  subscription,
+  username,
+  onClose,
+  onPrev,
+  onNext,
+  nextItem,
+  prevItem
+}) => {
   if (!item) return null;
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -338,7 +346,6 @@ export const ProxyDetailModal: React.FC<ProxyDetailModalProps> = ({ open, item, 
       <div className="h-full bg-bg-canvas dark:bg-bg-canvas-dark flex flex-col overflow-auto">
         {subscription && <ProxyConnectionInfo subscription={subscription} username={username} />}
       </div>
-
 
       <div className="absolute -translate-x-1/2 bottom-[72px] left-1/2 z-50">
         <ActionButtons />

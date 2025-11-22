@@ -112,6 +112,16 @@ export const navigationSections: NavigationSection[] = [
         name: '/components',
         breadcrumb: 'Components',
         hidden: true
+      },
+      {
+        title: 'Đơn hàng',
+        icon: <ArrowCounter />,
+        iconClass: 'text-blue',
+        breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
+        path: '/order',
+        name: '/order',
+        breadcrumb: 'Đơn hàng',
+        hidden: true
       }
     ]
   },

@@ -251,7 +251,7 @@ const DashboardPage = () => {
       align: 'left',
       sortable: true,
       render: (value) => (
-        <div className="line-clamp-1 font-mono text-xs flex items-center justify-between">
+        <div className="line-clamp-1 font-mono flex items-center justify-between">
           {value}
           <ContentCopy
             className="text-blue cursor-pointer ml-2"

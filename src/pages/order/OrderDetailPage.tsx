@@ -1,6 +1,15 @@
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
-import { CloudSwapFilled, ContentCopy, CheckMark, Replay, MagnifyingGlass, ArrowCounter } from '@/components/icons';
+import {
+  CloudSwapFilled,
+  ContentCopy,
+  CheckMark,
+  Replay,
+  MagnifyingGlass,
+  ArrowCounter,
+  ChatWarning,
+  DocumentSync
+} from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Checkbox } from '@/components/checkbox/Checkbox';
@@ -19,6 +28,10 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useSubscriptionStore } from '@/stores/subscription.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { Input } from '@/components/input/Input';
+import Tooltip from '@/components/tooltip/Tooltip';
+import { OrderInfoModal } from './OrderInfoModal';
+import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
+import { get } from 'http';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -89,9 +102,7 @@ const OrderDetailPage = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showProxyModal, setShowProxyModal] = useState(false);
   const [proxyList, setProxyList] = useState<string[]>([]);
-  const [showProtocolModal, setShowProtocolModal] = useState(false);
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
-  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<string | null>(null);
   const [selectedProtocol, setSelectedProtocol] = useState<'http' | 'socks5'>('http');
   const [showAutoRenewModal, setShowAutoRenewModal] = useState(false);
   const [selectedAutoRenew, setSelectedAutoRenew] = useState<string>('true');
@@ -127,19 +138,7 @@ const OrderDetailPage = () => {
     fetchOrderSubscriptions();
   }, [id]);
 
-  // Helper function to check if subscription is rotating proxy
-  const isRotatingProxy = (record: Subscription) => {
-    // Rotating proxies have plan type 'rotating' or category 'rotating'
-    return record.plan?.type === 'rotating' || record.plan?.category === 'rotating';
-  };
-
-  const handleChangeProtocol = (subscriptionId: string) => {
-    setSelectedSubscriptionId(subscriptionId);
-    setProtocolModalType('single');
-    setShowProtocolModal(true);
-  };
-
-  const handleSwitchProtocol = async () => {
+  const handleSwitchProtocol = async ({ selectedSubscriptionId }: { selectedSubscriptionId: string }) => {
     try {
       const protocol = selectedProtocol;
 
@@ -209,11 +208,6 @@ const OrderDetailPage = () => {
           toast.error(`Failed to switch protocol for ${failureCount} subscription(s). ${successCount} succeeded.`);
         }
       }
-
-      // Close modal and reset
-      setShowProtocolModal(false);
-      setSelectedSubscriptionId(null);
-      setSelectedProtocol('http');
     } catch (err) {
       console.error('Failed to switch protocol:', err);
       toast.error('Failed to switch protocol');
@@ -261,11 +255,6 @@ const OrderDetailPage = () => {
       console.error('Failed to get proxy:', err);
       toast.error('Failed to get proxy information');
     }
-  };
-
-  const handleRefreshSessionId = (subscriptionId: string) => {
-    const newSessionId = useSubscriptionStore.getState().generateNewSessionId(subscriptionId);
-    toast.success(`Session ID refreshed: ${newSessionId}`);
   };
 
   const handleCopyProxy = async (record: Subscription) => {
@@ -358,33 +347,8 @@ const OrderDetailPage = () => {
     }
   };
 
-  const handleBulkGetProxy = () => {
-    const selectedSubscriptions = subscriptions.filter((sub) => selectedIds.includes(sub.id));
-    const proxyStrings = selectedSubscriptions
-      .map((record) => {
-        const credentials = record.provider_credentials as any;
-        if (credentials && credentials.ProxyIP) {
-          const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
-          const username = credentials.Username || '';
-          const password = credentials.Password || '';
-          const ip = credentials.ProxyIP || '';
-          const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
-          return `${protocol}://${username}:${password}@${ip}:${port}`;
-        }
-        return null;
-      })
-      .filter(Boolean) as string[];
-
-    setProxyList(proxyStrings);
-    setShowProxyModal(true);
-  };
-
   const handleCopyAllProxies = () => {
     copyToClipboard(proxyList.join('\n'));
-  };
-
-  const handleBulkAutoRenew = () => {
-    setShowAutoRenewModal(true);
   };
 
   const handleSaveAutoRenew = async () => {
@@ -405,11 +369,6 @@ const OrderDetailPage = () => {
     } catch (err) {
       console.error('Failed to update bulk auto-renew:', err);
     }
-  };
-
-  const handleBulkSwitchProtocol = () => {
-    setProtocolModalType('bulk');
-    setShowProtocolModal(true);
   };
 
   const isAllSelected = subscriptions.length > 0 && selectedIds.length === subscriptions.length;
@@ -438,7 +397,19 @@ const OrderDetailPage = () => {
       key: 'subscription_id',
       title: 'ID',
       align: 'left',
-      render: (_, record) => <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
+      render: (_, record) => (
+        <div className="group flex items-center">
+          <p className="line-clamp-1 font-mono text-xs ">{record.id}</p>
+          <ContentCopy
+            className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              copyToClipboard(record.id);
+              toast.success('Đã sao chép mã đơn hàng vào clipboard');
+            }}
+          />
+        </div>
+      )
     },
     {
       width: isMobile || isTablet ? 200 : '',
@@ -446,12 +417,8 @@ const OrderDetailPage = () => {
       title: 'IP Address',
       align: 'left',
       render: (_, record) => {
-        const isRotating = isRotatingProxy(record);
-        if (isRotating) {
-          return <div className="line-clamp-1 font-mono text-xs">relay.prx.network</div>;
-        }
-        const credentials = record.provider_credentials as any;
-        return <div className="line-clamp-1 font-mono text-xs">{credentials?.ProxyIP || '-'}</div>;
+        const ipAddress = getIpAddressByProxyType(record);
+        return <div className="line-clamp-1 font-mono text-xs">{ipAddress}</div>;
       }
     },
     {
@@ -460,12 +427,7 @@ const OrderDetailPage = () => {
       title: 'Port',
       align: 'left',
       render: (_, record) => {
-        const isRotating = isRotatingProxy(record);
-        if (isRotating) {
-          return <div className="line-clamp-1 font-mono text-xs">80</div>;
-        }
-        const credentials = record.provider_credentials as any;
-        const port = credentials?.HTTPPort > 0 ? credentials.HTTPPort : credentials?.SOCKS5Port;
+        const port = getPortByProxyType(record);
         return <div className="line-clamp-1 font-mono text-xs">{port || '-'}</div>;
       }
     },
@@ -475,27 +437,8 @@ const OrderDetailPage = () => {
       title: 'Username',
       align: 'left',
       render: (_, record) => {
-        const isRotating = isRotatingProxy(record);
-        if (isRotating) {
-          const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
-          const authUser = useAuthStore.getState().user;
-          const authUsername = authUser?.username || 'user';
-          const country = subscriptionData?.country || 'us';
-          let sessionId = subscriptionData?.sessionId;
-
-          // Generate session ID if it doesn't exist
-          if (!sessionId) {
-            sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
-          }
-
-          let username = `npx-customer-${authUsername}-country-${country}`;
-          if (sessionId) {
-            username += `-session-${sessionId}`;
-          }
-          return <div className="line-clamp-1 font-mono text-xs">{username}</div>;
-        }
-        const credentials = record.provider_credentials as any;
-        return <div className="line-clamp-1 font-mono text-xs">{credentials?.Username || '-'}</div>;
+        const username = getUsernameByProxyType(record);
+        return <div className="line-clamp-1 font-mono text-xs">{username}</div>;
       }
     },
     {
@@ -504,12 +447,8 @@ const OrderDetailPage = () => {
       title: 'Password',
       align: 'left',
       render: (_, record) => {
-        const isRotating = isRotatingProxy(record);
-        if (isRotating) {
-          return <div className="line-clamp-1 font-mono text-xs">{record.api_key.substring(0, 20)}...</div>;
-        }
-        const credentials = record.provider_credentials as any;
-        return <div className="line-clamp-1 font-mono text-xs">{credentials?.Password || '********'}</div>;
+        const { displayPassword } = getPasswordByProxyType(record);
+        return <div className="line-clamp-1 font-mono text-xs">{displayPassword}</div>;
       }
     },
     {
@@ -565,7 +504,7 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 200 : 250,
+      width: 200,
       fixed: 'right',
       key: 'actions',
       title: 'Hành động',
@@ -574,6 +513,53 @@ const OrderDetailPage = () => {
         const isRotating = isRotatingProxy(record);
         return (
           <div className="flex items-center justify-center gap-2">
+            {' '}
+            {!isRotating && (
+              <>
+                <IconButton
+                  icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400" />}
+                  className="w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  onClick={() => {
+                    setProtocolModalType('single');
+                    const credentials = record.provider_credentials as any;
+                    const connectionType = credentials?.HTTPPort > 0 ? 'http' : credentials?.SOCKS5Port > 0 ? 'socks5' : '-';
+                    setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
+                    handleSwitchProtocol({ selectedSubscriptionId: record.id });
+                  }}
+                  title="Change Protocol"
+                />
+                <IconButton
+                  icon={<Replay className="text-orange-600 dark:text-orange-400" />}
+                  className="w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
+                  onClick={() => handleGetProxy(record.id)}
+                  title="Get Proxy"
+                />
+              </>
+            )}
+            <IconButton
+              className={`w-8 h-8 ${
+                copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
+              }`}
+              icon={<DocumentSync />}
+              onClick={() => {
+                const ip = getIpAddressByProxyType(record);
+                const port = getPortByProxyType(record);
+                const username = getUsernameByProxyType(record);
+                const { plainPassword } = getPasswordByProxyType(record);
+
+                const proxyString = `${ip}:${port}:${username}:${plainPassword}`;
+                const blob = new Blob([proxyString], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `proxy_${record.id}.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                toast.success('Proxy exported successfully');
+              }}
+            />
             <IconButton
               icon={
                 copiedId === record.id ? (
@@ -588,22 +574,6 @@ const OrderDetailPage = () => {
               onClick={() => handleCopyProxy(record)}
               title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
             />
-            {!isRotating && (
-              <>
-                <IconButton
-                  icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400" />}
-                  className="w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                  onClick={() => handleChangeProtocol(record.id)}
-                  title="Change Protocol"
-                />
-                <IconButton
-                  icon={<Replay className="text-orange-600 dark:text-orange-400" />}
-                  className="w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
-                  onClick={() => handleGetProxy(record.id)}
-                  title="Get Proxy"
-                />
-              </>
-            )}
           </div>
         );
       }
@@ -650,6 +620,7 @@ const OrderDetailPage = () => {
             />
             <div className="flex items-center gap-2">
               <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+              <OrderInfoModal />
             </div>
           </div>
         </div>
@@ -703,52 +674,6 @@ const OrderDetailPage = () => {
             className="w-full h-96 p-3 rounded-lg bg-bg-mute dark:bg-bg-mute-dark text-text-hi dark:text-text-hi-dark font-mono text-xs border border-border-element dark:border-border-element-dark focus:outline-none focus:ring-2 focus:ring-blue dark:focus:ring-blue-dark resize-none"
             placeholder="Không có proxy nào được chọn"
           />
-        </div>
-      </Modal>
-
-      {/* Protocol Selection Modal */}
-      <Modal
-        open={showProtocolModal}
-        title="Edit Protocol"
-        onClose={() => {
-          setShowProtocolModal(false);
-          setSelectedSubscriptionId(null);
-          setSelectedProtocol('http');
-        }}
-        className="max-w-md"
-        bodyClassName="p-5"
-        actions={[
-          <Button
-            key="cancel"
-            variant="outlined"
-            onClick={() => {
-              setShowProtocolModal(false);
-              setSelectedSubscriptionId(null);
-              setSelectedProtocol('http');
-            }}
-          >
-            Cancel
-          </Button>,
-          <Button key="save" onClick={handleSwitchProtocol}>
-            Save
-          </Button>
-        ]}
-      >
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-text-hi dark:text-text-hi-dark mb-2">
-              Protocol <span className="text-red-500">*</span>
-            </label>
-            <Select
-              options={[
-                { value: 'http', label: 'HTTP' },
-                { value: 'socks5', label: 'SOCKS5' }
-              ]}
-              value={selectedProtocol}
-              onChange={(value) => setSelectedProtocol(value as 'http' | 'socks5')}
-              placeholder="Select protocol"
-            />
-          </div>
         </div>
       </Modal>
 

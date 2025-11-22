@@ -1,6 +1,6 @@
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
-import { ArrowRotate, CloudSwapFilled, ContentCopy, CheckMark, Replay } from '@/components/icons';
+import { CloudSwapFilled, ContentCopy, CheckMark, Replay, MagnifyingGlass, ArrowCounter } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Checkbox } from '@/components/checkbox/Checkbox';
@@ -18,6 +18,7 @@ import { sectionVariants } from '@/utils/animation';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useSubscriptionStore } from '@/stores/subscription.store';
 import { useAuthStore } from '@/stores/auth.store';
+import { Input } from '@/components/input/Input';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -40,7 +41,7 @@ const COUNTRY_OPTIONS = [
   { label: 'Indonesia', value: 'ID' },
   { label: 'Hong Kong', value: 'HK' },
   { label: 'Taiwan', value: 'TW' },
-  { label: 'Pakistan', value: 'PK' },
+  { label: 'Pakistan', value: 'PK' }
 ];
 
 // Country Select Cell Component for Table
@@ -157,8 +158,8 @@ const OrderDetailPage = () => {
                       HTTPPort: response.http_port,
                       SOCKS5Port: response.socks5_port,
                       Username: response.username,
-                      Password: response.password,
-                    },
+                      Password: response.password
+                    }
                   }
                 : s
             )
@@ -167,9 +168,7 @@ const OrderDetailPage = () => {
         }
       } else if (protocolModalType === 'bulk') {
         // Bulk switch - filter out rotating proxies
-        const selectedSubscriptions = subscriptions
-          .filter((sub) => selectedIds.includes(sub.id))
-          .filter((sub) => !isRotatingProxy(sub)); // Skip rotating proxies
+        const selectedSubscriptions = subscriptions.filter((sub) => selectedIds.includes(sub.id)).filter((sub) => !isRotatingProxy(sub)); // Skip rotating proxies
 
         let successCount = 0;
         let failureCount = 0;
@@ -190,8 +189,8 @@ const OrderDetailPage = () => {
                           HTTPPort: response.http_port,
                           SOCKS5Port: response.socks5_port,
                           Username: response.username,
-                          Password: response.password,
-                        },
+                          Password: response.password
+                        }
                       }
                     : s
                 )
@@ -250,8 +249,8 @@ const OrderDetailPage = () => {
                   HTTPPort: response.http_port,
                   SOCKS5Port: response.socks5_port,
                   Username: response.username,
-                  Password: response.password,
-                } as any,
+                  Password: response.password
+                } as any
               }
             : sub
         )
@@ -332,18 +331,14 @@ const OrderDetailPage = () => {
   const handleAutoRenewChange = async (subscriptionId: string, checked: boolean) => {
     try {
       // Optimistically update UI
-      setSubscriptions((prev) =>
-        prev.map((sub) => (sub.id === subscriptionId ? { ...sub, auto_renew: checked } : sub))
-      );
+      setSubscriptions((prev) => prev.map((sub) => (sub.id === subscriptionId ? { ...sub, auto_renew: checked } : sub)));
 
       // Call backend API
       await subscriptionService.updateAutoRenew(subscriptionId, checked);
     } catch (err) {
       console.error('Failed to update auto-renew:', err);
       // Revert on error
-      setSubscriptions((prev) =>
-        prev.map((sub) => (sub.id === subscriptionId ? { ...sub, auto_renew: !checked } : sub))
-      );
+      setSubscriptions((prev) => prev.map((sub) => (sub.id === subscriptionId ? { ...sub, auto_renew: !checked } : sub)));
     }
   };
 
@@ -365,18 +360,20 @@ const OrderDetailPage = () => {
 
   const handleBulkGetProxy = () => {
     const selectedSubscriptions = subscriptions.filter((sub) => selectedIds.includes(sub.id));
-    const proxyStrings = selectedSubscriptions.map((record) => {
-      const credentials = record.provider_credentials as any;
-      if (credentials && credentials.ProxyIP) {
-        const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
-        const username = credentials.Username || '';
-        const password = credentials.Password || '';
-        const ip = credentials.ProxyIP || '';
-        const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
-        return `${protocol}://${username}:${password}@${ip}:${port}`;
-      }
-      return null;
-    }).filter(Boolean) as string[];
+    const proxyStrings = selectedSubscriptions
+      .map((record) => {
+        const credentials = record.provider_credentials as any;
+        if (credentials && credentials.ProxyIP) {
+          const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
+          const username = credentials.Username || '';
+          const password = credentials.Password || '';
+          const ip = credentials.ProxyIP || '';
+          const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
+          return `${protocol}://${username}:${password}@${ip}:${port}`;
+        }
+        return null;
+      })
+      .filter(Boolean) as string[];
 
     setProxyList(proxyStrings);
     setShowProxyModal(true);
@@ -398,9 +395,7 @@ const OrderDetailPage = () => {
       const autoRenewValue = selectedAutoRenew === 'true';
 
       // Process all subscriptions with selected auto-renew value
-      const promises = selectedSubscriptions.map(sub =>
-        handleAutoRenewChange(sub.id, autoRenewValue)
-      );
+      const promises = selectedSubscriptions.map((sub) => handleAutoRenewChange(sub.id, autoRenewValue));
 
       await Promise.all(promises);
 
@@ -423,20 +418,11 @@ const OrderDetailPage = () => {
   const columns: TableColumn<Subscription>[] = [
     {
       key: 'checkbox',
-      title: (
-        <Checkbox
-          checked={isAllSelected}
-          indeterminate={isIndeterminate}
-          onChange={handleSelectAll}
-        />
-      ),
+      title: <Checkbox checked={isAllSelected} indeterminate={isIndeterminate} onChange={handleSelectAll} />,
       width: '50px',
       align: 'center',
       render: (_, record) => (
-        <Checkbox
-          checked={selectedIds.includes(record.id)}
-          onChange={(checked) => handleSelectOne(record.id, checked)}
-        />
+        <Checkbox checked={selectedIds.includes(record.id)} onChange={(checked) => handleSelectOne(record.id, checked)} />
       )
     },
     {
@@ -446,28 +432,13 @@ const OrderDetailPage = () => {
       align: 'center',
       render: (_, __, index) => index + 1
     },
-    {
-      width: isMobile || isTablet ? 200 : 180,
-      key: 'country_code',
-      title: 'Country',
-      align: 'center',
-      render: (_, record) => {
-        const isRotating = isRotatingProxy(record);
-        if (isRotating) {
-          return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
-        }
-        // For non-rotating proxies, show as plain text
-        return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
-      }
-    },
+
     {
       width: isMobile || isTablet ? 200 : '',
       key: 'subscription_id',
       title: 'ID',
       align: 'left',
-      render: (_, record) => (
-        <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
-      )
+      render: (_, record) => <div className="line-clamp-1 font-mono text-xs">{record.id}</div>
     },
     {
       width: isMobile || isTablet ? 200 : '',
@@ -544,7 +515,7 @@ const OrderDetailPage = () => {
     {
       width: isMobile || isTablet ? 150 : '',
       key: 'connection_type',
-      title: 'Connection Type',
+      title: 'Type',
       align: 'center',
       render: (_, record) => {
         const isRotating = isRotatingProxy(record);
@@ -554,9 +525,7 @@ const OrderDetailPage = () => {
         let textColor = '#374151';
 
         if (isRotating) {
-          connectionType = 'Rotating';
-          bgColor = '#fef3c7';
-          textColor = '#b45309';
+          connectionType = 'HTTPS';
         } else {
           const credentials = record.provider_credentials as any;
           connectionType = credentials?.HTTPPort > 0 ? 'HTTP' : credentials?.SOCKS5Port > 0 ? 'SOCKS5' : '-';
@@ -569,29 +538,8 @@ const OrderDetailPage = () => {
           }
         }
 
-        return (
-          <div
-            className="px-2 py-1 rounded text-xs font-semibold"
-            style={{ backgroundColor: bgColor, color: textColor }}
-          >
-            {connectionType}
-          </div>
-        );
+        return <div className="px-2 py-1 rounded text-xs font-semibold">{connectionType}</div>;
       }
-    },
-    {
-      width: isMobile || isTablet ? 200 : '',
-      key: 'plan',
-      title: 'Plan',
-      align: 'left',
-      render: (_, record) => <div className="line-clamp-1 text-xs">{record.plan?.name || '-'}</div>
-    },
-    {
-      width: isMobile || isTablet ? 150 : '',
-      key: 'api_key',
-      title: 'API Key',
-      align: 'left',
-      render: (_, record) => <div className="line-clamp-1 font-mono text-xs">{record.api_key || '-'}</div>
     },
     {
       width: 150,
@@ -599,12 +547,22 @@ const OrderDetailPage = () => {
       title: 'Renew-Auto',
       align: 'center',
       render: (_, record) => (
-        <Switch
-          size="md"
-          checked={record.auto_renew}
-          onChange={(checked) => handleAutoRenewChange(record.id, checked)}
-        />
+        <Switch size="md" checked={record.auto_renew} onChange={(checked) => handleAutoRenewChange(record.id, checked)} />
       )
+    },
+    {
+      width: isMobile || isTablet ? 200 : 180,
+      key: 'country_code',
+      title: 'Country',
+      align: 'center',
+      render: (_, record) => {
+        const isRotating = isRotatingProxy(record);
+        if (isRotating) {
+          return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
+        }
+        // For non-rotating proxies, show as plain text
+        return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
+      }
     },
     {
       width: isMobile || isTablet ? 200 : 250,
@@ -625,21 +583,12 @@ const OrderDetailPage = () => {
                 )
               }
               className={`w-8 h-8 ${
-                copiedId === record.id
-                  ? 'bg-green-50 dark:bg-green-900/30'
-                  : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
+                copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
               }`}
               onClick={() => handleCopyProxy(record)}
               title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
             />
-            {isRotating ? (
-              <IconButton
-                icon={<ArrowRotate className="text-blue-600 dark:text-blue-400" />}
-                className="w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                onClick={() => handleRefreshSessionId(record.id)}
-                title="Refresh Session ID"
-              />
-            ) : (
+            {!isRotating && (
               <>
                 <IconButton
                   icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400" />}
@@ -692,60 +641,15 @@ const OrderDetailPage = () => {
       >
         {/* Header */}
         <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark border-b-2 border-border-element dark:border-border-element-dark">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-text-hi dark:text-text-hi-dark mb-2">
-                {planName}
-              </h1>
-              <p className="text-sm text-text-lo dark:text-text-lo-dark">
-                Mã đơn hàng: <span className="font-mono font-semibold">{id}</span>
-              </p>
-            </div>
-            <Button variant="outlined" onClick={() => navigate('/home')}>
-              Quay lại
-            </Button>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div className="px-5 py-4 bg-bg-surface dark:bg-bg-surface-dark">
-          <p className="text-sm text-text-lo dark:text-text-lo-dark leading-relaxed">
-            Nếu bạn muốn IP định cố định cho kết nối, thêm một session id vào phần username (ví dụ: user_session123).
-            Nếu bạn không thêm session id thì hệ thống sẽ tự động xoay IP sau mỗi lần kết thành công (default rotation).
-          </p>
-        </div>
-
-        {/* Search and actions bar */}
-        <div className="px-5 py-3 bg-bg-canvas dark:bg-bg-canvas-dark border-b-2 border-border-element dark:border-border-element-dark">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-3">
+            <Input
+              placeholder="Tìm kiếm"
+              wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
+              icon={<MagnifyingGlass />}
+              onChange={(e) => console.log(e.target.value)}
+            />
             <div className="flex items-center gap-2">
-              <span className="text-sm text-text-hi dark:text-text-hi-dark">Trang {currentPage}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outlined"
-                size="sm"
-                onClick={handleBulkGetProxy}
-                disabled={selectedIds.length === 0}
-              >
-                Get proxy ({selectedIds.length})
-              </Button>
-              <Button
-                variant="outlined"
-                size="sm"
-                onClick={handleBulkAutoRenew}
-                disabled={selectedIds.length === 0}
-              >
-                Bật / Tắt tự động gia hạn ({selectedIds.length})
-              </Button>
-              <Button
-                variant="outlined"
-                size="sm"
-                onClick={handleBulkSwitchProtocol}
-                disabled={selectedIds.length === 0}
-              >
-                Change Protocol ({selectedIds.length})
-              </Button>
+              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
             </div>
           </div>
         </div>
@@ -814,11 +718,15 @@ const OrderDetailPage = () => {
         className="max-w-md"
         bodyClassName="p-5"
         actions={[
-          <Button key="cancel" variant="outlined" onClick={() => {
-            setShowProtocolModal(false);
-            setSelectedSubscriptionId(null);
-            setSelectedProtocol('http');
-          }}>
+          <Button
+            key="cancel"
+            variant="outlined"
+            onClick={() => {
+              setShowProtocolModal(false);
+              setSelectedSubscriptionId(null);
+              setSelectedProtocol('http');
+            }}
+          >
             Cancel
           </Button>,
           <Button key="save" onClick={handleSwitchProtocol}>
@@ -855,10 +763,14 @@ const OrderDetailPage = () => {
         className="max-w-md"
         bodyClassName="p-5"
         actions={[
-          <Button key="cancel" variant="outlined" onClick={() => {
-            setShowAutoRenewModal(false);
-            setSelectedAutoRenew('true');
-          }}>
+          <Button
+            key="cancel"
+            variant="outlined"
+            onClick={() => {
+              setShowAutoRenewModal(false);
+              setSelectedAutoRenew('true');
+            }}
+          >
             Cancel
           </Button>,
           <Button key="save" onClick={handleSaveAutoRenew}>

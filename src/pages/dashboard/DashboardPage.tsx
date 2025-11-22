@@ -5,6 +5,7 @@ import {
   Add,
   ArrowCounter,
   CartFilled,
+  ContentCopy,
   GridDots,
   MagnifyingGlass,
   Person,
@@ -24,6 +25,10 @@ import { subscriptionService } from '@/services/subscription/subscription.servic
 import { Order } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import moment from 'moment';
+import { useAuthStore } from '@/stores/auth.store';
+import { copyToClipboard } from '@/utils/copyToClipboard';
+import { toast } from 'sonner';
+import { Badge } from '@/components/badge/Badge';
 
 export const data = [
   {
@@ -169,6 +174,7 @@ interface OrderTableData {
   plan_name: string; // First subscription's plan name
   subscription_count: number; // Total subscriptions in order
   fulfilled_at: string; // Order fulfillment date (or created_at if not fulfilled)
+  duration: string; // Duration calculated by the first subscription
 }
 
 const DashboardPage = () => {
@@ -185,6 +191,8 @@ const DashboardPage = () => {
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
+  const userProfile = useAuthStore((state) => state.userProfile);
+  const [totalSubscriptions, setTotalSubscriptions] = useState(0);
 
   // Fetch data on mount
   useEffect(() => {
@@ -197,6 +205,7 @@ const DashboardPage = () => {
         const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active' });
 
         setOrders(ordersResponse.orders || []);
+        setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
 
         // Transform orders to table data
         const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
@@ -206,7 +215,8 @@ const DashboardPage = () => {
             order_number: order.order_number,
             plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
             subscription_count: order.subscriptions?.length || 0,
-            fulfilled_at: order.fulfilled_at || order.created_at
+            fulfilled_at: order.fulfilled_at || order.created_at,
+            duration: firstSubscription?.plan?.duration ? moment.duration(firstSubscription.plan.duration, 'seconds').humanize() : 'N/A'
           };
         });
         setTableData(transformedData);
@@ -240,7 +250,19 @@ const DashboardPage = () => {
       title: 'Mã đơn hàng',
       align: 'left',
       sortable: true,
-      render: (value) => <div className="line-clamp-1 font-mono text-xs">{value}</div>
+      render: (value) => (
+        <div className="line-clamp-1 font-mono text-xs flex items-center justify-between">
+          {value}
+          <ContentCopy
+            className="text-blue cursor-pointer ml-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              copyToClipboard(value);
+              toast.success('Đã sao chép mã đơn hàng vào clipboard');
+            }}
+          />
+        </div>
+      )
     },
     {
       width: isMobile || isTablet ? 200 : '',
@@ -259,11 +281,27 @@ const DashboardPage = () => {
       render: (value) => <div className="font-semibold">{value}</div>
     },
     {
+      key: 'expired',
+      title: 'Duration',
+      width: isMobile || isTablet ? 150 : 200,
+      render: (_, record) => {
+        return <div className="font-semibold capitalize">{record.duration}</div>;
+      }
+    },
+    {
       width: 150,
       key: 'fulfilled_at',
       title: 'Ngày mua',
       sortable: true,
       render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
+    },
+
+    {
+      key: 'subscriptions',
+      title: 'Trạng thái',
+      width: '160px',
+      align: 'center',
+      render: (subs) => <Badge color={'blue'}>Đang hoạt động</Badge> // Always active for now
     },
     {
       width: isMobile || isTablet ? 150 : 200,
@@ -379,10 +417,10 @@ const DashboardPage = () => {
                 mainContent={
                   <div className="flex items-center font-averta">
                     <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
-                    <span className="text-blue dark:text-blue-dark font-semibold text-xl">50.00</span>
+                    <span className="text-blue dark:text-blue-dark font-semibold text-xl">{userProfile?.balance || '-'}</span>
                   </div>
                 }
-                subInfo={[{ label: 'Đã chi tiêu', value: '$20.00' }]}
+                subInfo={[{ label: 'Đã chi tiêu', value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }]}
                 buttonText="NẠP THÊM"
                 onButtonClick={() => setOpen(true)}
               />,
@@ -397,7 +435,7 @@ const DashboardPage = () => {
                 mainContent={
                   <div>
                     <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">
-                      {loading ? '...' : tableData.length}
+                      {loading ? '...' : totalSubscriptions}
                     </span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
                   </div>

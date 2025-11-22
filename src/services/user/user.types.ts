@@ -10,6 +10,7 @@ export interface UserProfile {
   balance: number;
   is_banned: boolean;
   ban_reason?: string | null;
+  total_purchased: number;
 }
 
 // Update profile request - matches UpdateProfileRequest from backend
@@ -28,5 +29,5 @@ export interface UpdateProfileResponse {
 // User role types
 export enum UserRole {
   USER = 'user',
-  ADMIN = 'admin',
+  ADMIN = 'admin'
 }

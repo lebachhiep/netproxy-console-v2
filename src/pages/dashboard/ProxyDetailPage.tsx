@@ -1,5 +1,5 @@
 // src/pages/proxy/ProxyDetailPage.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowCounter, Chevron, ContentCopy, Eye, EyeOff, FileCopy, Key, Language, Location, MagnifyingGlass } from '@/components/icons';
 import IconButton from '@/components/button/IconButton';
@@ -11,7 +11,6 @@ import {
   proxyTabs,
   columnsBandwidth,
   countryOptions,
-  HeaderInfo,
   locationOptions,
   optionsTagSelect,
   ProxyData
@@ -22,10 +21,9 @@ import { ApiInput } from '@/components/input/ApiInput';
 import { ActionButtons } from '@/components/button/ActionButtons';
 import { Switch } from '@/components/switch/Switch';
 import { Button } from '@/components/button/Button';
-import { useResponsive } from '@/hooks/useResponsive';
 import { Pagination } from '@/components/pagination/Pagination';
 import { toast } from 'sonner';
-import { motion, Variants } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { sectionVariants } from '@/utils/animation';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
@@ -33,11 +31,9 @@ export const ProxyDetailPage = () => {
   const pageTitle = usePageTitle({ pageName: 'Chi tiết proxy' });
   const { id } = useParams();
   const navigate = useNavigate();
-  const [autoRenew, setAutoRenew] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const { isMobile } = useResponsive();
   const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
   const [isHideApiValue, setIsHideApiValue] = useState(true);
 

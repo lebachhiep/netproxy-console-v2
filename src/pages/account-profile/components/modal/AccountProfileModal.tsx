@@ -46,7 +46,8 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
       avatar_url: user?.avatar_url ?? null,
       balance: user?.balance ?? 0,
       is_banned: user?.is_banned ?? false,
-      ban_reason: user?.ban_reason ?? null
+      ban_reason: user?.ban_reason ?? null,
+      total_purchased: user?.total_purchased ?? 0
     }
   });
 

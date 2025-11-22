@@ -50,7 +50,8 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
       avatar_url: userProfile?.avatar_url ?? null,
       balance: userProfile?.balance ?? 0,
       is_banned: userProfile?.is_banned ?? false,
-      ban_reason: userProfile?.ban_reason ?? null
+      ban_reason: userProfile?.ban_reason ?? null,
+      total_purchased: userProfile?.total_purchased ?? 0
     }
   });
 
@@ -81,7 +82,8 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
         avatar_url: userProfile.avatar_url ?? null,
         balance: userProfile.balance ?? 0,
         is_banned: userProfile.is_banned ?? false,
-        ban_reason: userProfile.ban_reason ?? null
+        ban_reason: userProfile.ban_reason ?? null,
+        total_purchased: userProfile.total_purchased ?? 0
       });
     }
   }, [userProfile, resetProfileForm]);

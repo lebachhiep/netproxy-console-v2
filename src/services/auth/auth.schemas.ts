@@ -76,7 +76,8 @@ export const userProfileSchema = z.object({
   avatar_url: z.string().url('URL avatar không hợp lệ').max(255, 'URL không được vượt quá 255 ký tự').optional().nullable(),
   balance: z.number().nonnegative('Số dư không được âm'),
   is_banned: z.boolean(),
-  ban_reason: z.string().optional().nullable()
+  ban_reason: z.string().optional().nullable(),
+  total_purchased: z.number().nonnegative('Tổng mua không được âm')
 });
 
 // Type inference for form data

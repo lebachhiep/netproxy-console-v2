@@ -435,12 +435,12 @@ const DashboardPage = () => {
                 mainContent={
                   <div>
                     <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">
-                      {loading ? '...' : totalSubscriptions}
+                      {loading ? '...' : tableData.length}
                     </span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
                   </div>
                 }
-                subInfo={[{ label: 'Tổng gói', value: `${loading ? '...' : tableData.length} gói` }]}
+                subInfo={[{ label: 'Tổng gói', value: `${loading ? '...' : totalSubscriptions} gói` }]}
                 buttonText="MUA THÊM"
                 onButtonClick={() => navigate('/buy')}
               />,

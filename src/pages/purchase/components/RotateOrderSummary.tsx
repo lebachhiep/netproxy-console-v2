@@ -1,19 +1,18 @@
 import React, { useRef, useState } from 'react';
 import { Country } from './table/CountrySelector';
-import { SectionTitle } from '@/components/SectionTitle';
 import { Add, CartFilled, Delete, Subtract } from '@/components/icons';
-import { Divider } from '@/components/divider/Divider';
-import { Button } from '@/components/button/Button';
 import { useResponsive } from '@/hooks/useResponsive';
 import { DesktopSummary } from './DesktopSummary';
 import IconButton from '@/components/button/IconButton';
 import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
-import { CartItem, getTabKeyFromPlan, CartTabKey } from '@/contexts/CartContext';
-import Tooltip from '@/components/tooltip/Tooltip';
+import { CartItem, getTabKeyFromPlan } from '@/contexts/CartContext';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
+import { RotateDesktopSummary } from './RotateDesktopSummary';
+import { toast } from 'sonner';
+import clsx from 'clsx';
 
 // Register locales
 countries.registerLocale(en);
@@ -40,9 +39,10 @@ interface Props {
   proxyType?: string; // Proxy type for dedicated tabs (e.g., "Premium ISP", "Private IPv4")
   duration?: number; // Duration in days (e.g., 7, 30)
   filterPlanType?: 'rotating' | 'dedicated' | 'static'; // Filter cart items by plan type
+  handleCloseModal?: () => void;
 }
 
-const OrderSummary: React.FC<Props> = ({
+const RotateOrderSummary: React.FC<Props> = ({
   orders: propOrders = [],
   onUpdateQuantity,
   onRemove,
@@ -50,7 +50,8 @@ const OrderSummary: React.FC<Props> = ({
   useCartContext = false,
   proxyType,
   duration,
-  filterPlanType
+  filterPlanType,
+  handleCloseModal
 }) => {
   const { isMobile, isTablet } = useResponsive();
   const cart = useCartContext ? useCart() : null;
@@ -239,212 +240,196 @@ const OrderSummary: React.FC<Props> = ({
   };
 
   return (
-    <>
+    <div>
       {/* Desktop */}
       {!isMobile && !isTablet ? (
-        <div className="bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark p-5 flex flex-col h-full !pb-0">
+        <div className=" flex flex-col h-full">
           {/* Header */}
           {/* <SectionTitle text="Đơn hàng" icon={<Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={onClearAll} />} /> */}
 
           {/* Scrollable order list */}
-          <div className="flex-1 mt-5 flex flex-col min-h-28 overflow-visible">
-            {/* Header row */}
-            <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 pb-3 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark">
-              <span>Country</span>
-              <span className="w-[42px] text-center">Giá</span>
-              <span className="w-[100px] text-center">Số lượng</span>
-              <span className="w-[60px] text-center">Tổng</span>
-              <span className="w-[20px] text-center"></span>
-            </div>
+          <div className="px-5 pt-5">
+            <div className="flex-1 flex flex-col overflow-visible  rounded-xl shadow-xs text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark">
+              {/* Header row */}
+              <div className="grid grid-cols-[1fr_1fr_1fr] gap-5 pb-3 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark p-2">
+                <span className="w-full text-start">Giá</span>
+                <span className="w-full text-center">Số lượng</span>
+                <span className="text-end w-full">Thành tiền</span>
+              </div>
 
-            {/* List items */}
-            <div className="space-y-3 mt-3 mb-5 pb-5 overflow-y-auto flex-1">
-              {useCartContext && cart
-                ? // Render cart items (already filtered by filterPlanType if provided)
-                  // Check if orders are CartItems or OrderItemTypes
-                  orders.map((item: any) => {
-                    // If item has 'plan' property, it's a CartItem
-                    // If item has 'country' property, it's an OrderItemType
-                    const isCartItem = 'plan' in item;
+              {/* List items */}
+              <div className="space-y-3 overflow-y-auto flex-1 p-2">
+                {useCartContext && cart
+                  ? // Render cart items (already filtered by filterPlanType if provided)
+                    // Check if orders are CartItems or OrderItemTypes
+                    orders.map((item: any) => {
+                      // If item has 'plan' property, it's a CartItem
+                      // If item has 'country' property, it's an OrderItemType
+                      const isCartItem = 'plan' in item;
 
-                    if (isCartItem) {
-                      // Render as CartItem
-                      return (
-                        <div
-                          key={item.id}
-                          className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
-                        >
-                          {/* Tên gói */}
-                          <div className="text-text-hi dark:text-text-hi-dark min-w-0">
-                            <Tooltip content={item.plan.name} position="top" disabled={item.plan.name.length <= 12}>
-                              <div className="truncate">{item.plan.name}</div>
-                            </Tooltip>
-                            {item.country && (
-                              <div className="text-xs text-text-lo dark:text-text-lo-dark mt-1 flex items-center gap-1">
-                                <img
-                                  src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
-                                  className="inline w-4 h-3"
-                                  alt={item.country}
-                                />
-                                <span>{getCountryName(item.country)}</span>
-                              </div>
-                            )}
-                          </div>
+                      if (isCartItem) {
+                        // Render as CartItem
+                        return (
+                          <div key={item.id} className="grid grid-cols-[1fr_1fr_1fr] gap-5 text-sm font-medium items-center">
+                            {/* Đơn giá */}
+                            <div className="text-star text-primary dark:text-primary-dark font-semibold">
+                              ${(item.calculatedPrice ?? item.plan.price).toFixed(2)}
+                            </div>
 
-                          {/* Đơn giá */}
-                          <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
-                            ${(item.calculatedPrice ?? item.plan.price).toFixed(2)}
-                          </div>
-
-                          {/* Số lượng */}
-                          <div className="w-[100px]">
-                            <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
-                              >
-                                <Subtract className="text-text-lo dark:text-text-lo-dark " />
-                              </div>
-                              {editingItemId === item.id ? (
-                                <input
-                                  type="text"
-                                  value={editValue}
-                                  onChange={handleQuantityInputChange}
-                                  onBlur={handleQuantityInputBlur}
-                                  onKeyDown={handleQuantityInputKeyPress}
-                                  className="w-12 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
-                                  autoFocus
-                                />
-                              ) : (
-                                <span
-                                  className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
-                                  onDoubleClick={() => handleDoubleClickQuantity(item)}
-                                  title="Double click để chỉnh sửa"
+                            {/* Số lượng */}
+                            <div className="w-[100px] mx-auto">
+                              <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
+                                <div
+                                  role="button"
+                                  className={clsx(
+                                    'shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent',
+                                    {
+                                      'opacity-50 cursor-not-allowed pointer-events-none': item.quantity <= 1
+                                    }
+                                  )}
+                                  onClick={() => {
+                                    if (item.quantity <= 1) {
+                                      toast.error('Số lượng tối thiểu là 1');
+                                      return;
+                                    }
+                                    handleUpdateQuantity(item, item.quantity - 1);
+                                  }}
                                 >
-                                  {item.quantity}
-                                </span>
-                              )}
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
-                              >
-                                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
+                                  <Subtract className="text-text-lo dark:text-text-lo-dark " />
+                                </div>
+                                {editingItemId === item.id ? (
+                                  <input
+                                    type="text"
+                                    value={editValue}
+                                    onChange={handleQuantityInputChange}
+                                    onBlur={handleQuantityInputBlur}
+                                    onKeyDown={handleQuantityInputKeyPress}
+                                    className="w-12 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
+                                    autoFocus
+                                  />
+                                ) : (
+                                  <span
+                                    className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
+                                    onDoubleClick={() => handleDoubleClickQuantity(item)}
+                                    title="Double click để chỉnh sửa"
+                                  >
+                                    {item.quantity}
+                                  </span>
+                                )}
+                                <div
+                                  className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
+                                  onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
+                                >
+                                  <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Tổng */}
-                          <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
-                            ${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}
-                          </div>
-
-                          {/* Nút xóa */}
-                          <IconButton
-                            className="w-8 h-8"
-                            icon={<Delete className="w-5 h-5" />}
-                            onClick={() => handleRemove(item)}
-                            aria-label="Xóa khỏi giỏ hàng"
-                          />
-                        </div>
-                      );
-                    } else {
-                      // Render as OrderItemType (for dedicated tabs)
-                      const orderItem = item as OrderItemType;
-                      return (
-                        <div
-                          key={orderItem.country.id}
-                          className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
-                        >
-                          {/* Quốc gia */}
-                          <div className="text-text-hi dark:text-text-hi-dark">{orderItem.country.name}</div>
-
-                          {/* Đơn giá */}
-                          <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
-                            ${orderItem.price.toFixed(2)}
-                          </div>
-
-                          {/* Số lượng */}
-                          <div className="w-[100px]">
-                            <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity - 1)}
-                              >
-                                <Subtract className="text-text-lo dark:text-text-lo-dark " />
-                              </div>
-                              <span className="text-text-hi dark:text-text-hi-dark">{orderItem.quantity}</span>
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity + 1)}
-                              >
-                                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
-                              </div>
+                            {/* Tổng */}
+                            <div className="text-end text-text-hi dark:text-text-hi-dark w-full select-none">
+                              ${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}
                             </div>
                           </div>
+                        );
+                      } else {
+                        // Render as OrderItemType (for dedicated tabs)
+                        const orderItem = item as OrderItemType;
+                        return (
+                          <div
+                            key={orderItem.country.id}
+                            className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
+                          >
+                            {/* Quốc gia */}
+                            <div className="text-text-hi dark:text-text-hi-dark">{orderItem.country.name}</div>
 
-                          {/* Tổng */}
-                          <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
-                            ${(orderItem.price * orderItem.quantity).toFixed(2)}
-                          </div>
+                            {/* Đơn giá */}
+                            <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
+                              ${orderItem.price.toFixed(2)}
+                            </div>
 
-                          {/* Nút xóa */}
-                          <IconButton
+                            {/* Số lượng */}
+                            <div className="w-[100px]">
+                              <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
+                                <div
+                                  className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
+                                  onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity - 1)}
+                                >
+                                  <Subtract className="text-text-lo dark:text-text-lo-dark " />
+                                </div>
+                                <span className="text-text-hi dark:text-text-hi-dark">{orderItem.quantity}</span>
+                                <div
+                                  className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
+                                  onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity + 1)}
+                                >
+                                  <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Tổng */}
+                            <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
+                              ${(orderItem.price * orderItem.quantity).toFixed(2)}
+                            </div>
+
+                            {/* Nút xóa */}
+                            {/* <IconButton
                             className="w-8 h-8"
                             icon={<Delete className="w-5 h-5" />}
                             onClick={() => onRemove && onRemove(orderItem.country)}
                             aria-label="Xóa khỏi giỏ hàng"
-                          />
-                        </div>
-                      );
-                    }
-                  })
-                : // Render dedicated orders (backward compatibility)
-                  propOrders.map((o) => (
-                    <div
-                      key={o.country.id}
-                      className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
-                    >
-                      {/* Quốc gia */}
-                      <div className="text-text-hi dark:text-text-hi-dark">{o.country.name}</div>
-
-                      {/* Đơn giá */}
-                      <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">${o.price.toFixed(2)}</div>
-
-                      {/* Số lượng */}
-                      <div className="w-[100px]">
-                        <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
-                          <div
-                            className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                            onClick={() => onUpdateQuantity && onUpdateQuantity(o.country, o.quantity - 1)}
-                          >
-                            <Subtract className="text-text-lo dark:text-text-lo-dark " />
+                          /> */}
                           </div>
-                          <span className="text-text-hi dark:text-text-hi-dark">{o.quantity}</span>
-                          <div
-                            className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                            onClick={() => onUpdateQuantity && onUpdateQuantity(o.country, o.quantity + 1)}
-                          >
-                            <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
+                        );
+                      }
+                    })
+                  : // Render dedicated orders (backward compatibility)
+                    propOrders.map((o) => (
+                      <div
+                        key={o.country.id}
+                        className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
+                      >
+                        {/* Quốc gia */}
+                        <div className="text-text-hi dark:text-text-hi-dark">{o.country.name}</div>
+
+                        {/* Đơn giá */}
+                        <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">${o.price.toFixed(2)}</div>
+
+                        {/* Số lượng */}
+                        <div className="w-[100px]">
+                          <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
+                            <div
+                              className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
+                              onClick={() => onUpdateQuantity && onUpdateQuantity(o.country, o.quantity - 1)}
+                            >
+                              <Subtract className="text-text-lo dark:text-text-lo-dark " />
+                            </div>
+                            <span className="text-text-hi dark:text-text-hi-dark">{o.quantity}</span>
+                            <div
+                              className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
+                              onClick={() => onUpdateQuantity && onUpdateQuantity(o.country, o.quantity + 1)}
+                            >
+                              <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
+                            </div>
                           </div>
                         </div>
+
+                        {/* Tổng */}
+                        <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
+
+                        {/* Nút xóa */}
+                        <IconButton
+                          className="w-8 h-8"
+                          icon={<Delete className="w-5 h-5" />}
+                          onClick={() => onRemove && onRemove(o.country)}
+                          aria-label="Xóa khỏi giỏ hàng"
+                        />
                       </div>
-
-                      {/* Tổng */}
-                      <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">${(o.price * o.quantity).toFixed(2)}</div>
-
-                      {/* Nút xóa */}
-                      <IconButton
-                        className="w-8 h-8"
-                        icon={<Delete className="w-5 h-5" />}
-                        onClick={() => onRemove && onRemove(o.country)}
-                        aria-label="Xóa khỏi giỏ hàng"
-                      />
-                    </div>
-                  ))}
+                    ))}
+              </div>
             </div>
           </div>
 
-          <DesktopSummary
+          <RotateDesktopSummary
             orders={propOrders}
             total={total}
             totalIps={totalIps}
@@ -453,12 +438,13 @@ const OrderSummary: React.FC<Props> = ({
             proxyType={proxyType}
             duration={duration}
             filterPlanType={filterPlanType}
+            orderCallback={handleCloseModal}
           />
         </div>
       ) : (
         <div className="flex flex-col h-[calc(100dvh-64px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark">
           {/* Scrollable content area */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-3 ">
+          <div className="flex-1 overflow-y-auto space-y-3 ">
             {useCartContext && cart
               ? // Render cart items (already filtered by filterPlanType if provided)
                 // Check if orders are CartItems or OrderItemTypes
@@ -663,8 +649,8 @@ const OrderSummary: React.FC<Props> = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
-export default OrderSummary;
+export default RotateOrderSummary;

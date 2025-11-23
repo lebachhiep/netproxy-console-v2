@@ -25,6 +25,8 @@ import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } fr
 import { PlanCardSkeleton } from '@/components/skeleton/PlanCardSkeleton';
 import { ErrorDisplay } from '@/components/error/ErrorDisplay';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { RadioGroup } from '@/components/radio/RadioGroup';
+import { PurchaseConfirmModal } from './PurchaseConfirmModal';
 
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
@@ -68,6 +70,9 @@ const itemVariants: Variants = {
 type TabKey = 'rotating' | string; // string for dedicated proxy types
 
 const PurchasePage: React.FC = () => {
+  const [filteredDuration, setFilteredDuration] = useState('');
+  const [durationOptions, setDurationOptions] = useState<number[]>([]);
+  const [confirmModal, setConfirmModalOpen] = useState(false);
   const pageTitle = usePageTitle({ pageName: 'Mua hàng' });
   // API data state
   const [plansData, setPlansData] = useState<PlansResponse | null>(null);
@@ -87,7 +92,7 @@ const PurchasePage: React.FC = () => {
 
   // Fetch default prices for external provider plans (price = 0) using US country
   const fetchDefaultPrices = async (plans: Plan[]) => {
-    const externalProviderPlans = plans.filter(p => p.price === 0);
+    const externalProviderPlans = plans.filter((p) => p.price === 0);
 
     if (externalProviderPlans.length === 0) return;
 
@@ -135,10 +140,7 @@ const PurchasePage: React.FC = () => {
   }, []);
 
   // Rotating plans from API response
-  const rotatingPlans = useMemo(
-    () => plansData?.rotate.sort((a, b) => a.sort_order - b.sort_order) || [],
-    [plansData]
-  );
+  const rotatingPlans = useMemo(() => plansData?.rotate.sort((a, b) => a.sort_order - b.sort_order) || [], [plansData]);
 
   // Dedicated tabs cố định
   const dedicatedTabs = [
@@ -157,12 +159,17 @@ const PurchasePage: React.FC = () => {
 
   // Dynamic speed groups for rotating plans
   const speedGroups = useMemo(() => {
-    const uniqueThroughputs = [...new Set(rotatingPlans.map(p => p.throughput).filter(Boolean))].sort(
-      (a, b) => (a || 0) - (b || 0)
-    );
+    const uniqueThroughputs = [...new Set(rotatingPlans.map((p) => p.throughput).filter(Boolean))].sort((a, b) => (a || 0) - (b || 0));
 
-    return uniqueThroughputs.map(throughput => ({
-      label: `${throughput} MBPS Plan`,
+    const throughputPrefix = {
+      5: 'Basic Plan: ',
+      10: 'Standard Plan: ',
+      25: 'Advanced Plan: ',
+      50: 'Premium Plan: '
+    };
+
+    return uniqueThroughputs.map((throughput) => ({
+      label: `${throughputPrefix?.[throughput as keyof typeof throughputPrefix] || ''}${throughput} MBPS`,
       key: `${throughput}mbps`,
       value: throughput
     }));
@@ -172,10 +179,25 @@ const PurchasePage: React.FC = () => {
 
   // Update active group when speed groups change
   useEffect(() => {
-    if (speedGroups.length > 0 && !speedGroups.find(g => g.key === activeGroup)) {
+    if (speedGroups.length > 0 && !speedGroups.find((g) => g.key === activeGroup)) {
       setActiveGroup(speedGroups[0].key);
     }
   }, [speedGroups, activeGroup]);
+
+  // Sync duration options when rotating plans change
+  useEffect(() => {
+    const durations = rotatingPlans.map((p) => p.duration).filter((d): d is number => d !== undefined);
+    const sortedDurations = Array.from(new Set(durations)).sort((a, b) => a - b);
+    setFilteredDuration('' + sortedDurations[0]);
+    setDurationOptions(sortedDurations);
+  }, [rotatingPlans]);
+
+  useEffect(() => {
+    const hasRotatingItems = cart.itemsByTab.rotating.length > 0;
+    if (hasRotatingItems) {
+      setConfirmModalOpen(true);
+    }
+  }, [cart]);
 
   // Helper to get display price
   const getDisplayPrice = (plan: Plan): string => {
@@ -346,20 +368,13 @@ const PurchasePage: React.FC = () => {
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
       <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark opacity-70 mb-4" aria-hidden="true" />
-      <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">
-        Không có gói nào
-      </h2>
-      <p className="text-text-me dark:text-text-me-dark text-sm">
-        Hiện tại chưa có gói dịch vụ trong danh mục này.
-      </p>
+      <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Không có gói nào</h2>
+      <p className="text-text-me dark:text-text-me-dark text-sm">Hiện tại chưa có gói dịch vụ trong danh mục này.</p>
     </div>
   );
 
   // Build main tabs: Rotating + dedicated tabs cố định
-  const mainTabs = [
-    { label: 'Rotating', key: 'rotating' },
-    ...dedicatedTabs
-  ];
+  const mainTabs = [{ label: 'Rotating', key: 'rotating' }, ...dedicatedTabs];
 
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
@@ -369,9 +384,7 @@ const PurchasePage: React.FC = () => {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
             <CartFilled width={24} height={24} className="text-yellow" />
-            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">
-              Mua hàng
-            </span>
+            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
           </div>
 
           {/* Cart Icon */}
@@ -384,18 +397,13 @@ const PurchasePage: React.FC = () => {
                 : 'border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark'
             }`}
           >
-            <CartFilled
-              className={`${
-                cart.itemCount > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'
-              }`}
-              aria-hidden="true"
-            />
+            <CartFilled className={`${cart.itemCount > 0 ? 'text-white' : 'text-text-lo dark:text-text-lo-dark'}`} aria-hidden="true" />
           </button>
         </div>
       </div>
 
       {/* Main Tabs */}
-      <Tabs tabs={mainTabs} activeKey={activeMain} onChange={key => setActiveMain(key as TabKey)}>
+      <Tabs tabs={mainTabs} activeKey={activeMain} onChange={(key) => setActiveMain(key as TabKey)}>
         {/* Rotating Tab - index 0, key: 'rotating' */}
         <div key="rotating">
           {loading ? (
@@ -405,17 +413,23 @@ const PurchasePage: React.FC = () => {
           ) : speedGroups.length === 0 ? (
             <EmptyState />
           ) : (
-            <Tabs
-              type="card"
-              tabs={speedGroups}
-              activeKey={activeGroup}
-              onChange={key => setActiveGroup(String(key))}
-            >
-              {speedGroups.map(g => {
-                const groupPlans = rotatingPlans.filter(p => p.throughput === g.value);
-
+            <Tabs type="card" tabs={speedGroups} activeKey={activeGroup} onChange={(key) => setActiveGroup(String(key))}>
+              {speedGroups.map((g) => {
+                const groupPlans = rotatingPlans.filter((p) => p.throughput === g.value);
                 return (
-                  <div key={g.key} className="flex">
+                  <div key={g.key} className="flex flex-col">
+                    {/* Filtering */}
+                    <div className="p-5">
+                      <RadioGroup
+                        value={filteredDuration}
+                        onChange={(value) => setFilteredDuration('' + value)}
+                        options={durationOptions.map((duration) => ({
+                          label: formatDuration(duration),
+                          value: '' + duration,
+                          key: `duration-${duration}`
+                        }))}
+                      />
+                    </div>
                     <motion.div
                       variants={containerVariants}
                       initial="hidden"
@@ -429,32 +443,30 @@ const PurchasePage: React.FC = () => {
                           <EmptyState />
                         </div>
                       ) : (
-                        groupPlans.map((plan, index) => (
-                          <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                            <PricingCard
-                              tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                              description={plan.description || ''}
-                              title={plan.name}
-                              price={getDisplayPrice(plan)}
-                              features={buildPlanFeatures(plan)}
-                              buttonText="MUA GÓI"
-                              enableCart={true}
-                              plan={plan}
-                              cartOptions={{
-                                speedLimit: plan.throughput?.toString()
-                              }}
-                            />
-                          </motion.div>
-                        ))
+                        groupPlans
+                          .filter((plan) => !filteredDuration || plan.duration === Number(filteredDuration))
+                          .map((plan, index) => (
+                            <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                              <PricingCard
+                                tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                                description={plan.description || ''}
+                                title={plan.name}
+                                price={getDisplayPrice(plan)}
+                                features={buildPlanFeatures(plan)}
+                                buttonText="MUA GÓI"
+                                enableCart
+                                plan={plan}
+                                cartOptions={{
+                                  speedLimit: plan.throughput?.toString()
+                                }}
+                                preventNotification
+                              />
+                            </motion.div>
+                          ))
                       )}
                     </motion.div>
 
-                    {/* Cart Sidebar - Desktop only - Only show if there are rotating items */}
-                    {cart.getAllItems().filter(item => item.plan.type === 'rotating').length > 0 && (
-                      <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                        <OrderSummary useCartContext={true} filterPlanType="rotating" />
-                      </div>
-                    )}
+                    <PurchaseConfirmModal open={confirmModal} setOpen={setConfirmModalOpen} duration={+filteredDuration} />
                   </div>
                 );
               })}
@@ -469,11 +481,7 @@ const PurchasePage: React.FC = () => {
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['premium_isp'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -492,11 +500,7 @@ const PurchasePage: React.FC = () => {
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['private_ipv4'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -515,11 +519,7 @@ const PurchasePage: React.FC = () => {
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['shared_ipv4'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -538,11 +538,7 @@ const PurchasePage: React.FC = () => {
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
+            <motion.div variants={containerVariants} initial="hidden" animate="visible">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['ipv6'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -580,15 +576,13 @@ const PurchasePage: React.FC = () => {
               }}
               transition={{ type: 'tween', duration: 0.35, ease: easeInOutCustom }}
               className="relative w-[calc(100%-75px)] max-w-[354px] h-full bg-white dark:bg-bg-canvas-dark shadow-xl flex flex-col"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex h-[64px] items-center justify-between p-5 border-b border-border dark:border-border-dark">
                 <div className="flex items-center gap-2">
                   <CartFilled className="text-yellow" width={24} height={24} />
-                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">
-                    Giỏ hàng
-                  </span>
+                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
                 </div>
                 <IconButton
                   className="w-10 h-10"
@@ -599,19 +593,17 @@ const PurchasePage: React.FC = () => {
               </div>
 
               {/* Content - Only show if there are rotating items */}
-              {cart.getAllItems().filter(item => item.plan.type === 'rotating').length > 0 && (
+              {cart.getAllItems().filter((item) => item.plan.type === 'rotating').length > 0 && (
                 <div className="flex-1">
                   <OrderSummary useCartContext={true} filterPlanType="rotating" />
                 </div>
               )}
-              {cart.getAllItems().filter(item => item.plan.type === 'rotating').length === 0 && (
+              {cart.getAllItems().filter((item) => item.plan.type === 'rotating').length === 0 && (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70 mx-auto" />
                     <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
-                    <p className="text-text-me dark:text-text-me-dark text-sm">
-                      Hãy chọn gói rotating để thêm vào giỏ hàng.
-                    </p>
+                    <p className="text-text-me dark:text-text-me-dark text-sm">Hãy chọn gói rotating để thêm vào giỏ hàng.</p>
                   </div>
                 </div>
               )}

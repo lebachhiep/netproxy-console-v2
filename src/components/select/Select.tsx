@@ -82,6 +82,8 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | number | undefined>(defaultValue);
+  // Only handle 'top' or 'bottom' for auto placement
+  const [autoPlacement, setAutoPlacement] = useState<'top' | 'bottom'>(placement === 'top' ? 'top' : 'bottom');
   const ref = useRef<HTMLDivElement>(null);
 
   const isControlled = value !== undefined;
@@ -111,13 +113,33 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropdownHeight = Math.min(options.length * 40, 300); // estimate or measure
+    if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+      setAutoPlacement('top');
+    } else {
+      setAutoPlacement('bottom');
+    }
+  }, [open, options.length]);
+
   // Determine position classes based on placement
   const getPositionClasses = () => {
+    // Only use autoPlacement for 'top'/'bottom', fallback to original for others
+    if (placement === 'top' || placement === 'bottom') {
+      switch (autoPlacement) {
+        case 'top':
+          return 'bottom-full mb-1 left-0 right-0';
+        case 'bottom':
+        default:
+          return 'top-full mt-1 left-0 right-0';
+      }
+    }
+    // Fallback for left/right placements
     switch (placement) {
-      case 'top':
-        return 'bottom-full mb-1 left-0 right-0';
-      case 'bottom':
-        return 'top-full mt-1 left-0 right-0';
       case 'top-left':
         return 'bottom-full mb-1 right-0';
       case 'top-right':
@@ -156,31 +178,33 @@ export const Select: React.FC<SelectProps> = ({
       </button>
 
       {/* Dropdown */}
-      <div
-        className={twMerge(
-          'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-hidden',
-          getPositionClasses(),
-          open ? 'opacity-100 max-h-[500px] translate-y-0 pointer-events-auto' : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
-          // Add width constraint for corner placements
-          placement.includes('left') || placement.includes('right') ? 'w-auto min-w-full' : 'w-full',
-          optionClassName
-        )}
-      >
-        {options.map((opt) => (
-          <div
-            key={opt.value}
-            onClick={() => handleSelect(opt)}
-            className={twMerge(
-              clsx(
-                'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap',
-                selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
-              )
-            )}
-          >
-            {opt.label}
-          </div>
-        ))}
-      </div>
+      {open && (
+        <div
+          className={twMerge(
+            'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-hidden',
+            getPositionClasses(),
+            open ? 'opacity-100 max-h-[500px] translate-y-0 pointer-events-auto' : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
+            // Add width constraint for corner placements
+            placement.includes('left') || placement.includes('right') ? 'w-auto min-w-full' : 'w-full',
+            optionClassName
+          )}
+        >
+          {options.map((opt) => (
+            <div
+              key={opt.value}
+              onClick={() => handleSelect(opt)}
+              className={twMerge(
+                clsx(
+                  'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap',
+                  selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
+                )
+              )}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -19,9 +19,7 @@ countriesLib.registerLocale(vi);
 
 // Helper function to get country name from code in Vietnamese
 const getCountryName = (code: string): string => {
-  return countriesLib.getName(code, 'vi', { select: 'official' }) ||
-         countriesLib.getName(code, 'en', { select: 'official' }) ||
-         code;
+  return countriesLib.getName(code, 'vi', { select: 'official' }) || countriesLib.getName(code, 'en', { select: 'official' }) || code;
 };
 
 interface DedicatedPlanFilterProps {
@@ -74,13 +72,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   // Filter state
   const [selectedServer, setSelectedServer] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<number | ''>('');
-  
+
   // Countries state
   const [countries, setCountries] = useState<Country[]>([]);
   const [countryRequired, setCountryRequired] = useState(false);
   const [countriesLoading, setCountriesLoading] = useState(false);
   const [countriesError, setCountriesError] = useState<string | null>(null);
-  
+
   // Selected countries in cart (local state for display)
   const [selectedCountries, setSelectedCountries] = useState<Map<string, SelectedCountry>>(new Map());
   const [calculatingPrices, setCalculatingPrices] = useState<Set<string>>(new Set());
@@ -97,7 +95,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
     // Fallback: extract from plans and sort alphabetically
     const serverSet = new Set<string>();
-    plans.forEach(plan => {
+    plans.forEach((plan) => {
       if (plan.provider_name) {
         serverSet.add(plan.provider_name);
       }
@@ -108,13 +106,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   // Filter plans by server để tính available periods
   const plansFilteredByServer = useMemo(() => {
     if (!selectedServer) return plans;
-    return plans.filter(plan => plan.provider_name === selectedServer);
+    return plans.filter((plan) => plan.provider_name === selectedServer);
   }, [plans, selectedServer]);
 
   // Extract available periods từ plans đã filter bởi server
   const availablePeriods = useMemo(() => {
     const periods = new Set<number>();
-    plansFilteredByServer.forEach(plan => {
+    plansFilteredByServer.forEach((plan) => {
       const periodDays = getPeriodDays(plan);
       if (periodDays !== null) {
         periods.add(periodDays);
@@ -148,15 +146,15 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   // Filter plans based on selections - lọc theo server (provider_name) và period (metadata.period)
   const filteredPlans = useMemo(() => {
     let filtered = plans;
-    
+
     // Filter by server (provider_name)
     if (selectedServer) {
-      filtered = filtered.filter(plan => plan.provider_name === selectedServer);
+      filtered = filtered.filter((plan) => plan.provider_name === selectedServer);
     }
-    
+
     // Filter by period (metadata.period)
     if (selectedPeriod) {
-      filtered = filtered.filter(plan => {
+      filtered = filtered.filter((plan) => {
         const planPeriodDays = getPeriodDays(plan);
         return planPeriodDays === selectedPeriod;
       });
@@ -182,16 +180,16 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
   const fetchCountries = async () => {
     if (!selectedPlan) return;
-    
+
     try {
       setCountriesLoading(true);
       setCountriesError(null);
       setSelectedCountries(new Map());
-      
+
       const response = await planService.getPlanCountries(selectedPlan.id);
 
       // Filter out unavailable countries
-      const availableCountries = response.countries.filter(c => c.available);
+      const availableCountries = response.countries.filter((c) => c.available);
       setCountries(availableCountries);
       setCountryRequired(response.country_required);
     } catch (err) {
@@ -205,7 +203,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
   const calculatePriceForCountry = async (countryCode: string, quantity: number = 1): Promise<number> => {
     if (!selectedPlan) return 0;
-    
+
     try {
       const response = await planService.calculatePlanPrice(selectedPlan.id, {
         country: countryCode,
@@ -221,7 +219,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   };
 
   const handleCountryToggle = async (countryCode: string) => {
-    const country = countries.find(c => c.code === countryCode);
+    const country = countries.find((c) => c.code === countryCode);
     if (!country || !selectedPlan) return;
 
     const countryName = getCountryName(countryCode);
@@ -234,10 +232,8 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         // Find and remove from cart
         const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
         const tabItems = cart.getTabItems(tabKey);
-        const cartItem = tabItems.find(item =>
-          item.plan.id === selectedPlan.id &&
-          item.country === countryCode &&
-          item.duration === durationOption
+        const cartItem = tabItems.find(
+          (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
         );
         if (cartItem) {
           cart.removeItem(tabKey, cartItem.id);
@@ -247,7 +243,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       setSelectedCountries(newMap);
     } else {
       // Add country with default quantity 1
-      setCalculatingPrices(prev => new Set(prev).add(countryCode));
+      setCalculatingPrices((prev) => new Set(prev).add(countryCode));
 
       // Use fallback price first, then calculate real price
       const fallbackPrice = selectedPlan.price || 0;
@@ -262,7 +258,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       setSelectedCountries(newMap);
 
       // Calculate real price asynchronously with quantity=1
-      calculatePriceForCountry(countryCode, 1).then(pricePerIP => {
+      calculatePriceForCountry(countryCode, 1).then((pricePerIP) => {
         const updated = new Map(newMap);
         const existing = updated.get(countryCode);
         if (existing) {
@@ -282,7 +278,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           cart.addToCart(tabKey, selectedPlan, 1, { duration: durationOption }, countryCode, finalTotal);
           toast.success(`Đã thêm ${countryName} vào giỏ hàng`);
         }
-        setCalculatingPrices(prev => {
+        setCalculatingPrices((prev) => {
           const next = new Set(prev);
           next.delete(countryCode);
           return next;
@@ -310,7 +306,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     const newTotal = pricePerIP * newQuantity;
 
     // Update selectedCountries with new quantity and total
-    setSelectedCountries(prev => {
+    setSelectedCountries((prev) => {
       const next = new Map(prev);
       const existing = next.get(countryCode);
       if (existing) {
@@ -319,7 +315,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           quantity: newQuantity,
           total: newTotal
         });
-        setUpdateTrigger(prev => prev + 1);
+        setUpdateTrigger((prev) => prev + 1);
       }
       return next;
     });
@@ -327,10 +323,8 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     // Find cart item
     const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
     const tabItems = cart.getTabItems(tabKey);
-    const cartItem = tabItems.find(item =>
-      item.plan.id === selectedPlan.id &&
-      item.country === countryCode &&
-      item.duration === durationOption
+    const cartItem = tabItems.find(
+      (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
     );
 
     // Update cart: use updateCartItem to atomically update quantity and calculatedPrice
@@ -351,10 +345,8 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       // Remove from cart
       const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
       const tabItems = cart.getTabItems(tabKey);
-      const cartItem = tabItems.find(item =>
-        item.plan.id === selectedPlan.id &&
-        item.country === countryCode &&
-        item.duration === durationOption
+      const cartItem = tabItems.find(
+        (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
       );
       if (cartItem) {
         cart.removeItem(tabKey, cartItem.id);
@@ -386,7 +378,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
 
     const tabItems = cart.getTabItems(tabKey);
-    tabItems.forEach(item => {
+    tabItems.forEach((item) => {
       if (item.plan.id === selectedPlan.id && item.duration === durationOption && item.country) {
         // Skip if this country is being updated
         if (isUpdatingCartRef.current.has(item.country)) {
@@ -397,12 +389,10 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
         // Calculate price per IP: if calculatedPrice exists, divide by quantity
         // Otherwise use plan.price as price per IP
-        const pricePerIP = item.calculatedPrice
-          ? item.calculatedPrice / item.quantity
-          : item.plan.price;
+        const pricePerIP = item.calculatedPrice ? item.calculatedPrice / item.quantity : item.plan.price;
 
         // Total price = price per IP * quantity
-        const totalPrice = item.calculatedPrice ?? (item.plan.price * item.quantity);
+        const totalPrice = item.calculatedPrice ?? item.plan.price * item.quantity;
 
         newMap.set(item.country, {
           code: item.country,
@@ -418,14 +408,14 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
 
   // Build server options
-  const serverOptions = availableServers.map(server => ({
+  const serverOptions = availableServers.map((server) => ({
     key: server,
     label: server,
     value: server
   }));
 
   // Build period options
-  const periodOptions = availablePeriods.map(period => ({
+  const periodOptions = availablePeriods.map((period) => ({
     key: `${period}d`,
     label: `${period} ngày`,
     value: period
@@ -433,28 +423,116 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
   // Group countries by region
   const asiaCountryCodes = new Set([
-    'CN', 'BD', 'ID', 'IN', 'VN', 'TH', 'PH', 'MY', 'SG', 'JP', 'KR', 'PK', 'LK', 'NP', 'MM', 'MN', 'KH', 'LA', 'JO',
-    'AF', 'AM', 'AZ', 'BH', 'BN', 'BT', 'CC', 'GE', 'HK', 'IL', 'IQ', 'IR', 'KG', 'KZ', 'LB', 'MO', 'MV', 'OM', 'PS',
-    'QA', 'SA', 'SY', 'TJ', 'TM', 'TR', 'TW', 'UZ', 'YE', 'AE'
+    'CN',
+    'BD',
+    'ID',
+    'IN',
+    'VN',
+    'TH',
+    'PH',
+    'MY',
+    'SG',
+    'JP',
+    'KR',
+    'PK',
+    'LK',
+    'NP',
+    'MM',
+    'MN',
+    'KH',
+    'LA',
+    'JO',
+    'AF',
+    'AM',
+    'AZ',
+    'BH',
+    'BN',
+    'BT',
+    'CC',
+    'GE',
+    'HK',
+    'IL',
+    'IQ',
+    'IR',
+    'KG',
+    'KZ',
+    'LB',
+    'MO',
+    'MV',
+    'OM',
+    'PS',
+    'QA',
+    'SA',
+    'SY',
+    'TJ',
+    'TM',
+    'TR',
+    'TW',
+    'UZ',
+    'YE',
+    'AE'
   ]);
 
   const europeCountryCodes = new Set([
-    'AL', 'AD', 'AT', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE',
-    'IT', 'LV', 'LI', 'LT', 'LU', 'MT', 'MD', 'MC', 'ME', 'NL', 'MK', 'NO', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SK',
-    'SI', 'ES', 'SE', 'CH', 'UA', 'GB', 'VA', 'XK'
+    'AL',
+    'AD',
+    'AT',
+    'BY',
+    'BE',
+    'BA',
+    'BG',
+    'HR',
+    'CY',
+    'CZ',
+    'DK',
+    'EE',
+    'FI',
+    'FR',
+    'DE',
+    'GR',
+    'HU',
+    'IS',
+    'IE',
+    'IT',
+    'LV',
+    'LI',
+    'LT',
+    'LU',
+    'MT',
+    'MD',
+    'MC',
+    'ME',
+    'NL',
+    'MK',
+    'NO',
+    'PL',
+    'PT',
+    'RO',
+    'RU',
+    'SM',
+    'RS',
+    'SK',
+    'SI',
+    'ES',
+    'SE',
+    'CH',
+    'UA',
+    'GB',
+    'VA',
+    'XK'
   ]);
 
   const asiaCountries = useMemo(() => {
-    return countries.filter(c => asiaCountryCodes.has(c.code.toUpperCase()));
+    return countries.filter((c) => asiaCountryCodes.has(c.code.toUpperCase()));
   }, [countries]);
 
   const europeCountries = useMemo(() => {
-    return countries.filter(c => europeCountryCodes.has(c.code.toUpperCase()));
+    return countries.filter((c) => europeCountryCodes.has(c.code.toUpperCase()));
   }, [countries]);
 
   const otherCountries = useMemo(() => {
-    const allGrouped = new Set([...asiaCountries.map(c => c.code), ...europeCountries.map(c => c.code)]);
-    return countries.filter(c => !allGrouped.has(c.code));
+    const allGrouped = new Set([...asiaCountries.map((c) => c.code), ...europeCountries.map((c) => c.code)]);
+    return countries.filter((c) => !allGrouped.has(c.code));
   }, [countries, asiaCountries, europeCountries]);
 
   // Filtered cart items for this tab (plan + duration)
@@ -464,10 +542,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
 
     const tabItems = cart.getTabItems(tabKey);
-    return tabItems.filter(item =>
-      item.plan.id === selectedPlan.id &&
-      item.duration === durationOption
-    );
+    return tabItems.filter((item) => item.plan.id === selectedPlan.id && item.duration === durationOption);
   }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
 
   // Component to render filtered OrderSummary
@@ -477,21 +552,16 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     // Filter cart items for this plan and duration
     const filteredItems = useMemo(() => {
       const tabItems = cart.getTabItems(tabKey);
-      return tabItems.filter(item =>
-        item.plan.id === selectedPlan.id &&
-        item.duration === durationOption
-      );
+      return tabItems.filter((item) => item.plan.id === selectedPlan.id && item.duration === durationOption);
     }, [cart.itemsByTab, selectedPlan.id, durationOption]);
 
     // Convert CartItem to OrderItemType format
     const orderItems = useMemo(() => {
-      return filteredItems.map(item => {
+      return filteredItems.map((item) => {
         // Calculate price per IP: if calculatedPrice exists, divide by quantity
         // Otherwise use plan.price as price per IP
-        const pricePerIP = item.calculatedPrice 
-          ? item.calculatedPrice / item.quantity 
-          : item.plan.price;
-        
+        const pricePerIP = item.calculatedPrice ? item.calculatedPrice / item.quantity : item.plan.price;
+
         return {
           country: {
             id: item.country || '',
@@ -506,15 +576,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
     // Handlers for OrderSummary
     const handleUpdateQuantity = (country: OrderCountry, quantity: number) => {
-      const item = filteredItems.find(i => i.country?.toLowerCase() === country.code);
+      const item = filteredItems.find((i) => i.country?.toLowerCase() === country.code);
       if (item) {
         if (quantity < 1) {
           cart.removeItem(tabKey, item.id);
         } else {
           // Calculate price per IP from current cart item
-          const pricePerIP = item.calculatedPrice
-            ? item.calculatedPrice / item.quantity
-            : item.plan.price;
+          const pricePerIP = item.calculatedPrice ? item.calculatedPrice / item.quantity : item.plan.price;
 
           // Calculate new total = price per IP * new quantity
           const newTotal = pricePerIP * quantity;
@@ -526,35 +594,37 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     };
 
     const handleRemove = (country: OrderCountry) => {
-      const item = filteredItems.find(i => i.country?.toLowerCase() === country.code);
+      const item = filteredItems.find((i) => i.country?.toLowerCase() === country.code);
       if (item) {
         cart.removeItem(tabKey, item.id);
       }
     };
 
+    if (!orderItems.length) {
+      return null;
+    }
+
     // If no items, show empty state
     if (orderItems.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-[calc(100dvh-270px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
-          <p className="text-text-me dark:text-text-me-dark">
-            Chưa có quốc gia nào được chọn
-          </p>
+          <p className="text-text-me dark:text-text-me-dark">Chưa có quốc gia nào được chọn</p>
         </div>
       );
     }
 
     // Get proxyType from plan metadata or use prop
     const displayProxyType = proxyType || selectedPlan.metadata?.proxy_type || 'Dedicated Proxy';
-    
+
     // Calculate totals from filtered items for dedicated tabs
     const filteredSubtotal = filteredItems.reduce((sum, item) => {
       const itemPrice = item.calculatedPrice ?? item.plan.price;
       return sum + itemPrice * item.quantity;
     }, 0);
-    
+
     const filteredTotalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
     const filteredTotalLocation = filteredItems.length;
-    
+
     // Render OrderSummary with useCartContext=true to enable coupon and balance features
     // But pass filtered orders to override the display
     return (
@@ -580,9 +650,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
             {/* Server Filter */}
             {serverOptions.length > 0 && (
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                  Server:
-                </label>
+                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Server:</label>
                 <RadioGroup
                   value={selectedServer}
                   onChange={(value) => setSelectedServer(String(value))}
@@ -595,9 +663,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
             {/* Period Filter */}
             {periodOptions.length > 0 && (
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                  Thời hạn:
-                </label>
+                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Thời hạn:</label>
                 <RadioGroup
                   value={selectedPeriod}
                   onChange={(value) => setSelectedPeriod(Number(value))}
@@ -643,7 +709,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Á</h3>
                       <div className="flex flex-wrap gap-3">
-                        {asiaCountries.map(country => {
+                        {asiaCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -666,7 +732,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Âu</h3>
                       <div className="flex flex-wrap gap-3">
-                        {europeCountries.map(country => {
+                        {europeCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -689,7 +755,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Khác</h3>
                       <div className="flex flex-wrap gap-3">
-                        {otherCountries.map(country => {
+                        {otherCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -712,9 +778,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
-            <p className="text-text-me dark:text-text-me-dark">
-              Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.
-            </p>
+            <p className="text-text-me dark:text-text-me-dark">Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.</p>
           </div>
         )}
       </div>
@@ -722,13 +786,9 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       {/* Right Panel - Cart Summary */}
       {selectedPlan && selectedServer && selectedPeriod && (
         <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-          <FilteredOrderSummary 
-            selectedPlan={selectedPlan} 
-            selectedPeriod={selectedPeriod}
-          />
+          <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
         </div>
       )}
     </div>
   );
 };
-

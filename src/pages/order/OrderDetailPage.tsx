@@ -81,7 +81,6 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
       options={COUNTRY_OPTIONS}
       placeholder="Select country"
       className="h-8 min-w-[140px]"
-      placement="top"
       optionClassName="max-h-60 overflow-y-auto"
     />
   );
@@ -399,7 +398,7 @@ const OrderDetailPage = () => {
       align: 'left',
       render: (_, record) => (
         <div className="group flex items-center">
-          <p className="line-clamp-1 font-mono text-xs ">{record.id}</p>
+          <p className="truncate line-clamp-1 font-mono text-xs ">{record.id}</p>
           <ContentCopy
             className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
             onClick={(e) => {
@@ -432,13 +431,25 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 150 : '',
-      key: 'status',
+      width: isMobile || isTablet ? 180 : '',
+      key: 'username',
       title: 'Username',
       align: 'left',
       render: (_, record) => {
         const username = getUsernameByProxyType(record);
-        return <div className="line-clamp-1 font-mono text-xs">{username}</div>;
+        return (
+          <div className="group flex items-center w-[90px]">
+            <p className="truncate line-clamp-1 font-mono text-xs">{username}</p>
+            <ContentCopy
+              className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard(username);
+                toast.success('Đã sao chép username vào clipboard');
+              }}
+            />
+          </div>
+        );
       }
     },
     {
@@ -447,8 +458,20 @@ const OrderDetailPage = () => {
       title: 'Password',
       align: 'left',
       render: (_, record) => {
-        const { displayPassword } = getPasswordByProxyType(record);
-        return <div className="line-clamp-1 font-mono text-xs">{displayPassword}</div>;
+        const { displayPassword, plainPassword } = getPasswordByProxyType(record);
+        return (
+          <div className="group flex items-center">
+            <p className="truncate line-clamp-1 font-mono text-xs">{displayPassword}</p>
+            <ContentCopy
+              className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard(plainPassword);
+                toast.success('Đã sao chép password vào clipboard');
+              }}
+            />
+          </div>
+        );
       }
     },
     {
@@ -544,7 +567,7 @@ const OrderDetailPage = () => {
               onClick={() => {
                 const ip = getIpAddressByProxyType(record);
                 const port = getPortByProxyType(record);
-                const username = getUsernameByProxyType(record);
+                const username = getUsernameByProxyType(record).toLocaleLowerCase();
                 const { plainPassword } = getPasswordByProxyType(record);
 
                 const proxyString = `${ip}:${port}:${username}:${plainPassword}`;

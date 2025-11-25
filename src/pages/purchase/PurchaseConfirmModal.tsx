@@ -30,7 +30,7 @@ export const PurchaseConfirmModal = ({
       className="max-w-xl rounded-xl"
     >
       <div className="flex-1">
-        <p className="px-5 py-3 border-b text-text-me">Vui lòng nhập số lượng cần mua</p>
+        <p className="px-5 py-3 border-b text-text-me dark:border-border-element-dark">Vui lòng nhập số lượng cần mua</p>
         <RotateOrderSummary useCartContext={true} filterPlanType="rotating" duration={duration} handleCloseModal={handleCloseModal} />
       </div>
     </Modal>

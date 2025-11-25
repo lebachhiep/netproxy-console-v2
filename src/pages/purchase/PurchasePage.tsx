@@ -434,9 +434,7 @@ const PurchasePage: React.FC = () => {
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
-                      className={`flex-1 grid grid-cols-1 md:grid-cols-2 ${
-                        cart.itemCount > 0 ? '2xl:grid-cols-2' : '2xl:grid-cols-4'
-                      } gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                      className={`flex-1 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
                     >
                       {groupPlans.length === 0 ? (
                         <div className="col-span-full">

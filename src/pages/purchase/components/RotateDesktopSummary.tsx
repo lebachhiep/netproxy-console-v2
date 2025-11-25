@@ -309,7 +309,7 @@ export const RotateDesktopSummary = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center border-t p-3">
+      <div className="flex items-center justify-center border-t p-3 dark:border-border-element-dark">
         <Button
           className={clsx('text-[12px] mx-auto h-10')}
           disabled={useCartContext ? hasInsufficientFunds || cart?.itemCount === 0 : false}

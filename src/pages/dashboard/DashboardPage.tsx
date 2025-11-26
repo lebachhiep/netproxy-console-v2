@@ -29,6 +29,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
+import { set } from 'zod';
 
 export const data = [
   {
@@ -180,7 +181,8 @@ interface OrderTableData {
 const DashboardPage = () => {
   const pageTitle = usePageTitle({ pageName: 'Trang chủ' });
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [tableData, setTableData] = useState<OrderTableData[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -220,6 +222,9 @@ const DashboardPage = () => {
           };
         });
         setTableData(transformedData);
+        setCurrentPage(ordersResponse.page);
+        setPageSize(ordersResponse.per_page);
+        setTotal(ordersResponse.total_subscriptions);
       } catch (err) {
         console.error('Failed to fetch data:', err);
         setError('Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.');
@@ -492,7 +497,7 @@ const DashboardPage = () => {
             pagination={{
               current: currentPage,
               pageSize,
-              total: tableData.length,
+              total,
               pageSizeOptions: [2, 4, 6, 8],
               className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
               onChange: (page, size) => {

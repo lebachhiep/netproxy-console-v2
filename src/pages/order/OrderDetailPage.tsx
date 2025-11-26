@@ -32,6 +32,7 @@ import Tooltip from '@/components/tooltip/Tooltip';
 import { OrderInfoModal } from './OrderInfoModal';
 import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
 import { get } from 'http';
+import moment from 'moment';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -523,6 +524,12 @@ const OrderDetailPage = () => {
       render: (_, record) => (
         <Switch size="md" checked={record.auto_renew} onChange={(checked) => handleAutoRenewChange(record.id, checked)} />
       )
+    },
+    {
+      width: isMobile || isTablet ? 200 : 180,
+      key: 'next_renewal_date',
+      title: 'Ngày hết hạn',
+      render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
     },
     {
       width: isMobile || isTablet ? 200 : 180,

@@ -398,7 +398,7 @@ const OrderDetailPage = () => {
       align: 'left',
       render: (_, record) => (
         <div className="group flex items-center">
-          <p className="truncate line-clamp-1 font-mono text-xs ">{record.id}</p>
+          <p className="truncate line-clamp-1 font-mono">{record.id}</p>
           <ContentCopy
             className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
             onClick={(e) => {
@@ -417,7 +417,19 @@ const OrderDetailPage = () => {
       align: 'left',
       render: (_, record) => {
         const ipAddress = getIpAddressByProxyType(record);
-        return <div className="line-clamp-1 font-mono text-xs">{ipAddress}</div>;
+        return (
+          <div className="group flex items-center">
+            <p className="truncate line-clamp-1 font-mono">{ipAddress}</p>
+            <ContentCopy
+              className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard(ipAddress);
+                toast.success('Đã sao chép ipAddress vào clipboard');
+              }}
+            />
+          </div>
+        );
       }
     },
     {
@@ -427,7 +439,7 @@ const OrderDetailPage = () => {
       align: 'left',
       render: (_, record) => {
         const port = getPortByProxyType(record);
-        return <div className="line-clamp-1 font-mono text-xs">{port || '-'}</div>;
+        return <div className="line-clamp-1 font-mono">{port || '-'}</div>;
       }
     },
     {
@@ -438,8 +450,8 @@ const OrderDetailPage = () => {
       render: (_, record) => {
         const username = getUsernameByProxyType(record);
         return (
-          <div className="group flex items-center w-[90px]">
-            <p className="truncate line-clamp-1 font-mono text-xs">{username}</p>
+          <div className="group flex items-center">
+            <p className="truncate line-clamp-1 font-mono">{username}</p>
             <ContentCopy
               className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
               onClick={(e) => {
@@ -458,10 +470,10 @@ const OrderDetailPage = () => {
       title: 'Password',
       align: 'left',
       render: (_, record) => {
-        const { displayPassword, plainPassword } = getPasswordByProxyType(record);
+        const { plainPassword } = getPasswordByProxyType(record);
         return (
           <div className="group flex items-center">
-            <p className="truncate line-clamp-1 font-mono text-xs">{displayPassword}</p>
+            <p className="truncate line-clamp-1 font-mono">{plainPassword}</p>
             <ContentCopy
               className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
               onClick={(e) => {

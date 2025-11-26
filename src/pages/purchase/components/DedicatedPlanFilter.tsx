@@ -647,7 +647,11 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         type="card"
         tabs={serverOptions}
         activeKey={selectedServer}
-        onChange={(value) => setSelectedServer(String(value))}
+        onChange={(value) => {
+          setSelectedServer(String(value));
+          setSelectedCountries(new Map());
+          cart.clearTabCart(tabKey);
+        }}
         className="w-full h-full flex-1 flex flex-col"
         cardWrapperClass="w-full h-full flex-1 flex flex-col"
       >

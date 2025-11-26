@@ -364,21 +364,21 @@ const DashboardPage = () => {
             <TopSpeed />
           </div>
         }
-        title="Hiệu suất & khả dụng"
+        title="Máy chủ"
         mainContent={
           <div>
-            <span className="text-green dark:text-green-dark font-semibold text-xl tracking-[-0.3px] font-averta">256</span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Mbps</span>
+            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">1</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ 5 </span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
           </div>
         }
         subInfo={[
           {
-            label: 'Cổng proxy khả dụng:',
+            label: '',
             value: (
-              <div>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">23222</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Ports</span>
-              </div>
+              <Button variant="default" className="rounded-lg w-full flex items-center justify-center">
+                KIỂM TRA TRẠNG THÁI
+              </Button>
             )
           }
         ]}

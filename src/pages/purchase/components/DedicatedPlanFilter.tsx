@@ -10,8 +10,9 @@ import countriesLib from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
 import OrderSummary from './OrderSumary';
-import { CartItem, CartTabKey, getTabKeyFromPlan } from '@/contexts/CartContext';
+import { CartTabKey, getTabKeyFromPlan } from '@/contexts/CartContext';
 import { Country as OrderCountry } from './table/CountrySelector';
+import { Tabs } from '@/components/tabs/Tabs';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -641,154 +642,152 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   };
 
   return (
-    <div className="flex gap-5 h-full">
-      {/* Left Panel - Filters and Country Selection */}
-      <div className="flex-1 p-5 overflow-y-auto max-h-[calc(100dvh-215px)]">
-        {/* Filters Section */}
-        <div className="mb-5 p-5 bg-bg-secondary dark:bg-bg-secondary-dark rounded-lg border border-border dark:border-border-dark">
-          <div className="flex flex-col gap-4">
-            {/* Server Filter */}
-            {serverOptions.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Server:</label>
-                <RadioGroup
-                  value={selectedServer}
-                  onChange={(value) => setSelectedServer(String(value))}
-                  options={serverOptions}
-                  direction="row"
-                />
-              </div>
-            )}
+    <div className="flex gap-5 h-full w-full flex-1 flex-col">
+      <Tabs
+        type="card"
+        tabs={serverOptions}
+        activeKey={selectedServer}
+        onChange={(value) => setSelectedServer(String(value))}
+        className="w-full h-full flex-1 flex flex-col"
+        cardWrapperClass="w-full h-full flex-1 flex flex-col"
+      >
+        {serverOptions &&
+          serverOptions.map((server) => {
+            return (
+              <div id={server.key} className="w-full flex flex-row gap-2 flex-1 h-full" key={server.key}>
+                {/* Left Panel - Filters and Country Selection */}
+                <div className="flex-1 overflow-y-auto max-h-[calc(100dvh-215px)]">
+                  {/* Filters Section */}
+                  <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
+                    {periodOptions.length > 0 && (
+                      <div className="flex flex-col gap-2">
+                        <RadioGroup
+                          value={selectedPeriod}
+                          onChange={(value) => setSelectedPeriod(Number(value))}
+                          options={periodOptions}
+                          direction="row"
+                        />
+                      </div>
+                    )}
+                  </div>
 
-            {/* Period Filter */}
-            {periodOptions.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Thời hạn:</label>
-                <RadioGroup
-                  value={selectedPeriod}
-                  onChange={(value) => setSelectedPeriod(Number(value))}
-                  options={periodOptions}
-                  direction="row"
-                />
-              </div>
-            )}
-          </div>
-        </div>
+                  {/* Error State */}
+                  {countriesError && (
+                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                      <p className="text-sm text-red-600 dark:text-red-400">{countriesError}</p>
+                      <Button variant="default" size="sm" onClick={fetchCountries} className="mt-2">
+                        Thử lại
+                      </Button>
+                    </div>
+                  )}
 
-        {/* Error State */}
-        {countriesError && (
-          <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-sm text-red-600 dark:text-red-400">{countriesError}</p>
-            <Button variant="default" size="sm" onClick={fetchCountries} className="mt-2">
-              Thử lại
-            </Button>
-          </div>
-        )}
+                  {/* Loading State */}
+                  {countriesLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-primary-dark"></div>
+                    </div>
+                  ) : selectedPlan && selectedServer && selectedPeriod ? (
+                    <div className="space-y-4 p-5">
+                      {/* Country Selection */}
+                      <div>
+                        <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
+                          Quốc gia: {countryRequired && <span className="text-red-500">*</span>}
+                        </label>
 
-        {/* Loading State */}
-        {countriesLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-primary-dark"></div>
-          </div>
-        ) : selectedPlan && selectedServer && selectedPeriod ? (
-          <div className="space-y-4">
-            {/* Country Selection */}
-            <div>
-              <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-                Quốc gia: {countryRequired && <span className="text-red-500">*</span>}
-              </label>
+                        {countries.length === 0 ? (
+                          <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
+                            Hiện tại không có quốc gia khả dụng cho gói này
+                          </div>
+                        ) : (
+                          <div className="space-y-4">
+                            {/* Asia Countries */}
+                            {asiaCountries.length > 0 && (
+                              <div>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Á</h3>
+                                <div className="flex flex-wrap gap-3">
+                                  {asiaCountries.map((country) => {
+                                    const isSelected = selectedCountries.has(country.code);
+                                    return (
+                                      <CountryTag
+                                        key={country.code}
+                                        name={getCountryName(country.code)}
+                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                        active={isSelected}
+                                        removable={isSelected}
+                                        onClick={() => handleCountryToggle(country.code)}
+                                        onRemove={() => handleRemoveCountry(country.code)}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
 
-              {countries.length === 0 ? (
-                <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
-                  Hiện tại không có quốc gia khả dụng cho gói này
+                            {/* Europe Countries */}
+                            {europeCountries.length > 0 && (
+                              <div>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Âu</h3>
+                                <div className="flex flex-wrap gap-3">
+                                  {europeCountries.map((country) => {
+                                    const isSelected = selectedCountries.has(country.code);
+                                    return (
+                                      <CountryTag
+                                        key={country.code}
+                                        name={getCountryName(country.code)}
+                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                        active={isSelected}
+                                        removable={isSelected}
+                                        onClick={() => handleCountryToggle(country.code)}
+                                        onRemove={() => handleRemoveCountry(country.code)}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Other Countries */}
+                            {otherCountries.length > 0 && (
+                              <div>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Khác</h3>
+                                <div className="flex flex-wrap gap-3">
+                                  {otherCountries.map((country) => {
+                                    const isSelected = selectedCountries.has(country.code);
+                                    return (
+                                      <CountryTag
+                                        key={country.code}
+                                        name={getCountryName(country.code)}
+                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                        active={isSelected}
+                                        removable={isSelected}
+                                        onClick={() => handleCountryToggle(country.code)}
+                                        onRemove={() => handleRemoveCountry(country.code)}
+                                      />
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
+                      <p className="text-text-me dark:text-text-me-dark">Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.</p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Asia Countries */}
-                  {asiaCountries.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Á</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {asiaCountries.map((country) => {
-                          const isSelected = selectedCountries.has(country.code);
-                          return (
-                            <CountryTag
-                              key={country.code}
-                              name={getCountryName(country.code)}
-                              flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                              active={isSelected}
-                              removable={isSelected}
-                              onClick={() => handleCountryToggle(country.code)}
-                              onRemove={() => handleRemoveCountry(country.code)}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Europe Countries */}
-                  {europeCountries.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Âu</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {europeCountries.map((country) => {
-                          const isSelected = selectedCountries.has(country.code);
-                          return (
-                            <CountryTag
-                              key={country.code}
-                              name={getCountryName(country.code)}
-                              flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                              active={isSelected}
-                              removable={isSelected}
-                              onClick={() => handleCountryToggle(country.code)}
-                              onRemove={() => handleRemoveCountry(country.code)}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Other Countries */}
-                  {otherCountries.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Khác</h3>
-                      <div className="flex flex-wrap gap-3">
-                        {otherCountries.map((country) => {
-                          const isSelected = selectedCountries.has(country.code);
-                          return (
-                            <CountryTag
-                              key={country.code}
-                              name={getCountryName(country.code)}
-                              flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                              active={isSelected}
-                              removable={isSelected}
-                              onClick={() => handleCountryToggle(country.code)}
-                              onRemove={() => handleRemoveCountry(country.code)}
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
-            <p className="text-text-me dark:text-text-me-dark">Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Right Panel - Cart Summary */}
-      {selectedPlan && selectedServer && selectedPeriod && (
-        <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-          <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
-        </div>
-      )}
+                {/* Right Panel - Cart Summary */}
+                {selectedPlan && selectedServer && selectedPeriod && selectedCountries.size > 0 && (
+                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
+                    <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+      </Tabs>
     </div>
   );
 };

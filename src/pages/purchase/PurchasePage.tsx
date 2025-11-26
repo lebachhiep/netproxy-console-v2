@@ -377,7 +377,13 @@ const PurchasePage: React.FC = () => {
   const mainTabs = [{ label: 'Rotating', key: 'rotating' }, ...dedicatedTabs];
 
   return (
-    <motion.div variants={pageVariants} initial="hidden" animate="visible" className="">
+    <motion.div
+      variants={pageVariants}
+      initial="hidden"
+      animate="visible"
+      className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1"
+      style={{ scrollbarGutter: 'stable' }}
+    >
       {pageTitle}
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between h-12 px-5 py-3 border-b border-border dark:border-border-dark">
@@ -401,9 +407,13 @@ const PurchasePage: React.FC = () => {
           </button>
         </div>
       </div>
-
       {/* Main Tabs */}
-      <Tabs tabs={mainTabs} activeKey={activeMain} onChange={(key) => setActiveMain(key as TabKey)}>
+      <Tabs
+        defaultWrapperClass="h-full flex flex-col"
+        tabs={mainTabs}
+        activeKey={activeMain}
+        onChange={(key) => setActiveMain(key as TabKey)}
+      >
         {/* Rotating Tab - index 0, key: 'rotating' */}
         <div key="rotating">
           {loading ? (
@@ -419,7 +429,7 @@ const PurchasePage: React.FC = () => {
                 return (
                   <div key={g.key} className="flex flex-col">
                     {/* Filtering */}
-                    <div className="p-5">
+                    <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
                       <RadioGroup
                         value={filteredDuration}
                         onChange={(value) => setFilteredDuration('' + value)}
@@ -473,13 +483,13 @@ const PurchasePage: React.FC = () => {
         </div>
 
         {/* Premium ISP Tab - index 1, key: 'premium_isp' */}
-        <div key="premium_isp">
+        <div className="flex-1 h-full flex flex-col" key="premium_isp">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['premium_isp'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -492,13 +502,13 @@ const PurchasePage: React.FC = () => {
         </div>
 
         {/* Private IPv4 Tab - index 2, key: 'private_ipv4' */}
-        <div key="private_ipv4">
+        <div className="flex-1 h-full flex flex-col" key="private_ipv4">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['private_ipv4'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -511,13 +521,13 @@ const PurchasePage: React.FC = () => {
         </div>
 
         {/* Shared IPv4 Tab - index 3, key: 'shared_ipv4' */}
-        <div key="shared_ipv4">
+        <div className="flex-1 h-full flex flex-col" key="shared_ipv4">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['shared_ipv4'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -530,13 +540,13 @@ const PurchasePage: React.FC = () => {
         </div>
 
         {/* IPv6 Tab - index 4, key: 'ipv6' */}
-        <div key="ipv6">
+        <div className="flex-1 h-full flex flex-col" key="ipv6">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
             <ErrorState />
           ) : (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['ipv6'] || []}
                 getDisplayPrice={getDisplayPrice}
@@ -548,7 +558,6 @@ const PurchasePage: React.FC = () => {
           )}
         </div>
       </Tabs>
-
       {/* Mobile Cart Drawer */}
       <AnimatePresence>
         {cartOpen && (

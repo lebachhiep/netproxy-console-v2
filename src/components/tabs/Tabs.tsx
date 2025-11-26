@@ -63,7 +63,17 @@ interface TabsProps {
  * </Tabs>
  *
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className, defaultWrapperClass, cardWrapperClass }) => {
+export const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  children,
+  type = 'default',
+  activeKey,
+  defaultActiveKey,
+  onChange,
+  className,
+  defaultWrapperClass,
+  cardWrapperClass
+}) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
   const isControlled = activeKey !== undefined;
@@ -195,7 +205,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
           </div>
 
           {/* Nội dung tab */}
-          <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
+          <>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</>
         </div>
       )}
     </>

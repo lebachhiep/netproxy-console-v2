@@ -410,9 +410,11 @@ const PurchasePage: React.FC = () => {
       {/* Main Tabs */}
       <Tabs
         defaultWrapperClass="h-full flex flex-col"
+        className="overflow-auto min-h-fit whitespace-nowrap scrollbar-hide"
         tabs={mainTabs}
         activeKey={activeMain}
         onChange={(key) => setActiveMain(key as TabKey)}
+        itemWrapperClass="overflow-visible"
       >
         {/* Rotating Tab - index 0, key: 'rotating' */}
         <div key="rotating">
@@ -429,8 +431,9 @@ const PurchasePage: React.FC = () => {
                 return (
                   <div key={g.key} className="flex flex-col">
                     {/* Filtering */}
-                    <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
+                    <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark whitespace-nowrap scrollbar-hide overflow-auto">
                       <RadioGroup
+                        className="overflow-visible"
                         value={filteredDuration}
                         onChange={(value) => setFilteredDuration('' + value)}
                         options={durationOptions.map((duration) => ({

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -34,6 +35,7 @@ interface TabsProps {
   className?: string;
   defaultWrapperClass?: string;
   cardWrapperClass?: string;
+  itemWrapperClass?: string;
 }
 
 /**
@@ -72,7 +74,8 @@ export const Tabs: React.FC<TabsProps> = ({
   onChange,
   className,
   defaultWrapperClass,
-  cardWrapperClass
+  cardWrapperClass,
+  itemWrapperClass
 }) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
@@ -91,7 +94,7 @@ export const Tabs: React.FC<TabsProps> = ({
       {type === 'default' && (
         <div className={defaultWrapperClass}>
           <div className={twMerge('relative border-b-2 h-10 border-border-element dark:border-border-element-dark pl-5', className)}>
-            <div className="flex w-fit gap-5 relative">
+            <div className={clsx('flex w-fit gap-5 relative', itemWrapperClass)}>
               {tabs.map((tab) => {
                 const isActive = currentActive === tab.key;
                 return (

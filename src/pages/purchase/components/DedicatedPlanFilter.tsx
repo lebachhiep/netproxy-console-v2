@@ -662,10 +662,11 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                 {/* Left Panel - Filters and Country Selection */}
                 <div className="flex-1 overflow-y-auto max-h-[calc(100dvh-215px)]">
                   {/* Filters Section */}
-                  <div className="px-5 py-4 border-b-2 border-border-element dark:border-border-element-dark">
+                  <div className="border-b-2 border-border-element dark:border-border-element-dark">
                     {periodOptions.length > 0 && (
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-2 whitespace-nowrap scrollbar-hide overflow-auto">
                         <RadioGroup
+                          className="overflow-visible px-5 py-4"
                           value={selectedPeriod}
                           onChange={(value) => setSelectedPeriod(Number(value))}
                           options={periodOptions}

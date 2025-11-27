@@ -1,5 +1,6 @@
 import React from 'react';
 import { Radio, RadioProps } from './Radio';
+import clsx from 'clsx';
 
 export interface RadioOption {
   /**
@@ -50,6 +51,8 @@ interface RadioGroupProps {
    * @default "row"
    */
   direction?: 'row' | 'col';
+
+  className?: string;
 }
 
 /**
@@ -72,9 +75,9 @@ interface RadioGroupProps {
  * />
  *
  */
-export const RadioGroup: React.FC<RadioGroupProps> = ({ value, onChange, options, direction = 'row' }) => {
+export const RadioGroup: React.FC<RadioGroupProps> = ({ value, onChange, options, direction = 'row', className }) => {
   return (
-    <div className={`flex ${direction === 'col' ? 'flex-col gap-2' : 'flex-row gap-5'}`}>
+    <div className={clsx(`flex ${direction === 'col' ? 'flex-col gap-2' : 'flex-row gap-5'}`, className)}>
       {options.map((opt) => (
         <Radio
           key={opt.key}

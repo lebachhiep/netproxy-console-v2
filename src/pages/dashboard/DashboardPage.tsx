@@ -251,13 +251,14 @@ const DashboardPage = () => {
     },
     {
       width: isMobile || isTablet ? 200 : '',
+      minWidth: 150,
       key: 'order_number',
       title: 'Mã đơn hàng',
       align: 'left',
       sortable: true,
       render: (value) => (
-        <div className="line-clamp-1 font-mono flex items-center justify-between">
-          {value}
+        <div className="flex items-center justify-between">
+          <p className="line-clamp-1 font-mono truncate">{value}</p>
           <ContentCopy
             className="text-blue cursor-pointer ml-2"
             onClick={(e) => {

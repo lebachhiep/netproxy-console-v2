@@ -377,29 +377,31 @@ const OrderDetailPage = () => {
   const columns: TableColumn<Subscription>[] = [
     {
       key: 'checkbox',
+      width: 40,
       title: <Checkbox checked={isAllSelected} indeterminate={isIndeterminate} onChange={handleSelectAll} />,
-      width: '50px',
       align: 'center',
       render: (_, record) => (
         <Checkbox checked={selectedIds.includes(record.id)} onChange={(checked) => handleSelectOne(record.id, checked)} />
-      )
+      ),
+      fixed: 'left'
     },
     {
       key: 'id',
       title: 'STT',
-      width: '50px',
+      width: 50,
       align: 'center',
-      render: (_, __, index) => index + 1
+      render: (_, __, index) => index + 1,
+      fixed: 'left'
     },
 
     {
-      width: isMobile || isTablet ? 200 : '',
+      width: 150,
       key: 'subscription_id',
       title: 'ID',
       align: 'left',
       render: (_, record) => (
-        <div className="group flex items-center">
-          <p className="truncate line-clamp-1 font-mono">{record.id}</p>
+        <div className="group flex items-center justify-between">
+          <p className="flex-1 truncate line-clamp-1 font-mono">{record.id}</p>
           <ContentCopy
             className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
             onClick={(e) => {
@@ -409,18 +411,19 @@ const OrderDetailPage = () => {
             }}
           />
         </div>
-      )
+      ),
+      fixed: 'left'
     },
     {
-      width: isMobile || isTablet ? 200 : '',
+      width: 150,
       key: 'ip',
       title: 'IP Address',
       align: 'left',
       render: (_, record) => {
         const ipAddress = getIpAddressByProxyType(record);
         return (
-          <div className="group flex items-center">
-            <p className="truncate line-clamp-1 font-mono">{ipAddress}</p>
+          <div className="group flex items-center justify-between">
+            <p className="flex-1 truncate line-clamp-1 font-mono">{ipAddress}</p>
             <ContentCopy
               className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
               onClick={(e) => {
@@ -434,7 +437,7 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 150 : '',
+      width: 60,
       key: 'port',
       title: 'Port',
       align: 'left',
@@ -444,15 +447,15 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 180 : '',
+      width: 150,
       key: 'username',
       title: 'Username',
       align: 'left',
       render: (_, record) => {
         const username = getUsernameByProxyType(record);
         return (
-          <div className="group flex items-center">
-            <p className="truncate line-clamp-1 font-mono">{username}</p>
+          <div className="group flex items-center justify-between">
+            <p className="flex-1 truncate line-clamp-1 font-mono">{username}</p>
             <ContentCopy
               className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
               onClick={(e) => {
@@ -466,15 +469,15 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 150 : '',
+      width: 150,
       key: 'password',
       title: 'Password',
       align: 'left',
       render: (_, record) => {
         const { plainPassword } = getPasswordByProxyType(record);
         return (
-          <div className="group flex items-center">
-            <p className="truncate line-clamp-1 font-mono">{plainPassword}</p>
+          <div className="group flex items-center justify-between">
+            <p className="flex-1 truncate line-clamp-1 font-mono">{plainPassword}</p>
             <ContentCopy
               className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
               onClick={(e) => {
@@ -488,7 +491,7 @@ const OrderDetailPage = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 150 : '',
+      width: 80,
       key: 'connection_type',
       title: 'Type',
       align: 'center',
@@ -526,13 +529,13 @@ const OrderDetailPage = () => {
       )
     },
     {
-      width: isMobile || isTablet ? 200 : 180,
+      width: 150,
       key: 'next_renewal_date',
       title: 'Ngày hết hạn',
       render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
     },
     {
-      width: isMobile || isTablet ? 200 : 180,
+      width: 60,
       key: 'country_code',
       title: 'Country',
       align: 'center',

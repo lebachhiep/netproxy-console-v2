@@ -318,7 +318,9 @@ export function Table<T extends Record<string, any>>({
   const renderHeaderTable = () => (
     <div
       ref={headerScrollRef}
-      className={clsx("overflow-auto relative bg-bg-canvas border-border-element dark:border-border-element-dark border-b-2 border-t-2 dark:bg-bg-canvas-dark")}
+      className={clsx(
+        'overflow-auto relative bg-bg-canvas border-border-element dark:border-border-element-dark border-b-2 border-t-2 dark:bg-bg-canvas-dark'
+      )}
       style={{
         overflowX: 'hidden',
         overflowY: scroll?.y ? 'scroll' : 'visible',
@@ -387,7 +389,7 @@ export function Table<T extends Record<string, any>>({
                 thClassName += ' sticky z-30 bg-white';
                 const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                 if (isLastLeftFixed) {
-                  thClassName += ' shadow-table';
+                  thClassName += ' fixed-left-shadow';
                 }
               } else if (isRightFixed) {
                 thClassName += ' sticky z-30';
@@ -529,7 +531,7 @@ export function Table<T extends Record<string, any>>({
                     className += ' sticky z-10';
                     const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                     if (isLastLeftFixed) {
-                      className += ` shadow-table dark:shadow-table-dark ${rowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` fixed-left-shadow ${rowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
                   if (isRightFixed) {

@@ -12,6 +12,7 @@ import { MdDashboard } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from '@/router';
 import { toast } from 'sonner';
+import { giftCodeService } from '@/services/giftcode/giftcode.service';
 
 interface Breadcrumb {
   title: string;
@@ -32,8 +33,9 @@ export const Navbar: React.FC = () => {
   });
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
-  const { user, userProfile, logout } = useAuth();
+  const { user, userProfile, logout, fetchUserProfile } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
+  const [isRedeeming, setIsRedeeming] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -96,9 +98,43 @@ export const Navbar: React.FC = () => {
     setCode(value);
   };
 
-  const handleEnter = (value: string) => {
-    console.log('Mã kích hoạt:', value);
-    // TODO: gọi API check code ở đây
+  const handleEnter = async (value: string) => {
+    const trimmedCode = value.trim();
+    if (!trimmedCode) {
+      toast.error('Vui lòng nhập mã kích hoạt');
+      return;
+    }
+
+    if (isRedeeming) return;
+
+    setIsRedeeming(true);
+    try {
+      const response = await giftCodeService.redeem(trimmedCode);
+
+      // Backend always returns success=true on 200 response
+      toast.success(response.message);
+
+      if (response.balance_added) {
+        await fetchUserProfile();
+      }
+
+      if (response.order_id) {
+        toast.success(`Đơn hàng đã được tạo thành công!`, {
+          duration: 5000
+        });
+      }
+
+      setCode('');
+    } catch (error: any) {
+      // Handle Encore error format (may have validation_error or message)
+      const errorMessage =
+        error.response?.data?.validation_error ||
+        error.response?.data?.message ||
+        'Không thể kích hoạt mã. Vui lòng thử lại.';
+      toast.error(errorMessage);
+    } finally {
+      setIsRedeeming(false);
+    }
   };
 
   const handleSetBreadcrumbs = (data: Route): void => {
@@ -163,6 +199,7 @@ export const Navbar: React.FC = () => {
             value={code}
             onChange={(e) => handleChange(e.target.value)}
             onEnter={handleEnter}
+            disabled={isRedeeming}
           />
           {/* Ngôn ngữ */}
           <Tooltip content="Chọn ngôn ngữ" trigger="hover" position="bottom">

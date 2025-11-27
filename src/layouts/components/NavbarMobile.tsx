@@ -12,6 +12,7 @@ import { AUTH_MESSAGES } from '@/utils/constants';
 import UserDropdown from '@/components/UserDropdown';
 import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
 import { motion } from 'framer-motion';
+import { giftCodeService } from '@/services/giftcode/giftcode.service';
 
 interface Breadcrumb {
   title: string;
@@ -35,8 +36,9 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const isProxyDetail = matchPath('/proxy/detail/:id', location.pathname);
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
-  const { user, userProfile, logout } = useAuth();
+  const { user, userProfile, logout, fetchUserProfile } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
+  const [isRedeeming, setIsRedeeming] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -97,9 +99,43 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
     setCode(value);
   };
 
-  const handleEnter = (value: string) => {
-    console.log('Mã kích hoạt:', value);
-    // TODO: gọi API check code ở đây
+  const handleEnter = async (value: string) => {
+    const trimmedCode = value.trim();
+    if (!trimmedCode) {
+      toast.error('Vui lòng nhập mã kích hoạt');
+      return;
+    }
+
+    if (isRedeeming) return;
+
+    setIsRedeeming(true);
+    try {
+      const response = await giftCodeService.redeem(trimmedCode);
+
+      // Backend always returns success=true on 200 response
+      toast.success(response.message);
+
+      if (response.balance_added) {
+        await fetchUserProfile();
+      }
+
+      if (response.order_id) {
+        toast.success(`Đơn hàng đã được tạo thành công!`, {
+          duration: 5000
+        });
+      }
+
+      setCode('');
+    } catch (error: any) {
+      // Handle Encore error format (may have validation_error or message)
+      const errorMessage =
+        error.response?.data?.validation_error ||
+        error.response?.data?.message ||
+        'Không thể kích hoạt mã. Vui lòng thử lại.';
+      toast.error(errorMessage);
+    } finally {
+      setIsRedeeming(false);
+    }
   };
 
   const handleSetBreadcrumbs = (data: Route): void => {
@@ -152,6 +188,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
               value={code}
               onChange={(e) => handleChange(e.target.value)}
               onEnter={handleEnter}
+              disabled={isRedeeming}
             />
           </div>
           {/* Ngôn ngữ */}

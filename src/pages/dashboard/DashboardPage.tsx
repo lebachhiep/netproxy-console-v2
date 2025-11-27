@@ -247,7 +247,8 @@ const DashboardPage = () => {
       title: 'STT',
       width: '50px',
       align: 'center',
-      render: (value, _, index) => index + 1
+      render: (value, _, index) => index + 1,
+      fixed: 'left'
     },
     {
       width: isMobile || isTablet ? 200 : '',
@@ -268,7 +269,8 @@ const DashboardPage = () => {
             }}
           />
         </div>
-      )
+      ),
+      fixed: 'left'
     },
     {
       width: isMobile || isTablet ? 200 : '',

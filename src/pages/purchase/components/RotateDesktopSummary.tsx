@@ -200,7 +200,7 @@ export const RotateDesktopSummary = ({
   return (
     <>
       <div className="px-5 mt-3 mb-5">
-        <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark">
+        <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-secondary-dark p-3">
           <div className="relative ">
             <div className={`transition-all duration-300 ease-in-out overflow-hidden `}>
               <div className="flex flex-col gap-3">

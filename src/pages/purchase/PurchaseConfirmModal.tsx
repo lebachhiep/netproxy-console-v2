@@ -27,9 +27,10 @@ export const PurchaseConfirmModal = ({
         });
       }}
       title={'Thanh toán'}
-      className="max-w-xl rounded-xl"
+      className="max-w-xl rounded-xl max-h-[90%] h-full my-auto flex flex-col"
+      bodyClassName="flex-1 h-full flex flex-col h-full"
     >
-      <div className="flex-1">
+      <div className="flex-1 h-full flex flex-col">
         <p className="px-5 py-3 border-b text-text-me dark:border-border-element-dark">Vui lòng nhập số lượng cần mua</p>
         <RotateOrderSummary useCartContext={true} filterPlanType="rotating" duration={duration} handleCloseModal={handleCloseModal} />
       </div>

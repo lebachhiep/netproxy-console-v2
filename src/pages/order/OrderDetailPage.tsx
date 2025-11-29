@@ -573,11 +573,11 @@ const OrderDetailPage = () => {
                 const { plainPassword } = getPasswordByProxyType(record);
 
                 const proxyString = `${ip}:${port}:${username}:${plainPassword}`;
-                const blob = new Blob([proxyString], { type: 'text/plain' });
+                const blob = new Blob([['ip:port:user:password', proxyString].join('\n')], { type: 'text/plain' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `proxy_${record.id}.txt`;
+                link.download = `proxy_${moment().format('YYYYMMDD_HHmmss')}.txt`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -650,21 +650,24 @@ const OrderDetailPage = () => {
                   className={`w-10 h-10 ${'hover:bg-purple-50 dark:hover:bg-purple-900/30'}`}
                   icon={<DocumentSync />}
                   onClick={() => {
-                    const selectedProxies = subscriptions
-                      .filter((sub) => selectedRows.some((row) => row.id === sub.id))
-                      .map((record) => {
-                        const ip = getIpAddressByProxyType(record);
-                        const port = getPortByProxyType(record);
-                        const username = getUsernameByProxyType(record).toLocaleLowerCase();
-                        const { plainPassword } = getPasswordByProxyType(record);
-                        return `${ip}:${port}:${username}:${plainPassword}`;
-                      });
+                    const selectedProxies = [
+                      'ip:port:user:password',
+                      ...subscriptions
+                        .filter((sub) => selectedRows.some((row) => row.id === sub.id))
+                        .map((record) => {
+                          const ip = getIpAddressByProxyType(record);
+                          const port = getPortByProxyType(record);
+                          const username = getUsernameByProxyType(record).toLocaleLowerCase();
+                          const { plainPassword } = getPasswordByProxyType(record);
+                          return `${ip}:${port}:${username}:${plainPassword}`;
+                        })
+                    ];
 
                     const blob = new Blob([selectedProxies.join('\n')], { type: 'text/plain' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = `proxies_${selectedIds.length}.txt`;
+                    link.download = `proxies_${moment().format('YYYYMMDD_HHmmss')}.txt`;
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);

@@ -1,15 +1,6 @@
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
-import {
-  CloudSwapFilled,
-  ContentCopy,
-  CheckMark,
-  Replay,
-  MagnifyingGlass,
-  ArrowCounter,
-  ChatWarning,
-  DocumentSync
-} from '@/components/icons';
+import { CloudSwapFilled, ContentCopy, CheckMark, Replay, MagnifyingGlass, ArrowCounter, DocumentSync } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Checkbox } from '@/components/checkbox/Checkbox';
@@ -28,11 +19,10 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useSubscriptionStore } from '@/stores/subscription.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { Input } from '@/components/input/Input';
-import Tooltip from '@/components/tooltip/Tooltip';
 import { OrderInfoModal } from './OrderInfoModal';
 import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
-import { get } from 'http';
 import moment from 'moment';
+import Tooltip from '@/components/tooltip/Tooltip';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -100,6 +90,7 @@ const OrderDetailPage = () => {
   const [pageSize, setPageSize] = useState(10);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
   const [showProxyModal, setShowProxyModal] = useState(false);
   const [proxyList, setProxyList] = useState<string[]>([]);
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
@@ -376,16 +367,6 @@ const OrderDetailPage = () => {
 
   const columns: TableColumn<Subscription>[] = [
     {
-      key: 'checkbox',
-      width: 40,
-      title: <Checkbox checked={isAllSelected} indeterminate={isIndeterminate} onChange={handleSelectAll} />,
-      align: 'center',
-      render: (_, record) => (
-        <Checkbox checked={selectedIds.includes(record.id)} onChange={(checked) => handleSelectOne(record.id, checked)} />
-      ),
-      fixed: 'left'
-    },
-    {
       key: 'id',
       title: 'STT',
       width: 50,
@@ -393,7 +374,6 @@ const OrderDetailPage = () => {
       render: (_, __, index) => index + 1,
       fixed: 'left'
     },
-
     {
       width: 150,
       key: 'subscription_id',
@@ -664,6 +644,35 @@ const OrderDetailPage = () => {
               onChange={(e) => console.log(e.target.value)}
             />
             <div className="flex items-center gap-2">
+              <Tooltip content="Export Selected Proxies" trigger="hover" position="bottom">
+                <IconButton
+                  disabled={selectedRows.length === 0}
+                  className={`w-10 h-10 ${'hover:bg-purple-50 dark:hover:bg-purple-900/30'}`}
+                  icon={<DocumentSync />}
+                  onClick={() => {
+                    const selectedProxies = subscriptions
+                      .filter((sub) => selectedRows.some((row) => row.id === sub.id))
+                      .map((record) => {
+                        const ip = getIpAddressByProxyType(record);
+                        const port = getPortByProxyType(record);
+                        const username = getUsernameByProxyType(record).toLocaleLowerCase();
+                        const { plainPassword } = getPasswordByProxyType(record);
+                        return `${ip}:${port}:${username}:${plainPassword}`;
+                      });
+
+                    const blob = new Blob([selectedProxies.join('\n')], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `proxies_${selectedIds.length}.txt`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    toast.success('Proxies exported successfully');
+                  }}
+                />
+              </Tooltip>
               <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
               <OrderInfoModal />
             </div>
@@ -692,6 +701,13 @@ const OrderDetailPage = () => {
             rowClassName={(_, index) => (index % 2 === 0 ? '' : 'bg-bg-mute dark:bg-bg-mute-dark')}
             size="large"
             bordered={false}
+            rowSelection={{
+              selectedRowKeys: selectedIds,
+              onChange: (selectedRowIds, selectedRows) => {
+                setSelectedIds(selectedRowIds.map((id) => id as string));
+                setSelectedRows(selectedRows);
+              }
+            }}
           />
         </div>
       </motion.div>

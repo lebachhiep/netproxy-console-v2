@@ -273,7 +273,7 @@ const DashboardPage = () => {
       fixed: 'left'
     },
     {
-      width: isMobile || isTablet ? 200 : '',
+      width: 200,
       key: 'plan_name',
       title: 'Gói',
       align: 'left',

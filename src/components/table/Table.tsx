@@ -1,9 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, createContext, useContext } from 'react';
 import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
 import { ExpandMore } from '../icons';
 import clsx from 'clsx';
 
+// Context to provide selected rows for compound pattern
+const TableSelectedContext = createContext<any[]>([]);
+
+export function useTableSelectedRows<T>() {
+  return useContext(TableSelectedContext) as T[];
+}
 export interface TableColumn<T> {
   /** Key của column, có thể là string hoặc path object */
   key: keyof T | string;
@@ -167,8 +173,9 @@ export function Table<T extends Record<string, any>>({
   onSort,
   showEmptyRows = false,
   maxHeight,
-  bodyClassName
-}: TableProps<T>) {
+  bodyClassName,
+  children
+}: TableProps<T> & { children?: React.ReactNode }) {
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
 
@@ -566,26 +573,37 @@ export function Table<T extends Record<string, any>>({
     </div>
   );
 
+  // Get selected rows for context
+  const selectedRows = rowSelection ? data.filter((_, index) => rowSelection.selectedRowKeys.includes(index)) : [];
+
   return (
-    <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
-      {/* Header Table - Fixed */}
-      {showHeader && fixedHeader && (
-        <div className="relative">
-          {renderHeaderTable()}
-          {/* Shadow overlay không chiếm space */}
-          <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />
-        </div>
-      )}
-
-      {/* Body Table - Scrollable */}
-      {renderBodyTable()}
-
-      {/* Pagination */}
-      {pagination && paginationType == 'loadmore' && (
-        <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />
-      )}
-
-      {pagination && paginationType == 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
-    </div>
+    <TableSelectedContext.Provider value={selectedRows}>
+      <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
+        {/* Bulk Actions Compound */}
+        {children}
+        {/* Header Table - Fixed */}
+        {showHeader && fixedHeader && (
+          <div className="relative">
+            {renderHeaderTable()}
+            {/* Shadow overlay không chiếm space */}
+            <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />
+          </div>
+        )}
+        {/* Body Table - Scrollable */}
+        {renderBodyTable()}
+        {/* Pagination */}
+        {pagination && paginationType == 'loadmore' && (
+          <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />
+        )}
+        {pagination && paginationType == 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
+      </div>
+    </TableSelectedContext.Provider>
   );
 }
+
+function BulkActions<T>({ children }: { children: (selectedRows: T[]) => React.ReactNode }) {
+  const selectedRows = useTableSelectedRows<T>();
+  return <>{children(selectedRows)}</>;
+}
+
+Table.BulkActions = BulkActions;

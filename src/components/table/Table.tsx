@@ -46,7 +46,7 @@ export interface TableProps<T> {
   /** Cấu hình cột của bảng */
   columns: TableColumn<T>[];
 
-  /** Hiển thị loading spinner */
+  /** Hiển thị loading spinner (deprecated, use isLoading) */
   loading?: boolean;
 
   /** Kiểu pagination: 'pagination' hoặc 'loadmore' */
@@ -312,15 +312,6 @@ export function Table<T extends Record<string, any>>({
 
   const displayData = getDisplayData();
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Đang tải...</span>
-      </div>
-    );
-  }
-
   // Render Header Table
   const renderHeaderTable = () => (
     <div
@@ -346,10 +337,15 @@ export function Table<T extends Record<string, any>>({
       >
         <thead className="z-20">
           <tr>
-            {rowSelection && (
+            {rowSelection && !loading && (
               <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-canvas-dark">
                 <div className="flex items-center justify-center px-2 gap-1 border-r-[1.25px] border-border-element dark:border-border-element-dark h-full">
-                  <Checkbox indeterminate={isIndeterminate} checked={!!isAllSelected} onChange={(checked) => handleSelectAll(checked)} />
+                  <Checkbox
+                    indeterminate={isIndeterminate}
+                    checked={!!isAllSelected}
+                    onChange={(checked) => handleSelectAll(checked)}
+                    disabled={loading}
+                  />
                 </div>
               </th>
             )}
@@ -590,7 +586,14 @@ export function Table<T extends Record<string, any>>({
           </div>
         )}
         {/* Body Table - Scrollable */}
-        {renderBodyTable()}
+        {!loading ? (
+          renderBodyTable()
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span className="ml-2 text-gray-600">Đang tải...</span>
+          </div>
+        )}
         {/* Pagination */}
         {pagination && paginationType == 'loadmore' && (
           <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />

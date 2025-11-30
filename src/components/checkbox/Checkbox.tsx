@@ -75,6 +75,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ checked, indeterminate = fal
       <span
         className={`flex h-5 w-5 items-center justify-center rounded border-2 transition-colors duration-200
           ${checked || indeterminate ? 'bg-blue dark:bg-blue-dark border-blue dark:border-blue-dark' : 'border-border dark:border-border-dark bg-bg-input dark:bg-bg-mute-dark'}
+          ${!disabled ? 'peer-hover:border-blue dark:peer-hover:border-blue-dark' : ''}
         `}
       >
         {checked && !indeterminate && (

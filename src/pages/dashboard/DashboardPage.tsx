@@ -428,7 +428,7 @@ const DashboardPage = () => {
                     <span className="text-blue dark:text-blue-dark font-semibold text-xl">{userProfile?.balance || '-'}</span>
                   </div>
                 }
-                subInfo={[{ label: 'Đã chi tiêu', value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }]}
+                subInfo={[{ label: 'Tổng tiền đã nạp ', value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }]}
                 buttonText="NẠP THÊM"
                 onButtonClick={() => setOpen(true)}
               />,

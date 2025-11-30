@@ -14,28 +14,32 @@ const SupportSoftwarePage = () => {
     {
       icon: <img src={chromeIcon} alt="Chrome" className="w-10 h-10" />,
       title: 'Ứng dụng trên Chrome',
-      description: 'It is a long established fact that a reader will be distracted by the readable content'
+      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      href: 'https://chromewebstore.google.com/detail/mnloefcpaepkpmhaoipjkpikbnkmbnic?utm_source=item-share-cb'
     },
     {
       icon: <img src={androidIcon} alt="Android" className="w-10 h-10" />,
       title: 'Ứng dụng trên Android',
-      description: 'It is a long established fact that a reader will be distracted by the readable content'
+      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      href: 'https://play.google.com/store/apps/details?id=com.scheler.superproxy'
     },
     {
       icon: <img src={windowsIcon} alt="Windows" className="w-10 h-10" />,
       title: 'Ứng dụng trên Windows',
-      description: 'It is a long established fact that a reader will be distracted by the readable content'
+      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      href: 'https://www.proxifier.com/'
     },
     {
       icon: <img src={macIcon} alt="Mac" className="w-10 h-10" />,
       title: 'Ứng dụng trên Mac',
-      description: 'It is a long established fact that a reader will be distracted by the readable content'
-    },
-    {
-      icon: <img src={linuxIcon} alt="Linux" className="w-10 h-10" />,
-      title: 'Ứng dụng trên Linux',
-      description: 'It is a long established fact that a reader will be distracted by the readable content'
+      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      href: 'https://apps.apple.com/us/app/shadowrocket/id932747118'
     }
+    // {
+    //   icon: <img src={linuxIcon} alt="Linux" className="w-10 h-10" />,
+    //   title: 'Ứng dụng trên Linux',
+    //   description: 'It is a long established fact that a reader will be distracted by the readable content'
+    // }
   ];
 
   return (
@@ -48,7 +52,9 @@ const SupportSoftwarePage = () => {
             icon={app.icon}
             title={app.title}
             description={app.description}
-            onButtonClick={() => alert(`Cài đặt ${app.title}`)}
+            onButtonClick={() => {
+              window.open(app.href, '_blank');
+            }}
             className="md:w-[264px]"
           />
         ))}

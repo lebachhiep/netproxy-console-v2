@@ -12,7 +12,6 @@ import {
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
-import { Modal } from '@/components/modal/Modal';
 import { Select } from '@/components/select/Select';
 import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -99,6 +98,7 @@ const OrderDetailPage = () => {
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
   const [selectedProtocol, setSelectedProtocol] = useState<'http' | 'socks5'>('http');
+  const [renewCount, setRenewCount] = useState(0);
 
   const { data: subscriptions, refetch } = useQuery({
     queryKey: ['order-subscriptions', id],
@@ -137,23 +137,7 @@ const OrderDetailPage = () => {
         const response = await subscriptionService.switchProtocol(selectedSubscriptionId, protocol);
 
         if (response.success) {
-          // setSubscriptions((prev) =>
-          //   prev.map((s) =>
-          //     s.id === selectedSubscriptionId
-          //       ? {
-          //           ...s,
-          //           provider_credentials: {
-          //             ProxyIP: response.proxy_ip,
-          //             HTTPPort: response.http_port,
-          //             SOCKS5Port: response.socks5_port,
-          //             Username: response.username,
-          //             Password: response.password
-          //           }
-          //         }
-          //       : s
-          //   )
-          // );
-          refetch();
+          await refetch();
           toast.success('Protocol switched successfully');
         }
       } else if (protocolModalType === 'bulk') {
@@ -171,22 +155,6 @@ const OrderDetailPage = () => {
 
             if (response.success) {
               successCount++;
-              // setSubscriptions((prev) =>
-              //   prev.map((s) =>
-              //     s.id === sub.id
-              //       ? {
-              //           ...s,
-              //           provider_credentials: {
-              //             ProxyIP: response.proxy_ip,
-              //             HTTPPort: response.http_port,
-              //             SOCKS5Port: response.socks5_port,
-              //             Username: response.username,
-              //             Password: response.password
-              //           }
-              //         }
-              //       : s
-              //   )
-              // );
               refetch();
             }
           } catch (err) {
@@ -431,7 +399,7 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 80,
+        width: 150,
         key: 'connection_type',
         title: 'Type',
         align: 'center',
@@ -439,21 +407,13 @@ const OrderDetailPage = () => {
           const isRotating = isRotatingProxy(record);
           let connectionType = '-';
 
-          let bgColor = '#f3f4f6';
-          let textColor = '#374151';
+          // let bgColor = '#f3f4f6';
+          // let textColor = '#374151';
 
           if (isRotating) {
-            connectionType = 'HTTPS';
+            connectionType = 'HTTP/ HTTPS';
           } else {
-            const credentials = record.provider_credentials as any;
-            connectionType = credentials?.HTTPPort > 0 ? 'HTTP' : credentials?.SOCKS5Port > 0 ? 'SOCKS5' : '-';
-            if (connectionType === 'HTTP') {
-              bgColor = '#dbeafe';
-              textColor = '#1e40af';
-            } else if (connectionType === 'SOCKS5') {
-              bgColor = '#e9d5ff';
-              textColor = '#7e22ce';
-            }
+            connectionType = 'HTTPS or SOCKS5';
           }
 
           return <div className="px-2 py-1 rounded text-xs font-semibold">{connectionType}</div>;
@@ -602,11 +562,9 @@ const OrderDetailPage = () => {
                 className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 onClick={async () => {
                   setLoading(true);
-                  const promiseList = selectedRows.map(async (record) => {
-                    const checked = !record.auto_renew;
-                    const result = await handleAutoRenewChange(record.id, checked);
-                    refetch();
-                    return result;
+                  const renewChecked = renewCount % 2 === 0;
+                  const promiseList = selectedRows.map((record) => {
+                    return handleAutoRenewChange(record.id, renewChecked);
                   });
                   const results = await Promise.allSettled(promiseList);
                   const needRefresh = results.some((res) => res.status === 'fulfilled');
@@ -615,31 +573,39 @@ const OrderDetailPage = () => {
                     await refetch();
                   }
                   setLoading(false);
+                  setRenewCount((prev) => prev + 1);
+                  toast.success(`Auto-renew ${renewChecked ? 'enabled' : 'disabled'} for selected subscriptions`);
                 }}
                 title="Renew Auto Toggle"
               />
 
-              <IconButton
-                disabled={selectedRows.length === 0}
-                icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400 dark:text-white" />}
-                className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                onClick={async () => {
-                  setLoading(true);
-                  const promiseList = selectedRows.map((record) => {
-                    setProtocolModalType('single');
-                    const credentials = record.provider_credentials as any;
-                    const connectionType = credentials?.HTTPPort > 0 ? 'http' : credentials?.SOCKS5Port > 0 ? 'socks5' : '-';
-                    setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
-                    return handleSwitchProtocol({ selectedSubscriptionId: record.id });
-                  });
+              {!isRotatingProxy && (
+                <IconButton
+                  disabled={selectedRows.length === 0}
+                  icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400 dark:text-white" />}
+                  className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                  onClick={async () => {
+                    setLoading(true);
+                    const promiseList = selectedRows.map((record) => {
+                      setProtocolModalType('single');
+                      const credentials = record.provider_credentials as any;
+                      const connectionType = credentials?.HTTPPort > 0 ? 'http' : credentials?.SOCKS5Port > 0 ? 'socks5' : '-';
+                      setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
+                      return handleSwitchProtocol({ selectedSubscriptionId: record.id });
+                    });
 
-                  const results = await Promise.allSettled(promiseList);
-                  console.log('Bulk protocol switch results:', results);
-                  refetch();
-                  setLoading(false);
-                }}
-                title="Change Protocol"
-              />
+                    const results = await Promise.allSettled(promiseList);
+                    const needRefresh = results.some((res) => res.status === 'fulfilled');
+
+                    if (needRefresh) {
+                      await refetch();
+                    }
+                    setLoading(false);
+                    toast.success('Protocol switched for selected subscriptions');
+                  }}
+                  title="Change Protocol"
+                />
+              )}
 
               <IconButton
                 disabled={selectedRows.length === 0}

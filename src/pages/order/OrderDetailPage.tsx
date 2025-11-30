@@ -128,6 +128,11 @@ const OrderDetailPage = () => {
     }
   });
 
+  const isBelongRotatingProxy = useMemo(() => {
+    if (!subscriptions || subscriptions.length === 0) return false;
+    return subscriptions?.some((sub) => isRotatingProxy(sub));
+  }, [subscriptions]);
+
   const handleSwitchProtocol = async ({ selectedSubscriptionId }: { selectedSubscriptionId: string }) => {
     try {
       const protocol = selectedProtocol;
@@ -579,7 +584,7 @@ const OrderDetailPage = () => {
                 title="Renew Auto Toggle"
               />
 
-              {!isRotatingProxy && (
+              {!isBelongRotatingProxy && (
                 <IconButton
                   disabled={selectedRows.length === 0}
                   icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400 dark:text-white" />}

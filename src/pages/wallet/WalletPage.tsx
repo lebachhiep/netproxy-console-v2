@@ -6,7 +6,7 @@ import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import TopUpModal from './components/modal/TopUpModal';
 import { useResponsive } from '@/hooks/useResponsive';
 import { toast } from 'sonner';
@@ -68,7 +68,7 @@ const WalletPage: React.FC = () => {
 
       const params: any = {
         page: currentPage,
-        per_page: pageSize,
+        per_page: pageSize
       };
 
       // Add search query if present
@@ -137,74 +137,74 @@ const WalletPage: React.FC = () => {
     toast.success('Đã làm mới dữ liệu');
   };
 
-  const columns: TableColumn<TransactionDisplay>[] = [
-    {
-      key: 'stt',
-      title: 'STT',
-      width: '60px',
-      align: 'center',
-      render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
-    },
-    {
-      key: 'id',
-      title: 'Mã',
-      width: '160px',
-      align: 'left',
-      sortable: true,
-      render: (value) => (
-        <div className="flex items-center justify-between">
-          <span className="truncate">{value}</span>
-          <ContentCopy
-            className="text-blue cursor-pointer ml-2"
-            onClick={() => {
-              copyToClipboard(value);
-              toast.success('Đã sao chép mã giao dịch vào clipboard');
-            }}
-          />
-        </div>
-      )
-    },
-    {
-      width: isMobile || isTablet ? 150 : '',
-      key: 'typeLabel',
-      title: 'Loại',
-      align: 'left',
-      render: (value, record) => (
-        <Badge color={record.type === 'credit' ? 'green' : 'blue'}>{value}</Badge>
-      )
-    },
-    {
-      key: 'amount',
-      title: 'Số tiền',
-      width: '120px',
-      render: (value, record) => (
-        <span className={record.type === 'credit' ? 'text-green' : 'text-red'}>
-          {record.type === 'credit' ? '+' : '-'} ${Number(value).toFixed(2)}
-        </span>
-      )
-    },
-    {
-      width: isMobile || isTablet ? 150 : '',
-      key: 'description',
-      title: 'Mô tả',
-      align: 'left',
-      render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
-    },
-    {
-      key: 'status',
-      title: 'Trạng thái',
-      width: '160px',
-      align: 'center',
-      render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
-    },
-    {
-      key: 'date',
-      title: 'Thời gian',
-      width: isMobile || isTablet ? 120 : 200,
-      fixed: 'right',
-      render: (value) => value || '-'
-    }
-  ];
+  const columns: TableColumn<TransactionDisplay>[] = useMemo(() => {
+    return [
+      {
+        key: 'stt',
+        title: 'STT',
+        width: '60px',
+        align: 'center',
+        render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
+      },
+      {
+        key: 'id',
+        title: 'Mã',
+        width: '160px',
+        align: 'left',
+        sortable: true,
+        render: (value) => (
+          <div className="flex items-center justify-between">
+            <span className="truncate">{value}</span>
+            <ContentCopy
+              className="text-blue cursor-pointer ml-2"
+              onClick={() => {
+                copyToClipboard(value);
+                toast.success('Đã sao chép mã giao dịch vào clipboard');
+              }}
+            />
+          </div>
+        )
+      },
+      {
+        width: isMobile || isTablet ? 150 : '',
+        key: 'typeLabel',
+        title: 'Loại',
+        align: 'left',
+        render: (value, record) => <Badge color={record.type === 'credit' ? 'green' : 'blue'}>{value}</Badge>
+      },
+      {
+        key: 'amount',
+        title: 'Số tiền',
+        width: '120px',
+        render: (value, record) => (
+          <span className={record.type === 'credit' ? 'text-green' : 'text-red'}>
+            {record.type === 'credit' ? '+' : '-'} ${Number(value).toFixed(2)}
+          </span>
+        )
+      },
+      {
+        width: isMobile || isTablet ? 150 : '',
+        key: 'description',
+        title: 'Mô tả',
+        align: 'left',
+        render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
+      },
+      {
+        key: 'status',
+        title: 'Trạng thái',
+        width: '160px',
+        align: 'center',
+        render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
+      },
+      {
+        key: 'date',
+        title: 'Thời gian',
+        width: isMobile || isTablet ? 120 : 200,
+        fixed: 'right',
+        render: (value) => value || '-'
+      }
+    ];
+  }, [currentPage, pageSize, isMobile, isTablet]);
 
   return (
     <motion.div
@@ -292,11 +292,7 @@ const WalletPage: React.FC = () => {
                   />
                 </div>
 
-                <IconButton
-                  className="w-10 h-10"
-                  icon={<ArrowCounter />}
-                  onClick={handleRefresh}
-                />
+                <IconButton className="w-10 h-10" icon={<ArrowCounter />} onClick={handleRefresh} />
               </div>
             </div>
           </div>
@@ -326,10 +322,7 @@ const WalletPage: React.FC = () => {
         />
       </motion.div>
 
-      <TopUpModal
-        open={topUpModalOpen}
-        onClose={() => setTopUpModalOpen(false)}
-      />
+      <TopUpModal open={topUpModalOpen} onClose={() => setTopUpModalOpen(false)} />
     </motion.div>
   );
 };

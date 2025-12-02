@@ -7,7 +7,7 @@ class WalletService {
    * @returns Promise with balance, total_deposited, and total_purchased
    */
   async getBalance(): Promise<WalletBalance> {
-    const response = await apiService.get<WalletBalance>('/user/account/wallet');
+    const response = await apiService.get<WalletBalance>('/user/account/me');
     return response;
   }
 }

@@ -538,7 +538,12 @@ const DashboardPage = () => {
               >
                 {tableData.map((item, index) => (
                   <motion.div key={item.id} variants={itemVariants}>
-                    <Card>
+                    <Card
+                      tag={{
+                        text: 'POPULAR',
+                        icon: <IoFlame className="w-3 h-3" />
+                      }}
+                    >
                       <Card.Header>
                         <Card.Title
                           status={{

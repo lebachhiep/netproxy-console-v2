@@ -28,15 +28,22 @@ interface CardProps {
   children: React.ReactNode;
   onClick?: () => void;
   className?: string;
+  tag?: { text: string; icon?: React.ReactNode };
 }
 
-const CardRoot: React.FC<CardProps> = ({ children, onClick, className = '' }) => {
+const CardRoot: React.FC<CardProps> = ({ children, onClick, className = '', tag }) => {
   return (
     <CardContext.Provider value={{ onClick }}>
       <div
         onClick={onClick}
         className={`group cursor-pointer relative w-full h-full rounded-xl border-2 border-border-element bg-bg-primary dark:bg-bg-primary-dark dark:border-border-element-dark hover:bg-bg-secondary dark:hover:bg-bg-secondary-dark hover:shadow-md shadow-xs p-5 flex flex-col gap-4 transition-all hover:border-blue hover:dark:border-blue-dark ${className}`}
       >
+        {tag && (
+          <span className="absolute -top-3 left-0 flex items-center gap-1  bg-primary text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
+            {tag.icon && <span className="text-sm">{tag.icon}</span>}
+            {tag.text}
+          </span>
+        )}
         {children}
       </div>
     </CardContext.Provider>

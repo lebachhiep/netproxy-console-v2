@@ -4,9 +4,13 @@ import { OverViewCard } from '@/components/card/OverViewCard';
 import {
   Add,
   ArrowCounter,
+  CalendarClock,
   CartFilled,
   ContentCopy,
+  DataPie,
+  DocumentTable,
   GridDots,
+  HourglassHalf,
   MagnifyingGlass,
   Person,
   TextColumnOne,
@@ -30,6 +34,9 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
 import { set } from 'zod';
+import { ProxyCard } from '@/components/card/ProxyCard';
+import { IoFlame } from 'react-icons/io5';
+import { Card } from '@/components/card/Card';
 
 export const data = [
   {
@@ -492,33 +499,101 @@ const DashboardPage = () => {
 
         {/* ====== CONTENT ====== */}
         <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px] pb-5">
-          <Table
-            className="h-full pr-2"
-            scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
-            data={sortedData}
-            columns={columns}
-            pagination={{
-              current: currentPage,
-              pageSize,
-              total,
-              pageSizeOptions: [2, 4, 6, 8],
-              className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
-              onChange: (page, size) => {
-                setCurrentPage(page);
-                setPageSize(size);
-              }
-            }}
-            paginationType="pagination"
-            rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-            size="large"
-            bordered={false}
-            sortField={sortField}
-            sortOrder={sortOrder}
-            onSort={(field, order) => {
-              setSortField(field);
-              setSortOrder(order);
-            }}
-          />
+          {viewMode === 'list' ? (
+            <Table
+              className="h-full pr-2"
+              scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
+              data={sortedData}
+              columns={columns}
+              pagination={{
+                current: currentPage,
+                pageSize,
+                total,
+                pageSizeOptions: [2, 4, 6, 8],
+                className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
+                onChange: (page, size) => {
+                  setCurrentPage(page);
+                  setPageSize(size);
+                }
+              }}
+              paginationType="pagination"
+              rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+              size="large"
+              bordered={false}
+              sortField={sortField}
+              sortOrder={sortOrder}
+              onSort={(field, order) => {
+                setSortField(field);
+                setSortOrder(order);
+              }}
+            />
+          ) : (
+            <div className="relative h-full flex-1 flex flex-col">
+              <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
+              >
+                {tableData.map((item, index) => (
+                  <motion.div key={item.id} variants={itemVariants}>
+                    <Card>
+                      <Card.Header>
+                        <Card.Title
+                          status={{
+                            text: 'Đang hoạt động',
+                            color: 'blue'
+                          }}
+                        >
+                          {item.plan_name}
+                        </Card.Title>
+                        <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
+                      </Card.Header>
+                      <Card.List className="dark:text-text-hi-dark">
+                        <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
+                          <div className="flex items-center justify-between">
+                            <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
+                            <ContentCopy
+                              className="text-blue cursor-pointer ml-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                copyToClipboard(item.order_number);
+                                toast.success('Đã sao chép mã đơn hàng vào clipboard');
+                              }}
+                            />
+                          </div>
+                        </Card.ListItem>
+                        <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
+                        <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
+                        <Card.ListItem
+                          label="Ngày mua"
+                          icon={<CalendarClock />}
+                          value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
+                        />
+                      </Card.List>
+                    </Card>
+                    {/* <ProxyCard
+                      data={{
+                        id: item.id,
+                        title: item.plan_name,
+                        status: { text: 'Đang hoạt động', color: 'green' },
+                        planID: 'ANH.EXP1DIP',
+                        dataLeft: '5GB',
+                        expired: 'Dec 17, 2023',
+                        autoRenew: false,
+                        tag: { text: 'POPULAR', icon: <IoFlame className="w-3 h-3" /> },
+                        type: 'bandwidth-proxy'
+                      }}
+                      buttonText="Quản lý"
+                      // onRenewChange={handleAutoRenewChange}
+                      // onClick={() => handleItemClick(index, item.id)}
+                    /> */}
+                  </motion.div>
+                ))}
+              </motion.div>
+            </div>
+          )}
         </motion.div>
 
         {/* ====== MODALS ====== */}

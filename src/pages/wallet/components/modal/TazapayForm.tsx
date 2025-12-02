@@ -8,6 +8,14 @@ import { useTazapayPayment } from '@/hooks/usePayments';
 
 const MIN_AMOUNT = 10;
 
+const getCountryFlag = (countryCode: string): string => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
 interface TazapayFormProps {
   countries?: Record<string, string>;
   onSuccess: () => void;
@@ -19,9 +27,14 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({ countries, onSuccess }
   const { mutate: generatePayment, isPending } = useTazapayPayment();
 
   const countryOptions = countries
-    ? Object.entries(countries).map(([code, name]) => ({
+    ? Object.entries(countries).map(([name, code]) => ({
         value: code,
-        label: <span className="text-text-hi dark:text-text-hi-dark">{name}</span>,
+        label: (
+          <span className="text-text-hi dark:text-text-hi-dark flex items-center gap-2">
+            <span>{getCountryFlag(code)}</span>
+            <span>{name}</span>
+          </span>
+        ),
       }))
     : [];
 

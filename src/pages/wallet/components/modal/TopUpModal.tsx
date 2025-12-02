@@ -108,7 +108,7 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
         type="card"
         activeKey={activeTab}
         onChange={setActiveTab}
-        cardWrapperClass="overflow-hidden"
+        cardWrapperClass=""
       >
         {renderContent()}
       </Tabs>

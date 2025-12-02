@@ -21,7 +21,7 @@ import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useMemo, useState, useEffect } from 'react';
 import { motion, Variants } from 'framer-motion';
-import DepositFlowModal from '../wallet/components/modal/DepositFlowModal';
+import TopUpModal from '../wallet/components/modal/TopUpModal';
 import { useNavigate } from 'react-router-dom';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
@@ -602,7 +602,7 @@ const DashboardPage = () => {
         </motion.div>
 
         {/* ====== MODALS ====== */}
-        <DepositFlowModal open={open} onClose={() => setOpen(false)} />
+        <TopUpModal open={open} onClose={() => setOpen(false)} />
       </motion.div>
     </div>
   );

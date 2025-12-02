@@ -4,13 +4,10 @@ import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
 import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
-import { InputField } from '@/components/input/InputField';
 import { SectionTitle } from '@/components/SectionTitle';
-import { Select } from '@/components/select/Select';
-import { Slider } from '@/components/slider/Slider';
 import { Table, TableColumn } from '@/components/table/Table';
 import React, { useState, useEffect, useCallback } from 'react';
-import DepositFlowModal from './components/modal/DepositFlowModal';
+import TopUpModal from './components/modal/TopUpModal';
 import { useResponsive } from '@/hooks/useResponsive';
 import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
@@ -26,45 +23,13 @@ import { WalletBalance } from '@/services/wallet/wallet.types';
 import { useAuth } from '@/hooks/useAuth';
 import { usePageTitle } from '@/hooks/usePageTitle';
 
-const options = [
-  {
-    value: 'ACB',
-    label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">ACB</span>
-      </div>
-    )
-  },
-  {
-    value: 'VCB',
-    label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">VCB</span>
-      </div>
-    )
-  },
-  {
-    value: 'TPB',
-    label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">TPB</span>
-      </div>
-    )
-  }
-];
-
 const WalletPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Xem ví' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
 
-  // Deposit form state
-  const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
-  const [priceValue, setPriceValue] = useState(10);
-  const [open, setOpen] = useState(false);
+  // Top-up modal state
+  const [topUpModalOpen, setTopUpModalOpen] = useState(false);
 
   // Balance state
   const [balance, setBalance] = useState<WalletBalance | null>(null);
@@ -250,58 +215,20 @@ const WalletPage: React.FC = () => {
     >
       {pageTitle}
       <motion.div variants={itemVariants} initial="hidden" animate="visible" className="flex flex-col md:flex-row gap-5 p-5 items-stretch">
-        {/* Left Panel - Top Up Form */}
+        {/* Left Panel - Top Up Section */}
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
             <div>
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
-              {/* Amount Display */}
-              <div>
-                <div className="relative text-text-hi dark:text-text-hi-dark">
-                  <span className="absolute z-10 top-1/2 left-3 -translate-y-1/2 text-sm flex justify-center items-center h-5">$</span>
-                  <InputField
-                    wrapperClassName="pl-3 h-10"
-                    value={priceValue}
-                    onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
-                  />
-                </div>
-
-                {/* Slider */}
-                <div className="mt-2">
-                  <Slider
-                    min={10}
-                    max={1000}
-                    step={5}
-                    value={priceValue}
-                    onValueChange={setPriceValue}
-                    formatValue={(val) => `$${val.toLocaleString()}`}
-                    labels={['$10.00', '$1,000.00']}
-                    labelValues={[10, 1000]}
-                    showCurrentValue={false}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Payment Method */}
-            <div className="">
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Phương thức</h3>
-              <Select
-                options={options}
-                value={selectedMethod}
-                onChange={(val) => setSelectedMethod(val)}
-                placeholder="Chọn ngân hàng"
-                placement="bottom"
-                className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
-              />
+              <h3 className="text-lg font-bold text-text-hi dark:text-text-hi-dark mb-2">Nạp tiền vào ví</h3>
+              <p className="text-sm text-text-lo dark:text-text-lo-dark">
+                Chọn phương thức thanh toán phù hợp: thẻ tín dụng, tiền điện tử hoặc chuyển khoản ngân hàng.
+              </p>
             </div>
 
             <div className="flex items-center gap-5 justify-between">
-              {/* Submit Button */}
-
               {/* Terms */}
               <p className="text-sm flex-1 text-text-lo dark:text-text-lo-dark font-medium">
-                Bằng cách nhấp vào tiếp tục thanh toán, bạn đồng ý với{' '}
+                Bằng cách nhấp vào nạp tiền, bạn đồng ý với{' '}
                 <a href="#" className="text-blue dark:text-blue-dark underline">
                   Điều khoản dịch vụ
                 </a>{' '}
@@ -312,8 +239,8 @@ const WalletPage: React.FC = () => {
               </p>
               <Button
                 variant="primary"
-                className="h-10 w-[100px] dark:pseudo-border-top-orange dark:border-transparent"
-                onClick={() => setOpen(true)}
+                className="h-10 px-6 dark:pseudo-border-top-orange dark:border-transparent"
+                onClick={() => setTopUpModalOpen(true)}
               >
                 NẠP TIỀN
               </Button>
@@ -399,12 +326,9 @@ const WalletPage: React.FC = () => {
         />
       </motion.div>
 
-      <DepositFlowModal
-        open={open}
-        onClose={() => setOpen(false)}
-        defaultStep={2}
-        defaultAmount={priceValue}
-        defaultMethod={selectedMethod}
+      <TopUpModal
+        open={topUpModalOpen}
+        onClose={() => setTopUpModalOpen(false)}
       />
     </motion.div>
   );

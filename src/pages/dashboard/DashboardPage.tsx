@@ -190,11 +190,12 @@ const DashboardPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    const storageMode = localStorage.getItem('dashboardViewMode');
+    return storageMode === 'list' ? 'list' : 'grid';
+  });
   const [tableData, setTableData] = useState<OrderTableData[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
@@ -208,12 +209,9 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         // Fetch orders
         const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active' });
-
-        setOrders(ordersResponse.orders || []);
         setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
 
         // Transform orders to table data
@@ -234,7 +232,6 @@ const DashboardPage = () => {
         setTotal(ordersResponse.total_subscriptions);
       } catch (err) {
         console.error('Failed to fetch data:', err);
-        setError('Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.');
         setTableData([]);
       } finally {
         setLoading(false);
@@ -403,6 +400,11 @@ const DashboardPage = () => {
     return items;
   }, [isDesktop, isLargeDesktop]);
 
+  const handleChangeMode = (mode: 'list' | 'grid') => {
+    setViewMode(mode);
+    localStorage.setItem('dashboardViewMode', mode);
+  };
+
   return (
     <div className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1" style={{ scrollbarGutter: 'stable' }}>
       {pageTitle}
@@ -485,7 +487,7 @@ const DashboardPage = () => {
               <IconButton
                 className="w-10 h-10 hidden lg:flex"
                 icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
-                onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+                onClick={() => handleChangeMode(viewMode === 'list' ? 'grid' : 'list')}
               />
               <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
               <IconButton

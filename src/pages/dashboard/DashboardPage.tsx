@@ -19,10 +19,10 @@ import {
 } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
 import TopUpModal from '../wallet/components/modal/TopUpModal';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
 import { subscriptionService } from '@/services/subscription/subscription.service';
@@ -34,7 +34,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
 import { IoFlame } from 'react-icons/io5';
 import { Card } from '@/components/card/Card';
-import { set } from 'zod';
+import { useQuery } from '@tanstack/react-query';
 
 export const data = [
   {
@@ -185,8 +185,14 @@ interface OrderTableData {
 
 const DashboardPage = () => {
   const pageTitle = usePageTitle({ pageName: 'Trang chủ' });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const pageQuery = new URLSearchParams(window.location.search).get('page');
+    return pageQuery ? parseInt(pageQuery, 10) : 1;
+  });
+  const [pageSize, setPageSize] = useState(() => {
+    const sizeQuery = new URLSearchParams(window.location.search).get('pageSize');
+    return sizeQuery ? parseInt(sizeQuery, 10) : 20;
+  });
   const [total, setTotal] = useState(0);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
     const storageMode = localStorage.getItem('dashboardViewMode');
@@ -203,16 +209,20 @@ const DashboardPage = () => {
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
 
-  // Fetch data on mount
-  useEffect(() => {
-    const fetchData = async () => {
+  useQuery({
+    queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
+    queryFn: async () => {
       try {
         setLoading(true);
 
         // Fetch orders
-        const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active' });
-        setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
-        setActiveSubscriptions(ordersResponse.total_orders || 0);
+        const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active', Page: currentPage, PerPage: pageSize });
+        if (ordersResponse.total_subscriptions !== totalSubscriptions) {
+          setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
+        }
+        if (ordersResponse.total_orders !== activeSubscriptions) {
+          setActiveSubscriptions(ordersResponse.total_orders || 0);
+        }
 
         // Transform orders to table data
         const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
@@ -227,19 +237,16 @@ const DashboardPage = () => {
           };
         });
         setTableData(transformedData);
-        setCurrentPage(ordersResponse.page);
-        setPageSize(ordersResponse.per_page);
-        setTotal(ordersResponse.total_subscriptions);
+        setTotal(ordersResponse.total_orders);
       } catch (err) {
         console.error('Failed to fetch data:', err);
+        toast.error('Không thể tải dữ liệu đơn hàng. Vui lòng thử lại sau.');
         setTableData([]);
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchData();
-  }, []);
+    }
+  });
 
   const handleItemClick = (id: string) => {
     navigate(`/order/${id}`);
@@ -489,12 +496,25 @@ const DashboardPage = () => {
                 icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
                 onClick={() => handleChangeMode(viewMode === 'list' ? 'grid' : 'list')}
               />
-              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
               <IconButton
-                hoverIconColor="text-white"
-                icon={<Add className="text-white dark:text-white" />}
-                className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border  hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-transparent dark:!pseudo-border-top-orange"
+                className="w-10 h-10"
+                icon={<ArrowCounter />}
+                onClick={() => {
+                  setCurrentPage(1);
+                  setPageSize(20);
+                  const params = new URLSearchParams(window.location.search);
+                  params.delete('page');
+                  params.delete('pageSize');
+                  window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+                }}
               />
+              <Link to="/buy">
+                <IconButton
+                  hoverIconColor="text-white"
+                  icon={<Add className="text-white dark:text-white" />}
+                  className="bg-primary dark:bg-primary-dark w-10 h-10 border-primary-border  hover:bg-primary dark:hover:bg-primary-dark hover:border-primary-hi-dark dark:hover:border-transparent dark:!pseudo-border-top-orange"
+                />
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -516,6 +536,20 @@ const DashboardPage = () => {
                 onChange: (page, size) => {
                   setCurrentPage(page);
                   setPageSize(size);
+
+                  // Update URL without reloading the page
+                  const params = new URLSearchParams(window.location.search);
+                  if (page !== 1) {
+                    params.set('page', String(page));
+                  } else {
+                    params.delete('page');
+                  }
+                  if (size !== 20) {
+                    params.set('pageSize', String(size));
+                  } else {
+                    params.delete('pageSize');
+                  }
+                  window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
                 }
               }}
               paginationType="pagination"
@@ -580,22 +614,6 @@ const DashboardPage = () => {
                         />
                       </Card.List>
                     </Card>
-                    {/* <ProxyCard
-                      data={{
-                        id: item.id,
-                        title: item.plan_name,
-                        status: { text: 'Đang hoạt động', color: 'green' },
-                        planID: 'ANH.EXP1DIP',
-                        dataLeft: '5GB',
-                        expired: 'Dec 17, 2023',
-                        autoRenew: false,
-                        tag: { text: 'POPULAR', icon: <IoFlame className="w-3 h-3" /> },
-                        type: 'bandwidth-proxy'
-                      }}
-                      buttonText="Quản lý"
-                      // onRenewChange={handleAutoRenewChange}
-                      // onClick={() => handleItemClick(index, item.id)}
-                    /> */}
                   </motion.div>
                 ))}
               </motion.div>

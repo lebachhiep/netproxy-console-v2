@@ -26,17 +26,15 @@ import { useNavigate } from 'react-router-dom';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
 import { subscriptionService } from '@/services/subscription/subscription.service';
-import { Order } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import moment from 'moment';
 import { useAuthStore } from '@/stores/auth.store';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
-import { set } from 'zod';
-import { ProxyCard } from '@/components/card/ProxyCard';
 import { IoFlame } from 'react-icons/io5';
 import { Card } from '@/components/card/Card';
+import { set } from 'zod';
 
 export const data = [
   {
@@ -203,6 +201,7 @@ const DashboardPage = () => {
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const userProfile = useAuthStore((state) => state.userProfile);
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
+  const [activeSubscriptions, setActiveSubscriptions] = useState(0);
 
   // Fetch data on mount
   useEffect(() => {
@@ -213,6 +212,7 @@ const DashboardPage = () => {
         // Fetch orders
         const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active' });
         setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
+        setActiveSubscriptions(ordersResponse.total_orders || 0);
 
         // Transform orders to table data
         const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
@@ -452,7 +452,7 @@ const DashboardPage = () => {
                 mainContent={
                   <div>
                     <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">
-                      {loading ? '...' : tableData.length}
+                      {loading ? '...' : activeSubscriptions}
                     </span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
                   </div>

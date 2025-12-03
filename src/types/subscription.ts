@@ -81,6 +81,7 @@ export interface ListSubscriptionsResponse {
   active_count: number;
   page: number;
   per_page: number;
+  total_orders: number;
 }
 
 export interface ListSubscriptionsRequest {

@@ -22,23 +22,56 @@ import { walletService } from '@/services/wallet/wallet.service';
 import { WalletBalance } from '@/services/wallet/wallet.types';
 import { useAuth } from '@/hooks/useAuth';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { Select } from '@/components/select/Select';
+import { Slider } from '@/components/slider/Slider';
+import { InputField } from '@/components/input/InputField';
+
+const options = [
+  {
+    value: 'ACB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">ACB</span>
+      </div>
+    )
+  },
+  {
+    value: 'VCB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">VCB</span>
+      </div>
+    )
+  },
+  {
+    value: 'TPB',
+    label: (
+      <div>
+        <span className="font-medium">Ngân hàng nội địa - </span>
+        <span className="text-primary font-bold">TPB</span>
+      </div>
+    )
+  }
+];
 
 const WalletPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Xem ví' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
+  const [priceValue, setPriceValue] = useState(10);
+  const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
 
   // Top-up modal state
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
 
   // Balance state
   const [balance, setBalance] = useState<WalletBalance | null>(null);
-  const [balanceLoading, setBalanceLoading] = useState(false);
 
   // Transaction state
   const [transactions, setTransactions] = useState<TransactionDisplay[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
 
@@ -50,13 +83,11 @@ const WalletPage: React.FC = () => {
   // Fetch balance
   const fetchBalance = useCallback(async () => {
     try {
-      setBalanceLoading(true);
       const balanceData = await walletService.getBalance();
       setBalance(balanceData);
-    } catch (err: any) {
+    } catch (error) {
       toast.error('Không thể tải thông tin ví');
-    } finally {
-      setBalanceLoading(false);
+      console.log('Error fetching wallet balance:', error);
     }
   }, []);
 
@@ -64,9 +95,7 @@ const WalletPage: React.FC = () => {
   const fetchTransactions = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
-
-      const params: any = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         per_page: pageSize
       };
@@ -90,9 +119,9 @@ const WalletPage: React.FC = () => {
       const transformedData = response.items.map(transformTransaction);
       setTransactions(transformedData);
       setTotal(response.total);
-    } catch (err: any) {
-      setError(err.message || 'Không thể tải lịch sử giao dịch');
+    } catch (error) {
       toast.error('Không thể tải lịch sử giao dịch');
+      console.log('Error fetching transaction history:', error);
     } finally {
       setLoading(false);
     }
@@ -219,16 +248,54 @@ const WalletPage: React.FC = () => {
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
             <div>
-              <h3 className="text-lg font-bold text-text-hi dark:text-text-hi-dark mb-2">Nạp tiền vào ví</h3>
-              <p className="text-sm text-text-lo dark:text-text-lo-dark">
-                Chọn phương thức thanh toán phù hợp: thẻ tín dụng, tiền điện tử hoặc chuyển khoản ngân hàng.
-              </p>
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
+              {/* Amount Display */}
+              <div>
+                <div className="relative text-text-hi dark:text-text-hi-dark">
+                  <span className="absolute z-10 top-1/2 left-3 -translate-y-1/2 text-sm flex justify-center items-center h-5">$</span>
+                  <InputField
+                    wrapperClassName="pl-3 h-10"
+                    value={priceValue}
+                    onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
+                  />
+                </div>
+
+                {/* Slider */}
+                <div className="mt-2">
+                  <Slider
+                    min={10}
+                    max={1000}
+                    step={5}
+                    value={priceValue}
+                    onValueChange={setPriceValue}
+                    formatValue={(val) => `$${val.toLocaleString()}`}
+                    labels={['$10.00', '$1,000.00']}
+                    labelValues={[10, 1000]}
+                    showCurrentValue={false}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Method */}
+            <div className="">
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Phương thức</h3>
+              <Select
+                options={options}
+                value={selectedMethod}
+                onChange={(val) => setSelectedMethod(val)}
+                placeholder="Chọn ngân hàng"
+                placement="bottom"
+                className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
+              />
             </div>
 
             <div className="flex items-center gap-5 justify-between">
+              {/* Submit Button */}
+
               {/* Terms */}
               <p className="text-sm flex-1 text-text-lo dark:text-text-lo-dark font-medium">
-                Bằng cách nhấp vào nạp tiền, bạn đồng ý với{' '}
+                Bằng cách nhấp vào tiếp tục thanh toán, bạn đồng ý với{' '}
                 <a href="#" className="text-blue dark:text-blue-dark underline">
                   Điều khoản dịch vụ
                 </a>{' '}

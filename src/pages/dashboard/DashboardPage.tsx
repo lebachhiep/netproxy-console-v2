@@ -258,7 +258,7 @@ const DashboardPage = () => {
       title: 'STT',
       width: '50px',
       align: 'center',
-      render: (value, _, index) => index + 1,
+      render: (_, __, index) => Number(index + 1) + (currentPage - 1) * pageSize,
       fixed: 'left'
     },
     {
@@ -320,7 +320,7 @@ const DashboardPage = () => {
       title: 'Trạng thái',
       width: '160px',
       align: 'center',
-      render: (subs) => <Badge color={'blue'}>Đang hoạt động</Badge> // Always active for now
+      render: () => <Badge color={'blue'}>Đang hoạt động</Badge> // Always active for now
     },
     {
       width: isMobile || isTablet ? 150 : 200,
@@ -572,7 +572,7 @@ const DashboardPage = () => {
                 animate="visible"
                 className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
               >
-                {tableData.map((item, index) => (
+                {tableData.map((item) => (
                   <motion.div key={item.id} variants={itemVariants}>
                     <Card
                       tag={{

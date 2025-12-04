@@ -377,7 +377,7 @@ export function Table<T extends Record<string, any>>({
   ${col.sortable ? 'cursor-pointer !text-text-hi dark:!text-text-hi-dark' : ''} 
   bg-bg-canvas dark:bg-bg-canvas-dark`;
 
-              let className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
+              const className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
   ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} 
   bg-bg-canvas dark:bg-bg-canvas-dark`;
 
@@ -445,7 +445,7 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="overflow-auto hide-scroll-x relative flex-1 dark:bg-bg-canvas-dark z-50"
+      className="overflow-auto relative flex-1 dark:bg-bg-canvas-dark z-50"
       style={{
         maxHeight: maxHeight || '',
         overflowX: 'auto',

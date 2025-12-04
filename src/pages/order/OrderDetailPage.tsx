@@ -61,7 +61,7 @@ interface CountrySelectCellProps {
   currentCountry?: string;
 }
 
-const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry }) => {
+const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry }: CountrySelectCellProps) => {
   const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
   const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
 
@@ -197,7 +197,7 @@ const OrderDetailPage = () => {
       }
 
       console.log('Getting proxy information for subscription:', subscriptionId);
-      const response = await subscriptionService.getProxy(subscriptionId);
+      // const response = await subscriptionService.getProxy(subscriptionId);
 
       // Update subscriptions state with new proxy credentials
       // setSubscriptions((prev) =>
@@ -404,6 +404,20 @@ const OrderDetailPage = () => {
         }
       },
       {
+        width: 170,
+        key: 'country_code',
+        title: 'Country',
+        align: 'center',
+        render: (_, record) => {
+          const isRotating = isRotatingProxy(record);
+          if (isRotating) {
+            return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
+          }
+          // For non-rotating proxies, show as plain text
+          return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
+        }
+      },
+      {
         width: 150,
         key: 'connection_type',
         title: 'Type',
@@ -411,9 +425,6 @@ const OrderDetailPage = () => {
         render: (_, record) => {
           const isRotating = isRotatingProxy(record);
           let connectionType = '-';
-
-          // let bgColor = '#f3f4f6';
-          // let textColor = '#374151';
 
           if (isRotating) {
             connectionType = 'HTTP/ HTTPS';
@@ -440,20 +451,6 @@ const OrderDetailPage = () => {
         key: 'next_renewal_date',
         title: 'Ngày hết hạn',
         render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
-      },
-      {
-        width: 60,
-        key: 'country_code',
-        title: 'Country',
-        align: 'center',
-        render: (_, record) => {
-          const isRotating = isRotatingProxy(record);
-          if (isRotating) {
-            return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
-          }
-          // For non-rotating proxies, show as plain text
-          return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
-        }
       },
       {
         width: 200,

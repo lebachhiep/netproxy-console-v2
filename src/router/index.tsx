@@ -5,7 +5,6 @@ import { NotFoundPage } from '@/pages/404/NotFoundPage';
 import { AccountProfilePage } from '@/pages/account-profile/AccountProfilePage';
 import ComponentPage from '@/pages/component/ComponentPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
-import { ProxyDetailPage } from '@/pages/dashboard/ProxyDetailPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { LoginPage } from '@/pages/login/LoginPage';

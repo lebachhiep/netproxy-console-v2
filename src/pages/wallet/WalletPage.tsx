@@ -173,13 +173,15 @@ const WalletPage: React.FC = () => {
         title: 'STT',
         width: '60px',
         align: 'center',
-        render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
+        render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1,
+        fixed: 'left'
       },
       {
         key: 'id',
         title: 'Mã',
         width: '160px',
         align: 'left',
+        fixed: 'left',
         sortable: true,
         render: (value) => (
           <div className="flex items-center justify-between">
@@ -193,6 +195,12 @@ const WalletPage: React.FC = () => {
             />
           </div>
         )
+      },
+      {
+        key: 'date',
+        title: 'Thời gian',
+        width: 200,
+        render: (value) => value || '-'
       },
       {
         width: isMobile || isTablet ? 150 : '',
@@ -224,13 +232,6 @@ const WalletPage: React.FC = () => {
         width: '160px',
         align: 'center',
         render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
-      },
-      {
-        key: 'date',
-        title: 'Thời gian',
-        width: isMobile || isTablet ? 120 : 200,
-        fixed: 'right',
-        render: (value) => value || '-'
       }
     ];
   }, [currentPage, pageSize, isMobile, isTablet]);

@@ -24,7 +24,6 @@ const HistoryPage: React.FC = () => {
   // State
   const [orders, setOrders] = useState<OrderDisplay[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
 
@@ -46,11 +45,10 @@ const HistoryPage: React.FC = () => {
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
-      setError(null);
 
       const params: any = {
         page: currentPage,
-        per_page: pageSize,
+        per_page: pageSize
       };
 
       // Add search query if present
@@ -83,8 +81,8 @@ const HistoryPage: React.FC = () => {
       setOrders(transformedData);
       setTotal(response.total);
     } catch (err: any) {
-      setError(err.message || 'Không thể tải lịch sử đơn hàng');
       toast.error('Không thể tải lịch sử đơn hàng');
+      console.error('Error fetching orders:', err);
     } finally {
       setLoading(false);
     }
@@ -152,14 +150,16 @@ const HistoryPage: React.FC = () => {
       title: 'STT',
       width: '60px',
       align: 'center',
-      render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1
+      render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1,
+      fixed: 'left'
     },
     {
       key: 'orderNumber',
       title: 'Mã đơn hàng',
-      width: '160px',
-      align: 'left',
+      width: 200,
+      align: 'center',
       sortable: true,
+      fixed: 'left',
       render: (value) => (
         <div className="flex items-center justify-between">
           <span className="truncate">{value}</span>
@@ -175,23 +175,27 @@ const HistoryPage: React.FC = () => {
       )
     },
     {
-      width: isMobile || isTablet ? 150 : '',
+      key: 'createdAt',
+      title: 'Thời gian',
+      width: 160,
+      render: (value) => formatOrderDate(value.toISOString())
+    },
+
+    {
+      width: 120,
       key: 'typeLabel',
       title: 'Loại đơn',
-      align: 'left',
-      render: (value, record) => (
-        <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
-      )
+      align: 'center',
+      render: (value, record) => <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
     },
     {
       key: 'total',
       title: 'Tổng tiền',
-      width: '120px',
+      width: 120,
+      align: 'center',
       render: (value, record) => (
         <div className="group relative">
-          <span className="font-medium text-blue cursor-help">
-            ${Number(value).toFixed(2)}
-          </span>
+          <span className="font-medium text-blue cursor-help">${Number(value).toFixed(2)}</span>
           {/* Tooltip */}
           <div className="absolute z-50 bottom-full left-0 mb-2 hidden group-hover:block w-48 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-lg p-3">
             <div className="space-y-1 text-xs">
@@ -240,25 +244,18 @@ const HistoryPage: React.FC = () => {
       }
     },
     {
-      width: isMobile || isTablet ? 150 : '',
-      key: 'description',
-      title: 'Mô tả',
-      align: 'left',
-      render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
-    },
-    {
+      width: 160,
       key: 'statusDisplay',
       title: 'Trạng thái',
-      width: '160px',
       align: 'center',
       render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
     },
     {
-      key: 'createdAt',
-      title: 'Thời gian',
-      width: isMobile || isTablet ? 120 : 200,
-      fixed: 'right',
-      render: (value) => formatOrderDate(value.toISOString())
+      width: 150,
+      key: 'description',
+      title: 'Mô tả',
+      align: 'left',
+      render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
     }
   ];
 
@@ -291,11 +288,7 @@ const HistoryPage: React.FC = () => {
               triggerClassName="dark:pseudo-border-top dark:border-transparent"
             />
 
-            <IconButton
-              className="w-10 h-10"
-              icon={<ArrowCounter />}
-              onClick={handleRefresh}
-            />
+            <IconButton className="w-10 h-10" icon={<ArrowCounter />} onClick={handleRefresh} />
           </div>
 
           {/* Second row - Type and Status filters */}
@@ -361,12 +354,7 @@ const HistoryPage: React.FC = () => {
       </motion.div>
 
       {/* Order Details Modal */}
-      <OrderDetailsModal
-        open={isModalOpen}
-        orderId={selectedOrderId}
-        onClose={handleModalClose}
-        initialItems={selectedOrderItems}
-      />
+      <OrderDetailsModal open={isModalOpen} orderId={selectedOrderId} onClose={handleModalClose} initialItems={selectedOrderItems} />
     </motion.div>
   );
 };

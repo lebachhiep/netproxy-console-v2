@@ -1,14 +1,14 @@
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import {
-  CloudSwapFilled,
   ContentCopy,
-  CheckMark,
-  Replay,
   MagnifyingGlass,
   ArrowCounter,
-  DocumentSync,
-  ArrowRepeatAll
+  CopySelect,
+  ArrowDownload,
+  Reload,
+  CloudSwap,
+  CloudSwapOutlined
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -466,8 +466,8 @@ const OrderDetailPage = () => {
               {!isRotating && (
                 <>
                   <IconButton
-                    icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400" />}
-                    className="w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    icon={<CloudSwap />}
+                    className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                     onClick={() => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
@@ -478,18 +478,18 @@ const OrderDetailPage = () => {
                     title="Change Protocol"
                   />
                   <IconButton
-                    icon={<Replay className="text-orange-600 dark:text-orange-400" />}
-                    className="w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
+                    icon={<Reload />}
+                    className="rounded-lg w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
                     onClick={() => handleGetProxy(record.id)}
                     title="Get Proxy"
                   />
                 </>
               )}
               <IconButton
-                className={`w-8 h-8 ${
+                className={`rounded-lg w-8 h-8 ${
                   copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
                 }`}
-                icon={<DocumentSync />}
+                icon={<ArrowDownload />}
                 onClick={() => {
                   const ip = getIpAddressByProxyType(record);
                   const port = getPortByProxyType(record);
@@ -510,14 +510,8 @@ const OrderDetailPage = () => {
                 }}
               />
               <IconButton
-                icon={
-                  copiedId === record.id ? (
-                    <CheckMark className="text-green-600 dark:text-green-400" />
-                  ) : (
-                    <ContentCopy className="text-purple-600 dark:text-purple-400" />
-                  )
-                }
-                className={`w-8 h-8 ${
+                icon={<CopySelect />}
+                className={`rounded-lg w-8 h-8 ${
                   copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
                 }`}
                 onClick={() => handleCopyProxy(record)}
@@ -558,33 +552,11 @@ const OrderDetailPage = () => {
               onChange={(e) => console.log(e.target.value)}
             />
             <div className="flex items-center gap-2">
-              <IconButton
-                disabled={selectedRows.length === 0}
-                icon={<ArrowRepeatAll className="text-blue-600 dark:text-blue-400 dark:text-white" />}
-                className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                onClick={async () => {
-                  setLoading(true);
-                  const renewChecked = renewCount % 2 === 0;
-                  const promiseList = selectedRows.map((record) => {
-                    return handleAutoRenewChange(record.id, renewChecked);
-                  });
-                  const results = await Promise.allSettled(promiseList);
-                  const needRefresh = results.some((res) => res.status === 'fulfilled');
-
-                  if (needRefresh) {
-                    await refetch();
-                  }
-                  setLoading(false);
-                  setRenewCount((prev) => prev + 1);
-                  toast.success(`Auto-renew ${renewChecked ? 'enabled' : 'disabled'} for selected subscriptions`);
-                }}
-                title="Renew Auto Toggle"
-              />
-
+              {/* Change protocol */}
               {!isBelongRotatingProxy && (
                 <IconButton
                   disabled={selectedRows.length === 0}
-                  icon={<CloudSwapFilled className="text-blue-600 dark:text-blue-400 dark:text-white" />}
+                  icon={<CloudSwapOutlined />}
                   className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   onClick={async () => {
                     setLoading(true);
@@ -609,10 +581,35 @@ const OrderDetailPage = () => {
                 />
               )}
 
+              {/* Renew */}
+              <IconButton
+                disabled={selectedRows.length === 0}
+                icon={<Reload />}
+                className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                onClick={async () => {
+                  setLoading(true);
+                  const renewChecked = renewCount % 2 === 0;
+                  const promiseList = selectedRows.map((record) => {
+                    return handleAutoRenewChange(record.id, renewChecked);
+                  });
+                  const results = await Promise.allSettled(promiseList);
+                  const needRefresh = results.some((res) => res.status === 'fulfilled');
+
+                  if (needRefresh) {
+                    await refetch();
+                  }
+                  setLoading(false);
+                  setRenewCount((prev) => prev + 1);
+                  toast.success(`Auto-renew ${renewChecked ? 'enabled' : 'disabled'} for selected subscriptions`);
+                }}
+                title="Renew Auto Toggle"
+              />
+
+              {/* Download */}
               <IconButton
                 disabled={selectedRows.length === 0}
                 className={`w-10 h-10 ${'hover:bg-purple-50 dark:hover:bg-purple-900/30'}`}
-                icon={<DocumentSync />}
+                icon={<ArrowDownload />}
                 onClick={() => {
                   const selectedProxies = [
                     'ip:port:user:password',
@@ -641,8 +638,22 @@ const OrderDetailPage = () => {
                 title="Export Selected Proxies"
               />
 
-              <IconButton className="w-10 h-10" icon={<ArrowCounter />} />
+              {/* Thông tin */}
               <OrderInfoModal />
+
+              {/* Refresh */}
+              <IconButton
+                className="w-10 h-10"
+                icon={<ArrowCounter />}
+                onClick={() => {
+                  setCurrentPage(1);
+                  setPageSize(20);
+                  const params = new URLSearchParams(window.location.search);
+                  params.delete('page');
+                  params.delete('pageSize');
+                  window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+                }}
+              />
             </div>
           </div>
         </div>

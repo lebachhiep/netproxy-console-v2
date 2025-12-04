@@ -185,7 +185,7 @@ const WalletPage: React.FC = () => {
         sortable: true,
         render: (value) => (
           <div className="flex items-center justify-between">
-            <span className="truncate">{value}</span>
+            <span className="truncate flex-1">{value}</span>
             <ContentCopy
               className="text-blue cursor-pointer ml-2"
               onClick={() => {

@@ -38,7 +38,7 @@ const HistoryPage: React.FC = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
   // Fetch orders
@@ -328,6 +328,7 @@ const HistoryPage: React.FC = () => {
 
       <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] pb-5">
         <Table
+          showEmptyRows
           className="h-full [&_tbody_tr]:cursor-pointer [&_tbody_tr:hover]:bg-bg-mute dark:[&_tbody_tr:hover]:bg-bg-mute-dark"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 270px)' }}
           data={orders}

@@ -92,7 +92,7 @@ const OrderDetailPage = () => {
   const { isMobile } = useResponsive();
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);

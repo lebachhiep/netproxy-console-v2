@@ -25,8 +25,8 @@ const getCountryName = (code: string): string => {
 
 interface DedicatedPlanFilterProps {
   plans: Plan[];
-  getDisplayPrice: (plan: Plan) => string;
-  buildPlanFeatures: (plan: Plan) => Array<{ icon: React.ReactNode; label: React.ReactNode }>;
+  // getDisplayPrice: (plan: Plan) => string;
+  // buildPlanFeatures: (plan: Plan) => Array<{ icon: React.ReactNode; label: React.ReactNode }>;
   proxyType?: string; // Proxy type name (tab name) like "Premium ISP", "Private IPv4", etc.
   servers?: string[]; // Ordered list of servers from API
 }
@@ -50,8 +50,8 @@ const getPeriodDays = (plan: Plan): number | null => {
 
 export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   plans,
-  getDisplayPrice,
-  buildPlanFeatures,
+  // getDisplayPrice,
+  // buildPlanFeatures,
   proxyType,
   servers
 }) => {
@@ -82,9 +82,9 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
   // Selected countries in cart (local state for display)
   const [selectedCountries, setSelectedCountries] = useState<Map<string, SelectedCountry>>(new Map());
-  const [calculatingPrices, setCalculatingPrices] = useState<Set<string>>(new Set());
-  const priceCalculationRefs = React.useRef<Map<string, number>>(new Map());
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  // const [calculatingPrices, setCalculatingPrices] = useState<Set<string>>(new Set());
+  // const priceCalculationRefs = React.useRef<Map<string, number>>(new Map());
+  // const [updateTrigger, setUpdateTrigger] = useState(0);
   const isUpdatingCartRef = React.useRef<Set<string>>(new Set()); // Track countries being updated to prevent sync loop
 
   // Extract available servers from API prop or fallback to extracting from plans
@@ -244,7 +244,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       setSelectedCountries(newMap);
     } else {
       // Add country with default quantity 1
-      setCalculatingPrices((prev) => new Set(prev).add(countryCode));
+      // setCalculatingPrices((prev) => new Set(prev).add(countryCode));
 
       // Use fallback price first, then calculate real price
       const fallbackPrice = selectedPlan.price || 0;
@@ -279,62 +279,62 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           cart.addToCart(tabKey, selectedPlan, 1, { duration: durationOption }, countryCode, finalTotal);
           toast.success(`Đã thêm ${countryName} vào giỏ hàng`);
         }
-        setCalculatingPrices((prev) => {
-          const next = new Set(prev);
-          next.delete(countryCode);
-          return next;
-        });
+        // setCalculatingPrices((prev) => {
+        //   const next = new Set(prev);
+        //   next.delete(countryCode);
+        //   return next;
+        // });
       });
     }
   };
 
-  const handleQuantityChange = async (countryCode: string, newQuantity: number) => {
-    if (newQuantity < 1 || !selectedPlan) return;
+  // const handleQuantityChange = async (countryCode: string, newQuantity: number) => {
+  //   if (newQuantity < 1 || !selectedPlan) return;
 
-    const selected = selectedCountries.get(countryCode);
-    if (!selected) return;
+  //   const selected = selectedCountries.get(countryCode);
+  //   if (!selected) return;
 
-    // Prevent multiple simultaneous updates
-    if (isUpdatingCartRef.current.has(countryCode)) {
-      return;
-    }
+  //   // Prevent multiple simultaneous updates
+  //   if (isUpdatingCartRef.current.has(countryCode)) {
+  //     return;
+  //   }
 
-    // Mark as updating
-    isUpdatingCartRef.current.add(countryCode);
+  //   // Mark as updating
+  //   isUpdatingCartRef.current.add(countryCode);
 
-    // Use the stored price per IP (already calculated when country was added)
-    const pricePerIP = selected.price;
-    const newTotal = pricePerIP * newQuantity;
+  //   // Use the stored price per IP (already calculated when country was added)
+  //   const pricePerIP = selected.price;
+  //   const newTotal = pricePerIP * newQuantity;
 
-    // Update selectedCountries with new quantity and total
-    setSelectedCountries((prev) => {
-      const next = new Map(prev);
-      const existing = next.get(countryCode);
-      if (existing) {
-        next.set(countryCode, {
-          ...existing,
-          quantity: newQuantity,
-          total: newTotal
-        });
-        setUpdateTrigger((prev) => prev + 1);
-      }
-      return next;
-    });
+  //   // Update selectedCountries with new quantity and total
+  //   setSelectedCountries((prev) => {
+  //     const next = new Map(prev);
+  //     const existing = next.get(countryCode);
+  //     if (existing) {
+  //       next.set(countryCode, {
+  //         ...existing,
+  //         quantity: newQuantity,
+  //         total: newTotal
+  //       });
+  //       setUpdateTrigger((prev) => prev + 1);
+  //     }
+  //     return next;
+  //   });
 
-    // Find cart item
-    const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
-    const tabItems = cart.getTabItems(tabKey);
-    const cartItem = tabItems.find(
-      (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
-    );
+  //   // Find cart item
+  //   const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
+  //   const tabItems = cart.getTabItems(tabKey);
+  //   const cartItem = tabItems.find(
+  //     (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
+  //   );
 
-    // Update cart: use updateCartItem to atomically update quantity and calculatedPrice
-    if (cartItem) {
-      cart.updateCartItem(tabKey, cartItem.id, newQuantity, newTotal);
-    }
+  //   // Update cart: use updateCartItem to atomically update quantity and calculatedPrice
+  //   if (cartItem) {
+  //     cart.updateCartItem(tabKey, cartItem.id, newQuantity, newTotal);
+  //   }
 
-    isUpdatingCartRef.current.delete(countryCode);
-  };
+  //   isUpdatingCartRef.current.delete(countryCode);
+  // };
 
   const handleRemoveCountry = (countryCode: string) => {
     if (!selectedPlan) return;
@@ -358,13 +358,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     setSelectedCountries(newMap);
   };
 
-  const totalPrice = useMemo(() => {
-    let total = 0;
-    selectedCountries.forEach((selected) => {
-      total += selected.total || 0;
-    });
-    return total;
-  }, [selectedCountries, updateTrigger]);
+  // const totalPrice = useMemo(() => {
+  //   let total = 0;
+  //   selectedCountries.forEach((selected) => {
+  //     total += selected.total || 0;
+  //   });
+  //   return total;
+  // }, [selectedCountries, updateTrigger]);
 
   // Sync selectedCountries with cart items (but skip if we're currently updating)
   useEffect(() => {
@@ -537,14 +537,14 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   }, [countries, asiaCountries, europeCountries]);
 
   // Filtered cart items for this tab (plan + duration)
-  const filteredCartItems = useMemo(() => {
-    if (!selectedPlan || !selectedPeriod) return [];
+  // const filteredCartItems = useMemo(() => {
+  //   if (!selectedPlan || !selectedPeriod) return [];
 
-    const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
+  //   const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
 
-    const tabItems = cart.getTabItems(tabKey);
-    return tabItems.filter((item) => item.plan.id === selectedPlan.id && item.duration === durationOption);
-  }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
+  //   const tabItems = cart.getTabItems(tabKey);
+  //   return tabItems.filter((item) => item.plan.id === selectedPlan.id && item.duration === durationOption);
+  // }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
 
   // Component to render filtered OrderSummary
   const FilteredOrderSummary: React.FC<{ selectedPlan: Plan; selectedPeriod: number }> = ({ selectedPlan, selectedPeriod }) => {
@@ -618,13 +618,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     const displayProxyType = proxyType || selectedPlan.metadata?.proxy_type || 'Dedicated Proxy';
 
     // Calculate totals from filtered items for dedicated tabs
-    const filteredSubtotal = filteredItems.reduce((sum, item) => {
-      const itemPrice = item.calculatedPrice ?? item.plan.price;
-      return sum + itemPrice * item.quantity;
-    }, 0);
+    // const filteredSubtotal = filteredItems.reduce((sum, item) => {
+    //   const itemPrice = item.calculatedPrice ?? item.plan.price;
+    //   return sum + itemPrice * item.quantity;
+    // }, 0);
 
-    const filteredTotalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
-    const filteredTotalLocation = filteredItems.length;
+    // const filteredTotalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
+    // const filteredTotalLocation = filteredItems.length;
 
     // Render OrderSummary with useCartContext=true to enable coupon and balance features
     // But pass filtered orders to override the display
@@ -636,7 +636,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         onRemove={handleRemove}
         proxyType={displayProxyType}
         duration={selectedPeriod}
-        filterPlanType="dedicated"
+        // filterPlanType="dedicated"
       />
     );
   };

@@ -527,6 +527,7 @@ const DashboardPage = () => {
               scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}
               columns={columns}
+              showEmptyRows
               pagination={{
                 current: currentPage,
                 pageSize,

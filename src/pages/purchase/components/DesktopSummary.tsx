@@ -12,7 +12,6 @@ import { couponService } from '@/services/coupon/coupon.service';
 import { orderService } from '@/services/order/order.service';
 import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 export const DesktopSummary = ({
   orders,
@@ -31,17 +30,17 @@ export const DesktopSummary = ({
   useCartContext?: boolean;
   proxyType?: string;
   duration?: number;
-  filterPlanType?: 'rotating' | 'dedicated' | 'static';
+  filterPlanType?: 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6';
 }) => {
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [couponInput, setCouponInput] = useState<string>('');
   const [isValidatingCoupon, setIsValidatingCoupon] = useState<boolean>(false);
   const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
   const userProfile = useAuthStore((state) => state.userProfile);
   const balance = userProfile?.balance ?? 0;
-  const navigate = useNavigate();
 
   // Calculate final total with discount
   // For dedicated tabs (when orders prop is provided), use the passed total (which is already filtered)
@@ -51,7 +50,7 @@ export const DesktopSummary = ({
   const isDedicatedTab = orders.length > 0 && useCartContext;
   // Always use the passed total since OrderSummary already filters items by filterPlanType
   const subtotalForCalculation = total;
-  const finalTotal = cart ? (subtotalForCalculation - discount) : total;
+  const finalTotal = cart ? subtotalForCalculation - discount : total;
   const balanceAfter = balance - finalTotal;
   const hasInsufficientFunds = balanceAfter < 0;
 
@@ -79,6 +78,7 @@ export const DesktopSummary = ({
       }
     } catch (error) {
       toast.error('Không thể xác thực mã giảm giá');
+      console.log('Error validating coupon:', error);
     } finally {
       setIsValidatingCoupon(false);
     }
@@ -101,13 +101,11 @@ export const DesktopSummary = ({
     let itemsToCheckout = allItems;
     if (isDedicatedTab && orders.length > 0) {
       // For dedicated tabs, only checkout items that are in the orders list (already filtered)
-      const orderCountries = orders.map(o => o.country.code?.toLowerCase()).filter(Boolean);
-      itemsToCheckout = allItems.filter(item =>
-        item.country && orderCountries.includes(item.country.toLowerCase())
-      );
+      const orderCountries = orders.map((o) => o.country.code?.toLowerCase()).filter(Boolean);
+      itemsToCheckout = allItems.filter((item) => item.country && orderCountries.includes(item.country.toLowerCase()));
     } else if (filterPlanType) {
       // For rotating tabs or when filterPlanType is provided
-      itemsToCheckout = allItems.filter(item => item.plan.type === filterPlanType);
+      itemsToCheckout = allItems.filter((item) => item.plan.type === filterPlanType);
     }
 
     // Validate cart not empty
@@ -127,7 +125,7 @@ export const DesktopSummary = ({
       // Build order request from filtered cart items only
       const orderRequest: CreateOrderRequest = {
         type: 'buy',
-        items: itemsToCheckout.map(item => ({
+        items: itemsToCheckout.map((item) => ({
           plan_id: item.plan.id,
           quantity: item.quantity,
           country: item.country
@@ -141,7 +139,7 @@ export const DesktopSummary = ({
       // Clear only the items that were checked out
       // Group items by tab and clear them from respective tabs
       const itemsByTab = new Map<CartTabKey, string[]>();
-      itemsToCheckout.forEach(item => {
+      itemsToCheckout.forEach((item) => {
         const tabKey = getTabKeyFromPlan(item.plan);
         if (!itemsByTab.has(tabKey)) {
           itemsByTab.set(tabKey, []);
@@ -289,7 +287,12 @@ export const DesktopSummary = ({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-text-me dark:text-text-me-dark">Số dư sau:</span>
-                <span className={clsx('font-semibold', hasInsufficientFunds ? 'text-red dark:text-red-dark' : 'text-text-hi dark:text-text-hi-dark')}>
+                <span
+                  className={clsx(
+                    'font-semibold',
+                    hasInsufficientFunds ? 'text-red dark:text-red-dark' : 'text-text-hi dark:text-text-hi-dark'
+                  )}
+                >
                   ${balanceAfter.toFixed(2)}
                 </span>
               </div>
@@ -316,7 +319,7 @@ export const DesktopSummary = ({
           <div>
             <Button
               className="w-full text-[12px]"
-              disabled={useCartContext ? hasInsufficientFunds || (cart?.itemCount === 0) : false}
+              disabled={useCartContext ? hasInsufficientFunds || cart?.itemCount === 0 : false}
               loading={isCheckingOut}
               onClick={useCartContext ? handleCheckout : undefined}
             >

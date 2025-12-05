@@ -1,15 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Country } from './table/CountrySelector';
-import { SectionTitle } from '@/components/SectionTitle';
 import { Add, CartFilled, Delete, Subtract } from '@/components/icons';
-import { Divider } from '@/components/divider/Divider';
-import { Button } from '@/components/button/Button';
 import { useResponsive } from '@/hooks/useResponsive';
 import { DesktopSummary } from './DesktopSummary';
 import IconButton from '@/components/button/IconButton';
 import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
-import { CartItem, getTabKeyFromPlan, CartTabKey } from '@/contexts/CartContext';
+import { CartItem, getTabKeyFromPlan } from '@/contexts/CartContext';
 import Tooltip from '@/components/tooltip/Tooltip';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
@@ -39,20 +36,20 @@ interface Props {
   useCartContext?: boolean; // Flag to use cart context instead of props
   proxyType?: string; // Proxy type for dedicated tabs (e.g., "Premium ISP", "Private IPv4")
   duration?: number; // Duration in days (e.g., 7, 30)
-  filterPlanType?: 'rotating' | 'dedicated' | 'static'; // Filter cart items by plan type
+  filterPlanType?: 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6'; // Filter cart items by plan type
 }
 
 const OrderSummary: React.FC<Props> = ({
   orders: propOrders = [],
   onUpdateQuantity,
   onRemove,
-  onClearAll,
   useCartContext = false,
   proxyType,
   duration,
   filterPlanType
 }) => {
   const { isMobile, isTablet } = useResponsive();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
   const updatingItemsRef = useRef<Set<string>>(new Set()); // Track items being updated
   const [editingItemId, setEditingItemId] = useState<string | null>(null); // Track which item is being edited
@@ -75,6 +72,7 @@ const OrderSummary: React.FC<Props> = ({
   } else {
     orders = propOrders;
   }
+  console.log('Rendering OrderSummary with orders:', orders);
   const isEmpty = orders.length === 0;
 
   // Nếu giỏ hàng trống

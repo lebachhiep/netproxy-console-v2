@@ -14,7 +14,6 @@ import {
 import { Tabs } from '@/components/tabs/Tabs';
 import React, { useState, useEffect, useMemo } from 'react';
 import OrderSummary from './components/OrderSumary';
-import { DedicatedPlanSelector } from './components/DedicatedPlanSelector';
 import { DedicatedPlanFilter } from './components/DedicatedPlanFilter';
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
@@ -67,7 +66,7 @@ const itemVariants: Variants = {
   }
 };
 
-type TabKey = 'rotating' | string; // string for dedicated proxy types
+type TabKey = 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6'; // string for dedicated proxy types
 
 const PurchasePage: React.FC = () => {
   const [filteredDuration, setFilteredDuration] = useState('');
@@ -85,37 +84,37 @@ const PurchasePage: React.FC = () => {
   const [cartOpen, setCartOpen] = useState(false);
 
   // Default prices for external provider plans (price = 0)
-  const [defaultPrices, setDefaultPrices] = useState<Record<string, number>>({});
+  // const [defaultPrices, setDefaultPrices] = useState<Record<string, number>>({});
 
   // Cart integration
   const cart = useCart();
 
   // Fetch default prices for external provider plans (price = 0) using US country
-  const fetchDefaultPrices = async (plans: Plan[]) => {
-    const externalProviderPlans = plans.filter((p) => p.price === 0);
+  // const fetchDefaultPrices = async (plans: Plan[]) => {
+  //   const externalProviderPlans = plans.filter((p) => p.price === 0);
 
-    if (externalProviderPlans.length === 0) return;
+  //   if (externalProviderPlans.length === 0) return;
 
-    const pricePromises = externalProviderPlans.map(async (plan) => {
-      try {
-        const result = await planService.calculatePlanPrice(plan.id, {
-          country: 'US', // Default to US for display
-          quantity: 1
-        });
-        return { planId: plan.id, price: result.price };
-      } catch (err) {
-        console.error(`Failed to fetch default price for plan ${plan.id}:`, err);
-        return { planId: plan.id, price: 0 };
-      }
-    });
+  //   const pricePromises = externalProviderPlans.map(async (plan) => {
+  //     try {
+  //       const result = await planService.calculatePlanPrice(plan.id, {
+  //         country: 'US', // Default to US for display
+  //         quantity: 1
+  //       });
+  //       return { planId: plan.id, price: result.price };
+  //     } catch (err) {
+  //       console.error(`Failed to fetch default price for plan ${plan.id}:`, err);
+  //       return { planId: plan.id, price: 0 };
+  //     }
+  //   });
 
-    const results = await Promise.all(pricePromises);
-    const pricesMap: Record<string, number> = {};
-    results.forEach(({ planId, price }) => {
-      pricesMap[planId] = price;
-    });
-    setDefaultPrices(pricesMap);
-  };
+  //   const results = await Promise.all(pricePromises);
+  //   const pricesMap: Record<string, number> = {};
+  //   results.forEach(({ planId, price }) => {
+  //     pricesMap[planId] = price;
+  //   });
+  //   setDefaultPrices(pricesMap);
+  // };
 
   // Shared fetch function (DRY principle)
   const fetchPlans = async () => {
@@ -136,7 +135,6 @@ const PurchasePage: React.FC = () => {
   // Fetch plans on mount
   useEffect(() => {
     fetchPlans();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Rotating plans from API response
@@ -202,9 +200,9 @@ const PurchasePage: React.FC = () => {
   // Helper to get display price
   const getDisplayPrice = (plan: Plan): string => {
     // If plan has price = 0 and we have a cached default price, use it
-    if (plan.price === 0 && defaultPrices[plan.id]) {
-      return defaultPrices[plan.id].toFixed(2);
-    }
+    // if (plan.price === 0 && defaultPrices[plan.id]) {
+    //   return defaultPrices[plan.id].toFixed(2);
+    // }
     // Otherwise use plan.price (có thể là 0 nếu chưa fetch price)
     return plan.price.toFixed(2);
   };
@@ -603,12 +601,12 @@ const PurchasePage: React.FC = () => {
               </div>
 
               {/* Content - Only show if there are rotating items */}
-              {cart.getAllItems().filter((item) => item.plan.type === 'rotating').length > 0 && (
+              {cart.getAllItems().length > 0 && (
                 <div className="flex-1">
-                  <OrderSummary useCartContext={true} filterPlanType="rotating" />
+                  <OrderSummary useCartContext={true} />
                 </div>
               )}
-              {cart.getAllItems().filter((item) => item.plan.type === 'rotating').length === 0 && (
+              {cart.getAllItems().length === 0 && (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70 mx-auto" />

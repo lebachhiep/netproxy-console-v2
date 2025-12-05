@@ -77,7 +77,7 @@ const WalletPage: React.FC = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
   // Fetch balance
@@ -374,6 +374,7 @@ const WalletPage: React.FC = () => {
           data={transactions}
           columns={columns}
           loading={loading}
+          showEmptyRows
           pagination={{
             current: currentPage,
             pageSize,
@@ -386,7 +387,6 @@ const WalletPage: React.FC = () => {
           rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
           size="large"
           bordered={false}
-          showEmptyRows
         />
       </motion.div>
 

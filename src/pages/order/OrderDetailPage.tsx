@@ -660,6 +660,7 @@ const OrderDetailPage = () => {
         {/* Table */}
         <div className="flex-1 flex flex-col overflow-hidden pb-5">
           <Table
+            showEmptyRows
             className="h-full pr-2"
             scroll={{ x: 800, y: isMobile ? '' : 'calc(100dvh - 450px)' }}
             data={subscriptions || []}

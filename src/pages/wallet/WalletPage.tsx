@@ -203,7 +203,7 @@ const WalletPage: React.FC = () => {
         render: (value) => value || '-'
       },
       {
-        width: isMobile || isTablet ? 150 : '',
+        width: 120,
         key: 'typeLabel',
         title: 'Loại',
         align: 'left',
@@ -224,7 +224,7 @@ const WalletPage: React.FC = () => {
         key: 'description',
         title: 'Mô tả',
         align: 'left',
-        render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
+        render: (value) => <div className="truncate">{value || '...'}</div>
       },
       {
         key: 'status',

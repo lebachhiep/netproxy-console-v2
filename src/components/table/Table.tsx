@@ -512,10 +512,6 @@ export function Table<T extends Record<string, any>>({
 
                   let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
-                  // if (!isLeftFixed && !isRightFixed) {
-                  //   className += ' truncate';
-                  // }
-
                   if (isSorted) {
                     className += ' font-medium';
                   }
@@ -564,6 +560,68 @@ export function Table<T extends Record<string, any>>({
               </tr>
             );
           })}
+          {/* Fill empty rows if needed */}
+          {/* Fill empty rows to match the pageSize if needed */}
+          {showEmptyRows &&
+            pagination &&
+            displayData.length < pagination.pageSize &&
+            Array.from({ length: pagination.pageSize - displayData.length }).map((_, idx) => {
+              const emptyRowIndex = displayData.length + idx;
+              const actualRowIndex = (pagination.current - 1) * pagination.pageSize + emptyRowIndex;
+              const rowClass = `${emptyRowIndex % 2 === 0 ? 'bg-bg-canvas dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+              return (
+                <tr key={`empty-${actualRowIndex}`} className={rowClass} style={{ height: '48px' }}>
+                  {rowSelection && <td className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`} />}
+                  {columns.map((col, colIndex) => {
+                    const leftOffset = getLeftOffset(colIndex);
+                    const rightOffset = getRightOffset(colIndex);
+                    const isLeftFixed = col.fixed === 'left';
+                    const isRightFixed = col.fixed === 'right';
+                    const isFirstCell = colIndex === 0 && !rowSelection;
+                    const isLastCell = colIndex === columns.length - 1;
+
+                    let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
+
+                    if (isFirstCell) {
+                      className += ' rounded-l-lg';
+                    }
+                    if (isLastCell) {
+                      className += ' rounded-r-lg';
+                    }
+                    if (isLeftFixed) {
+                      className += ' sticky z-10';
+                      const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
+                      if (isLastLeftFixed) {
+                        className += ` fixed-left-shadow ${emptyRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      }
+                    }
+                    if (isRightFixed) {
+                      className += ' sticky z-10';
+                      const isFirstRightFixed = rightFixedColumns[0] === col;
+                      if (isFirstRightFixed) {
+                        className += ` h-full fixed-right-shadow  ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      }
+                    }
+
+                    const colWidth = getColumnWidth(col);
+
+                    const style: React.CSSProperties = {
+                      width: colWidth,
+                      minWidth: colWidth
+                    };
+
+                    if (isLeftFixed) style.left = leftOffset;
+                    if (isRightFixed) style.right = rightOffset;
+
+                    return (
+                      <td key={colIndex} className={className} style={style}>
+                        {/* Empty cell */}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </div>

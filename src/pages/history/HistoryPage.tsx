@@ -177,12 +177,12 @@ const HistoryPage: React.FC = () => {
     {
       key: 'createdAt',
       title: 'Thời gian',
-      width: 160,
+      width: 150,
       render: (value) => formatOrderDate(value.toISOString())
     },
 
     {
-      width: 120,
+      width: 150,
       key: 'typeLabel',
       title: 'Loại đơn',
       align: 'center',
@@ -191,7 +191,7 @@ const HistoryPage: React.FC = () => {
     {
       key: 'total',
       title: 'Tổng tiền',
-      width: 120,
+      width: 150,
       align: 'center',
       render: (value, record) => (
         <div className="group relative">
@@ -227,7 +227,7 @@ const HistoryPage: React.FC = () => {
     {
       key: 'items',
       title: 'Items',
-      width: '100px',
+      width: 150,
       align: 'center',
       render: (_value, record) => {
         const itemsCount = record.items?.length || 0;
@@ -244,7 +244,7 @@ const HistoryPage: React.FC = () => {
       }
     },
     {
-      width: 160,
+      width: 150,
       key: 'statusDisplay',
       title: 'Trạng thái',
       align: 'center',
@@ -255,7 +255,7 @@ const HistoryPage: React.FC = () => {
       key: 'description',
       title: 'Mô tả',
       align: 'left',
-      render: (value) => <div className="truncate max-w-[220px]">{value || '...'}</div>
+      render: (value) => <div className="truncate">{value || '...'}</div>
     }
   ];
 

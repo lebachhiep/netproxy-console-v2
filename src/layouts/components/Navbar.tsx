@@ -1,5 +1,5 @@
 import IconButton from '@/components/button/IconButton';
-import { Chevron, Globe, Translate, WeatherMoon, WeatherSunny } from '@/components/icons';
+import { Chevron, Translate, WeatherMoon, WeatherSunny } from '@/components/icons';
 import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import Tooltip from '@/components/tooltip/Tooltip';
 import UserDropdown from '@/components/UserDropdown';
@@ -21,7 +21,6 @@ interface Breadcrumb {
 
 export const Navbar: React.FC = () => {
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -44,6 +43,7 @@ export const Navbar: React.FC = () => {
       navigate('/login');
     } catch (error) {
       toast.error('Đăng xuất thất bại');
+      console.log('Logout error:', error);
     }
   };
 
@@ -53,7 +53,7 @@ export const Navbar: React.FC = () => {
       const target = e.target as Node;
       // Nếu click ngoài dropdownRef thì mới đóng
       if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-        setMenuOpen(false);
+        // setMenuOpen(false);
       }
     };
 
@@ -128,9 +128,7 @@ export const Navbar: React.FC = () => {
     } catch (error: any) {
       // Handle Encore error format (may have validation_error or message)
       const errorMessage =
-        error.response?.data?.validation_error ||
-        error.response?.data?.message ||
-        'Không thể kích hoạt mã. Vui lòng thử lại.';
+        error.response?.data?.validation_error || error.response?.data?.message || 'Không thể kích hoạt mã. Vui lòng thử lại.';
       toast.error(errorMessage);
     } finally {
       setIsRedeeming(false);
@@ -149,9 +147,7 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     adminSections.forEach((section) => {
       section.routes.forEach((router: Route) => {
-        console.log('Checking route:', router);
         if (router.path === location.pathname || location.pathname.startsWith(router.path + '/')) {
-          console.log('Found route for breadcrumb:', router);
           return handleSetBreadcrumbs(router);
         }
       });

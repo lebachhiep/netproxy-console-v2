@@ -31,11 +31,9 @@ export function Pagination({
   loading = false,
   hasMore = true
 }: PaginationProps) {
-  console.log('Pagination props:', { current, total, pageSize, type });
   const totalPages = Math.ceil(total / pageSize);
-  console.log('totalPages', totalPages);
-  const startItem = Math.min((current - 1) * pageSize + 1, total);
-  const endItem = Math.min(current * pageSize, total);
+  // const startItem = Math.min((current - 1) * pageSize + 1, total);
+  // const endItem = Math.min(current * pageSize, total);
 
   // Nếu pageSize hiện tại không có trong options, thêm nó vào
   const sizeOptionsWithCurrent = pageSizeOptions.includes(pageSize) ? pageSizeOptions : [...pageSizeOptions, pageSize];

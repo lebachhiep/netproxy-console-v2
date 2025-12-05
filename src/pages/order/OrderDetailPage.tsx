@@ -8,7 +8,8 @@ import {
   ArrowDownload,
   Reload,
   CloudSwap,
-  CloudSwapOutlined
+  CloudSwapOutlined,
+  ArrowSync
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -308,7 +309,7 @@ const OrderDetailPage = () => {
         fixed: 'left'
       },
       {
-        width: 150,
+        width: 100,
         key: 'subscription_id',
         title: 'ID',
         align: 'left',
@@ -324,11 +325,10 @@ const OrderDetailPage = () => {
               }}
             />
           </div>
-        ),
-        fixed: 'left'
+        )
       },
       {
-        width: 150,
+        width: 100,
         key: 'ip',
         title: 'IP Address',
         align: 'left',
@@ -350,17 +350,29 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 60,
+        width: 100,
         key: 'port',
         title: 'Port',
         align: 'left',
         render: (_, record) => {
           const port = getPortByProxyType(record);
-          return <div className="line-clamp-1 font-mono">{port || '-'}</div>;
+          return (
+            <div className="group flex items-center justify-between">
+              <p className="flex-1 truncate line-clamp-1 font-mono">{port}</p>
+              <ContentCopy
+                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyToClipboard(port);
+                  toast.success('Đã sao chép ipAddress vào clipboard');
+                }}
+              />
+            </div>
+          );
         }
       },
       {
-        width: 150,
+        width: 100,
         key: 'username',
         title: 'Username',
         align: 'left',
@@ -382,7 +394,7 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 150,
+        width: 100,
         key: 'password',
         title: 'Password',
         align: 'left',
@@ -404,7 +416,7 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 170,
+        width: 100,
         key: 'country_code',
         title: 'Country',
         align: 'center',
@@ -418,7 +430,7 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 150,
+        width: 100,
         key: 'connection_type',
         title: 'Type',
         align: 'center',
@@ -436,7 +448,7 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 150,
+        width: 100,
         key: 'auto_renew',
         title: 'Renew-Auto',
         align: 'center',
@@ -542,8 +554,8 @@ const OrderDetailPage = () => {
         className="bg-bg-canvas dark:bg-bg-canvas-dark h-full flex flex-col flex-1"
       >
         {/* Header */}
-        <div className="p-5 bg-bg-canvas dark:bg-bg-canvas-dark border-b-2 border-border-element dark:border-border-element-dark">
-          <div className="flex items-center justify-between mt-3">
+        <div className="px-5 border-t mt-6 py-2 bg-bg-canvas dark:bg-bg-canvas-dark border-b-2 border-border-element dark:border-border-element-dark">
+          <div className="flex items-center justify-between">
             <Input
               placeholder="Tìm kiếm"
               wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
@@ -583,7 +595,7 @@ const OrderDetailPage = () => {
               {/* Renew */}
               <IconButton
                 disabled={selectedRows.length === 0}
-                icon={<Reload />}
+                icon={<ArrowSync />}
                 className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 onClick={async () => {
                   setLoading(true);

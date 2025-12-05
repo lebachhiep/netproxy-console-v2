@@ -32,7 +32,6 @@ import { useAuthStore } from '@/stores/auth.store';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
-import { IoFlame } from 'react-icons/io5';
 import { Card } from '@/components/card/Card';
 import { useQuery } from '@tanstack/react-query';
 
@@ -575,12 +574,7 @@ const DashboardPage = () => {
               >
                 {tableData.map((item) => (
                   <motion.div key={item.id} variants={itemVariants}>
-                    <Card
-                      tag={{
-                        text: 'POPULAR',
-                        icon: <IoFlame className="w-3 h-3" />
-                      }}
-                    >
+                    <Card>
                       <Card.Header>
                         <Card.Title
                           status={{

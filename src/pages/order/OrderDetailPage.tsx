@@ -479,16 +479,16 @@ const OrderDetailPage = () => {
                   />
                   <IconButton
                     icon={<Reload />}
-                    className="rounded-lg w-8 h-8 hover:bg-orange-50 dark:hover:bg-orange-900/30"
+                    iconClassName="text-[#FDBE02] hover:!text-[#FDBE02] dark:text-[#FDBE02]"
+                    className="rounded-lg w-8 h-8"
                     onClick={() => handleGetProxy(record.id)}
                     title="Get Proxy"
                   />
                 </>
               )}
               <IconButton
-                className={`rounded-lg w-8 h-8 ${
-                  copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
-                }`}
+                className={`rounded-lg w-8 h-8`}
+                iconClassName="text-[#27BE2A] hover:text-[#27BE2A] dark:!text-[#27BE2A]"
                 icon={<ArrowDownload />}
                 onClick={() => {
                   const ip = getIpAddressByProxyType(record);
@@ -508,12 +508,11 @@ const OrderDetailPage = () => {
                   URL.revokeObjectURL(url);
                   toast.success('Proxy exported successfully');
                 }}
+                title="Export Proxy"
               />
               <IconButton
                 icon={<CopySelect />}
-                className={`rounded-lg w-8 h-8 ${
-                  copiedId === record.id ? 'bg-green-50 dark:bg-green-900/30' : 'hover:bg-purple-50 dark:hover:bg-purple-900/30'
-                }`}
+                className={`rounded-lg w-8 h-8`}
                 onClick={() => handleCopyProxy(record)}
                 title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
               />
@@ -608,7 +607,7 @@ const OrderDetailPage = () => {
               {/* Download */}
               <IconButton
                 disabled={selectedRows.length === 0}
-                className={`w-10 h-10 ${'hover:bg-purple-50 dark:hover:bg-purple-900/30'}`}
+                className={`w-10 h-10`}
                 icon={<ArrowDownload />}
                 onClick={() => {
                   const selectedProxies = [

@@ -654,6 +654,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         }}
         className="w-full h-full flex-1 flex flex-col"
         cardWrapperClass="w-full h-full flex-1 flex flex-col"
+        contentCardWrapperClass="h-full flex-1 flex flex-col"
       >
         {serverOptions &&
           serverOptions.map((server) => {

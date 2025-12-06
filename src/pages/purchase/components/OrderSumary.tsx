@@ -72,7 +72,6 @@ const OrderSummary: React.FC<Props> = ({
   } else {
     orders = propOrders;
   }
-  console.log('Rendering OrderSummary with orders:', orders);
   const isEmpty = orders.length === 0;
 
   // Nếu giỏ hàng trống
@@ -256,7 +255,7 @@ const OrderSummary: React.FC<Props> = ({
             </div>
 
             {/* List items */}
-            <div className="space-y-3 mt-3 mb-5 pb-5 overflow-y-auto flex-1">
+            <div className="space-y-3 mt-3 mb-5 pb-5 overflow-y-auto flex-1 overflow-x-hidden">
               {useCartContext && cart
                 ? // Render cart items (already filtered by filterPlanType if provided)
                   // Check if orders are CartItems or OrderItemTypes

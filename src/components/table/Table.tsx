@@ -298,7 +298,7 @@ export function Table<T extends Record<string, any>>({
     }
 
     // Tính toán dữ liệu cho trang hiện tại
-    const startIndex = (pagination.current - 1) * pagination.pageSize;
+    const startIndex = 0;
     const endIndex = startIndex + pagination.pageSize;
     const paginatedData = data.slice(startIndex, endIndex);
 

@@ -211,20 +211,18 @@ const DashboardPage = () => {
   useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
     queryFn: async () => {
+      setLoading(true);
       try {
-        setLoading(true);
+        const ordersResponse = await subscriptionService.getSubscriptions({
+          Status: 'active',
+          Page: currentPage,
+          PerPage: pageSize
+        });
 
-        // Fetch orders
-        const ordersResponse = await subscriptionService.getSubscriptions({ Status: 'active', Page: currentPage, PerPage: pageSize });
-        if (ordersResponse.total_subscriptions !== totalSubscriptions) {
-          setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
-        }
-        if (ordersResponse.total_orders !== activeSubscriptions) {
-          setActiveSubscriptions(ordersResponse.total_orders || 0);
-        }
+        setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
+        setActiveSubscriptions(ordersResponse.total_orders || 0);
 
-        // Transform orders to table data
-        const transformedData = (ordersResponse.orders || []).map((order): OrderTableData => {
+        const transformedData: OrderTableData[] = (ordersResponse.orders || []).map((order) => {
           const firstSubscription = order.subscriptions?.[0];
           return {
             id: order.id,
@@ -235,12 +233,15 @@ const DashboardPage = () => {
             duration: firstSubscription?.plan?.duration ? moment.duration(firstSubscription.plan.duration, 'seconds').humanize() : 'N/A'
           };
         });
+
         setTableData(transformedData);
         setTotal(ordersResponse.total_orders);
+        return transformedData;
       } catch (err) {
         console.error('Failed to fetch data:', err);
-        toast.error('Không thể tải dữ liệu đơn hàng. Vui lòng thử lại sau.');
+        toast.error('Failed to load order data. Please try again later.');
         setTableData([]);
+        return [];
       } finally {
         setLoading(false);
       }
@@ -257,7 +258,9 @@ const DashboardPage = () => {
       title: 'STT',
       width: '50px',
       align: 'center',
-      render: (_, __, index) => Number(index + 1) + (currentPage - 1) * pageSize,
+      render: (_, __, index) => {
+        return index;
+      },
       fixed: 'left'
     },
     {

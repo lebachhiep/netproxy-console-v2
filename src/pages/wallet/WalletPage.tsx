@@ -2,7 +2,7 @@ import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
-import { ArrowCounter, ContentCopy, DatabaseStackOutlined, Globe, MagnifyingGlass, WalletCreditCardOutlined } from '@/components/icons';
+import { ArrowCounter, ContentCopy, DatabaseStackOutlined, Globe, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -25,38 +25,10 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { InputField } from '@/components/input/InputField';
-
-const options = [
-  {
-    value: 'tazapay',
-    label: (
-      <div className="flex gap-2">
-        <WalletCreditCardOutlined className="w-5 h-5 text-primary font-bold" />
-        <span className="font-medium">Thẻ/Ví</span>
-      </div>
-    )
-  },
-  {
-    value: 'cryptomus',
-    label: (
-      <div className="flex gap-2">
-        <Globe className="w-5 h-5 text-primary font-bold" />
-        <span className="font-medium">Crypto</span>
-      </div>
-    )
-  },
-  {
-    value: 'web2m',
-    label: (
-      <div className="flex gap-2">
-        <DatabaseStackOutlined className="w-5 h-5 text-primary font-bold" />
-        <span className="font-medium">Ngân hàng</span>
-      </div>
-    )
-  }
-];
+import { usePaymentMethods } from '@/hooks/usePayments';
 
 const WalletPage: React.FC = () => {
+  const { data: paymentMethods } = usePaymentMethods();
   const pageTitle = usePageTitle({ pageName: 'Xem ví' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
@@ -79,6 +51,49 @@ const WalletPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
+
+  // payment method options
+
+  const isTazapayAvailable = paymentMethods?.methods.find((m) => m.type === 'tazapay')?.available;
+  const tazapayCountryOptions = isTazapayAvailable
+    ? paymentMethods?.methods.find((m) => m.type === 'tazapay')?.supported_countries || []
+    : [];
+
+  const options = [
+    {
+      value: 'web2m',
+      label: (
+        <div className="flex gap-2">
+          <DatabaseStackOutlined className="w-5 h-5 text-primary font-bold" />
+          <span className="font-medium">Ngân hàng</span>
+        </div>
+      )
+    },
+    {
+      value: 'cryptomus',
+      label: (
+        <div className="flex gap-2">
+          <Globe className="w-5 h-5 text-primary font-bold" />
+          <span className="font-medium">Crypto</span>
+        </div>
+      )
+    },
+    ...(Object.entries(tazapayCountryOptions) ? Object.entries(tazapayCountryOptions) : []).map(([country, value]) => {
+      return {
+        value: 'tazapay',
+        label: (
+          <div className="flex gap-2">
+            <img
+              className="w-5 h-5 text-primary font-bold"
+              src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`}
+              alt={`${value} flag`}
+            />
+            <span className="font-medium">{country}</span>
+          </div>
+        )
+      };
+    })
+  ];
 
   // Fetch balance
   const fetchBalance = useCallback(async () => {

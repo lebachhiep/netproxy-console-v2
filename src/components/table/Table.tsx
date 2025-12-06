@@ -1,4 +1,4 @@
-import React, { useRef, createContext, useContext } from 'react';
+import React, { useRef, createContext, useContext, useEffect, useState } from 'react';
 import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
 import { ExpandMore } from '../icons';
@@ -10,147 +10,49 @@ const TableSelectedContext = createContext<any[]>([]);
 export function useTableSelectedRows<T>() {
   return useContext(TableSelectedContext) as T[];
 }
+
 export interface TableColumn<T> {
-  /** Key của column, có thể là string hoặc path object */
   key: keyof T | string;
-
-  /** Tiêu đề cột */
   title: React.ReactNode;
-
-  /** Render custom cell */
   render?: (value: any, record: T, index: number) => React.ReactNode;
-
-  /** Chiều rộng column */
   width?: string | number;
-
-  /** Căn chỉnh text */
   align?: 'left' | 'center' | 'right';
-
-  /** Có thể sort cột */
   sortable?: boolean;
-
-  /** Có thể filter cột */
   filterable?: boolean;
-
-  /** Column cố định bên trái hoặc phải */
   fixed?: 'left' | 'right';
-
-  /** Chiều rộng tối thiểu */
   minWidth?: string | number;
 }
 
 export interface TableProps<T> {
-  /** Dữ liệu bảng */
   data: T[];
-
-  /** Cấu hình cột của bảng */
   columns: TableColumn<T>[];
-
-  /** Hiển thị loading spinner (deprecated, use isLoading) */
   loading?: boolean;
-
-  /** Kiểu pagination: 'pagination' hoặc 'loadmore' */
   paginationType?: 'pagination' | 'loadmore';
-
-  /** Cấu hình pagination */
   pagination?: PaginationProps;
-
-  /** Cấu hình row selection */
   rowSelection?: {
     selectedRowKeys: (string | number)[];
     onChange: (selectedRowKeys: (string | number)[], selectedRows: T[]) => void;
     getCheckboxProps?: (record: T) => { disabled?: boolean };
   };
-
-  /** Callback khi click vào row */
   onRowClick?: (record: T, index: number) => void;
-
-  /** Class tùy chỉnh cho wrapper bảng */
   className?: string;
-
-  /** Kích thước chữ: 'small', 'middle', 'large' */
   size?: 'small' | 'middle' | 'large';
-
-  /** Hiển thị border xung quanh bảng */
   bordered?: boolean;
-
-  /** Hiển thị header */
   showHeader?: boolean;
-
-  /** Header cố định khi scroll */
   fixedHeader?: boolean;
-
-  /** Scroll container */
   scroll?: { x?: number | string; y?: number | string };
-
-  /** ClassName cho từng row */
   rowClassName?: (record: T, index: number) => string;
-
-  /** Style cho từng row */
   rowStyle?: (record: T, index: number) => React.CSSProperties;
-  /** Sort field hiện tại - CONTROLLED */
   sortField?: string | null;
-
-  /** Sort order hiện tại - CONTROLLED */
   sortOrder?: 'asc' | 'desc' | null;
-
-  /** Callback khi sort thay đổi - CONTROLLED */
   onSort?: (field: string | null, order: 'asc' | 'desc' | null) => void;
-
-  /** Hiển thị đủ số dòng theo pageSize (bao gồm dòng trống) */
   showEmptyRows?: boolean;
-
   maxHeight?: string;
   bodyClassName?: string;
 }
 
-/**
- * Component Table
- *
- * Bảng dữ liệu linh hoạt với các tính năng:
- * - Hỗ trợ hiển thị dữ liệu dạng rows & columns
- * - Hỗ trợ scroll ngang/dọc với fixed header và fixed columns
- * - Hỗ trợ sort, filter, align, minWidth, width, fixed left/right
- * - Hỗ trợ rowSelection với checkbox (select all / select row)
- * - Hỗ trợ click vào row
- * - Hỗ trợ pagination kiểu "pagination" hoặc "load more"
- * - Hỗ trợ custom rowClassName, rowStyle
- * - Hỗ trợ các kích thước: small, middle, large
- * - Hỗ trợ bordered table
- * - Hỗ trợ hiển thị đủ số dòng theo pageSize (showEmptyRows)
- *
- * @component
- *
- * @example
- * interface DataType {
- *   id: number;
- *   name: string;
- *   age: number;
- * }
- *
- * const columns: TableColumn<DataType>[] = [
- *   { key: 'id', title: 'ID', width: 50 },
- *   { key: 'name', title: 'Tên', sortable: true },
- *   { key: 'age', title: 'Tuổi', align: 'right' }
- * ];
- *
- * <Table
- *   data={data}
- *   columns={columns}
- *   rowSelection={{
- *     selectedRowKeys,
- *     onChange: (keys, rows) => setSelectedRows(rows)
- *   }}
- *   pagination={{
- *     current: 1,
- *     pageSize: 10,
- *     total: 100,
- *     onChange: (page, size) => console.log(page, size)
- *   }}
- *   showEmptyRows={true}
- * />
- *
- */
+const ROW_HEIGHT = 48; // Height of each row in pixels
+
 export function Table<T extends Record<string, any>>({
   data,
   columns,
@@ -167,7 +69,6 @@ export function Table<T extends Record<string, any>>({
   rowClassName,
   rowStyle,
   paginationType = 'loadmore',
-  // CONTROLLED SORTING PROPS
   sortField = null,
   sortOrder = null,
   onSort,
@@ -178,12 +79,44 @@ export function Table<T extends Record<string, any>>({
 }: TableProps<T> & { children?: React.ReactNode }) {
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
+  const [emptyRowsCount, setEmptyRowsCount] = useState(0);
 
   const sizeClasses = {
     small: 'text-xs',
     middle: 'text-sm',
     large: 'text-base'
   };
+
+  // Calculate number of empty rows needed to fill viewport
+  useEffect(() => {
+    if (!showEmptyRows || !bodyScrollRef.current) return;
+
+    const calculateEmptyRows = () => {
+      const container = bodyScrollRef.current;
+      if (!container) return;
+
+      const containerHeight = container.clientHeight;
+      const dataRowsCount = data.length;
+      const dataRowsHeight = dataRowsCount * ROW_HEIGHT;
+
+      // Calculate how many empty rows can fit in remaining space
+      const remainingHeight = containerHeight - dataRowsHeight;
+      const emptyRowsFit = Math.floor(remainingHeight / ROW_HEIGHT);
+
+      // Only add empty rows if there's space and data doesn't overflow
+      setEmptyRowsCount(emptyRowsFit > 0 ? emptyRowsFit : 0);
+    };
+
+    calculateEmptyRows();
+
+    // Recalculate on window resize
+    const resizeObserver = new ResizeObserver(calculateEmptyRows);
+    if (bodyScrollRef.current) {
+      resizeObserver.observe(bodyScrollRef.current);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [data.length, showEmptyRows]);
 
   const handleSort = (columnKey: string) => {
     if (!onSort) return;
@@ -209,7 +142,6 @@ export function Table<T extends Record<string, any>>({
     rowSelection.onChange(newSelectedKeys, newSelectedRows);
   };
 
-  // Sync scroll between header and body
   const handleBodyScroll = (e: React.UIEvent<HTMLDivElement>) => {
     if (headerScrollRef.current) {
       headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft;
@@ -231,20 +163,16 @@ export function Table<T extends Record<string, any>>({
   const isAllSelected = rowSelection && rowSelection.selectedRowKeys.length === data.length;
   const isIndeterminate = rowSelection && rowSelection.selectedRowKeys.length > 0 && !isAllSelected;
 
-  // Tính toán width cho columns
   const getColumnWidth = (column: TableColumn<T>) => {
     if (column.width) {
-      // Nếu có width -> giữ nguyên (cứng)
       return typeof column.width === 'number' ? `${column.width}px` : column.width;
     }
-    // Nếu không có width -> auto (hoặc fallback minWidth nếu có)
     if (column.minWidth) {
       return typeof column.minWidth === 'number' ? `${column.minWidth}px` : column.minWidth;
     }
-    return 'auto'; // để auto thay vì 150px cứng
+    return 'auto';
   };
 
-  // Tính left offset cho sticky columns bên trái
   const leftFixedColumns = columns.filter((col) => col.fixed === 'left');
   const rightFixedColumns = columns.filter((col) => col.fixed === 'right');
 
@@ -252,7 +180,7 @@ export function Table<T extends Record<string, any>>({
     const column = columns[columnIndex];
     if (column.fixed !== 'left') return 0;
 
-    let offset = rowSelection ? 48 : 0; // checkbox column width
+    let offset = rowSelection ? 48 : 0;
     for (let i = 0; i < columnIndex; i++) {
       if (columns[i].fixed === 'left') {
         const width = getColumnWidth(columns[i]);
@@ -262,7 +190,6 @@ export function Table<T extends Record<string, any>>({
     return offset;
   };
 
-  // Tính right offset cho sticky columns bên phải
   const getRightOffset = (columnIndex: number) => {
     const column = columns[columnIndex];
     if (column.fixed !== 'right') return 0;
@@ -277,7 +204,6 @@ export function Table<T extends Record<string, any>>({
     return offset;
   };
 
-  // Tính tổng width của table để đảm bảo scroll hoạt động
   const getTotalWidth = () => {
     let totalWidth = rowSelection ? 48 : 0;
     columns.forEach((col) => {
@@ -291,28 +217,6 @@ export function Table<T extends Record<string, any>>({
   const scrollX = scroll?.x;
   const tableMinWidth = scrollX ? (typeof scrollX === 'number' ? `${scrollX}px` : scrollX) : `${totalTableWidth}px`;
 
-  // Tính toán dữ liệu hiển thị
-  const getDisplayData = () => {
-    if (!showEmptyRows || !pagination) {
-      return data;
-    }
-
-    // Tính toán dữ liệu cho trang hiện tại
-    const startIndex = 0;
-    const endIndex = startIndex + pagination.pageSize;
-    const paginatedData = data.slice(startIndex, endIndex);
-
-    // Tạo mảng đủ pageSize dòng, các dòng không có data sẽ là null
-    const fullPageData = Array.from({ length: pagination.pageSize }, (_, index) => {
-      return index < paginatedData.length ? paginatedData[index] : null;
-    });
-
-    return fullPageData;
-  };
-
-  const displayData = getDisplayData();
-
-  // Render Header Table
   const renderHeaderTable = () => (
     <div
       ref={headerScrollRef}
@@ -356,9 +260,8 @@ export function Table<T extends Record<string, any>>({
               const isLeftFixed = col.fixed === 'left';
               const isRightFixed = col.fixed === 'right';
               const isLastCol = colIndex === columns.length - 1;
-              const isSorted = sortField === col.key; // Check if this column is being sorted
+              const isSorted = sortField === col.key;
 
-              // align cho text
               let alignClass = 'text-left';
               let justifyClass = 'justify-start';
               if (col.align === 'center') {
@@ -381,11 +284,10 @@ export function Table<T extends Record<string, any>>({
   ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} 
   bg-bg-canvas dark:bg-bg-canvas-dark`;
 
-              // THÊM FONT-WEIGHT CHO CỘT ĐANG SORT
               if (isSorted) {
-                thClassName += ' font-medium'; // font-weight: 500
+                thClassName += ' font-medium';
               } else {
-                thClassName += ' font-normal'; // font-weight: 400
+                thClassName += ' font-normal';
               }
 
               if (isLeftFixed) {
@@ -411,9 +313,8 @@ export function Table<T extends Record<string, any>>({
 
               if (isLeftFixed) style.left = leftOffset;
               if (isRightFixed) style.right = rightOffset;
-              // Border className cho div bên trong
+
               let borderClassName = '';
-              // Chỉ thêm border-right cho các cột không phải cuối, kế cuối và không phải fixed
               const isSecondLastCol = colIndex === columns.length - 2;
               if (!isLastCol && !isSecondLastCol && !isLeftFixed && !isRightFixed) {
                 borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
@@ -424,7 +325,6 @@ export function Table<T extends Record<string, any>>({
                   <div className={className}>
                     <div className={`flex items-center px-2 gap-1 ${justifyClass} ${borderClassName} h-full`}>
                       <span>{col.title}</span>
-
                       {col.sortable && (
                         <div className="flex items-center justify-center w-5 h-5">
                           <ExpandMore className="w-5 h-5 hover:text-text-hi dark:hover:text-text-hi-dark" />
@@ -441,7 +341,6 @@ export function Table<T extends Record<string, any>>({
     </div>
   );
 
-  // Render Body Table
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
@@ -464,38 +363,22 @@ export function Table<T extends Record<string, any>>({
         }}
       >
         <tbody className={bodyClassName}>
-          {displayData.map((record, rowIndex) => {
-            // Tính chỉ số thực tế trong toàn bộ data
+          {/* Render actual data rows */}
+          {data.map((record, rowIndex) => {
             const actualRowIndex = showEmptyRows && pagination ? (pagination.current - 1) * pagination.pageSize + rowIndex : rowIndex;
 
             const isSelected = rowSelection?.selectedRowKeys.includes(actualRowIndex);
-            const isEmpty = record === null; // Dòng trống
-
-            // Row className: kết hợp cursor, hover, selection, custom
-            const rowClass = `${rowIndex % 2 === 0 ? 'bg-bg-canvas dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'} ${!isEmpty && onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''} ${!isEmpty ? rowClassName?.(record, actualRowIndex) || '' : ''}`;
-
-            // Row style: chẵn/lẻ + selection + custom
+            const rowClass = `${actualRowIndex % 2 === 0 ? 'bg-bg-canvas dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'} ${onRowClick ? 'cursor-pointer hover:bg-gray-50' : ''} ${rowClassName?.(record, actualRowIndex) || ''}`;
             const rowStyleFinal: React.CSSProperties = {
-              ...(!isEmpty ? rowStyle?.(record, actualRowIndex) : {})
+              height: `${ROW_HEIGHT}px`,
+              ...rowStyle?.(record, rowIndex)
             };
 
             return (
-              <tr
-                key={actualRowIndex}
-                className={rowClass}
-                style={rowStyleFinal}
-                onClick={() => !isEmpty && onRowClick?.(record, actualRowIndex)}
-              >
+              <tr key={actualRowIndex} className={rowClass} style={rowStyleFinal} onClick={() => onRowClick?.(record, actualRowIndex)}>
                 {rowSelection && (
-                  <td
-                    className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`}
-                    style={{
-                      ...rowStyleFinal
-                    }}
-                  >
-                    {!isEmpty && (
-                      <Checkbox checked={!!isSelected} onChange={(checked) => handleSelectRow(actualRowIndex, record, checked)} />
-                    )}
+                  <td className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`} style={rowStyleFinal}>
+                    <Checkbox checked={!!isSelected} onChange={(checked) => handleSelectRow(actualRowIndex, record, checked)} />
                   </td>
                 )}
 
@@ -505,44 +388,31 @@ export function Table<T extends Record<string, any>>({
                   const isLeftFixed = col.fixed === 'left';
                   const isRightFixed = col.fixed === 'right';
                   const isSorted = sortField === col.key;
-
-                  // Xác định cell đầu và cuối
                   const isFirstCell = colIndex === 0 && !rowSelection;
                   const isLastCell = colIndex === columns.length - 1;
 
                   let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
-                  if (isSorted) {
-                    className += ' font-medium';
-                  }
-
-                  // Thêm border radius cho cell đầu tiên
-                  if (isFirstCell) {
-                    className += ' rounded-l-lg'; // Border radius trái
-                  }
-
-                  // Thêm border radius cho cell cuối cùng
-                  if (isLastCell) {
-                    className += ' rounded-r-lg'; // Border radius phải
-                  }
+                  if (isSorted) className += ' font-medium';
+                  if (isFirstCell) className += ' rounded-l-lg';
+                  if (isLastCell) className += ' rounded-r-lg';
 
                   if (isLeftFixed) {
                     className += ' sticky z-10';
                     const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                     if (isLastLeftFixed) {
-                      className += ` fixed-left-shadow ${rowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` fixed-left-shadow ${actualRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
                   if (isRightFixed) {
                     className += ' sticky z-10';
                     const isFirstRightFixed = rightFixedColumns[0] === col;
                     if (isFirstRightFixed) {
-                      className += ` h-full fixed-right-shadow  ${rowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` h-full fixed-right-shadow ${actualRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
 
                   const colWidth = getColumnWidth(col);
-
                   const style: React.CSSProperties = {
                     width: colWidth,
                     minWidth: colWidth
@@ -553,24 +423,23 @@ export function Table<T extends Record<string, any>>({
 
                   return (
                     <td key={colIndex} className={className} style={style}>
-                      {!isEmpty ? renderCell(col, record, actualRowIndex) : ''}
+                      {renderCell(col, record, actualRowIndex)}
                     </td>
                   );
                 })}
               </tr>
             );
           })}
-          {/* Fill empty rows if needed */}
-          {/* Fill empty rows to match the pageSize if needed */}
+
+          {/* Render empty rows to fill viewport - macOS Finder style */}
           {showEmptyRows &&
-            pagination &&
-            displayData.length < pagination.pageSize &&
-            Array.from({ length: pagination.pageSize - displayData.length }).map((_, idx) => {
-              const emptyRowIndex = displayData.length + idx;
-              const actualRowIndex = (pagination.current - 1) * pagination.pageSize + emptyRowIndex;
+            emptyRowsCount > 0 &&
+            Array.from({ length: emptyRowsCount }).map((_, idx) => {
+              const emptyRowIndex = data.length + idx;
               const rowClass = `${emptyRowIndex % 2 === 0 ? 'bg-bg-canvas dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+
               return (
-                <tr key={`empty-${actualRowIndex}`} className={rowClass} style={{ height: '48px' }}>
+                <tr key={`empty-${idx}`} className={rowClass} style={{ height: `${ROW_HEIGHT}px` }}>
                   {rowSelection && <td className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`} />}
                   {columns.map((col, colIndex) => {
                     const leftOffset = getLeftOffset(colIndex);
@@ -582,12 +451,9 @@ export function Table<T extends Record<string, any>>({
 
                     let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
-                    if (isFirstCell) {
-                      className += ' rounded-l-lg';
-                    }
-                    if (isLastCell) {
-                      className += ' rounded-r-lg';
-                    }
+                    if (isFirstCell) className += ' rounded-l-lg';
+                    if (isLastCell) className += ' rounded-r-lg';
+
                     if (isLeftFixed) {
                       className += ' sticky z-10';
                       const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
@@ -599,12 +465,11 @@ export function Table<T extends Record<string, any>>({
                       className += ' sticky z-10';
                       const isFirstRightFixed = rightFixedColumns[0] === col;
                       if (isFirstRightFixed) {
-                        className += ` h-full fixed-right-shadow  ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                        className += ` h-full fixed-right-shadow ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                       }
                     }
 
                     const colWidth = getColumnWidth(col);
-
                     const style: React.CSSProperties = {
                       width: colWidth,
                       minWidth: colWidth
@@ -627,23 +492,18 @@ export function Table<T extends Record<string, any>>({
     </div>
   );
 
-  // Get selected rows for context
   const selectedRows = rowSelection ? data.filter((_, index) => rowSelection.selectedRowKeys.includes(index)) : [];
 
   return (
     <TableSelectedContext.Provider value={selectedRows}>
       <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
-        {/* Bulk Actions Compound */}
         {children}
-        {/* Header Table - Fixed */}
         {showHeader && fixedHeader && (
           <div className="relative">
             {renderHeaderTable()}
-            {/* Shadow overlay không chiếm space */}
             <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />
           </div>
         )}
-        {/* Body Table - Scrollable */}
         {!loading ? (
           renderBodyTable()
         ) : (
@@ -652,11 +512,10 @@ export function Table<T extends Record<string, any>>({
             <span className="ml-2 text-gray-600">Đang tải...</span>
           </div>
         )}
-        {/* Pagination */}
-        {pagination && paginationType == 'loadmore' && (
+        {pagination && paginationType === 'loadmore' && (
           <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />
         )}
-        {pagination && paginationType == 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
+        {pagination && paginationType === 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
       </div>
     </TableSelectedContext.Provider>
   );

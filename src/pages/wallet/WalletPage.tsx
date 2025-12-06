@@ -25,7 +25,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { InputField } from '@/components/input/InputField';
-import { usePaymentMethods } from '@/hooks/usePayments';
+import { useCryptomusPayment, usePaymentMethods, useTazapayPayment } from '@/hooks/usePayments';
 import { BANK_INFO_MAPPING, BankInfo } from '@/utils/constants';
 import TopUpModalV2 from './components/TopUpModalV2';
 import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
@@ -37,6 +37,8 @@ const WalletPage: React.FC = () => {
   const { userProfile, getDisplayName } = useAuth();
   const [priceValue, setPriceValue] = useState(10);
   const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
+  const { mutate: generateTazapayPayment, isPending: isTazapayPending } = useTazapayPayment();
+  const { mutate: generateCryptomusPayment, isPending: isCryptomusPending } = useCryptomusPayment();
 
   // Top-up modal state
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
@@ -75,11 +77,14 @@ const WalletPage: React.FC = () => {
     options.push({
       value: 'web2m',
       label: (
-        <div className="flex gap-2 items-center w-full">
-          <div className="w-8 h-6 flex justify-center items-center">
-            <img src={web2mAvailable?.bankLogoUrl} alt={`${web2mAvailable?.shortName} logo`} />
+        <div className="flex items-center justify-between">
+          <div className="flex gap-2 items-center w-full">
+            <div className="w-8 h-6 flex justify-center items-center">
+              <img src={web2mAvailable?.bankLogoUrl} alt={`${web2mAvailable?.shortName} logo`} />
+            </div>
+            <span className="font-medium">{web2mAvailable?.name}</span>
           </div>
-          <span className="font-medium">{web2mAvailable?.name}</span>
+          <div>Banking</div>
         </div>
       )
     });
@@ -309,6 +314,50 @@ const WalletPage: React.FC = () => {
     ];
   }, [currentPage, pageSize, isMobile, isTablet]);
 
+  const handleTopup = () => {
+    if (topUpMethod === 'web2m') {
+      setTopUpModalOpen(true);
+    }
+
+    if (topUpMethod === 'tazapay') {
+      const baseUrl = window.location.origin;
+      generateTazapayPayment(
+        {
+          amount: priceValue,
+          country: String(tazapayCountry),
+          success_url: `${baseUrl}/wallet`,
+          cancel_url: `${baseUrl}/wallet`
+        },
+        {
+          onSuccess: (data) => {
+            window.open(data.payment_url, '_blank');
+            toast.success('Đã mở cửa sổ thanh toán');
+            setTopUpModalOpen(false);
+          },
+          onError: (error) => {
+            toast.error(error.message || 'Không thể tạo thanh toán');
+          }
+        }
+      );
+    }
+
+    if (topUpMethod === 'cryptomus') {
+      generateCryptomusPayment(
+        { amount: priceValue },
+        {
+          onSuccess: (data) => {
+            window.open(data.payment_url, '_blank');
+            toast.success('Đã mở cửa sổ thanh toán');
+            setTopUpModalOpen(false);
+          },
+          onError: (error) => {
+            toast.error(error.message || 'Không thể tạo thanh toán');
+          }
+        }
+      );
+    }
+  };
+
   return (
     <motion.div
       variants={pageVariants}
@@ -391,7 +440,8 @@ const WalletPage: React.FC = () => {
               <Button
                 variant="primary"
                 className="h-10 px-6 dark:pseudo-border-top-orange dark:border-transparent"
-                onClick={() => setTopUpModalOpen(true)}
+                onClick={handleTopup}
+                loading={isTazapayPending || isCryptomusPending}
               >
                 NẠP TIỀN
               </Button>

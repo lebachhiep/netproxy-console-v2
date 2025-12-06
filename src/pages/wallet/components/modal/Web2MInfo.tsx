@@ -8,7 +8,7 @@ import type { BankInfo } from '@/services/payment/payment.types';
 
 interface Web2MInfoProps {
   bankInfo: BankInfo;
-  amount: number; // amount in USD
+  amount?: number; // as default amount amount in USD
 }
 
 export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
@@ -24,12 +24,16 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
     if (!bank) return null;
 
     try {
-      return QRPay.initVietQR({
+      const qrPayload = {
         bankBin: bank.bin,
         bankNumber: bankInfo.bank_account_number,
-        purpose: bankInfo.transfer_code,
-        amount: amount * bankInfo.vnd_usd_rate + ''
-      }).build();
+        purpose: bankInfo.transfer_code
+      };
+      if (amount !== undefined) {
+        Object.assign(qrPayload, { amount: ((amount ?? 10) * bankInfo.vnd_usd_rate).toString() });
+      }
+      const qrInit = QRPay.initVietQR(qrPayload);
+      return qrInit.build();
     } catch {
       return null;
     }
@@ -54,11 +58,15 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
   const fields = [
     { label: 'Ngân hàng', value: bankDisplayName, key: 'bank_name' },
     { label: 'Số tài khoản', value: bankInfo.bank_account_number, key: 'account_number' },
-    {
-      label: 'Số tiền',
-      value: (amount * bankInfo.vnd_usd_rate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
-      key: 'amount'
-    },
+    ...(amount !== undefined
+      ? [
+          {
+            label: 'Số tiền',
+            value: ((amount ?? 10) * bankInfo.vnd_usd_rate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+            key: 'amount'
+          }
+        ]
+      : []),
     { label: 'Chủ tài khoản', value: bankInfo.account_holder_name, key: 'holder_name' },
     { label: 'Nội dung chuyển khoản', value: bankInfo.transfer_code, key: 'transfer_code', highlight: true }
   ];

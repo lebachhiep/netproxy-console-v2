@@ -86,7 +86,7 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
       ),
       // Web2M content
       web2m?.available && web2m.bank_info ? (
-        <Web2MInfo key="web2m" bankInfo={web2m.bank_info} />
+        <Web2MInfo key="web2m" bankInfo={web2m.bank_info} amount={10} />
       ) : (
         <UnavailableMethod key="web2m-unavailable" />
       )

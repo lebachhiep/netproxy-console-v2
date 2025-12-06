@@ -493,8 +493,8 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['premium_isp'] || []}
-                getDisplayPrice={getDisplayPrice}
-                buildPlanFeatures={buildPlanFeatures}
+                // getDisplayPrice={getDisplayPrice}
+                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Premium ISP"
                 servers={plansData?.servers}
               />
@@ -512,8 +512,8 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['private_ipv4'] || []}
-                getDisplayPrice={getDisplayPrice}
-                buildPlanFeatures={buildPlanFeatures}
+                // getDisplayPrice={getDisplayPrice}
+                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Private IPv4"
                 servers={plansData?.servers}
               />
@@ -531,8 +531,8 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['shared_ipv4'] || []}
-                getDisplayPrice={getDisplayPrice}
-                buildPlanFeatures={buildPlanFeatures}
+                // getDisplayPrice={getDisplayPrice}
+                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Shared IPv4"
                 servers={plansData?.servers}
               />
@@ -550,8 +550,8 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['ipv6'] || []}
-                getDisplayPrice={getDisplayPrice}
-                buildPlanFeatures={buildPlanFeatures}
+                // getDisplayPrice={getDisplayPrice}
+                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="IPv6"
                 servers={plansData?.servers}
               />

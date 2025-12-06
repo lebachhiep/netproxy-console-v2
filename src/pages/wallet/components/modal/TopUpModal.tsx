@@ -21,9 +21,7 @@ const LoadingSkeleton: React.FC = () => (
 );
 
 const UnavailableMethod: React.FC = () => (
-  <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">
-    Phương thức thanh toán này hiện không khả dụng
-  </div>
+  <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">Phương thức thanh toán này hiện không khả dụng</div>
 );
 
 export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
@@ -54,18 +52,18 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
     {
       key: 'tazapay',
       label: 'Thẻ/Ví',
-      icon: <WalletCreditCardOutlined className="w-5 h-5" />,
+      icon: <WalletCreditCardOutlined className="w-5 h-5" />
     },
     {
       key: 'cryptomus',
       label: 'Crypto',
-      icon: <Globe className="w-5 h-5" />,
+      icon: <Globe className="w-5 h-5" />
     },
     {
       key: 'web2m',
       label: 'Ngân hàng',
-      icon: <DatabaseStackOutlined className="w-5 h-5" />,
-    },
+      icon: <DatabaseStackOutlined className="w-5 h-5" />
+    }
   ];
 
   const renderContent = () => {
@@ -91,25 +89,13 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
         <Web2MInfo key="web2m" bankInfo={web2m.bank_info} />
       ) : (
         <UnavailableMethod key="web2m-unavailable" />
-      ),
+      )
     ];
   };
 
   return (
-    <Modal
-      open={open}
-      title="Nạp tiền"
-      onClose={onClose}
-      className="max-w-[500px] max-h-[90dvh] overflow-auto"
-      bodyClassName="p-0"
-    >
-      <Tabs
-        tabs={tabs}
-        type="card"
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        cardWrapperClass=""
-      >
+    <Modal open={open} title="Nạp tiền" onClose={onClose} className="max-w-[500px] max-h-[90dvh] overflow-auto" bodyClassName="p-0">
+      <Tabs tabs={tabs} type="card" activeKey={activeTab} onChange={setActiveTab} cardWrapperClass="">
         {renderContent()}
       </Tabs>
     </Modal>

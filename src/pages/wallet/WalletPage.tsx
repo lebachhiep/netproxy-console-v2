@@ -2,7 +2,7 @@ import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
-import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
+import { ArrowCounter, ContentCopy, DatabaseStackOutlined, Globe, MagnifyingGlass, WalletCreditCardOutlined } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -28,29 +28,29 @@ import { InputField } from '@/components/input/InputField';
 
 const options = [
   {
-    value: 'ACB',
+    value: 'tazapay',
     label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">ACB</span>
+      <div className="flex gap-2">
+        <WalletCreditCardOutlined className="w-5 h-5 text-primary font-bold" />
+        <span className="font-medium">Thẻ/Ví</span>
       </div>
     )
   },
   {
-    value: 'VCB',
+    value: 'cryptomus',
     label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">VCB</span>
+      <div className="flex gap-2">
+        <Globe className="w-5 h-5 text-primary font-bold" />
+        <span className="font-medium">Crypto</span>
       </div>
     )
   },
   {
-    value: 'TPB',
+    value: 'web2m',
     label: (
-      <div>
-        <span className="font-medium">Ngân hàng nội địa - </span>
-        <span className="text-primary font-bold">TPB</span>
+      <div className="flex gap-2">
+        <DatabaseStackOutlined className="w-5 h-5 text-primary font-bold" />
+        <span className="font-medium">Ngân hàng</span>
       </div>
     )
   }
@@ -285,7 +285,7 @@ const WalletPage: React.FC = () => {
                 options={options}
                 value={selectedMethod}
                 onChange={(val) => setSelectedMethod(val)}
-                placeholder="Chọn ngân hàng"
+                placeholder="Chọn phương thức thanh toán"
                 placement="bottom"
                 className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
               />

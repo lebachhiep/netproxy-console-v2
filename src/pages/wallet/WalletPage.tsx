@@ -429,11 +429,21 @@ const WalletPage: React.FC = () => {
               {/* Terms */}
               <p className="text-sm flex-1 text-text-lo dark:text-text-lo-dark font-medium">
                 Bằng cách nhấp vào tiếp tục thanh toán, bạn đồng ý với{' '}
-                <a href="#" className="text-blue dark:text-blue-dark underline">
+                <a
+                  href="https://netproxy.io/en/term-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue dark:text-blue-dark underline"
+                >
                   Điều khoản dịch vụ
                 </a>{' '}
                 và{' '}
-                <a href="#" className="text-blue dark:text-blue-dark underline">
+                <a
+                  href="https://netproxy.io/en/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue dark:text-blue-dark underline"
+                >
                   Chính sách bảo mật
                 </a>
               </p>

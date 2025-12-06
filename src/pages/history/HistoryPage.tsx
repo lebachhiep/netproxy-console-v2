@@ -270,7 +270,7 @@ const HistoryPage: React.FC = () => {
       <motion.div variants={itemVariants} className="px-5 py-2">
         <div className="flex flex-col gap-3">
           {/* First row - Search and Date Range */}
-          <div className="flex flex-col md:flex-row gap-3 w-full">
+          <div className="flex flex-col md:flex-row gap-3 w-full flex-wrap">
             {/* Search field */}
             <Input
               placeholder="Tìm kiếm theo mã đơn hàng..."
@@ -288,12 +288,6 @@ const HistoryPage: React.FC = () => {
               triggerClassName="dark:pseudo-border-top dark:border-transparent"
             />
 
-            <IconButton className="w-10 h-10" icon={<ArrowCounter />} onClick={handleRefresh} />
-          </div>
-
-          {/* Second row - Type and Status filters */}
-          <div className="flex flex-col md:flex-row gap-3 w-full">
-            {/* Order Type Filter */}
             <Select
               value={selectedType}
               onChange={(val) => setSelectedType(val as OrderType | '')}
@@ -322,6 +316,8 @@ const HistoryPage: React.FC = () => {
                 }))
               ]}
             />
+
+            <IconButton className="w-10 h-10 ml-auto" icon={<ArrowCounter />} onClick={handleRefresh} />
           </div>
         </div>
       </motion.div>

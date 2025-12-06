@@ -500,14 +500,15 @@ const DashboardPage = () => {
               <IconButton
                 className="w-10 h-10"
                 icon={<ArrowCounter />}
-                onClick={() => {
-                  queryClient.invalidateQueries({ queryKey: ['dashboard-get-subscriptions'] });
+                onClick={async () => {
+                  await queryClient.invalidateQueries({ queryKey: ['dashboard-get-subscriptions'] });
                   setCurrentPage(1);
                   setPageSize(20);
                   const params = new URLSearchParams(window.location.search);
                   params.delete('page');
                   params.delete('pageSize');
                   window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+                  toast.success('Làm mới dữ liệu thành công');
                 }}
               />
               <Link to="/buy">
@@ -525,6 +526,7 @@ const DashboardPage = () => {
         <motion.div variants={sectionVariants} className="relative flex-1 flex flex-col overflow-hidden min-h-[350px] pb-5">
           {viewMode === 'list' ? (
             <Table
+              loading={loading}
               className="h-full pr-2"
               scroll={{ x: 300, y: isMobile ? '' : 'calc(100dvh - 540px)' }}
               data={sortedData}

@@ -11,7 +11,8 @@ interface Web2MInfoProps {
   amount?: number; // as default amount amount in USD
 }
 
-export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
+export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount: amountProp }) => {
+  const [amount, setAmount] = useState<number>(amountProp || 10);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Generate VietQR content
@@ -90,6 +91,27 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
       </p>
 
       <div className="space-y-3">
+        <div
+          className={`flex items-center justify-between p-3 rounded-lg border-2 bg-bg-mute dark:bg-bg-mute-dark border-border-element dark:border-border-element-dark`}
+        >
+          <div className="flex-1 min-w-0">
+            <p className="text-xs text-text-lo dark:text-text-lo-dark">Số tiền (USD)</p>
+            <div className={`font-medium truncate text-text-hi dark:text-text-hi-dark`}>
+              <input
+                type="number"
+                min={10}
+                placeholder={`Tối thiểu: $10`}
+                value={amount}
+                onChange={(e) => {
+                  const val = Math.max(10, Number(e.target.value));
+                  setAmount(val);
+                }}
+                className="outline-none w-full bg-transparent border-b border-border-element dark:border-border-element-dark py-1 px-2 transition-colors"
+              />
+            </div>
+          </div>
+        </div>
+
         {fields.map((field) => (
           <div
             key={field.key}
@@ -106,7 +128,7 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
               >
                 {field.value}
               </p>
-            </div>
+            </div>{' '}
             {field.hasCopy && (
               <button
                 onClick={() => handleCopy('' + (field.copyValue ?? field.value), field.key)}

@@ -150,7 +150,7 @@ const HistoryPage: React.FC = () => {
       title: 'STT',
       width: '60px',
       align: 'center',
-      render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1,
+      render: (_value, _record, index) => index + 1,
       fixed: 'left'
     },
     {

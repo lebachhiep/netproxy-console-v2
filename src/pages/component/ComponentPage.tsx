@@ -8,17 +8,13 @@ import { ProxyCard } from '@/components/card/ProxyCard';
 import { Checkbox } from '@/components/checkbox/Checkbox';
 import { DatePicker } from '@/components/datepicker/DatePicker';
 import {
-  ApprovalsApp,
   ArrowDown,
   ArrowRotate,
-  CalendarClock,
   CartFilled,
   Chevron,
   Clock,
-  DataBar,
   DatabaseStackFilled,
   DatabaseStackOutlined,
-  GlobeShield,
   ShieldCheckmark,
   TagFilled,
   TopSpeed,
@@ -34,7 +30,7 @@ import { Table, TableColumn } from '@/components/table/Table';
 import Tag from '@/components/tag/Tag';
 import { Dayjs } from 'dayjs';
 import { useState } from 'react';
-import { FaDatabase, FaRegCalendar, FaShoppingCart, FaWallet } from 'react-icons/fa';
+import { FaRegCalendar } from 'react-icons/fa';
 import { IoFlame, IoLanguage } from 'react-icons/io5';
 import { ColorPalette } from './ColorPallete';
 import { usePageTitle } from '@/hooks/usePageTitle';
@@ -57,7 +53,7 @@ const ComponentPage = () => {
   const [isOn, setIsOn] = useState(false);
   const [selected, setSelected] = useState('primary');
   const [checked, setChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
+  // const [indeterminate, setIndeterminate] = useState(false);
   const [date, setDate] = useState<Dayjs | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -155,10 +151,10 @@ const ComponentPage = () => {
   ];
 
   const buttons = [
-    <IoLanguage size={24} />,
-    <IoLanguage size={24} />,
-    <FaRegCalendar size={24} />,
-    <IoLanguage size={24} color="orange" />
+    <IoLanguage size={24} key={1} />,
+    <IoLanguage size={24} key={2} />,
+    <FaRegCalendar size={24} key={3} />,
+    <IoLanguage size={24} color="orange" key={4} />
   ];
 
   const options = [
@@ -344,8 +340,9 @@ const ComponentPage = () => {
             className="col-span-2"
           />
 
-          {Array.from({ length: 4 }).map(() => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <PricingCard
+              key={index}
               tag={{ text: 'POPULAR', icon: <IoFlame className="w-3 h-3" /> }}
               title="Đổi IP 10 phút"
               price="4.50"
@@ -403,8 +400,9 @@ const ComponentPage = () => {
           ))}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
-          {Array.from({ length: 4 }).map(() => (
+          {Array.from({ length: 4 }).map((_, index) => (
             <ProxyCard
+              key={index}
               data={{
                 id: 1,
                 title: 'Proxy - Băng thông',
@@ -446,7 +444,7 @@ const ComponentPage = () => {
           <Radio checked={selected === 'success'} onChange={() => setSelected('success')} label="Success" variant="success" />
           <Radio checked={selected === 'danger'} onChange={() => setSelected('danger')} label="Danger disabled" variant="danger" disabled />
 
-          <Checkbox checked={checked} indeterminate={indeterminate} onChange={setChecked} label="Custom Checkbox" />
+          <Checkbox checked={checked} indeterminate={false} onChange={setChecked} label="Custom Checkbox" />
         </div>
       </div>
 

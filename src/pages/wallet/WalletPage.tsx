@@ -80,7 +80,7 @@ const WalletPage: React.FC = () => {
     },
     ...(Object.entries(tazapayCountryOptions) ? Object.entries(tazapayCountryOptions) : []).map(([country, value]) => {
       return {
-        value: 'tazapay',
+        value: 'tazapay-' + value,
         label: (
           <div className="flex gap-2">
             <img
@@ -188,7 +188,7 @@ const WalletPage: React.FC = () => {
         title: 'STT',
         width: '60px',
         align: 'center',
-        render: (_value, _record, index) => (currentPage - 1) * pageSize + index + 1,
+        render: (_value, _record, index) => index + 1,
         fixed: 'left'
       },
       {

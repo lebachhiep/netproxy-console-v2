@@ -258,9 +258,7 @@ const DashboardPage = () => {
       title: 'STT',
       width: '50px',
       align: 'center',
-      render: (_, __, index) => {
-        return index;
-      },
+      render: (_value, _record, index) => index + 1,
       fixed: 'left'
     },
     {

@@ -57,18 +57,21 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
 
   const fields = [
     { label: 'Ngân hàng', value: bankDisplayName, key: 'bank_name' },
-    { label: 'Số tài khoản', value: bankInfo.bank_account_number, key: 'account_number' },
+    { label: 'Chủ tài khoản', value: bankInfo.account_holder_name, key: 'holder_name' },
+    { label: 'Số tài khoản', value: bankInfo.bank_account_number, key: 'account_number', hasCopy: true },
     ...(amount !== undefined
       ? [
           {
             label: 'Số tiền',
             value: ((amount ?? 10) * bankInfo.vnd_usd_rate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
-            key: 'amount'
+            key: 'amount',
+            copyValue: (amount ?? 10) * bankInfo.vnd_usd_rate,
+            hasCopy: true
           }
         ]
       : []),
-    { label: 'Chủ tài khoản', value: bankInfo.account_holder_name, key: 'holder_name' },
-    { label: 'Nội dung chuyển khoản', value: bankInfo.transfer_code, key: 'transfer_code', highlight: true }
+
+    { label: 'Nội dung chuyển khoản', value: bankInfo.transfer_code, key: 'transfer_code', highlight: true, hasCopy: true }
   ];
 
   return (
@@ -104,16 +107,18 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
                 {field.value}
               </p>
             </div>
-            <button
-              onClick={() => handleCopy(field.value, field.key)}
-              className="ml-2 p-2 rounded-lg hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark transition-colors"
-            >
-              {copiedField === field.key ? (
-                <CheckMark className="w-5 h-5 text-green dark:text-green-dark" />
-              ) : (
-                <ContentCopy className="w-5 h-5 text-blue dark:text-blue-dark" />
-              )}
-            </button>
+            {field.hasCopy && (
+              <button
+                onClick={() => handleCopy('' + (field.copyValue ?? field.value), field.key)}
+                className="ml-2 p-2 rounded-lg hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark transition-colors"
+              >
+                {copiedField === field.key ? (
+                  <CheckMark className="w-5 h-5 text-green dark:text-green-dark" />
+                ) : (
+                  <ContentCopy className="w-5 h-5 text-blue dark:text-blue-dark" />
+                )}
+              </button>
+            )}
           </div>
         ))}
       </div>

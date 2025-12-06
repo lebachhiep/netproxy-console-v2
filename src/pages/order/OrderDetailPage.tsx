@@ -31,6 +31,7 @@ import { OrderInfoModal } from './OrderInfoModal';
 import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -60,9 +61,10 @@ const COUNTRY_OPTIONS = [
 interface CountrySelectCellProps {
   subscriptionId: string;
   currentCountry?: string;
+  className?: string;
 }
 
-const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry }: CountrySelectCellProps) => {
+const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
   const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
   const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
 
@@ -79,7 +81,7 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
       onChange={handleCountryChange}
       options={COUNTRY_OPTIONS}
       placeholder="Select country"
-      className="h-8 min-w-[140px]"
+      className={clsx('h-8 min-w-[140px]', className)}
       optionClassName="max-h-60 overflow-y-auto"
     />
   );
@@ -305,8 +307,7 @@ const OrderDetailPage = () => {
         title: 'STT',
         width: 50,
         align: 'center',
-        render: (_, __, index) => index + 1,
-        fixed: 'left'
+        render: (_, __, index) => index + 1
       },
       {
         width: 100,
@@ -416,14 +417,14 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 100,
+        width: 180,
         key: 'country_code',
         title: 'Country',
         align: 'center',
         render: (_, record) => {
           const isRotating = isRotatingProxy(record);
           if (isRotating) {
-            return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} />;
+            return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} className="max-w-40 mx-auto" />;
           }
           // For non-rotating proxies, show as plain text
           return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
@@ -567,7 +568,7 @@ const OrderDetailPage = () => {
               {!isBelongRotatingProxy && (
                 <IconButton
                   disabled={selectedRows.length === 0}
-                  icon={<CloudSwapOutlined />}
+                  icon={<CloudSwapOutlined className="w-5 h-5" />}
                   className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   onClick={async () => {
                     setLoading(true);
@@ -595,7 +596,7 @@ const OrderDetailPage = () => {
               {/* Renew */}
               <IconButton
                 disabled={selectedRows.length === 0}
-                icon={<ArrowSync />}
+                icon={<ArrowSync className="w-5 h-5" />}
                 className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 onClick={async () => {
                   setLoading(true);
@@ -620,7 +621,7 @@ const OrderDetailPage = () => {
               <IconButton
                 disabled={selectedRows.length === 0}
                 className={`w-10 h-10`}
-                icon={<ArrowDownload />}
+                icon={<ArrowDownload className="w-5 h-5" />}
                 onClick={() => {
                   const selectedProxies = [
                     'ip:port:user:password',
@@ -655,7 +656,7 @@ const OrderDetailPage = () => {
               {/* Refresh */}
               <IconButton
                 className="w-10 h-10"
-                icon={<ArrowCounter />}
+                icon={<ArrowCounter className="w-5 h-5" />}
                 onClick={() => {
                   setCurrentPage(1);
                   setPageSize(20);

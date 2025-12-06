@@ -36,6 +36,7 @@ interface TabsProps {
   defaultWrapperClass?: string;
   cardWrapperClass?: string;
   itemWrapperClass?: string;
+  contentCardWrapperClass?: string;
 }
 
 /**
@@ -75,7 +76,8 @@ export const Tabs: React.FC<TabsProps> = ({
   className,
   defaultWrapperClass,
   cardWrapperClass,
-  itemWrapperClass
+  itemWrapperClass,
+  contentCardWrapperClass
 }) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
@@ -131,7 +133,7 @@ export const Tabs: React.FC<TabsProps> = ({
 
       {type === 'card' && (
         <div className={cardWrapperClass}>
-          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5 overflow-auto scrollbar-hide">
+          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5 overflow-auto scrollbar-hide min-h-fit">
             {/* Wrapper có scroll ngang + ẩn scrollbar */}
             <div className="relative w-full overflow-x-visible" id="tab-scroll-container">
               <div className="flex w-fit flex-nowrap rounded-lg lg:gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark relative">
@@ -208,7 +210,7 @@ export const Tabs: React.FC<TabsProps> = ({
           </div>
 
           {/* Nội dung tab */}
-          <>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</>
+          <div className={contentCardWrapperClass}>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
         </div>
       )}
     </>

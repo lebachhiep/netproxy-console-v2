@@ -3,7 +3,7 @@ import { useState } from 'react';
 import IconButton from '@/components/button/IconButton';
 import { ChatWarning } from '@/components/icons';
 
-export const OrderInfoModal = ({}) => {
+export const OrderInfoModal = () => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -13,7 +13,7 @@ export const OrderInfoModal = ({}) => {
           setOpen(true);
         }}
         className="w-10 h-10"
-        icon={<ChatWarning />}
+        icon={<ChatWarning className="w-5 h-5" />}
       />
       <Modal open={open} onClose={() => setOpen(false)} title={'Hướng dẫn sử dụng'}>
         {/* Nội dung modal */}

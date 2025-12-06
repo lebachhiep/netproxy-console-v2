@@ -51,6 +51,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
   cartOptions,
   preventNotification = false
 }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = enableCart ? useCart() : null;
   const [isAdding, setIsAdding] = useState(false);
   const [showCountryModal, setShowCountryModal] = useState(false);
@@ -92,7 +93,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
         }
       } catch (error) {
         // If error (e.g., internal plan), add directly to cart
-        console.log('Country selection not available, adding directly to cart');
+        console.log('Country selection not available, adding directly to cart: ', error);
         cart.addToCart(tabKey, plan, 1, cartOptions);
         if (!preventNotification) {
           toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);

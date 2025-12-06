@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
 import { Select } from '@/components/select/Select';
-import { Open } from '@/components/icons';
 import { useTazapayPayment } from '@/hooks/usePayments';
 
 const MIN_AMOUNT = 10;
@@ -125,7 +124,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
         />
       </div>
 
-      <Button type="submit" variant="primary" loading={isPending} icon={<Open className="w-5 h-5" />} className="w-full h-10">
+      <Button type="submit" variant="primary" loading={isPending} className="w-full h-10">
         Thanh toán
       </Button>
 

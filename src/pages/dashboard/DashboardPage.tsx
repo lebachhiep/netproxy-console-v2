@@ -34,6 +34,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/badge/Badge';
 import { Card } from '@/components/card/Card';
 import { useQuery } from '@tanstack/react-query';
+import { queryClient } from '@/components/auth/ProtectedRoute';
 
 export const data = [
   {
@@ -500,6 +501,7 @@ const DashboardPage = () => {
                 className="w-10 h-10"
                 icon={<ArrowCounter />}
                 onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ['dashboard-get-subscriptions'] });
                   setCurrentPage(1);
                   setPageSize(20);
                   const params = new URLSearchParams(window.location.search);

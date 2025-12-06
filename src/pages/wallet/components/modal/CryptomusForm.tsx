@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
-import { Open } from '@/components/icons';
 import { useCryptomusPayment } from '@/hooks/usePayments';
 import type { CryptoService } from '@/services/payment/payment.types';
 
@@ -75,7 +74,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
         </div>
       )}
 
-      <Button type="submit" variant="primary" loading={isPending} icon={<Open className="w-5 h-5" />} className="w-full h-10">
+      <Button type="submit" variant="primary" loading={isPending} className="w-full h-10">
         Thanh toán
       </Button>
 

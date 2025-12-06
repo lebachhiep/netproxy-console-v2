@@ -94,8 +94,14 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
   };
 
   return (
-    <Modal open={open} title="Nạp tiền" onClose={onClose} className="max-w-[500px] max-h-[90dvh] overflow-auto" bodyClassName="p-0">
-      <Tabs tabs={tabs} type="card" activeKey={activeTab} onChange={setActiveTab} cardWrapperClass="">
+    <Modal open={open} title="Nạp tiền" onClose={onClose} bodyClassName="p-0">
+      <Tabs
+        tabs={tabs}
+        type="card"
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        contentCardWrapperClass="overflow-auto max-w-[500px] max-h-[70dvh]"
+      >
         {renderContent()}
       </Tabs>
     </Modal>

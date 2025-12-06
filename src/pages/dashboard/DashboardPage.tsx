@@ -35,6 +35,7 @@ import { Badge } from '@/components/badge/Badge';
 import { Card } from '@/components/card/Card';
 import { useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/components/auth/ProtectedRoute';
+import { Pagination } from '@/components/pagination/Pagination';
 
 export const data = [
   {
@@ -573,62 +574,98 @@ const DashboardPage = () => {
               }}
             />
           ) : (
-            <div className="relative h-full flex-1 flex flex-col">
-              <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate="visible"
-                className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center h-full w-full col-span-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    <span className="ml-2 text-gray-600">Đang tải...</span>
-                  </div>
-                ) : (
-                  tableData.map((item) => (
-                    <motion.div key={item.id} variants={itemVariants}>
-                      <Card>
-                        <Card.Header>
-                          <Card.Title
-                            status={{
-                              text: 'Đang hoạt động',
-                              color: 'blue'
-                            }}
-                          >
-                            {item.plan_name}
-                          </Card.Title>
-                          <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
-                        </Card.Header>
-                        <Card.List className="dark:text-text-hi-dark">
-                          <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
-                            <div className="flex items-center justify-between">
-                              <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
-                              <ContentCopy
-                                className="text-blue cursor-pointer ml-2"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  copyToClipboard(item.order_number);
-                                  toast.success('Đã sao chép mã đơn hàng vào clipboard');
-                                }}
-                              />
-                            </div>
-                          </Card.ListItem>
-                          <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
-                          <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
-                          <Card.ListItem
-                            label="Ngày mua"
-                            icon={<CalendarClock />}
-                            value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
-                          />
-                        </Card.List>
-                      </Card>
-                    </motion.div>
-                  ))
-                )}
-              </motion.div>
-            </div>
+            <>
+              <div className="relative h-full flex-1 flex flex-col">
+                <div className="absolute top-0 left-0 right-0 h-[2px] shadow-xxs z-10 border-t-2 border-border-element dark:border-border-element-dark" />
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center h-full w-full col-span-12">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                      <span className="ml-2 text-gray-600">Đang tải...</span>
+                    </div>
+                  ) : (
+                    tableData.map((item) => (
+                      <motion.div key={item.id} variants={itemVariants}>
+                        <Card>
+                          <Card.Header>
+                            <Card.Title
+                              status={{
+                                text: 'Đang hoạt động',
+                                color: 'blue'
+                              }}
+                            >
+                              {item.plan_name}
+                            </Card.Title>
+                            <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
+                          </Card.Header>
+                          <Card.List className="dark:text-text-hi-dark">
+                            <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
+                              <div className="flex items-center justify-between">
+                                <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
+                                <ContentCopy
+                                  className="text-blue cursor-pointer ml-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyToClipboard(item.order_number);
+                                    toast.success('Đã sao chép mã đơn hàng vào clipboard');
+                                  }}
+                                />
+                              </div>
+                            </Card.ListItem>
+                            <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
+                            <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
+                            <Card.ListItem
+                              label="Ngày mua"
+                              icon={<CalendarClock />}
+                              value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
+                            />
+                          </Card.List>
+                        </Card>
+                      </motion.div>
+                    ))
+                  )}
+                </motion.div>
+                <div>
+                  <Pagination
+                    type={'pagination'}
+                    {...{
+                      current: currentPage,
+                      pageSize,
+                      total,
+                      pageSizeOptions: [2, 4, 6, 8],
+                      className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
+                      onChange: (page, size) => {
+                        setCurrentPage(page);
+                        setPageSize(size);
+
+                        // Update URL without reloading the page
+                        const params = new URLSearchParams(window.location.search);
+                        if (page !== 1) {
+                          params.set('page', String(page));
+                        } else {
+                          params.delete('page');
+                        }
+                        if (size !== 20) {
+                          params.set('pageSize', String(size));
+                        } else {
+                          params.delete('pageSize');
+                        }
+                        window.history.replaceState(
+                          {},
+                          '',
+                          `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`
+                        );
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </>
           )}
         </motion.div>
 

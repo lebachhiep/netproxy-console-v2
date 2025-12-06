@@ -358,7 +358,7 @@ const DashboardPage = () => {
             <Person className="text-text-hi-dark" />
           </div>
         }
-        title="Người dùng & Đơn hàng"
+        title="Người dùng"
         mainContent={
           <div>
             <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">2500</span>
@@ -396,8 +396,12 @@ const DashboardPage = () => {
           {
             label: '',
             value: (
-              <Button variant="default" className="rounded-lg w-full flex items-center justify-center">
-                KIỂM TRA TRẠNG THÁI
+              <Button
+                // size={isDesktop || isLargeDesktop ? 'md' : 'sm'}
+                variant="default"
+                className="font-bold relative transition-colors duration-300 group whitespace-nowrap justify-center items-center gap-1 border-2 shadow-xs border-border dark:border-transparent dark:pseudo-border-top text-text-me dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:border-blue text-sm px-3 py-[7.5px] rounded-[4px] h-[32px] lg:h-10 flex w-full lg:px-3"
+              >
+                KIỂM TRA
               </Button>
             )
           }
@@ -577,45 +581,52 @@ const DashboardPage = () => {
                 animate="visible"
                 className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
               >
-                {tableData.map((item) => (
-                  <motion.div key={item.id} variants={itemVariants}>
-                    <Card>
-                      <Card.Header>
-                        <Card.Title
-                          status={{
-                            text: 'Đang hoạt động',
-                            color: 'blue'
-                          }}
-                        >
-                          {item.plan_name}
-                        </Card.Title>
-                        <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
-                      </Card.Header>
-                      <Card.List className="dark:text-text-hi-dark">
-                        <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
-                          <div className="flex items-center justify-between">
-                            <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
-                            <ContentCopy
-                              className="text-blue cursor-pointer ml-2"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                copyToClipboard(item.order_number);
-                                toast.success('Đã sao chép mã đơn hàng vào clipboard');
-                              }}
-                            />
-                          </div>
-                        </Card.ListItem>
-                        <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
-                        <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
-                        <Card.ListItem
-                          label="Ngày mua"
-                          icon={<CalendarClock />}
-                          value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
-                        />
-                      </Card.List>
-                    </Card>
-                  </motion.div>
-                ))}
+                {loading ? (
+                  <div className="flex items-center justify-center h-full w-full col-span-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <span className="ml-2 text-gray-600">Đang tải...</span>
+                  </div>
+                ) : (
+                  tableData.map((item) => (
+                    <motion.div key={item.id} variants={itemVariants}>
+                      <Card>
+                        <Card.Header>
+                          <Card.Title
+                            status={{
+                              text: 'Đang hoạt động',
+                              color: 'blue'
+                            }}
+                          >
+                            {item.plan_name}
+                          </Card.Title>
+                          <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
+                        </Card.Header>
+                        <Card.List className="dark:text-text-hi-dark">
+                          <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
+                            <div className="flex items-center justify-between">
+                              <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
+                              <ContentCopy
+                                className="text-blue cursor-pointer ml-2"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copyToClipboard(item.order_number);
+                                  toast.success('Đã sao chép mã đơn hàng vào clipboard');
+                                }}
+                              />
+                            </div>
+                          </Card.ListItem>
+                          <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
+                          <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
+                          <Card.ListItem
+                            label="Ngày mua"
+                            icon={<CalendarClock />}
+                            value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
+                          />
+                        </Card.List>
+                      </Card>
+                    </motion.div>
+                  ))
+                )}
               </motion.div>
             </div>
           )}

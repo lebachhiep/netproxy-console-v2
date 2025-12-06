@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@floating-ui/react-dom": "^2.1.6",
     "@hookform/resolvers": "^5.2.2",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
     "@tailwindcss/postcss": "^4.1.12",

@@ -37,6 +37,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
   const amount = propAmount !== undefined ? String(propAmount) : internalAmount;
   const country = propCountry !== undefined ? propCountry : internalCountry;
   const { mutate: generatePayment, isPending } = useTazapayPayment();
+  console.log('countries', countries);
 
   const countryOptions = countries
     ? Object.entries(countries).map(([name, code]) => ({
@@ -119,7 +120,8 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
             }
           }}
           placeholder="Chọn quốc gia"
-          placement="bottom"
+          optionClassName="max-h-[100px]"
+          placement="top-right"
           className="w-full h-10 dark:bg-[#2B405A] dark:pseudo-border-top dark:border-transparent"
         />
       </div>

@@ -167,9 +167,9 @@ export const Select: React.FC<SelectProps> = ({
           className
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           {selectedOption ? (
-            <div className={twMerge('text-text-hi dark:text-text-me-dark font-bold', labelClassName)}>{selectedOption.label}</div>
+            <div className={twMerge('text-text-hi dark:text-text-me-dark font-bold w-full', labelClassName)}>{selectedOption.label}</div>
           ) : (
             <span className="text-text-me dark:text-text-me-dark">{placeholder}</span>
           )}

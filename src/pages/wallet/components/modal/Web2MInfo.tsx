@@ -8,9 +8,10 @@ import type { BankInfo } from '@/services/payment/payment.types';
 
 interface Web2MInfoProps {
   bankInfo: BankInfo;
+  amount: number; // amount in USD
 }
 
-export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo }) => {
+export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount }) => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   // Generate VietQR content
@@ -27,11 +28,12 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo }) => {
         bankBin: bank.bin,
         bankNumber: bankInfo.bank_account_number,
         purpose: bankInfo.transfer_code,
+        amount: amount * bankInfo.vnd_usd_rate + ''
       }).build();
     } catch {
       return null;
     }
-  }, [bankInfo]);
+  }, [bankInfo, amount]);
 
   const handleCopy = async (text: string, field: string) => {
     try {
@@ -52,8 +54,13 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo }) => {
   const fields = [
     { label: 'Ngân hàng', value: bankDisplayName, key: 'bank_name' },
     { label: 'Số tài khoản', value: bankInfo.bank_account_number, key: 'account_number' },
+    {
+      label: 'Số tiền',
+      value: (amount * bankInfo.vnd_usd_rate).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }),
+      key: 'amount'
+    },
     { label: 'Chủ tài khoản', value: bankInfo.account_holder_name, key: 'holder_name' },
-    { label: 'Nội dung chuyển khoản', value: bankInfo.transfer_code, key: 'transfer_code', highlight: true },
+    { label: 'Nội dung chuyển khoản', value: bankInfo.transfer_code, key: 'transfer_code', highlight: true }
   ];
 
   return (
@@ -83,7 +90,9 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo }) => {
           >
             <div className="flex-1 min-w-0">
               <p className="text-xs text-text-lo dark:text-text-lo-dark">{field.label}</p>
-              <p className={`font-medium truncate ${field.highlight ? 'text-primary dark:text-primary-dark' : 'text-text-hi dark:text-text-hi-dark'}`}>
+              <p
+                className={`font-medium truncate ${field.highlight ? 'text-primary dark:text-primary-dark' : 'text-text-hi dark:text-text-hi-dark'}`}
+              >
                 {field.value}
               </p>
             </div>
@@ -104,8 +113,8 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo }) => {
       <div className="border-2 border-yellow dark:border-yellow-dark bg-yellow-bg dark:bg-yellow-bg-dark p-3 rounded-lg">
         <p className="text-sm text-text-hi dark:text-text-hi-dark">
           <b className="text-red dark:text-red-dark">Lưu ý:</b> Vui lòng nhập chính xác{' '}
-          <b className="text-primary dark:text-primary-dark">nội dung chuyển khoản</b> để hệ thống tự động xác nhận giao dịch.
-          Sau khi chuyển khoản thành công, số dư sẽ được cập nhật trong vòng 1-5 phút.
+          <b className="text-primary dark:text-primary-dark">nội dung chuyển khoản</b> để hệ thống tự động xác nhận giao dịch. Sau khi
+          chuyển khoản thành công, số dư sẽ được cập nhật trong vòng 1-5 phút.
         </p>
       </div>
     </div>

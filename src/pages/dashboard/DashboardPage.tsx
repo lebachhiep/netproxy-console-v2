@@ -21,7 +21,7 @@ import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useMemo, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
-import TopUpModal from '../wallet/components/modal/TopUpModal';
+import TopUpModal from '../wallet/components/TopUpModal';
 import { Link, useNavigate } from 'react-router-dom';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';

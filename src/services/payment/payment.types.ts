@@ -5,6 +5,7 @@ export interface BankInfo {
   bank_account_number: string;
   account_holder_name: string;
   transfer_code: string;
+  vnd_usd_rate: number;
 }
 
 export interface CryptoService {

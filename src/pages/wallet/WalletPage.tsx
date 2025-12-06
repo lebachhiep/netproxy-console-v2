@@ -2,12 +2,12 @@ import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
-import { ArrowCounter, ContentCopy, DatabaseStackOutlined, Globe, MagnifyingGlass } from '@/components/icons';
+import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import TopUpModal from './components/modal/TopUpModal';
+
 import { useResponsive } from '@/hooks/useResponsive';
 import { toast } from 'sonner';
 import { DateRangePicker } from '@/components/date-range-picker/DateRangePicker';
@@ -26,6 +26,9 @@ import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { InputField } from '@/components/input/InputField';
 import { usePaymentMethods } from '@/hooks/usePayments';
+import { BANK_INFO_MAPPING, BankInfo } from '@/utils/constants';
+import TopUpModalV2 from './components/TopUpModalV2';
+import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
 
 const WalletPage: React.FC = () => {
   const { data: paymentMethods } = usePaymentMethods();
@@ -37,6 +40,8 @@ const WalletPage: React.FC = () => {
 
   // Top-up modal state
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
+  const [topUpMethod, setTopUpMethod] = useState<'tazapay' | 'cryptomus' | 'web2m' | null>(null);
+  const [tazapayCountry, setTazapayCountry] = useState<string>('');
 
   // Balance state
   const [balance, setBalance] = useState<WalletBalance | null>(null);
@@ -58,42 +63,95 @@ const WalletPage: React.FC = () => {
   const tazapayCountryOptions = isTazapayAvailable
     ? paymentMethods?.methods.find((m) => m.type === 'tazapay')?.supported_countries || []
     : [];
+  const web2mMethod = paymentMethods?.methods.find((m) => m.type === 'web2m')?.bank_info || {
+    bank_name: 'mbbank'
+  };
 
-  const options = [
-    {
+  const web2mAvailable: BankInfo | undefined = Object.values(BANK_INFO_MAPPING).find(
+    (bank) => bank.shortName.toLowerCase() === web2mMethod.bank_name.toLowerCase()
+  );
+  const options = [];
+  if (web2mAvailable) {
+    options.push({
       value: 'web2m',
       label: (
-        <div className="flex gap-2">
-          <DatabaseStackOutlined className="w-5 h-5 text-primary font-bold" />
-          <span className="font-medium">Ngân hàng</span>
+        <div className="flex gap-2 items-center w-full">
+          <div className="w-8 h-6 flex justify-center items-center">
+            <img src={web2mAvailable?.bankLogoUrl} alt={`${web2mAvailable?.shortName} logo`} />
+          </div>
+          <span className="font-medium">{web2mAvailable?.name}</span>
         </div>
       )
-    },
-    {
-      value: 'cryptomus',
-      label: (
-        <div className="flex gap-2">
-          <Globe className="w-5 h-5 text-primary font-bold" />
-          <span className="font-medium">Crypto</span>
-        </div>
-      )
-    },
-    ...(Object.entries(tazapayCountryOptions) ? Object.entries(tazapayCountryOptions) : []).map(([country, value]) => {
-      return {
-        value: 'tazapay-' + value,
+    });
+  }
+  options.push(
+    ...[
+      {
+        value: 'cryptomus',
         label: (
-          <div className="flex gap-2">
-            <img
-              className="w-5 h-5 text-primary font-bold"
-              src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`}
-              alt={`${value} flag`}
-            />
-            <span className="font-medium">{country}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2 items-center">
+              <div className="w-8 h-6 flex items-center justify-center">
+                <img src={CryptocurrencyIcon} alt="Cryptocurrency" className="w-6 h-6" />
+              </div>
+              <span className="font-medium">Global (Cryptocurrency)</span>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div aria-describedby=":r10:" className="ant-image css-1trwq0a">
+                <img
+                  className="ant-image-img css-1trwq0a"
+                  src="https://dl.922proxy.com/img/svg/cc_2.svg"
+                  style={{ height: '2em', width: '2em' }}
+                />
+              </div>
+              <div aria-describedby=":r12:" className="ant-image css-1trwq0a">
+                <img
+                  className="ant-image-img css-1trwq0a"
+                  src="https://dl.922proxy.com/img/svg/trx.svg"
+                  style={{ height: '2em', width: '2em' }}
+                />
+              </div>
+              <div aria-describedby=":r14:" className="ant-image css-1trwq0a">
+                <img
+                  className="ant-image-img css-1trwq0a"
+                  src="https://dl.922proxy.com/img/svg/cc_3.svg"
+                  style={{ height: '2em', width: '2em' }}
+                />
+              </div>
+              <div aria-describedby=":r16:" className="ant-image css-1trwq0a">
+                <img
+                  className="ant-image-img css-1trwq0a"
+                  src="https://dl.922proxy.com/img/svg/cc_6.svg"
+                  style={{ height: '2em', width: '2em' }}
+                />
+              </div>
+              <div aria-describedby=":r18:" className="ant-image css-1trwq0a">
+                <img
+                  className="ant-image-img css-1trwq0a"
+                  src="https://dl.922proxy.com/files/img/202304/16822401106515.svg"
+                  style={{ height: '2em', width: '2em' }}
+                />
+              </div>
+            </div>
           </div>
         )
-      };
-    })
-  ];
+      },
+      ...(Object.entries(tazapayCountryOptions) ? Object.entries(tazapayCountryOptions) : []).map(([country, value]) => {
+        return {
+          value: 'tazapay-' + value,
+          label: (
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2 items-center">
+                <img className="w-8 h-6" src={`https://flagcdn.com/w20/${value.toLowerCase()}.png`} alt={`${value} flag`} />
+                <span className="font-medium">{country}</span>
+              </div>
+              <div>{country} - Tazapay</div>
+            </div>
+          )
+        };
+      })
+    ]
+  );
 
   // Fetch balance
   const fetchBalance = useCallback(async () => {
@@ -299,7 +357,17 @@ const WalletPage: React.FC = () => {
               <Select
                 options={options}
                 value={selectedMethod}
-                onChange={(val) => setSelectedMethod(val)}
+                onChange={(val) => {
+                  setSelectedMethod(val);
+                  if (val === 'web2m') {
+                    setTopUpMethod('web2m');
+                  } else if (val === 'cryptomus') {
+                    setTopUpMethod('cryptomus');
+                  } else if (typeof val === 'string' && val.startsWith('tazapay-')) {
+                    setTopUpMethod('tazapay');
+                    setTazapayCountry(val.split('-')[1].toUpperCase());
+                  }
+                }}
                 placeholder="Chọn phương thức thanh toán"
                 placement="bottom"
                 className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
@@ -405,7 +473,15 @@ const WalletPage: React.FC = () => {
         />
       </motion.div>
 
-      <TopUpModal open={topUpModalOpen} onClose={() => setTopUpModalOpen(false)} />
+      {topUpMethod && (
+        <TopUpModalV2
+          amount={priceValue}
+          paymentMethod={topUpMethod}
+          open={topUpModalOpen}
+          onClose={() => setTopUpModalOpen(false)}
+          country={tazapayCountry}
+        />
+      )}
     </motion.div>
   );
 };

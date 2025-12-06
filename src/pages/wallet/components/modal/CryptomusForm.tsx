@@ -11,10 +11,11 @@ const MIN_AMOUNT = 10;
 interface CryptomusFormProps {
   services?: CryptoService[];
   onSuccess: () => void;
+  amount?: number;
 }
 
-export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSuccess }) => {
-  const [amount, setAmount] = useState('');
+export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSuccess, amount: propAmount }) => {
+  const [amount, setAmount] = useState(propAmount ? propAmount.toString() : '');
   const { mutate: generatePayment, isPending } = useCryptomusPayment();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,7 +37,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
         },
         onError: (error) => {
           toast.error(error.message || 'Không thể tạo thanh toán');
-        },
+        }
       }
     );
   };
@@ -46,9 +47,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
   return (
     <form onSubmit={handleSubmit} className="p-5 space-y-4">
       <div>
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">
-          Số tiền (USD)
-        </label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">Số tiền (USD)</label>
         <InputField
           type="number"
           min={MIN_AMOUNT}
@@ -62,9 +61,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
 
       {availableServices.length > 0 && (
         <div className="p-3 rounded-lg bg-bg-mute dark:bg-bg-mute-dark border-2 border-border-element dark:border-border-element-dark">
-          <p className="text-sm text-text-lo dark:text-text-lo-dark mb-2">
-            Tiền điện tử được hỗ trợ:
-          </p>
+          <p className="text-sm text-text-lo dark:text-text-lo-dark mb-2">Tiền điện tử được hỗ trợ:</p>
           <div className="flex flex-wrap gap-2">
             {availableServices.map((service) => (
               <span
@@ -78,13 +75,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
         </div>
       )}
 
-      <Button
-        type="submit"
-        variant="primary"
-        loading={isPending}
-        icon={<Open className="w-5 h-5" />}
-        className="w-full h-10"
-      >
+      <Button type="submit" variant="primary" loading={isPending} icon={<Open className="w-5 h-5" />} className="w-full h-10">
         Thanh toán
       </Button>
 

@@ -3,9 +3,9 @@ import { Modal } from '@/components/modal/Modal';
 import { Tabs } from '@/components/tabs/Tabs';
 import { WalletCreditCardOutlined, Globe, DatabaseStackOutlined } from '@/components/icons';
 import { usePaymentMethods } from '@/hooks/usePayments';
-import TazapayForm from './TazapayForm';
-import CryptomusForm from './CryptomusForm';
-import Web2MInfo from './Web2MInfo';
+import TazapayForm from './modal/TazapayForm';
+import CryptomusForm from './modal/CryptomusForm';
+import Web2MInfo from './modal/Web2MInfo';
 
 interface TopUpModalProps {
   open: boolean;

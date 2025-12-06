@@ -5,13 +5,13 @@ import type {
   TazapayGenerateRequest,
   TazapayGenerateResponse,
   CryptomusGenerateRequest,
-  CryptomusGenerateResponse,
+  CryptomusGenerateResponse
 } from '@/services/payment/payment.types';
 
 // Query keys factory
 export const paymentKeys = {
   all: ['payments'] as const,
-  methods: () => [...paymentKeys.all, 'methods'] as const,
+  methods: () => [...paymentKeys.all, 'methods'] as const
 };
 
 /**
@@ -21,7 +21,7 @@ export function usePaymentMethods() {
   return useQuery<AvailablePaymentMethodsResponse>({
     queryKey: paymentKeys.methods(),
     queryFn: () => paymentService.getAvailablePaymentMethods(),
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 1000 * 60 * 5 // 5 minutes cache
   });
 }
 
@@ -30,7 +30,7 @@ export function usePaymentMethods() {
  */
 export function useTazapayPayment() {
   return useMutation<TazapayGenerateResponse, Error, TazapayGenerateRequest>({
-    mutationFn: (data) => paymentService.generateTazapayPayment(data),
+    mutationFn: (data) => paymentService.generateTazapayPayment(data)
   });
 }
 
@@ -39,6 +39,6 @@ export function useTazapayPayment() {
  */
 export function useCryptomusPayment() {
   return useMutation<CryptomusGenerateResponse, Error, CryptomusGenerateRequest>({
-    mutationFn: (data) => paymentService.generateCryptomusPayment(data),
+    mutationFn: (data) => paymentService.generateCryptomusPayment(data)
   });
 }

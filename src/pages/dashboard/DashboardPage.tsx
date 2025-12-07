@@ -39,129 +39,6 @@ import { Pagination } from '@/components/pagination/Pagination';
 import { CheckingModal } from './CheckingModal';
 import { useTranslation } from 'react-i18next';
 
-export const data = [
-  {
-    id: 1,
-    title: 'UK Bandwidth Proxy - 5GB / 30 ngày',
-    planID: 'ANH.EXP1DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '5GB',
-    expired: 'Dec 17, 2023',
-    autoRenew: false,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 2,
-    title: 'US Bandwidth Proxy - 3GB / 7 ngày',
-    planID: 'USA.EXP3DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '3GB',
-    expired: 'Sep 10, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 3,
-    title: 'Germany Rotating Proxy - 1GB / 3 ngày',
-    planID: 'GER.EXP1DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '1GB',
-    expired: 'Aug 15, 2023',
-    autoRenew: true,
-    type: 'rotating-proxy'
-  },
-  {
-    id: 4,
-    title: 'France Rotating Proxy - 500MB / 1 ngày',
-    planID: 'FRA.EXP1DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '500MB',
-    expired: 'Oct 5, 2023',
-    autoRenew: true,
-    type: 'rotating-proxy'
-  },
-  {
-    id: 5,
-    title: 'Japan Bandwidth Proxy - 2GB / 15 ngày',
-    planID: 'JPN.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '2GB',
-    expired: 'Nov 20, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 6,
-    title: 'Singapore Bandwidth Proxy - 4GB / 30 ngày',
-    planID: 'SGP.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '4GB',
-    expired: 'Nov 22, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 7,
-    title: 'Canada Rotating Proxy - 1.5GB / 14 ngày',
-    planID: 'CAN.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '1.5GB',
-    expired: 'Dec 1, 2023',
-    autoRenew: true,
-    type: 'rotating-proxy'
-  },
-  {
-    id: 8,
-    title: 'Australia Bandwidth Proxy - 6GB / 30 ngày',
-    planID: 'AUS.EXP3DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '6GB',
-    expired: 'Dec 12, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 9,
-    title: 'Netherlands Rotating Proxy - 750MB / 7 ngày',
-    planID: 'NLD.EXP1DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '750MB',
-    expired: 'Nov 25, 2023',
-    autoRenew: true,
-    type: 'rotating-proxy'
-  },
-  {
-    id: 10,
-    title: 'Sweden Bandwidth Proxy - 3GB / 15 ngày',
-    planID: 'SWE.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '3GB',
-    expired: 'Dec 5, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  },
-  {
-    id: 11,
-    title: 'Italy Rotating Proxy - 2GB / 10 ngày',
-    planID: 'ITA.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '2GB',
-    expired: 'Dec 15, 2023',
-    autoRenew: true,
-    type: 'rotating-proxy'
-  },
-  {
-    id: 12,
-    title: 'Spain Bandwidth Proxy - 4GB / 20 ngày',
-    planID: 'ESP.EXP2DIP',
-    status: { text: 'Đang hoạt động', color: 'blue' },
-    dataLeft: '4GB',
-    expired: 'Dec 20, 2023',
-    autoRenew: true,
-    type: 'bandwidth-proxy'
-  }
-];
-
 const easeInOutCustom = [0.44, 0, 0.56, 1];
 
 const pageVariants: Variants = {
@@ -262,7 +139,7 @@ const DashboardPage = () => {
   const columns: TableColumn<OrderTableData>[] = [
     {
       key: 'id',
-      title: 'STT',
+      title: t('no'),
       width: '50px',
       align: 'center',
       render: (_value, _record, index) => index + 1,
@@ -272,7 +149,7 @@ const DashboardPage = () => {
       width: isMobile || isTablet ? 200 : '',
       minWidth: 150,
       key: 'order_number',
-      title: 'Mã đơn hàng',
+      title: t('orderNumber'),
       align: 'left',
       sortable: true,
       render: (value) => (
@@ -283,7 +160,7 @@ const DashboardPage = () => {
             onClick={(e) => {
               e.stopPropagation();
               copyToClipboard(value);
-              toast.success('Đã sao chép mã đơn hàng vào clipboard');
+              toast.success(t('dashboard.copyOrderIDSuccess'));
             }}
           />
         </div>
@@ -293,7 +170,7 @@ const DashboardPage = () => {
     {
       width: 200,
       key: 'plan_name',
-      title: 'Gói',
+      title: t('plan'),
       align: 'left',
       sortable: true,
       render: (value) => <div className="line-clamp-1">{value}</div>
@@ -301,14 +178,14 @@ const DashboardPage = () => {
     {
       width: 150,
       key: 'subscription_count',
-      title: 'Số lượng',
+      title: t('quantity'),
       align: 'center',
       sortable: true,
       render: (value) => <div className="font-semibold">{value}</div>
     },
     {
       key: 'expired',
-      title: 'Duration',
+      title: t('duration'),
       width: isMobile || isTablet ? 150 : 200,
       render: (_, record) => {
         return <div className="font-semibold capitalize">{record.duration}</div>;
@@ -317,27 +194,27 @@ const DashboardPage = () => {
     {
       width: 150,
       key: 'fulfilled_at',
-      title: 'Ngày mua',
+      title: t('purchaseDate'),
       sortable: true,
       render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
     },
 
     {
       key: 'subscriptions',
-      title: 'Trạng thái',
+      title: t('status'),
       width: '160px',
       align: 'center',
-      render: () => <Badge color={'blue'}>Đang hoạt động</Badge> // Always active for now
+      render: () => <Badge color={'blue'}>{t('dashboard.active')}</Badge> // Always active for now
     },
     {
       width: isMobile || isTablet ? 150 : 200,
       fixed: 'right',
       key: 'buttonText',
-      title: 'Hành động',
+      title: t('action'),
       align: 'center',
       render: (_, record) => (
         <Button variant="default" className="px-3 py-[7.5px] h-[32px] dark:text-text-lo-dark" onClick={() => handleItemClick(record.id)}>
-          QUẢN LÝ
+          {t('manage')}
         </Button>
       )
     }
@@ -364,16 +241,16 @@ const DashboardPage = () => {
             <Person className="text-text-hi-dark" />
           </div>
         }
-        title="Người dùng"
+        title={t('dashboard.user')}
         mainContent={
           <div>
             <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">2500</span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Khách hàng</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.customer')}</span>
           </div>
         }
         subInfo={[
           {
-            label: 'Tổng đơn hàng :',
+            label: t('dashboard.totalOrders'),
             value: (
               <div>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">155.231</span>
@@ -390,12 +267,12 @@ const DashboardPage = () => {
             <TopSpeed />
           </div>
         }
-        title="Máy chủ"
+        title={t('dashboard.server')}
         mainContent={
           <div>
             <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">1</span>
             <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ 5 </span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> hoạt động</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.operating')}</span>
           </div>
         }
         subInfo={[
@@ -410,7 +287,7 @@ const DashboardPage = () => {
                   setOpenCheckingModal(true);
                 }}
               >
-                KIỂM TRA
+                {t('dashboard.checking').toUpperCase()}
               </Button>
             )
           }
@@ -458,7 +335,9 @@ const DashboardPage = () => {
                     <span className="text-blue dark:text-blue-dark font-semibold text-xl">{userProfile?.balance || '-'}</span>
                   </div>
                 }
-                subInfo={[{ label: 'Tổng tiền đã nạp ', value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }]}
+                subInfo={[
+                  { label: t('dashboard.totalTopUp'), value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }
+                ]}
                 buttonText={t('dashboard.topUp').toUpperCase()}
                 onButtonClick={() => setOpen(true)}
               />,
@@ -478,8 +357,8 @@ const DashboardPage = () => {
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.activePlans')}</span>
                   </div>
                 }
-                subInfo={[{ label: 'Tổng gói', value: `${loading ? '...' : totalSubscriptions} gói` }]}
-                buttonText="MUA THÊM"
+                subInfo={[{ label: t('dashboard.totalPlans'), value: `${loading ? '...' : totalSubscriptions} gói` }]}
+                buttonText={t('dashboard.buyMore').toUpperCase()}
                 onButtonClick={() => navigate('/buy')}
               />,
               ...last2Items
@@ -494,12 +373,14 @@ const DashboardPage = () => {
         {/* ====== FILTER BAR ====== */}
         <motion.div variants={sectionVariants} className="p-5 pb-2 bg-bg-canvas dark:bg-bg-canvas-dark">
           <div className="flex items-center gap-2">
-            <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">Gói đang hoạt động</p>
+            <p className="text-text-hi dark:text-text-hi-dark text-sm tracking-[0.52px] font-ibm-plex-mono uppercase">
+              {t('dashboard.activePlans')}
+            </p>
             <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
           </div>
           <div className="flex items-center justify-between mt-3">
             <Input
-              placeholder="Tìm kiếm"
+              placeholder={t('dashboard.search')}
               wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => console.log(e.target.value)}
@@ -521,7 +402,7 @@ const DashboardPage = () => {
                   params.delete('page');
                   params.delete('pageSize');
                   window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
-                  toast.success('Làm mới dữ liệu thành công');
+                  toast.success(t('dashboard.refreshSuccess'));
                 }}
               />
               <Link to="/buy">
@@ -594,7 +475,7 @@ const DashboardPage = () => {
                   {loading ? (
                     <div className="flex items-center justify-center h-full w-full col-span-12">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                      <span className="ml-2 text-gray-600">Đang tải...</span>
+                      <span className="ml-2 text-gray-600">{t('loading')}</span>
                     </div>
                   ) : (
                     tableData.map((item) => (
@@ -603,7 +484,7 @@ const DashboardPage = () => {
                           <Card.Header>
                             <Card.Title
                               status={{
-                                text: 'Đang hoạt động',
+                                text: t('dashboard.active'),
                                 color: 'blue'
                               }}
                             >
@@ -612,7 +493,7 @@ const DashboardPage = () => {
                             <Card.Action text={'Quản lý'} onClick={() => handleItemClick(item.id)} />
                           </Card.Header>
                           <Card.List className="dark:text-text-hi-dark">
-                            <Card.ListItem label="Mã đơn hàng" icon={<DocumentTable />}>
+                            <Card.ListItem label={t('dashboard.orderID')} icon={<DocumentTable />}>
                               <div className="flex items-center justify-between">
                                 <p className="line-clamp-1 font-mono truncate">{item.order_number}</p>
                                 <ContentCopy
@@ -620,7 +501,7 @@ const DashboardPage = () => {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     copyToClipboard(item.order_number);
-                                    toast.success('Đã sao chép mã đơn hàng vào clipboard');
+                                    toast.success(t('dashboard.copyOrderIDSuccess'));
                                   }}
                                 />
                               </div>
@@ -628,7 +509,7 @@ const DashboardPage = () => {
                             <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
                             <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
                             <Card.ListItem
-                              label="Ngày mua"
+                              label={t('dashboard.purchaseDate')}
                               icon={<CalendarClock />}
                               value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
                             />

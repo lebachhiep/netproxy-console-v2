@@ -1,9 +1,33 @@
 {
   "home": "Trang chủ",
+  "loading": "Đang tải...",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm",
     "activePlan": "Các gói đang hoạt động",
-    "activePlans": "Gói đang hoạt động"
-  }
+    "activePlans": "Gói đang hoạt động",
+    "buyMore": "Mua thêm",
+    "refreshSuccess": "Làm mới dữ liệu thành công",
+    "active": "Đang hoạt động",
+    "orderID": "Mã đơn hàng",
+    "copyOrderIDSuccess": "Đã sao chép mã đơn hàng vào clipboard",
+    "totalTopUp": "Tổng tiền đã nạp",
+    "totalPlans": "Tổng gói",
+    "totalOrders": "Tổng đơn hàng",
+    "operating": "hoạt động",
+    "server": "Máy chủ",
+    "user": "Người dùng",
+    "customer": "Khách hàng",
+    "checking": "Kiểm tra",
+    "search": "Tìm kiếm"
+  },
+  "purchaseDate": "Ngày mua",
+  "orderNumber": "Mã đơn hàng",
+  "plan": "Gói",
+  "quantity": "Số lượng",
+  "duration": "Thời lượng",
+  "status": "Trạng thái",
+  "action": "Hành động",
+  "manage": "QUẢN LÝ",
+  "no": "STT"
 }

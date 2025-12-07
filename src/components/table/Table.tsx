@@ -3,6 +3,7 @@ import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
 import { ExpandMore } from '../icons';
 import clsx from 'clsx';
+import { useTranslation } from 'react-i18next';
 
 // Context to provide selected rows for compound pattern
 const TableSelectedContext = createContext<any[]>([]);
@@ -77,6 +78,7 @@ export function Table<T extends Record<string, any>>({
   bodyClassName,
   children
 }: TableProps<T> & { children?: React.ReactNode }) {
+  const { t } = useTranslation();
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const [emptyRowsCount, setEmptyRowsCount] = useState(0);
@@ -515,7 +517,7 @@ export function Table<T extends Record<string, any>>({
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">Đang tải...</span>
+            <span className="ml-2 text-gray-600">{t('loading')}</span>
           </div>
         )}
         {pagination && paginationType === 'loadmore' && (

@@ -1,9 +1,42 @@
 {
   "home": "Home",
+  "loading": "Loading...",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",
     "activePlan": "Active plan",
-    "activePlans": "Active plans"
-  }
+    "activePlans": "Active plans",
+    "buyMore": "Buy more",
+    "refreshSuccess": "Data refreshed successfully",
+    "active": "Active",
+    "orderID": "Order ID",
+    "copyOrderIDSuccess": "Order ID copied to clipboard",
+    "totalTopUp": "Total top-up amount",
+    "totalPlans": "Total plans",
+    "totalOrders": "Total orders",
+    "operating": "operating",
+    "server": "Server",
+    "user": "User",
+    "customer": "Customer",
+    "checking": "Checking",
+    "search": "Search"
+  },
+  "durationMapping": {
+    "days": "days",
+    "hours": "hours",
+    "months": "months",
+    "years": "years",
+    "day": "day",
+    "month": "month",
+    "year": "year"
+  },
+  "purchaseDate": "Purchase date",
+  "orderNumber": "Order number",
+  "plan": "Plan",
+  "quantity": "Quantity",
+  "duration": "Duration",
+  "status": "Status",
+  "action": "Action",
+  "manage": "MANAGE",
+  "no": "No."
 }

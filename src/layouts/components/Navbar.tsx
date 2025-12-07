@@ -8,11 +8,13 @@ import { AccountProfileModal } from '@/pages/account-profile/components/modal/Ac
 import { settings } from '@/settings';
 import { AUTH_MESSAGES } from '@/utils/constants';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MdDashboard } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from '@/router';
 import { toast } from 'sonner';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
+import { Dropdown } from '@/components/dropdown';
 
 interface Breadcrumb {
   title: string;
@@ -20,6 +22,7 @@ interface Breadcrumb {
 }
 
 export const Navbar: React.FC = () => {
+  const { i18n } = useTranslation();
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -198,9 +201,39 @@ export const Navbar: React.FC = () => {
             disabled={isRedeeming}
           />
           {/* Ngôn ngữ */}
-          <Tooltip content="Chọn ngôn ngữ" trigger="hover" position="bottom">
-            <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
-          </Tooltip>
+          <Dropdown>
+            <Dropdown.Trigger asIcon showChevron={false}>
+              <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
+            </Dropdown.Trigger>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={async () => {
+                  const currentLang = i18n.language;
+                  if (currentLang === 'en') {
+                    toast.info('Language is already English');
+                    return;
+                  }
+                  await i18n.changeLanguage('en');
+                  toast.success('Language changed to English');
+                }}
+              >
+                English
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={async () => {
+                  const currentLang = i18n.language;
+                  if (currentLang === 'vi') {
+                    toast.info('Ngôn ngữ đã được chuyển sang Tiếng Việt');
+                    return;
+                  }
+                  await i18n.changeLanguage('vi');
+                  toast.success('Ngôn ngữ đã được chuyển sang Tiếng Việt');
+                }}
+              >
+                Tiếng Việt
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover" position="bottom">
             <IconButton
               className="w-10 h-10"

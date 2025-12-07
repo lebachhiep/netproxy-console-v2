@@ -1,0 +1,9 @@
+{
+  "home": "Home",
+  "dashboard": {
+    "balance": "Balance",
+    "topUp": "Top Up",
+    "activePlan": "Active plan",
+    "activePlans": "Active plans"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "home": "Trang chủ",
+  "dashboard": {
+    "balance": "Số dư",
+    "topUp": "Nạp Thêm",
+    "activePlan": "Các gói đang hoạt động",
+    "activePlans": "Gói đang hoạt động"
+  }
+}

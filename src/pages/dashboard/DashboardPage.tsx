@@ -37,6 +37,7 @@ import { useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/components/auth/ProtectedRoute';
 import { Pagination } from '@/components/pagination/Pagination';
 import { CheckingModal } from './CheckingModal';
+import { useTranslation } from 'react-i18next';
 
 export const data = [
   {
@@ -186,7 +187,8 @@ interface OrderTableData {
 }
 
 const DashboardPage = () => {
-  const pageTitle = usePageTitle({ pageName: 'Trang chủ' });
+  const { t } = useTranslation();
+  const pageTitle = usePageTitle({ pageName: t('home') });
   const [currentPage, setCurrentPage] = useState(() => {
     const pageQuery = new URLSearchParams(window.location.search).get('page');
     return pageQuery ? parseInt(pageQuery, 10) : 1;
@@ -449,7 +451,7 @@ const DashboardPage = () => {
                     <WalletCreditCardFilled />
                   </div>
                 }
-                title="Số dư"
+                title={t('dashboard.balance')}
                 mainContent={
                   <div className="flex items-center font-averta">
                     <span className="text-green font-semibold text-xl tracking-[-0.66px]">$</span>
@@ -457,7 +459,7 @@ const DashboardPage = () => {
                   </div>
                 }
                 subInfo={[{ label: 'Tổng tiền đã nạp ', value: userProfile?.total_purchased ? `$${userProfile.total_purchased}` : '-' }]}
-                buttonText="NẠP THÊM"
+                buttonText={t('dashboard.topUp').toUpperCase()}
                 onButtonClick={() => setOpen(true)}
               />,
               <OverViewCard
@@ -467,13 +469,13 @@ const DashboardPage = () => {
                     <CartFilled />
                   </div>
                 }
-                title="Các gói hoạt động"
+                title={t('dashboard.activePlan')}
                 mainContent={
                   <div>
                     <span className="text-primary dark:text-primary-dark font-semibold text-xl tracking-[-0.3px] font-averta">
                       {loading ? '...' : activeSubscriptions}
                     </span>
-                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Gói đang hoạt động</span>
+                    <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.activePlans')}</span>
                   </div>
                 }
                 subInfo={[{ label: 'Tổng gói', value: `${loading ? '...' : totalSubscriptions} gói` }]}

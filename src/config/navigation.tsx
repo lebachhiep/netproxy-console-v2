@@ -15,7 +15,6 @@ import {
   DocumentSyncFilled,
   Person,
   PersonFilled,
-  SettingsFilled,
   Open,
   WalletCreditCardFilled,
   WalletCreditCardOutlined,

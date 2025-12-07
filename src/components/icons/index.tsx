@@ -89,8 +89,10 @@ import { ReactComponent as ArrowDownload } from '@/assets/icons/arrow_download.s
 import { ReactComponent as Reload } from '@/assets/icons/reload.svg';
 import { ReactComponent as CloudSwap } from '@/assets/icons/cloud_swap.svg';
 import { ReactComponent as ArrowSync } from '@/assets/icons/arrow_sync.svg';
+import { ReactComponent as CalendarClockOutline } from '@/assets/icons/calendar_clock_outline.svg';
 
 export {
+  CalendarClockOutline,
   ArrowSync,
   CloudSwap,
   Reload,

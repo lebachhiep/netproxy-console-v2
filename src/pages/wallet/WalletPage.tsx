@@ -371,7 +371,7 @@ const WalletPage: React.FC = () => {
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
             <div>
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Nạp thêm tiền vào ví</h3>
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">Nạp thêm tiền vào ví</h3>
               {/* Amount Display */}
               <div>
                 <div className="relative text-text-hi dark:text-text-hi-dark">
@@ -402,7 +402,7 @@ const WalletPage: React.FC = () => {
 
             {/* Payment Method */}
             <div className="">
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1">Phương thức</h3>
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">Phương thức</h3>
               <Select
                 options={options}
                 value={selectedMethod}
@@ -419,7 +419,7 @@ const WalletPage: React.FC = () => {
                 }}
                 placeholder="Chọn phương thức thanh toán"
                 placement="bottom"
-                className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A]"
+                className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
               />
             </div>
 

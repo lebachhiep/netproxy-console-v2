@@ -1,7 +1,7 @@
 import { PricingCard } from '@/components/card/PricingCard';
 import {
   ArrowRotate,
-  CalendarClock,
+  CalendarClockOutline,
   CartFilled,
   Clock,
   DatabaseStackOutlined,
@@ -238,7 +238,7 @@ const PurchasePage: React.FC = () => {
     // Duration (for time-based plans)
     if (plan.duration) {
       features.push({
-        icon: <CalendarClock className="w-6 h-6 text-blue" />,
+        icon: <CalendarClockOutline className="w-6 h-6 text-blue" />,
         label: (
           <div className="text-base">
             <label>Thời hạn: </label>
@@ -301,7 +301,7 @@ const PurchasePage: React.FC = () => {
     // Max concurrent connections
     if (plan.max_concurrent) {
       features.push({
-        icon: <Grid className="w-6 h-6 text-purple" />,
+        icon: <Grid className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
             <label>Kết nối đồng thời: </label>
@@ -312,7 +312,7 @@ const PurchasePage: React.FC = () => {
     } else {
       // Unlimited concurrent connections when max_concurrent doesn't exist
       features.push({
-        icon: <Grid className="w-6 h-6 text-purple" />,
+        icon: <Grid className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
             <label>Kết nối đồng thời: </label>

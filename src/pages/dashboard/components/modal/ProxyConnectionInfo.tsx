@@ -18,9 +18,9 @@ interface ProxyConnectionInfoProps {
 const hasValidCredentials = (creds: any): creds is ProxyCredentials => {
   return creds &&
          typeof creds === 'object' &&
-         'ProxyIP' in creds &&
-         'Username' in creds &&
-         'Password' in creds;
+         'proxy_ip' in creds &&
+         'username' in creds &&
+         'password' in creds;
 };
 
 // Country options for username builder
@@ -112,11 +112,11 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
     const credentials = subscription.provider_credentials as ProxyCredentials;
 
     // Generate RFC format strings
-    const httpPort = credentials.HTTPPort || 80;
-    const socksPort = credentials.SOCKS5Port || 0;
-    const host = credentials.ProxyIP;
-    const user = credentials.Username;
-    const pass = showPassword ? credentials.Password : '•'.repeat(credentials.Password.length);
+    const httpPort = credentials.http_port || 80;
+    const socksPort = credentials.socks5_port || 0;
+    const host = credentials.proxy_ip;
+    const user = credentials.username;
+    const pass = showPassword ? credentials.password : '•'.repeat(credentials.password.length);
 
     // RFC formats
     const format1 = `http://${user}:${pass}@${host}:${httpPort}`;
@@ -153,7 +153,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
               },
               {
                 icon: <FileCopy className="text-blue dark:text-blue-dark w-5 h-5" />,
-                onClick: () => copyToClipboard(`http://${user}:${credentials.Password}@${host}:${httpPort}`, 'Format 1')
+                onClick: () => copyToClipboard(`http://${user}:${credentials.password}@${host}:${httpPort}`, 'Format 1')
               }
             ]}
           />
@@ -179,7 +179,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
               },
               {
                 icon: <FileCopy className="text-blue dark:text-blue-dark w-5 h-5" />,
-                onClick: () => copyToClipboard(`${host}:${httpPort}:${user}:${credentials.Password}`, 'Format 2')
+                onClick: () => copyToClipboard(`${host}:${httpPort}:${user}:${credentials.password}`, 'Format 2')
               }
             ]}
           />
@@ -205,7 +205,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
               },
               {
                 icon: <FileCopy className="text-blue dark:text-blue-dark w-5 h-5" />,
-                onClick: () => copyToClipboard(`${user}:${credentials.Password}@${host}:${httpPort}`, 'Format 3')
+                onClick: () => copyToClipboard(`${user}:${credentials.password}@${host}:${httpPort}`, 'Format 3')
               }
             ]}
           />
@@ -231,7 +231,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
               },
               {
                 icon: <FileCopy className="text-blue dark:text-blue-dark w-5 h-5" />,
-                onClick: () => copyToClipboard(`${host},${httpPort},${user},${credentials.Password}`, 'Format 4')
+                onClick: () => copyToClipboard(`${host},${httpPort},${user},${credentials.password}`, 'Format 4')
               }
             ]}
           />

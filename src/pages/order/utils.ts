@@ -13,7 +13,7 @@ export const getIpAddressByProxyType = (record: Subscription): string => {
     return 'relay.prx.network';
   }
   const credentials = record.provider_credentials as any;
-  return credentials?.ProxyIP || '-';
+  return credentials?.proxy_ip || '-';
 };
 
 export const getPortByProxyType = (record: Subscription): string => {
@@ -22,7 +22,7 @@ export const getPortByProxyType = (record: Subscription): string => {
     return '80';
   }
   const credentials = record.provider_credentials as any;
-  const port = credentials?.HTTPPort > 0 ? credentials.HTTPPort : credentials?.SOCKS5Port;
+  const port = credentials?.http_port > 0 ? credentials.http_port : credentials?.socks5_port;
   return port?.toString() || '-';
 };
 
@@ -47,7 +47,7 @@ export const getUsernameByProxyType = (record: Subscription): string => {
     return username;
   }
   const credentials = record.provider_credentials as any;
-  return credentials?.Username || '-';
+  return credentials?.username || '-';
 };
 
 export const getPasswordByProxyType = (record: Subscription): { displayPassword: string; plainPassword: string } => {
@@ -59,7 +59,7 @@ export const getPasswordByProxyType = (record: Subscription): { displayPassword:
     };
   }
   const credentials = record.provider_credentials as any;
-  const password = credentials?.Password || '********';
+  const password = credentials?.password || '********';
   return {
     displayPassword: password,
     plainPassword: password

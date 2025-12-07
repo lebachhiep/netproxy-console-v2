@@ -262,16 +262,16 @@ const OrderDetailPage = () => {
     } else {
       // For fixed proxy: protocol://username:password@ip:port
       const credentials = record.provider_credentials as any;
-      if (!credentials || !credentials.ProxyIP) {
+      if (!credentials || !credentials.proxy_ip) {
         toast.error('No credentials available');
         return;
       }
 
-      const protocol = credentials.HTTPPort > 0 ? 'http' : 'socks5';
-      const username = credentials.Username || '';
-      const password = credentials.Password || '';
-      const ip = credentials.ProxyIP || '';
-      const port = credentials.HTTPPort > 0 ? credentials.HTTPPort : credentials.SOCKS5Port;
+      const protocol = credentials.http_port > 0 ? 'http' : 'socks5';
+      const username = credentials.username || '';
+      const password = credentials.password || '';
+      const ip = credentials.proxy_ip || '';
+      const port = credentials.http_port > 0 ? credentials.http_port : credentials.socks5_port;
 
       const proxyString = `${protocol}://${username}:${password}@${ip}:${port}`;
 
@@ -484,7 +484,7 @@ const OrderDetailPage = () => {
                     onClick={() => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
-                      const connectionType = credentials?.HTTPPort > 0 ? 'http' : credentials?.SOCKS5Port > 0 ? 'socks5' : '-';
+                      const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
                       setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
                       handleSwitchProtocol({ selectedSubscriptionId: record.id });
                     }}
@@ -575,7 +575,7 @@ const OrderDetailPage = () => {
                     const promiseList = selectedRows.map((record) => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
-                      const connectionType = credentials?.HTTPPort > 0 ? 'http' : credentials?.SOCKS5Port > 0 ? 'socks5' : '-';
+                      const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
                       setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
                       return handleSwitchProtocol({ selectedSubscriptionId: record.id });
                     });

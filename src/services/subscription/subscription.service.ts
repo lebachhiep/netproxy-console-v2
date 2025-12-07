@@ -106,7 +106,7 @@ class SubscriptionService {
   /**
    * Get current proxy credentials for a subscription
    * @param id - Subscription ID
-   * @returns Promise with current proxy credentials (ProxyIP, HTTPPort, SOCKS5Port, Username, Password)
+   * @returns Promise with current proxy credentials (proxy_ip, http_port, socks5_port, username, password)
    */
   async getProxy(id: string): Promise<SwitchProtocolResponse> {
     const response = await apiService.get<SwitchProtocolResponse>(

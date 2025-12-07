@@ -1,11 +1,12 @@
 // Backend subscription types matching Encore.go API structure
 
 export interface ProxyCredentials {
-  ProxyIP: string;
-  HTTPPort: number;
-  SOCKS5Port: number;
-  Username: string;
-  Password: string;
+  proxy_ip: string;
+  http_port: number;
+  socks5_port: number;
+  username: string;
+  password: string;
+  active_protocol?: string;
 }
 
 export interface Plan {

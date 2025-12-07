@@ -11,15 +11,13 @@ import { couponService } from '@/services/coupon/coupon.service';
 import { orderService } from '@/services/order/order.service';
 import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import { formatDate } from '@/utils/date';
 import moment from 'moment';
 import clsx from 'clsx';
 
 export const RotateDesktopSummary = ({
   orders,
-  totalIps,
-  totalLocation,
+  // totalIps,
+  // totalLocation,
   total,
   useCartContext = false,
   proxyType,
@@ -42,10 +40,10 @@ export const RotateDesktopSummary = ({
   const [isValidatingCoupon, setIsValidatingCoupon] = useState<boolean>(false);
   const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
   const userProfile = useAuthStore((state) => state.userProfile);
   const balance = userProfile?.balance ?? 0;
-  const navigate = useNavigate();
 
   console.log('cart in RotateDesktopSummary:', cart);
 
@@ -85,6 +83,7 @@ export const RotateDesktopSummary = ({
       }
     } catch (error) {
       toast.error('Không thể xác thực mã giảm giá');
+      console.log('Coupon validation error:', error);
     } finally {
       setIsValidatingCoupon(false);
     }
@@ -193,6 +192,7 @@ export const RotateDesktopSummary = ({
       }
     } finally {
       setIsCheckingOut(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       orderCallback && orderCallback();
     }
   };
@@ -200,13 +200,13 @@ export const RotateDesktopSummary = ({
   return (
     <>
       <div className="px-5 mt-3 mb-5">
-        <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-secondary-dark p-3">
+        <div className="border border-border-element dark:border-border-element-dark rounded-xl shadow-xs  text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-secondary-dark p-2">
           <div className="relative ">
             <div className={`transition-all duration-300 ease-in-out overflow-hidden `}>
               <div className="flex flex-col gap-3">
                 {/* Coupon Input - Only show for cart context */}
                 {useCartContext && cart && (
-                  <div className="border-b border-border-element dark:border-border-element-dark p-2">
+                  <div className="border-b border-border-element dark:border-border-element-dark pb-2">
                     {cart.couponCode ? (
                       <div className="flex items-center gap-2 bg-green-bg dark:bg-green-bg p-2 rounded-lg">
                         <span className="text-green dark:text-green-dark text-sm font-medium flex-1">{cart.couponCode}</span>
@@ -255,13 +255,13 @@ export const RotateDesktopSummary = ({
               {/* Balance and pricing - Only show for cart context */}
               {useCartContext && cart && (
                 <div className="flex flex-col border-b border-border-element dark:border-border-element-dark">
-                  <div className="flex justify-between text-sm p-2 border-b border-border-element dark:border-border-element-dark">
+                  <div className="flex justify-between text-sm py-2 border-b border-border-element dark:border-border-element-dark">
                     <span className="text-text-me dark:text-text-me-dark">IP Type:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">{cart.getTabItems('rotating')[0]?.plan?.name}</span>
                   </div>
 
                   {duration && (
-                    <div className="flex justify-between border-b border-border-element dark:border-border-element-dark p-2 ">
+                    <div className="flex justify-between border-b border-border-element dark:border-border-element-dark py-2 ">
                       <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP Duration:</span>
                       <span className="font-semibold text-text-hi dark:text-text-hi-dark">
                         {moment.duration(duration, 'seconds').humanize()}
@@ -275,13 +275,13 @@ export const RotateDesktopSummary = ({
                       <span className="text-green dark:text-green-dark font-semibold">-${cart.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-sm pt-2 border-t border-border-element dark:border-border-element-dark p-2">
+                  <div className="flex justify-between text-sm pt-2 border-t border-border-element dark:border-border-element-dark py-2">
                     <span className="text-text-me dark:text-text-me-dark">Giá:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">
                       ${cart.getTabItems('rotating')[0]?.plan?.price?.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm border-t border-border-element dark:border-border-element-dark p-2">
+                  <div className="flex justify-between text-sm border-t border-border-element dark:border-border-element-dark py-2">
                     <span className="text-text-me dark:text-text-me-dark">Số lượng:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">{cart.getTabItems('rotating')[0]?.quantity}</span>
                   </div>
@@ -296,7 +296,7 @@ export const RotateDesktopSummary = ({
                 </div>
               )}
 
-              <div className="flex justify-between items-center font-semibold text-lg py-2 px-3">
+              <div className="flex justify-between items-center font-semibold text-lg pt-2">
                 <div className="py-2">
                   <span className="text-text-hi dark:text-text-hi-dark text-lg font-semibold font-averta">Tổng cộng:</span>
                 </div>
@@ -309,7 +309,7 @@ export const RotateDesktopSummary = ({
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-center border-t p-3 dark:border-border-element-dark pb-3">
+      <div className="flex items-center justify-center border-t p-3 dark:border-border-element-dark">
         <Button
           className={clsx('text-[12px] mx-auto h-10')}
           disabled={useCartContext ? hasInsufficientFunds || cart?.itemCount === 0 : false}

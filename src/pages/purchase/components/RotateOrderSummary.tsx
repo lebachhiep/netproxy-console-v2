@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Country } from './table/CountrySelector';
 import { Add, CartFilled, Delete, Subtract } from '@/components/icons';
-import { useResponsive } from '@/hooks/useResponsive';
 import IconButton from '@/components/button/IconButton';
 import { useCart } from '@/hooks/useCart';
 import { CartItem, getTabKeyFromPlan } from '@/contexts/CartContext';
@@ -43,6 +42,7 @@ const RotateOrderSummary: React.FC<Props> = ({
   filterPlanType,
   handleCloseModal
 }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
   const updatingItemsRef = useRef<Set<string>>(new Set()); // Track items being updated
   const [editingItemId, setEditingItemId] = useState<string | null>(null); // Track which item is being edited
@@ -221,9 +221,9 @@ const RotateOrderSummary: React.FC<Props> = ({
       <div className=" flex flex-col h-full flex-1">
         {/* Scrollable order list */}
         <div className="px-5 pt-5 flex-1 h-full">
-          <div className="flex-1 flex flex-col overflow-visible  rounded-xl shadow-xs text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark">
+          <div className="flex-1 flex flex-col overflow-visible  rounded-xl shadow-xs text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark border border-border-element dark:border-border-element-dark">
             {/* Header row */}
-            <div className="grid grid-cols-[1fr_1fr_1fr] gap-5 pb-3 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark p-2">
+            <div className="grid grid-cols-[1fr_1fr_1fr] gap-5 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark p-2">
               <span className="w-full text-start">Giá</span>
               <span className="w-full text-center">Số lượng</span>
               <span className="text-end w-full">Thành tiền</span>

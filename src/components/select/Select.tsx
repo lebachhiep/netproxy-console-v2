@@ -181,7 +181,7 @@ export const Select: React.FC<SelectProps> = ({
       {open && (
         <div
           className={twMerge(
-            'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-y-auto',
+            'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-y-auto flex flex-col gap-1',
             getPositionClasses(),
             open ? 'opacity-100 max-h-60 translate-y-0 pointer-events-auto' : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
             // Add width constraint for corner placements

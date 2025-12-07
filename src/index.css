@@ -179,10 +179,6 @@ code {
   width: 1px;
   height: 100%;
   pointer-events: none;
-  box-shadow:
-    -1px 0 0 0 #ffffff,
-    -1px 0 3px 0 rgba(0, 0, 0, 0.1),
-    -1px 0 2px 0 rgba(0, 0, 0, 0.06); /* bóng về bên trái */
 }
 
 .dark .fixed-right-shadow::before {
@@ -200,10 +196,6 @@ code {
   width: 1px;
   height: 100%;
   pointer-events: none;
-  box-shadow:
-    -1px 0 0 0 #ffffff,
-    -1px 0 3px 0 rgba(0, 0, 0, 0.1),
-    -1px 0 2px 0 rgba(0, 0, 0, 0.06); /* bóng về bên trái */
 }
 
 .dark .fixed-left-shadow::after {

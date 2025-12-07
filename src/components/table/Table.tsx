@@ -300,7 +300,7 @@ export function Table<T extends Record<string, any>>({
                 thClassName += ' sticky z-30';
                 const isFirstRightFixed = rightFixedColumns[0] === col;
                 if (isFirstRightFixed) {
-                  thClassName += ' fixed-right-shadow';
+                  thClassName += ' fixed-right-shadow border-l border-border-element dark:border-border-element-dark';
                 }
               }
 
@@ -316,7 +316,13 @@ export function Table<T extends Record<string, any>>({
 
               let borderClassName = '';
               const isSecondLastCol = colIndex === columns.length - 2;
+              const isLastColSticky = columns[columns.length - 1].fixed === 'right';
+
               if (!isLastCol && !isSecondLastCol && !isLeftFixed && !isRightFixed) {
+                borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
+              }
+              // Using for case last column does not sticky, it should add right border to second last column
+              if (!isLastColSticky && isSecondLastCol) {
                 borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
               }
 
@@ -408,7 +414,7 @@ export function Table<T extends Record<string, any>>({
                     className += ' sticky z-10';
                     const isFirstRightFixed = rightFixedColumns[0] === col;
                     if (isFirstRightFixed) {
-                      className += ` h-full fixed-right-shadow ${actualRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` h-full fixed-right-shadow border-l border-border-element dark:border-border-element-dark ${actualRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
 
@@ -465,7 +471,7 @@ export function Table<T extends Record<string, any>>({
                       className += ' sticky z-10';
                       const isFirstRightFixed = rightFixedColumns[0] === col;
                       if (isFirstRightFixed) {
-                        className += ` h-full fixed-right-shadow ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                        className += ` h-full fixed-right-shadow border-l border-border-element dark:border-border-element-dark ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                       }
                     }
 

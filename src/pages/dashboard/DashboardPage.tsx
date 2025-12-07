@@ -36,6 +36,7 @@ import { Card } from '@/components/card/Card';
 import { useQuery } from '@tanstack/react-query';
 import { queryClient } from '@/components/auth/ProtectedRoute';
 import { Pagination } from '@/components/pagination/Pagination';
+import { CheckingModal } from './CheckingModal';
 
 export const data = [
   {
@@ -209,6 +210,8 @@ const DashboardPage = () => {
   const userProfile = useAuthStore((state) => state.userProfile);
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
+  // Checking modal state
+  const [openCheckingModal, setOpenCheckingModal] = useState(false);
 
   useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
@@ -401,6 +404,9 @@ const DashboardPage = () => {
                 // size={isDesktop || isLargeDesktop ? 'md' : 'sm'}
                 variant="default"
                 className="font-bold relative transition-colors duration-300 group whitespace-nowrap justify-center items-center gap-1 border-2 shadow-xs border-border dark:border-transparent dark:pseudo-border-top text-text-me dark:text-text-me-dark hover:text-text-hi dark:hover:text-text-hi-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:border-blue text-sm px-3 py-[7.5px] rounded-[4px] h-[32px] lg:h-10 flex w-full lg:px-3"
+                onClick={() => {
+                  setOpenCheckingModal(true);
+                }}
               >
                 KIỂM TRA
               </Button>
@@ -671,6 +677,7 @@ const DashboardPage = () => {
 
         {/* ====== MODALS ====== */}
         <TopUpModal open={open} onClose={() => setOpen(false)} />
+        <CheckingModal isOpen={openCheckingModal} onClose={() => setOpenCheckingModal(false)} />
       </motion.div>
     </div>
   );

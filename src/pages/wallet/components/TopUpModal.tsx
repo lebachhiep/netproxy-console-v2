@@ -10,6 +10,7 @@ import Web2MInfo from './modal/Web2MInfo';
 interface TopUpModalProps {
   open: boolean;
   onClose: () => void;
+  allowCloseByBackdrop?: boolean;
 }
 
 const LoadingSkeleton: React.FC = () => (
@@ -24,7 +25,7 @@ const UnavailableMethod: React.FC = () => (
   <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">Phương thức thanh toán này hiện không khả dụng</div>
 );
 
-export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
+export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose, allowCloseByBackdrop = true }) => {
   const { data: paymentMethods, isLoading } = usePaymentMethods();
   const [activeTab, setActiveTab] = useState<string | number>('tazapay');
 
@@ -94,7 +95,7 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose }) => {
   };
 
   return (
-    <Modal open={open} title="Nạp tiền" onClose={onClose} bodyClassName="p-0">
+    <Modal open={open} title="Nạp tiền" onClose={onClose} bodyClassName="p-0" allowCloseByBackdrop={allowCloseByBackdrop}>
       <Tabs
         tabs={tabs}
         type="card"

@@ -576,7 +576,7 @@ const OrderDetailPage = () => {
               {/* Change protocol */}
               {!isBelongRotatingProxy && (
                 <IconButton
-                  disabled={selectedRows.length === 0}
+                  disabled={selectedRows.length === 0 || loading}
                   icon={<CloudSwapOutlined className="w-5 h-5" />}
                   className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   onClick={async () => {
@@ -585,8 +585,6 @@ const OrderDetailPage = () => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
                       const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
-
-                      console.log('Switching protocol for subscription:', record.id, 'from', connectionType);
 
                       return handleSwitchProtocol({
                         selectedSubscriptionId: record.id,

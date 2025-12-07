@@ -669,7 +669,11 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                         <RadioGroup
                           className="overflow-visible px-5 py-4"
                           value={selectedPeriod}
-                          onChange={(value) => setSelectedPeriod(Number(value))}
+                          onChange={(value) => {
+                            setSelectedPeriod(Number(value));
+                            setSelectedCountries(new Map());
+                            cart.clearTabCart(tabKey);
+                          }}
                           options={periodOptions}
                           direction="row"
                         />

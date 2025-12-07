@@ -57,6 +57,7 @@ interface ModalProps {
    * Tùy chỉnh class cho nút đóng.
    */
   closeButtonClassName?: string;
+  allowCloseByBackdrop?: boolean;
 }
 
 /**
@@ -93,7 +94,8 @@ export const Modal: React.FC<ModalProps> = ({
   headerClassName = '',
   bodyClassName = '',
   footerClassName = '',
-  closeButtonClassName = ''
+  closeButtonClassName = '',
+  allowCloseByBackdrop = true
 }) => {
   // Handle ESC key press to close modal
   useEffect(() => {
@@ -115,7 +117,14 @@ export const Modal: React.FC<ModalProps> = ({
   const titleId = 'modal-title';
 
   return (
-    <div className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40`} onClick={onClose}>
+    <div
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/40`}
+      onClick={() => {
+        if (allowCloseByBackdrop) {
+          onClose();
+        }
+      }}
+    >
       <div
         role="dialog"
         aria-modal="true"
@@ -131,7 +140,9 @@ export const Modal: React.FC<ModalProps> = ({
             headerClassName
           )}
         >
-          <div id={titleId} className="text-text-hi dark:text-text-hi-dark text-xl font-semibold font-averta">{title}</div>
+          <div id={titleId} className="text-text-hi dark:text-text-hi-dark text-xl font-semibold font-averta">
+            {title}
+          </div>
           <button onClick={onClose} className={`rounded-full flex items-center justify-center ${closeButtonClassName}`} aria-label="Đóng">
             <Dismiss className="text-xl text-text-hi dark:text-text-hi-dark" aria-hidden="true" />
           </button>

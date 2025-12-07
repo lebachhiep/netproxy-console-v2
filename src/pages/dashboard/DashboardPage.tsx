@@ -38,6 +38,7 @@ import { queryClient } from '@/components/auth/ProtectedRoute';
 import { Pagination } from '@/components/pagination/Pagination';
 import { CheckingModal } from './CheckingModal';
 import { useTranslation } from 'react-i18next';
+import { serverService } from '@/services/server/server.service';
 
 const easeInOutCustom = [0.44, 0, 0.56, 1];
 
@@ -91,6 +92,11 @@ const DashboardPage = () => {
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
   // Checking modal state
   const [openCheckingModal, setOpenCheckingModal] = useState(false);
+
+  const { data: serverStatus } = useQuery({
+    queryKey: ['query-server-status'],
+    queryFn: async () => serverService.checkServerStatus()
+  });
 
   useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
@@ -270,8 +276,10 @@ const DashboardPage = () => {
         title={t('dashboard.server')}
         mainContent={
           <div>
-            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">1</span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ 5 </span>
+            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">
+              {serverStatus?.nodes?.length}
+            </span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ {serverStatus?.nodes?.length} </span>
             <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.operating')}</span>
           </div>
         }
@@ -509,7 +517,7 @@ const DashboardPage = () => {
                             <Card.ListItem label="Số lượng" icon={<DataPie />} value={item.subscription_count} />
                             <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
                             <Card.ListItem
-                              label={t('dashboard.purchaseDate')}
+                              label={t('purchaseDate')}
                               icon={<CalendarClock />}
                               value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
                             />
@@ -559,7 +567,7 @@ const DashboardPage = () => {
         </motion.div>
 
         {/* ====== MODALS ====== */}
-        <TopUpModal open={open} onClose={() => setOpen(false)} />
+        <TopUpModal open={open} onClose={() => setOpen(false)} allowCloseByBackdrop={false} />
         <CheckingModal isOpen={openCheckingModal} onClose={() => setOpenCheckingModal(false)} />
       </motion.div>
     </div>

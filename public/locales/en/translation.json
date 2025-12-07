@@ -21,15 +21,6 @@
     "checking": "Checking",
     "search": "Search"
   },
-  "durationMapping": {
-    "days": "days",
-    "hours": "hours",
-    "months": "months",
-    "years": "years",
-    "day": "day",
-    "month": "month",
-    "year": "year"
-  },
   "purchaseDate": "Purchase date",
   "orderNumber": "Order number",
   "plan": "Plan",
@@ -38,5 +29,6 @@
   "status": "Status",
   "action": "Action",
   "manage": "MANAGE",
-  "no": "No."
+  "no": "No.",
+  "page": "Page"
 }

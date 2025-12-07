@@ -207,14 +207,15 @@ export const Navbar: React.FC = () => {
             </Dropdown.Trigger>
             <Dropdown.Menu>
               <Dropdown.Item
-                onClick={async () => {
+                onClick={() => {
                   const currentLang = i18n.language;
                   if (currentLang === 'en') {
                     toast.info('Language is already English');
                     return;
                   }
-                  await i18n.changeLanguage('en');
+                  i18n.changeLanguage('en');
                   toast.success('Language changed to English');
+                  window.location.reload();
                 }}
               >
                 English
@@ -228,6 +229,7 @@ export const Navbar: React.FC = () => {
                   }
                   await i18n.changeLanguage('vi');
                   toast.success('Ngôn ngữ đã được chuyển sang Tiếng Việt');
+                  window.location.reload();
                 }}
               >
                 Tiếng Việt

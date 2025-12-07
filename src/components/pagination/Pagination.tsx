@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { CaretLeft, CaretRight } from '../icons';
 import { Select } from '../select/Select';
 
@@ -31,6 +32,7 @@ export function Pagination({
   loading = false,
   hasMore = true
 }: PaginationProps) {
+  const { t } = useTranslation();
   const totalPages = Math.ceil(total / pageSize);
   // const startItem = Math.min((current - 1) * pageSize + 1, total);
   // const endItem = Math.min(current * pageSize, total);
@@ -160,14 +162,18 @@ export function Pagination({
 
         <div className="md:flex items-center ">
           <Select
-            placeholder={current ? 'Trang ' + current : `Chọn trang`}
+            placeholder={current ? t('page') + ' ' + current : t('page')}
             optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
             options={Array(totalPages)
               .fill(null)
               .map((_, index) => {
                 const size = index + 1;
                 return {
-                  label: <div key={size}>Trang {size}</div>,
+                  label: (
+                    <div key={size}>
+                      {t('page')} {size}
+                    </div>
+                  ),
                   value: size
                 };
               })}

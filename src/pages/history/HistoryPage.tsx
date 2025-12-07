@@ -328,6 +328,7 @@ const HistoryPage: React.FC = () => {
           className="h-full [&_tbody_tr]:cursor-pointer [&_tbody_tr:hover]:bg-bg-mute dark:[&_tbody_tr:hover]:bg-bg-mute-dark"
           scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 270px)' }}
           data={orders}
+          onRowClick={(record) => handleRowClick(record)}
           columns={columns.map((col) => ({
             ...col,
             onCell: (record: OrderDisplay) => ({

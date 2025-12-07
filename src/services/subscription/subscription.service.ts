@@ -7,6 +7,7 @@ import {
   OrderSubscriptionsResponse,
   SwitchProtocolRequest,
   SwitchProtocolResponse,
+  ListOrderSubscriptionsRequest
 } from '@/types/subscription';
 
 class SubscriptionService {
@@ -21,13 +22,10 @@ class SubscriptionService {
     const queryParams = {
       page: params?.Page,
       perPage: params?.PerPage,
-      Status: params?.Status,
+      Status: params?.Status
     };
 
-    const response = await apiService.get<ListSubscriptionsResponse>(
-      this.BASE_PATH,
-      { params: queryParams }
-    );
+    const response = await apiService.get<ListSubscriptionsResponse>(this.BASE_PATH, { params: queryParams });
     return response;
   }
 
@@ -37,9 +35,7 @@ class SubscriptionService {
    * @returns Promise with subscription details
    */
   async getSubscription(id: string): Promise<SubscriptionWithPlan> {
-    const response = await apiService.get<SubscriptionWithPlan>(
-      `${this.BASE_PATH}/${id}`
-    );
+    const response = await apiService.get<SubscriptionWithPlan>(`${this.BASE_PATH}/${id}`);
     return response;
   }
 
@@ -51,13 +47,10 @@ class SubscriptionService {
    */
   async updateAutoRenew(id: string, autoRenew: boolean): Promise<SubscriptionWithPlan> {
     const data: UpdateAutoRenewRequest = {
-      auto_renew: autoRenew,
+      auto_renew: autoRenew
     };
 
-    const response = await apiService.put<SubscriptionWithPlan>(
-      `${this.BASE_PATH}/${id}/auto-renew`,
-      data
-    );
+    const response = await apiService.put<SubscriptionWithPlan>(`${this.BASE_PATH}/${id}/auto-renew`, data);
     return response;
   }
 
@@ -67,9 +60,7 @@ class SubscriptionService {
    * @returns Promise with cancelled subscription
    */
   async cancelSubscription(id: string): Promise<SubscriptionWithPlan> {
-    const response = await apiService.post<SubscriptionWithPlan>(
-      `${this.BASE_PATH}/${id}/cancel`
-    );
+    const response = await apiService.post<SubscriptionWithPlan>(`${this.BASE_PATH}/${id}/cancel`);
     return response;
   }
 
@@ -81,13 +72,10 @@ class SubscriptionService {
    */
   async switchProtocol(id: string, protocol: 'http' | 'socks5'): Promise<SwitchProtocolResponse> {
     const data: SwitchProtocolRequest = {
-      protocol,
+      protocol
     };
 
-    const response = await apiService.post<SwitchProtocolResponse>(
-      `${this.BASE_PATH}/${id}/switch-protocol`,
-      data
-    );
+    const response = await apiService.post<SwitchProtocolResponse>(`${this.BASE_PATH}/${id}/switch-protocol`, data);
     return response;
   }
 
@@ -96,10 +84,16 @@ class SubscriptionService {
    * @param orderId - Order ID
    * @returns Promise with response containing subscriptions array
    */
-  async getOrderSubscriptions(orderId: string): Promise<OrderSubscriptionsResponse> {
-    const response = await apiService.get<OrderSubscriptionsResponse>(
-      `/user/orders/${orderId}/subscriptions`
-    );
+  async getOrderSubscriptions(params: ListOrderSubscriptionsRequest): Promise<OrderSubscriptionsResponse> {
+    const queryParams = {
+      page: params?.Page,
+      perPage: params?.PerPage,
+      Status: params?.Status
+    };
+
+    const response = await apiService.get<OrderSubscriptionsResponse>(`/user/orders/${params.orderId}/subscriptions`, {
+      params: queryParams
+    });
     return response;
   }
 
@@ -109,9 +103,7 @@ class SubscriptionService {
    * @returns Promise with current proxy credentials (proxy_ip, http_port, socks5_port, username, password)
    */
   async getProxy(id: string): Promise<SwitchProtocolResponse> {
-    const response = await apiService.get<SwitchProtocolResponse>(
-      `${this.BASE_PATH}/${id}/proxy`
-    );
+    const response = await apiService.get<SwitchProtocolResponse>(`${this.BASE_PATH}/${id}/proxy`);
     return response;
   }
 }

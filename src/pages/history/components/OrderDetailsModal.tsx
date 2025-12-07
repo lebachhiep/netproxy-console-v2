@@ -149,7 +149,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
             <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-3">Chi tiết thanh toán</h4>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-text-med dark:text-text-med-dark">Tạm tính</span>
+                <span className="text-text-med dark:text-text-hi-dark">Tạm tính</span>
                 <span className="font-medium text-text-hi dark:text-text-hi-dark">{order.priceBreakdown.subtotal}</span>
               </div>
 
@@ -192,7 +192,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
             )}
             {order.fulfilledAt && (
               <div className="text-sm">
-                <span className="text-text-med dark:text-text-med-dark">Hoàn thành lúc: </span>
+                <span className="text-text-med dark:text-text-hi-dark">Hoàn thành lúc: </span>
                 <span className="text-text-hi dark:text-text-hi-dark font-medium">{formatOrderDate(order.fulfilledAt.toISOString())}</span>
               </div>
             )}

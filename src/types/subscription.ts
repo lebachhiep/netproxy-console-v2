@@ -91,6 +91,13 @@ export interface ListSubscriptionsRequest {
   Status?: 'active' | 'paused' | 'cancelled' | 'expired';
 }
 
+export interface ListOrderSubscriptionsRequest {
+  orderId: string;
+  Page?: number;
+  PerPage?: number;
+  Status?: 'active' | 'paused' | 'cancelled' | 'expired';
+}
+
 export interface OrderSubscriptionsResponse {
   subscriptions: Subscription[];
   total: number;

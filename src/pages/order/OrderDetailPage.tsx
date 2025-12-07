@@ -32,6 +32,7 @@ import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, ge
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
+import { queryClient } from '@/components/auth/ProtectedRoute';
 
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
@@ -100,18 +101,21 @@ const OrderDetailPage = () => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
-  const [selectedProtocol, setSelectedProtocol] = useState<'http' | 'socks5'>('http');
   const [renewCount, setRenewCount] = useState(0);
 
   const { data: subscriptions, refetch } = useQuery({
-    queryKey: ['order-subscriptions', id],
+    queryKey: ['order-subscriptions', id, currentPage, pageSize],
     enabled: !!id,
     queryFn: async () => {
       try {
         setError(null);
         setLoading(true);
         // Fetch subscriptions for this order using the new API
-        const response = await subscriptionService.getOrderSubscriptions(id!);
+        const response = await subscriptionService.getOrderSubscriptions({
+          orderId: id!,
+          Page: currentPage,
+          PerPage: pageSize
+        });
 
         // Extract subscriptions array from response
         if (response && Array.isArray(response.subscriptions)) {
@@ -136,16 +140,22 @@ const OrderDetailPage = () => {
     return subscriptions?.some((sub) => isRotatingProxy(sub));
   }, [subscriptions]);
 
-  const handleSwitchProtocol = async ({ selectedSubscriptionId }: { selectedSubscriptionId: string }) => {
+  const handleSwitchProtocol = async ({
+    selectedSubscriptionId,
+    protocol
+  }: {
+    selectedSubscriptionId: string;
+    protocol: 'http' | 'socks5';
+  }) => {
     try {
-      const protocol = selectedProtocol;
-
       if (protocolModalType === 'single' && selectedSubscriptionId) {
         // Single subscription switch
         const response = await subscriptionService.switchProtocol(selectedSubscriptionId, protocol);
 
         if (response.success) {
           await refetch();
+          setSelectedRows([]);
+          setSelectedIds([]);
           toast.success('Protocol switched successfully');
         }
       } else if (protocolModalType === 'bulk') {
@@ -164,6 +174,8 @@ const OrderDetailPage = () => {
             if (response.success) {
               successCount++;
               refetch();
+              setSelectedRows([]);
+              setSelectedIds([]);
             }
           } catch (err) {
             failureCount++;
@@ -220,6 +232,8 @@ const OrderDetailPage = () => {
       //   )
       // );
       refetch();
+      setSelectedRows([]);
+      setSelectedIds([]);
 
       toast.success('Proxy information retrieved successfully');
     } catch (err) {
@@ -294,6 +308,8 @@ const OrderDetailPage = () => {
       console.log('Auto-renew update result:', result);
       if (result) {
         refetch();
+        setSelectedRows([]);
+        setSelectedIds([]);
       }
     } catch (err) {
       console.error('Failed to update auto-renew:', err);
@@ -436,14 +452,8 @@ const OrderDetailPage = () => {
         title: 'Type',
         align: 'center',
         render: (_, record) => {
-          const isRotating = isRotatingProxy(record);
-          let connectionType = '-';
-
-          if (isRotating) {
-            connectionType = 'HTTP/ HTTPS';
-          } else {
-            connectionType = 'HTTPS or SOCKS5';
-          }
+          const credentials = record.provider_credentials as any;
+          const connectionType = credentials?.http_port > 0 ? 'HTTPS' : credentials?.socks5_port > 0 ? 'SOCKS5' : '-';
 
           return <div className="px-2 py-1 rounded text-xs font-semibold">{connectionType}</div>;
         }
@@ -485,8 +495,7 @@ const OrderDetailPage = () => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
                       const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
-                      setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
-                      handleSwitchProtocol({ selectedSubscriptionId: record.id });
+                      handleSwitchProtocol({ selectedSubscriptionId: record.id, protocol: connectionType === 'http' ? 'socks5' : 'http' });
                     }}
                     title="Change Protocol"
                   />
@@ -576,8 +585,13 @@ const OrderDetailPage = () => {
                       setProtocolModalType('single');
                       const credentials = record.provider_credentials as any;
                       const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
-                      setSelectedProtocol(connectionType === 'http' ? 'http' : 'socks5');
-                      return handleSwitchProtocol({ selectedSubscriptionId: record.id });
+
+                      console.log('Switching protocol for subscription:', record.id, 'from', connectionType);
+
+                      return handleSwitchProtocol({
+                        selectedSubscriptionId: record.id,
+                        protocol: connectionType === 'http' ? 'socks5' : 'http'
+                      });
                     });
 
                     const results = await Promise.allSettled(promiseList);
@@ -585,6 +599,8 @@ const OrderDetailPage = () => {
 
                     if (needRefresh) {
                       await refetch();
+                      setSelectedRows([]);
+                      setSelectedIds([]);
                     }
                     setLoading(false);
                     toast.success('Protocol switched for selected subscriptions');
@@ -609,6 +625,9 @@ const OrderDetailPage = () => {
 
                   if (needRefresh) {
                     await refetch();
+
+                    setSelectedRows([]);
+                    setSelectedIds([]);
                   }
                   setLoading(false);
                   setRenewCount((prev) => prev + 1);
@@ -657,13 +676,15 @@ const OrderDetailPage = () => {
               <IconButton
                 className="w-10 h-10"
                 icon={<ArrowCounter className="w-5 h-5" />}
-                onClick={() => {
+                onClick={async () => {
+                  await queryClient.invalidateQueries({ queryKey: ['order-subscriptions'] });
                   setCurrentPage(1);
                   setPageSize(20);
                   const params = new URLSearchParams(window.location.search);
                   params.delete('page');
                   params.delete('pageSize');
                   window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
+                  toast.success('Làm mới dữ liệu thành công');
                 }}
               />
             </div>

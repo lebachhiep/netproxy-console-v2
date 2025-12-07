@@ -180,7 +180,6 @@ const HistoryPage: React.FC = () => {
       width: 150,
       render: (value) => formatOrderDate(value.toISOString())
     },
-
     {
       width: 150,
       key: 'typeLabel',

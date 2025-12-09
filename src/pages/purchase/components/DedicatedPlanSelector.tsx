@@ -11,6 +11,7 @@ import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
 import { useCart } from '@/hooks/useCart';
 import { getTabKeyFromPlan } from '@/contexts/CartContext';
+import { useTranslation } from 'react-i18next';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -18,9 +19,7 @@ countriesLib.registerLocale(vi);
 
 // Helper function to get country name from code in Vietnamese
 const getCountryName = (code: string): string => {
-  return countriesLib.getName(code, 'vi', { select: 'official' }) ||
-         countriesLib.getName(code, 'en', { select: 'official' }) ||
-         code;
+  return countriesLib.getName(code, 'vi', { select: 'official' }) || countriesLib.getName(code, 'en', { select: 'official' }) || code;
 };
 
 interface SelectedCountry {
@@ -56,6 +55,7 @@ const getPricePerIP = (quantity: number): number => {
 };
 
 export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ plan }) => {
+  const { t } = useTranslation();
   const cart = useCart();
   const [selectedCountries, setSelectedCountries] = useState<Map<string, SelectedCountry>>(new Map());
   const [duration, setDuration] = useState<'7day' | '30day'>('7day');
@@ -77,11 +77,11 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
       setLoading(true);
       setError(null);
       setSelectedCountries(new Map());
-      
+
       const response = await planService.getPlanCountries(plan.id);
 
       // Filter out unavailable countries
-      const availableCountries = response.countries.filter(c => c.available);
+      const availableCountries = response.countries.filter((c) => c.available);
       setCountries(availableCountries);
       setCountryRequired(response.country_required);
     } catch (err) {
@@ -108,7 +108,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
   };
 
   const handleCountryToggle = async (countryCode: string) => {
-    const country = countries.find(c => c.code === countryCode);
+    const country = countries.find((c) => c.code === countryCode);
     if (!country) return;
 
     const countryName = getCountryName(countryCode);
@@ -120,8 +120,8 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
       setSelectedCountries(newMap);
     } else {
       // Add country with default quantity 1
-      setCalculatingPrices(prev => new Set(prev).add(countryCode));
-      
+      setCalculatingPrices((prev) => new Set(prev).add(countryCode));
+
       // Use fallback price first, then calculate real price
       const fallbackPrice = getPricePerIP(1);
       newMap.set(countryCode, {
@@ -134,8 +134,8 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
       setSelectedCountries(newMap);
 
       // Calculate real price asynchronously
-      calculatePriceForCountry(countryCode, 1).then(pricePerIP => {
-        setSelectedCountries(prev => {
+      calculatePriceForCountry(countryCode, 1).then((pricePerIP) => {
+        setSelectedCountries((prev) => {
           const updated = new Map(prev);
           const existing = updated.get(countryCode);
           if (existing) {
@@ -147,7 +147,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
           }
           return updated;
         });
-        setCalculatingPrices(prev => {
+        setCalculatingPrices((prev) => {
           const next = new Set(prev);
           next.delete(countryCode);
           return next;
@@ -171,7 +171,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
     priceCalculationRefs.current.set(countryCode, requestId);
 
     // Update quantity immediately with current price
-    setSelectedCountries(prev => {
+    setSelectedCountries((prev) => {
       const next = new Map(prev);
       const existing = next.get(countryCode);
       if (existing) {
@@ -181,62 +181,64 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
           total: currentPrice * targetQuantity
         });
         // Force re-render to update total price
-        setUpdateTrigger(prev => prev + 1);
+        setUpdateTrigger((prev) => prev + 1);
       }
       return next;
     });
 
     // Calculate new price asynchronously
-    setCalculatingPrices(prev => new Set(prev).add(countryCode));
-    
-    calculatePriceForCountry(countryCode, targetQuantity).then(pricePerIP => {
-      // Check if this is still the latest request for this country
-      const latestRequestId = priceCalculationRefs.current.get(countryCode);
-      if (latestRequestId !== requestId) {
-        // This is a stale response, ignore it
-        setCalculatingPrices(prev => {
-          const next = new Set(prev);
-          next.delete(countryCode);
-          return next;
-        });
-        return;
-      }
+    setCalculatingPrices((prev) => new Set(prev).add(countryCode));
 
-      // Update with functional update to ensure we get the latest state
-      setSelectedCountries(prev => {
-        const next = new Map(prev);
-        const existing = next.get(countryCode);
-        // Only update if this country still exists and quantity matches what we requested
-        if (existing && existing.quantity === targetQuantity) {
-          const newTotal = pricePerIP * targetQuantity;
-          next.set(countryCode, {
-            ...existing,
-            price: pricePerIP,
-            total: newTotal
+    calculatePriceForCountry(countryCode, targetQuantity)
+      .then((pricePerIP) => {
+        // Check if this is still the latest request for this country
+        const latestRequestId = priceCalculationRefs.current.get(countryCode);
+        if (latestRequestId !== requestId) {
+          // This is a stale response, ignore it
+          setCalculatingPrices((prev) => {
+            const next = new Set(prev);
+            next.delete(countryCode);
+            return next;
           });
-          // Force re-render by updating trigger
-          setUpdateTrigger(prev => prev + 1);
+          return;
         }
-        return next;
-      });
-      
-      setCalculatingPrices(prev => {
-        const next = new Set(prev);
-        next.delete(countryCode);
-        return next;
-      });
-    }).catch(err => {
-      console.error('Error calculating price:', err);
-      // Only clear calculating state if this is still the latest request
-      const latestRequestId = priceCalculationRefs.current.get(countryCode);
-      if (latestRequestId === requestId) {
-        setCalculatingPrices(prev => {
+
+        // Update with functional update to ensure we get the latest state
+        setSelectedCountries((prev) => {
+          const next = new Map(prev);
+          const existing = next.get(countryCode);
+          // Only update if this country still exists and quantity matches what we requested
+          if (existing && existing.quantity === targetQuantity) {
+            const newTotal = pricePerIP * targetQuantity;
+            next.set(countryCode, {
+              ...existing,
+              price: pricePerIP,
+              total: newTotal
+            });
+            // Force re-render by updating trigger
+            setUpdateTrigger((prev) => prev + 1);
+          }
+          return next;
+        });
+
+        setCalculatingPrices((prev) => {
           const next = new Set(prev);
           next.delete(countryCode);
           return next;
         });
-      }
-    });
+      })
+      .catch((err) => {
+        console.error('Error calculating price:', err);
+        // Only clear calculating state if this is still the latest request
+        const latestRequestId = priceCalculationRefs.current.get(countryCode);
+        if (latestRequestId === requestId) {
+          setCalculatingPrices((prev) => {
+            const next = new Set(prev);
+            next.delete(countryCode);
+            return next;
+          });
+        }
+      });
   };
 
   const handleRemoveCountry = (countryCode: string) => {
@@ -254,9 +256,16 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
     // Add each selected country as a separate cart item
     const tabKey = getTabKeyFromPlan(plan);
     selectedCountries.forEach((selected) => {
-      cart.addToCart(tabKey, plan, selected.quantity, {
-        duration: duration
-      }, selected.code, selected.total);
+      cart.addToCart(
+        tabKey,
+        plan,
+        selected.quantity,
+        {
+          duration: duration
+        },
+        selected.code,
+        selected.total
+      );
     });
 
     toast.success(`Đã thêm ${selectedCountries.size} quốc gia vào giỏ hàng`);
@@ -271,38 +280,118 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
     return total;
   }, [selectedCountries, updateTrigger]);
 
-  const totalQuantity = useMemo(() => {
-    let total = 0;
-    selectedCountries.forEach((selected) => {
-      total += selected.quantity;
-    });
-    return total;
-  }, [selectedCountries]);
-
   // Group countries by region
   const asiaCountryCodes = new Set([
-    'CN', 'BD', 'ID', 'IN', 'VN', 'TH', 'PH', 'MY', 'SG', 'JP', 'KR', 'PK', 'LK', 'NP', 'MM', 'MN', 'KH', 'LA', 'JO',
-    'AF', 'AM', 'AZ', 'BH', 'BN', 'BT', 'CC', 'GE', 'HK', 'IL', 'IQ', 'IR', 'KG', 'KZ', 'LB', 'MO', 'MV', 'OM', 'PS',
-    'QA', 'SA', 'SY', 'TJ', 'TM', 'TR', 'TW', 'UZ', 'YE', 'AE'
+    'CN',
+    'BD',
+    'ID',
+    'IN',
+    'VN',
+    'TH',
+    'PH',
+    'MY',
+    'SG',
+    'JP',
+    'KR',
+    'PK',
+    'LK',
+    'NP',
+    'MM',
+    'MN',
+    'KH',
+    'LA',
+    'JO',
+    'AF',
+    'AM',
+    'AZ',
+    'BH',
+    'BN',
+    'BT',
+    'CC',
+    'GE',
+    'HK',
+    'IL',
+    'IQ',
+    'IR',
+    'KG',
+    'KZ',
+    'LB',
+    'MO',
+    'MV',
+    'OM',
+    'PS',
+    'QA',
+    'SA',
+    'SY',
+    'TJ',
+    'TM',
+    'TR',
+    'TW',
+    'UZ',
+    'YE',
+    'AE'
   ]);
 
   const europeCountryCodes = new Set([
-    'AL', 'AD', 'AT', 'BY', 'BE', 'BA', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR', 'DE', 'GR', 'HU', 'IS', 'IE',
-    'IT', 'LV', 'LI', 'LT', 'LU', 'MT', 'MD', 'MC', 'ME', 'NL', 'MK', 'NO', 'PL', 'PT', 'RO', 'RU', 'SM', 'RS', 'SK',
-    'SI', 'ES', 'SE', 'CH', 'UA', 'GB', 'VA', 'XK'
+    'AL',
+    'AD',
+    'AT',
+    'BY',
+    'BE',
+    'BA',
+    'BG',
+    'HR',
+    'CY',
+    'CZ',
+    'DK',
+    'EE',
+    'FI',
+    'FR',
+    'DE',
+    'GR',
+    'HU',
+    'IS',
+    'IE',
+    'IT',
+    'LV',
+    'LI',
+    'LT',
+    'LU',
+    'MT',
+    'MD',
+    'MC',
+    'ME',
+    'NL',
+    'MK',
+    'NO',
+    'PL',
+    'PT',
+    'RO',
+    'RU',
+    'SM',
+    'RS',
+    'SK',
+    'SI',
+    'ES',
+    'SE',
+    'CH',
+    'UA',
+    'GB',
+    'VA',
+    'XK'
   ]);
 
   const asiaCountries = useMemo(() => {
-    return countries.filter(c => asiaCountryCodes.has(c.code.toUpperCase()));
+    return countries.filter((c) => asiaCountryCodes.has(c.code.toUpperCase()));
   }, [countries]);
 
   const europeCountries = useMemo(() => {
-    return countries.filter(c => europeCountryCodes.has(c.code.toUpperCase()));
+    return countries.filter((c) => europeCountryCodes.has(c.code.toUpperCase()));
   }, [countries]);
 
   const otherCountries = useMemo(() => {
-    const allGrouped = new Set([...asiaCountries.map(c => c.code), ...europeCountries.map(c => c.code)]);
-    return countries.filter(c => !allGrouped.has(c.code));
+    const allGrouped = new Set([...asiaCountries.map((c) => c.code), ...europeCountries.map((c) => c.code)]);
+    return countries.filter((c) => !allGrouped.has(c.code));
   }, [countries, asiaCountries, europeCountries]);
 
   return (
@@ -328,9 +417,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
           <div className="space-y-6">
             {/* Duration Selection */}
             <div>
-              <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-                Thời hạn:
-              </label>
+              <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">Thời hạn:</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setDuration('7day')}
@@ -340,7 +427,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                       : 'bg-bg-secondary dark:bg-bg-secondary-dark text-text-me dark:text-text-me-dark hover:bg-bg-mute dark:hover:bg-bg-mute-dark'
                   }`}
                 >
-                  7 ngày
+                  7 {t('day')}s
                 </button>
                 <button
                   onClick={() => setDuration('30day')}
@@ -350,7 +437,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                       : 'bg-bg-secondary dark:bg-bg-secondary-dark text-text-me dark:text-text-me-dark hover:bg-bg-mute dark:hover:bg-bg-mute-dark'
                   }`}
                 >
-                  30 ngày
+                  30 {t('day')}s
                 </button>
               </div>
             </div>
@@ -372,7 +459,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Á</h3>
                       <div className="flex flex-wrap gap-3">
-                        {asiaCountries.map(country => {
+                        {asiaCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -395,7 +482,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Âu</h3>
                       <div className="flex flex-wrap gap-3">
-                        {europeCountries.map(country => {
+                        {europeCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -418,7 +505,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                     <div>
                       <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Khác</h3>
                       <div className="flex flex-wrap gap-3">
-                        {otherCountries.map(country => {
+                        {otherCountries.map((country) => {
                           const isSelected = selectedCountries.has(country.code);
                           return (
                             <CountryTag
@@ -447,9 +534,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
         <h2 className="text-lg font-semibold text-text-hi dark:text-text-hi-dark mb-4">Tóm tắt đơn hàng</h2>
 
         {selectedCountries.size === 0 ? (
-          <div className="text-center py-8 text-text-lo dark:text-text-lo-dark">
-            Chưa có quốc gia nào được chọn
-          </div>
+          <div className="text-center py-8 text-text-lo dark:text-text-lo-dark">Chưa có quốc gia nào được chọn</div>
         ) : (
           <div className="space-y-4">
             {/* Table Header */}
@@ -462,7 +547,10 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
 
             {/* Selected Countries List */}
             {Array.from(selectedCountries.values()).map((selected) => (
-              <div key={selected.code} className="grid grid-cols-12 gap-2 items-center py-2 border-b border-border-element dark:border-border-element-dark">
+              <div
+                key={selected.code}
+                className="grid grid-cols-12 gap-2 items-center py-2 border-b border-border-element dark:border-border-element-dark"
+              >
                 <div className="col-span-4 flex items-center gap-2">
                   <img
                     src={`https://flagcdn.com/w20/${selected.code.toLowerCase()}.png`}
@@ -471,9 +559,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                   />
                   <span className="text-sm text-text-hi dark:text-text-hi-dark truncate">{selected.name}</span>
                 </div>
-                <div className="col-span-3 text-right text-sm text-text-me dark:text-text-me-dark">
-                  ${selected.price.toFixed(2)}
-                </div>
+                <div className="col-span-3 text-right text-sm text-text-me dark:text-text-me-dark">${selected.price.toFixed(2)}</div>
                 <div className="col-span-3 flex items-center justify-center gap-1">
                   <button
                     className="w-6 h-6 flex items-center justify-center rounded border border-border-element dark:border-border-element-dark bg-bg-secondary dark:bg-bg-secondary-dark hover:bg-bg-mute dark:hover:bg-bg-mute-dark disabled:opacity-50"
@@ -495,23 +581,24 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
                   </button>
                 </div>
                 <div className="col-span-2 flex items-center justify-end gap-2">
-                  <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                    ${selected.total.toFixed(2)}
-                  </span>
+                  <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">${selected.total.toFixed(2)}</span>
                   <button
                     onClick={() => handleRemoveCountry(selected.code)}
                     className="w-5 h-5 flex items-center justify-center text-red-500 hover:text-red-700 dark:hover:text-red-400"
                     aria-label="Xóa quốc gia"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
                     </svg>
                   </button>
                 </div>
                 {calculatingPrices.has(selected.code) && (
-                  <div className="col-span-12 text-xs text-text-lo dark:text-text-lo-dark animate-pulse">
-                    Đang tính giá...
-                  </div>
+                  <div className="col-span-12 text-xs text-text-lo dark:text-text-lo-dark animate-pulse">Đang tính giá...</div>
                 )}
               </div>
             ))}
@@ -520,19 +607,13 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
             <div className="pt-4 border-t-2 border-border-element dark:border-border-element-dark">
               <div className="flex justify-between items-center">
                 <span className="text-base font-medium text-text-hi dark:text-text-hi-dark">Tổng cộng:</span>
-                <span className="text-xl font-bold text-primary dark:text-primary-dark">
-                  ${totalPrice.toFixed(2)}
-                </span>
+                <span className="text-xl font-bold text-primary dark:text-primary-dark">${totalPrice.toFixed(2)}</span>
               </div>
             </div>
 
             {/* Add to Cart Button */}
             <div className="pt-4">
-              <Button
-                onClick={handleAddToCart}
-                disabled={selectedCountries.size === 0 || loading}
-                className="w-full"
-              >
+              <Button onClick={handleAddToCart} disabled={selectedCountries.size === 0 || loading} className="w-full">
                 MUA GÓI
               </Button>
             </div>

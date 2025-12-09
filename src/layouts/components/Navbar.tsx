@@ -22,7 +22,7 @@ interface Breadcrumb {
 }
 
 export const Navbar: React.FC = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -148,7 +148,7 @@ export const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    adminSections.forEach((section) => {
+    adminSections(t).forEach((section) => {
       section.routes.forEach((router: Route) => {
         if (router.path === location.pathname || location.pathname.startsWith(router.path + '/')) {
           return handleSetBreadcrumbs(router);

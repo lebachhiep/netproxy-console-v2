@@ -1,11 +1,4 @@
-import {
-  Plan,
-  PlanDisplay,
-  PLAN_TYPE_LABELS,
-  PLAN_CATEGORY_LABELS,
-  PlanType,
-  PlanCategory,
-} from './plan.types';
+import { Plan, PLAN_TYPE_LABELS, PLAN_CATEGORY_LABELS, PlanType, PlanCategory } from './plan.types';
 
 /**
  * Format price with currency symbol
@@ -18,7 +11,7 @@ export function formatPrice(price: number, currencyCode: string): string {
     USD: '$',
     VND: '₫',
     EUR: '€',
-    GBP: '£',
+    GBP: '£'
   };
 
   const symbol = currencySymbols[currencyCode] || currencyCode;
@@ -26,7 +19,7 @@ export function formatPrice(price: number, currencyCode: string): string {
   // Format with locale
   const formatted = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: currencyCode === 'VND' ? 0 : 2,
-    maximumFractionDigits: currencyCode === 'VND' ? 0 : 2,
+    maximumFractionDigits: currencyCode === 'VND' ? 0 : 2
   }).format(price);
 
   // VND puts symbol after, others before
@@ -38,28 +31,28 @@ export function formatPrice(price: number, currencyCode: string): string {
  * @param seconds - Duration in seconds
  * @returns Formatted duration string
  */
-export function formatDuration(seconds: number): string {
+export function formatDuration(seconds: number, t: any): string {
   const days = Math.floor(seconds / 86400);
   const hours = Math.floor((seconds % 86400) / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
 
   if (days > 0) {
-    if (days === 1) return '1 ngày';
-    if (days === 7) return '7 ngày';
-    if (days === 30) return '30 ngày';
-    if (days === 365) return '1 năm';
-    return `${days} ngày`;
+    if (days === 1) return `1 ${t('day')}`;
+    if (days === 7) return `7 ${t('day')}`;
+    if (days === 30) return `30 ${t('day')}`;
+    if (days === 365) return `1 ${t('year')}`;
+    return `${days} ${t('day')}`;
   }
 
   if (hours > 0) {
-    return hours === 1 ? '1 giờ' : `${hours} giờ`;
+    return hours === 1 ? `1 ${t('hour')}` : `${hours} ${t('hour')}`;
   }
 
   if (minutes > 0) {
-    return minutes === 1 ? '1 phút' : `${minutes} phút`;
+    return minutes === 1 ? `1 ${t('minute')}` : `${minutes} ${t('minute')}`;
   }
 
-  return `${seconds} giây`;
+  return `${seconds} ${t('second')}`;
 }
 
 /**
@@ -123,49 +116,6 @@ export function formatMaxConcurrent(maxConcurrent: number): string {
 }
 
 /**
- * Extract features from plan attributes for display
- * @param plan - Plan object
- * @returns Array of feature strings
- */
-export function extractPlanFeatures(plan: Plan): string[] {
-  const features: string[] = [];
-
-  // Bandwidth
-  if (plan.bandwidth !== undefined) {
-    if (plan.bandwidth === 0) {
-      features.push('Băng thông không giới hạn');
-    } else {
-      features.push(`Băng thông: ${formatBandwidth(plan.bandwidth)}`);
-    }
-  }
-
-  // Duration
-  if (plan.duration !== undefined) {
-    features.push(`Thời hạn: ${formatDuration(plan.duration)}`);
-  }
-
-  // Throughput
-  if (plan.throughput !== undefined) {
-    features.push(`Tốc độ: ${formatThroughput(plan.throughput)}`);
-  }
-
-  // Frequency
-  if (plan.frequency !== undefined) {
-    features.push(`Xoay vòng: ${formatFrequency(plan.frequency)}`);
-  }
-
-  // Max concurrent
-  if (plan.max_concurrent !== undefined) {
-    features.push(formatMaxConcurrent(plan.max_concurrent));
-  }
-
-  // Category
-  features.push(`Loại: ${PLAN_CATEGORY_LABELS[plan.category]}`);
-
-  return features;
-}
-
-/**
  * Get category label in Vietnamese
  * @param category - Plan category
  * @returns Vietnamese label
@@ -195,68 +145,6 @@ export function calculateDiscountPercent(originalPrice: number, discountedPrice:
 }
 
 /**
- * Convert Plan to PlanDisplay for UI rendering
- * @param plan - Backend plan object
- * @returns Frontend display plan object
- */
-export function toPlanDisplay(plan: Plan): PlanDisplay {
-  const features = extractPlanFeatures(plan);
-
-  const display: PlanDisplay = {
-    id: plan.id,
-    name: plan.name,
-    description: plan.description || '',
-    type: plan.type,
-    typeLabel: getPlanTypeLabel(plan.type),
-    category: plan.category,
-    categoryLabel: getPlanCategoryLabel(plan.category),
-    price: plan.price,
-    priceFormatted: formatPrice(plan.price, plan.currency_code),
-    currencyCode: plan.currency_code,
-    features,
-    featured: plan.featured,
-  };
-
-  // Add fake discount if present
-  if (plan.fake_discount && plan.fake_discount > plan.price) {
-    display.originalPrice = plan.fake_discount;
-    display.originalPriceFormatted = formatPrice(plan.fake_discount, plan.currency_code);
-    display.discountPercent = calculateDiscountPercent(plan.fake_discount, plan.price);
-  }
-
-  // Add formatted attributes
-  if (plan.bandwidth !== undefined) {
-    display.bandwidth = formatBandwidth(plan.bandwidth);
-  }
-
-  if (plan.duration !== undefined) {
-    display.duration = formatDuration(plan.duration);
-  }
-
-  if (plan.throughput !== undefined) {
-    display.throughput = formatThroughput(plan.throughput);
-  }
-
-  if (plan.frequency !== undefined) {
-    display.frequency = formatFrequency(plan.frequency);
-  }
-
-  if (plan.max_concurrent !== undefined) {
-    display.maxConcurrent = formatMaxConcurrent(plan.max_concurrent);
-  }
-
-  // Add badge for featured plans
-  if (plan.featured) {
-    display.badge = {
-      text: 'Nổi bật',
-      color: 'yellow',
-    };
-  }
-
-  return display;
-}
-
-/**
  * Sort plans by sort_order (ascending)
  * @param plans - Array of plans
  * @returns Sorted array
@@ -272,7 +160,7 @@ export function sortPlansBySortOrder(plans: Plan[]): Plan[] {
  * @returns Filtered array
  */
 export function filterPlansByType(plans: Plan[], type: PlanType): Plan[] {
-  return plans.filter(plan => plan.type === type);
+  return plans.filter((plan) => plan.type === type);
 }
 
 /**
@@ -282,7 +170,7 @@ export function filterPlansByType(plans: Plan[], type: PlanType): Plan[] {
  * @returns Filtered array
  */
 export function filterPlansByCategory(plans: Plan[], category: PlanCategory): Plan[] {
-  return plans.filter(plan => plan.category === category);
+  return plans.filter((plan) => plan.category === category);
 }
 
 /**
@@ -293,7 +181,7 @@ export function filterPlansByCategory(plans: Plan[], category: PlanCategory): Pl
 export function groupPlansByCategory(plans: Plan[]): Record<PlanCategory, Plan[]> {
   const grouped: Partial<Record<PlanCategory, Plan[]>> = {};
 
-  plans.forEach(plan => {
+  plans.forEach((plan) => {
     if (!grouped[plan.category]) {
       grouped[plan.category] = [];
     }
@@ -311,7 +199,7 @@ export function groupPlansByCategory(plans: Plan[]): Record<PlanCategory, Plan[]
 export function groupPlansByType(plans: Plan[]): Record<PlanType, Plan[]> {
   const grouped: Partial<Record<PlanType, Plan[]>> = {};
 
-  plans.forEach(plan => {
+  plans.forEach((plan) => {
     if (!grouped[plan.type]) {
       grouped[plan.type] = [];
     }

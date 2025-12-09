@@ -8,13 +8,15 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { adminSections, Route } from '@/router';
 import { twMerge } from 'tailwind-merge';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   collapsed: boolean;
   toggle: (collapse: boolean) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarProps) => {
+  const { t } = useTranslation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
@@ -27,8 +29,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const isActive = (path: string) => location.pathname === path;
 
   // chia section main và footer
-  const mainSections = adminSections.filter((s) => s.title !== 'FOOTER');
-  const footerSection = adminSections.find((s) => s.title === 'FOOTER');
+  const mainSections = adminSections(t).filter((s) => s.title !== 'FOOTER');
+  const footerSection = adminSections(t).find((s) => s.title === 'FOOTER');
 
   return (
     <aside

@@ -2,18 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { Plan } from '@/services/plan/plan.types';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { PricingCard } from '@/components/card/PricingCard';
-import {
-  ArrowRotate,
-  CalendarClock,
-  Clock,
-  DatabaseStackOutlined,
-  Fire,
-  Grid,
-  ShieldCheckmark,
-  TopSpeed
-} from '@/components/icons';
-import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
+import { Fire } from '@/components/icons';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface ServerPlanFilterProps {
   plans: Plan[];
@@ -38,11 +29,8 @@ const getPeriodDays = (plan: Plan): number | null => {
   return null;
 };
 
-export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
-  plans,
-  getDisplayPrice,
-  buildPlanFeatures
-}) => {
+export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({ plans, getDisplayPrice, buildPlanFeatures }) => {
+  const { t } = useTranslation();
   // Filter state - phải khai báo trước khi dùng trong useMemo
   const [selectedProxyType, setSelectedProxyType] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -51,7 +39,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   // Extract available proxy types from all plans (level 1 - không phụ thuộc filter nào)
   const availableProxyTypes = useMemo(() => {
     const proxyTypes = new Set<string>();
-    plans.forEach(plan => {
+    plans.forEach((plan) => {
       const proxyType = normalizeProxyType(plan.metadata?.proxy_type);
       if (proxyType) proxyTypes.add(proxyType);
     });
@@ -61,7 +49,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   // Filter plans by proxyType để tính available categories (level 2)
   const plansFilteredByProxyType = useMemo(() => {
     if (!selectedProxyType) return plans;
-    return plans.filter(plan => {
+    return plans.filter((plan) => {
       const planProxyType = normalizeProxyType(plan.metadata?.proxy_type);
       return planProxyType === selectedProxyType;
     });
@@ -70,7 +58,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   // Extract available categories từ plans đã filter bởi proxyType
   const availableCategories = useMemo(() => {
     const categories = new Set<string>();
-    plansFilteredByProxyType.forEach(plan => {
+    plansFilteredByProxyType.forEach((plan) => {
       if (plan.category) categories.add(plan.category);
     });
     return Array.from(categories).sort();
@@ -80,7 +68,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   const plansFilteredByProxyTypeAndCategory = useMemo(() => {
     let filtered = plansFilteredByProxyType;
     if (selectedCategory) {
-      filtered = filtered.filter(plan => plan.category === selectedCategory);
+      filtered = filtered.filter((plan) => plan.category === selectedCategory);
     }
     return filtered;
   }, [plansFilteredByProxyType, selectedCategory]);
@@ -88,7 +76,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   // Extract available periods từ plans đã filter bởi proxyType + category
   const availablePeriods = useMemo(() => {
     const periods = new Set<number>();
-    plansFilteredByProxyTypeAndCategory.forEach(plan => {
+    plansFilteredByProxyTypeAndCategory.forEach((plan) => {
       const periodDays = getPeriodDays(plan);
       if (periodDays !== null) {
         periods.add(periodDays);
@@ -133,10 +121,10 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   // Filter plans based on all selections - dùng plansFilteredByProxyTypeAndCategory làm base
   const filteredPlans = useMemo(() => {
     let filtered = plansFilteredByProxyTypeAndCategory;
-    
+
     // Filter by period
     if (selectedPeriod) {
-      filtered = filtered.filter(plan => {
+      filtered = filtered.filter((plan) => {
         const planPeriodDays = getPeriodDays(plan);
         return planPeriodDays === selectedPeriod;
       });
@@ -146,13 +134,13 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   }, [plansFilteredByProxyTypeAndCategory, selectedPeriod]);
 
   // Build proxy type options - format label đẹp hơn
-  const proxyTypeOptions = availableProxyTypes.map(type => {
+  const proxyTypeOptions = availableProxyTypes.map((type) => {
     // Format label: "ipv4" -> "IPv4", "ipv4 shared" -> "IPv4 Shared", "ipv6" -> "IPv6"
     const formattedLabel = type
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-    
+
     return {
       key: type,
       label: formattedLabel,
@@ -161,16 +149,16 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
   });
 
   // Build category options - chỉ hiển thị categories có trong plans đã filter bởi proxyType
-  const categoryOptions = availableCategories.map(cat => ({
+  const categoryOptions = availableCategories.map((cat) => ({
     key: cat,
     label: cat.charAt(0).toUpperCase() + cat.slice(1),
     value: cat
   }));
 
   // Build period options - chỉ hiển thị periods có trong plans đã filter bởi proxyType + category
-  const periodOptions = availablePeriods.map(period => ({
+  const periodOptions = availablePeriods.map((period) => ({
     key: `${period}d`,
-    label: `${period} ngày`,
+    label: `${period} ${t('day')}`,
     value: period
   }));
 
@@ -182,9 +170,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
           {/* Proxy Type Filter */}
           {proxyTypeOptions.length > 0 && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                Loại Proxy:
-              </label>
+              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Loại Proxy:</label>
               <RadioGroup
                 value={selectedProxyType}
                 onChange={(value) => setSelectedProxyType(String(value))}
@@ -197,9 +183,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
           {/* Category Filter */}
           {categoryOptions.length > 0 && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                Danh mục:
-              </label>
+              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Danh mục:</label>
               <RadioGroup
                 value={selectedCategory}
                 onChange={(value) => setSelectedCategory(String(value))}
@@ -212,9 +196,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
           {/* Period Filter */}
           {periodOptions.length > 0 && (
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-                Thời hạn:
-              </label>
+              <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Thời hạn:</label>
               <RadioGroup
                 value={selectedPeriod}
                 onChange={(value) => setSelectedPeriod(Number(value))}
@@ -229,9 +211,7 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
       {/* Filtered Plans Grid */}
       {filteredPlans.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
-          <p className="text-text-me dark:text-text-me-dark">
-            Không có gói nào phù hợp với bộ lọc đã chọn.
-          </p>
+          <p className="text-text-me dark:text-text-me-dark">Không có gói nào phù hợp với bộ lọc đã chọn.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5">
@@ -262,4 +242,3 @@ export const ServerPlanFilter: React.FC<ServerPlanFilterProps> = ({
     </div>
   );
 };
-

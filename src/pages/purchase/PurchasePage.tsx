@@ -26,6 +26,7 @@ import { ErrorDisplay } from '@/components/error/ErrorDisplay';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { PurchaseConfirmModal } from './PurchaseConfirmModal';
+import { useTranslation } from 'react-i18next';
 
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
@@ -69,6 +70,7 @@ const itemVariants: Variants = {
 type TabKey = 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6'; // string for dedicated proxy types
 
 const PurchasePage: React.FC = () => {
+  const { t } = useTranslation();
   const [filteredDuration, setFilteredDuration] = useState('');
   const [durationOptions, setDurationOptions] = useState<number[]>([]);
   const [confirmModal, setConfirmModalOpen] = useState(false);
@@ -242,7 +244,7 @@ const PurchasePage: React.FC = () => {
         label: (
           <div className="text-base">
             <label>Thời hạn: </label>
-            <span className="font-bold">{formatDuration(plan.duration)}</span>
+            <span className="font-bold">{formatDuration(plan.duration, t)}</span>
           </div>
         )
       });
@@ -435,7 +437,7 @@ const PurchasePage: React.FC = () => {
                         value={filteredDuration}
                         onChange={(value) => setFilteredDuration('' + value)}
                         options={durationOptions.map((duration) => ({
-                          label: formatDuration(duration),
+                          label: formatDuration(duration, t),
                           value: '' + duration,
                           key: `duration-${duration}`
                         }))}

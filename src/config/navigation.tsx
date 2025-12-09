@@ -39,155 +39,157 @@ export interface NavigationSection {
   routes: NavigationRoute[];
 }
 
-export const navigationSections: NavigationSection[] = [
-  {
-    title: 'CHÍNH',
-    routes: [
-      {
-        title: 'Trang chủ',
-        icon: <DashboardFilled />,
-        collapsedIcon: <DashboardOutlined />,
-        iconClass: 'text-primary',
-        breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
-        path: '/home',
-        name: '/home',
-        breadcrumb: 'Trang chủ'
-      },
-      {
-        title: 'Chi tiết proxy',
-        hidden: true, // ẩn trong menu
-        path: '/proxy/detail/:id',
-        name: '/proxy/detail/:id',
-        breadcrumb: 'Chi tiết proxy',
-        breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />
-      },
-      {
-        title: 'Mua hàng',
-        icon: <CartFilled />,
-        collapsedIcon: <CartOutlined />,
-        iconClass: 'text-yellow',
-        breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />,
-        path: '/buy',
-        name: '/buy',
-        breadcrumb: 'Mua hàng'
-      },
-      {
-        title: 'Xem ví',
-        icon: <WalletCreditCardFilled />,
-        collapsedIcon: <WalletCreditCardOutlined />,
-        iconClass: 'text-green',
-        breadcrumbIcon: <WalletCreditCardFilled width={32} height={32} className="text-green" />,
-        path: '/wallet',
-        name: '/wallet',
-        breadcrumb: 'Xem ví'
-      },
-      {
-        title: 'Lịch sử',
-        icon: <ClockBillFilled />,
-        collapsedIcon: <ClockBill />,
-        iconClass: 'text-blue',
-        breadcrumbIcon: <ClockBillFilled width={32} height={32} className="text-blue" />,
-        path: '/history',
-        name: '/history',
-        breadcrumb: 'Lịch sử'
-      },
-      {
-        title: 'Tài khoản',
-        icon: <Person />,
-        collapsedIcon: <Person />,
-        iconClass: 'text-blue',
-        breadcrumbIcon: <PersonFilled width={32} height={32} className="text-blue" />,
-        path: '/account-profile',
-        name: '/account-profile',
-        breadcrumb: 'Tài khoản',
-        hidden: true
-      },
-      {
-        title: 'Components',
-        icon: <Apps />,
-        iconClass: 'text-blue',
-        breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
-        path: '/components',
-        name: '/components',
-        breadcrumb: 'Components',
-        hidden: true
-      },
-      {
-        title: 'Đơn hàng',
-        icon: <ArrowCounter />,
-        iconClass: 'text-blue',
-        breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
-        path: '/order',
-        name: '/order',
-        breadcrumb: 'Đơn hàng',
-        hidden: true
-      }
-    ]
-  },
-  {
-    title: 'KHÁC',
-    routes: [
-      {
-        title: (
-          <div className="flex items-center flex-1 justify-between w-full">
-            <span>Chương trình đại lý</span>
-            <Open className="text-blue dark:text-blue-dark" />
-          </div>
-        ),
-        icon: <CloudSwapFilled />,
-        collapsedIcon: <CloudSwapOutlined />,
-        iconClass: 'text-pink',
-        breadcrumbIcon: <CloudSwapFilled width={32} height={32} className="text-pink" />,
-        path: '/reseller',
-        name: '/reseller',
-        breadcrumb: 'Chương trình đại lý'
-      },
-      {
-        title: (
-          <div className="flex items-center flex-1 justify-between w-full">
-            <span>Tài liệu API</span>
-            <Open className="text-blue dark:text-blue-dark" />
-          </div>
-        ),
-        icon: <DocumentSyncFilled />,
-        collapsedIcon: <DocumentSync />,
-        iconClass: 'text-primary',
-        breadcrumbIcon: <DocumentSyncFilled width={32} height={32} className="text-primary" />,
-        path: '/api-docs',
-        name: '/api-docs',
-        breadcrumb: 'Tài liệu API'
-      }
-    ]
-  },
-  {
-    title: 'FOOTER',
-    routes: [
-      {
-        title: 'Trợ giúp',
-        icon: <ChatWarningFilled />,
-        collapsedIcon: <ChatWarning />,
-        iconClass: 'text-blue',
-        breadcrumbIcon: <ChatWarningFilled width={32} height={32} className="text-blue" />,
-        path: '/help',
-        name: '/help',
-        breadcrumb: 'Trợ giúp'
-      },
-      {
-        title: (
-          <div className="flex items-center justify-between">
-            <span>Phần mềm hỗ trợ</span>
-            {/* <div className="text-xs w-6 flex items-center justify-center h-6 rounded-full font-medium bg-blue-bg dark:bg-blue-bg-dark text-blue dark:text-blue-dark">
+export const navigationSections = (t: (key: string) => string): NavigationSection[] => {
+  return [
+    {
+      title: 'CHÍNH',
+      routes: [
+        {
+          title: t('home'),
+          icon: <DashboardFilled />,
+          collapsedIcon: <DashboardOutlined />,
+          iconClass: 'text-primary',
+          breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
+          path: '/home',
+          name: '/home',
+          breadcrumb: t('home')
+        },
+        {
+          title: t('proxyDetails'),
+          hidden: true, // ẩn trong menu
+          path: '/proxy/detail/:id',
+          name: '/proxy/detail/:id',
+          breadcrumb: t('proxyDetails'),
+          breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />
+        },
+        {
+          title: t('buy'),
+          icon: <CartFilled />,
+          collapsedIcon: <CartOutlined />,
+          iconClass: 'text-yellow',
+          breadcrumbIcon: <CartFilled width={32} height={32} className="text-yellow" />,
+          path: '/buy',
+          name: '/buy',
+          breadcrumb: t('buy')
+        },
+        {
+          title: t('checkWallet'),
+          icon: <WalletCreditCardFilled />,
+          collapsedIcon: <WalletCreditCardOutlined />,
+          iconClass: 'text-green',
+          breadcrumbIcon: <WalletCreditCardFilled width={32} height={32} className="text-green" />,
+          path: '/wallet',
+          name: '/wallet',
+          breadcrumb: t('checkWallet')
+        },
+        {
+          title: t('history'),
+          icon: <ClockBillFilled />,
+          collapsedIcon: <ClockBill />,
+          iconClass: 'text-blue',
+          breadcrumbIcon: <ClockBillFilled width={32} height={32} className="text-blue" />,
+          path: '/history',
+          name: '/history',
+          breadcrumb: t('history')
+        },
+        {
+          title: t('account'),
+          icon: <Person />,
+          collapsedIcon: <Person />,
+          iconClass: 'text-blue',
+          breadcrumbIcon: <PersonFilled width={32} height={32} className="text-blue" />,
+          path: '/account-profile',
+          name: '/account-profile',
+          breadcrumb: t('account'),
+          hidden: true
+        },
+        {
+          title: t('components'),
+          icon: <Apps />,
+          iconClass: 'text-blue',
+          breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
+          path: '/components',
+          name: '/components',
+          breadcrumb: t('components'),
+          hidden: true
+        },
+        {
+          title: t('order'),
+          icon: <ArrowCounter />,
+          iconClass: 'text-blue',
+          breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
+          path: '/order',
+          name: '/order',
+          breadcrumb: t('order'),
+          hidden: true
+        }
+      ]
+    },
+    {
+      title: 'KHÁC',
+      routes: [
+        {
+          title: (
+            <div className="flex items-center flex-1 justify-between w-full">
+              <span>{t('affiliateProgram')}</span>
+              <Open className="text-blue dark:text-blue-dark" />
+            </div>
+          ),
+          icon: <CloudSwapFilled />,
+          collapsedIcon: <CloudSwapOutlined />,
+          iconClass: 'text-pink',
+          breadcrumbIcon: <CloudSwapFilled width={32} height={32} className="text-pink" />,
+          path: '/reseller',
+          name: '/reseller',
+          breadcrumb: t('affiliateProgram')
+        },
+        {
+          title: (
+            <div className="flex items-center flex-1 justify-between w-full">
+              <span>{t('apiDocumentation')}</span>
+              <Open className="text-blue dark:text-blue-dark" />
+            </div>
+          ),
+          icon: <DocumentSyncFilled />,
+          collapsedIcon: <DocumentSync />,
+          iconClass: 'text-primary',
+          breadcrumbIcon: <DocumentSyncFilled width={32} height={32} className="text-primary" />,
+          path: '/api-docs',
+          name: '/api-docs',
+          breadcrumb: t('apiDocumentation')
+        }
+      ]
+    },
+    {
+      title: 'FOOTER',
+      routes: [
+        {
+          title: t('help'),
+          icon: <ChatWarningFilled />,
+          collapsedIcon: <ChatWarning />,
+          iconClass: 'text-blue',
+          breadcrumbIcon: <ChatWarningFilled width={32} height={32} className="text-blue" />,
+          path: '/help',
+          name: '/help',
+          breadcrumb: t('help')
+        },
+        {
+          title: (
+            <div className="flex items-center justify-between">
+              <span>{t('supportedSoftware')}</span>
+              {/* <div className="text-xs w-6 flex items-center justify-center h-6 rounded-full font-medium bg-blue-bg dark:bg-blue-bg-dark text-blue dark:text-blue-dark">
               4
             </div> */}
-          </div>
-        ),
-        icon: <Apps />,
-        iconClass: 'text-yellow',
-        breadcrumbIcon: <Apps width={32} height={32} className="text-yellow" />,
-        path: '/support-software',
-        name: '/support-software',
-        breadcrumb: 'Phần mềm hỗ trợ'
-      }
-    ]
-  }
-];
+            </div>
+          ),
+          icon: <Apps />,
+          iconClass: 'text-yellow',
+          breadcrumbIcon: <Apps width={32} height={32} className="text-yellow" />,
+          path: '/support-software',
+          name: '/support-software',
+          breadcrumb: t('supportedSoftware')
+        }
+      ]
+    }
+  ];
+};

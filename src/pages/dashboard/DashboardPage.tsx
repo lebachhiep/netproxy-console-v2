@@ -365,7 +365,9 @@ const DashboardPage = () => {
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.activePlans')}</span>
                   </div>
                 }
-                subInfo={[{ label: t('dashboard.totalPlans'), value: `${loading ? '...' : totalSubscriptions} gói` }]}
+                subInfo={[
+                  { label: t('dashboard.totalPlans'), value: `${loading ? '...' : totalSubscriptions} ${t('plan').toLocaleLowerCase()}` }
+                ]}
                 buttonText={t('dashboard.buyMore').toUpperCase()}
                 onButtonClick={() => navigate('/buy')}
               />,

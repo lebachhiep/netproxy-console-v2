@@ -6,6 +6,7 @@ import { AuthUser } from '@/services/auth/auth.types';
 import { UserProfile } from '@/services/user/user.types';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useClickOutside } from '@/hooks/useClickOutside';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   user: AuthUser | null;
@@ -15,7 +16,8 @@ interface Props {
   setModalOpen: (open: boolean) => void;
 }
 
-const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogout, setModalOpen }) => {
+const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogout }: Props) => {
+  const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,9 +50,7 @@ const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogo
         <div className="flex items-center gap-2">
           <img src={avatar} className="w-9 h-9 rounded-full" alt={displayName} />
           <div className="flex flex-col items-start">
-            <span className="text-xs font-medium text-text-me dark:text-text-me-dark">
-              {displayName}
-            </span>
+            <span className="text-xs font-medium text-text-me dark:text-text-me-dark">{displayName}</span>
             <span className="text-sm text-blue-hi dark:text-blue-hi-dark">$ {balance.toFixed(2)}</span>
           </div>
         </div>
@@ -89,10 +89,7 @@ const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogo
                   <div className="flex items-center gap-2">
                     <PersonOutlined className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
                     <div>
-                      Xem hồ sơ{' '}
-                      <span className="text-sm text-blue-hi dark:text-blue-hi-dark">
-                        {displayName}
-                      </span>
+                      {t('viewProfile')} <span className="text-sm text-blue-hi dark:text-blue-hi-dark">{displayName}</span>
                     </div>
                   </div>
                 </div>
@@ -107,7 +104,7 @@ const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogo
                   <div className="flex items-center gap-2 flex-nowrap">
                     <WalletCreditCardOutlined className="w-5 h-5 text-text-hi dark:text-text-hi-dark" />
                     <div>
-                      Xem ví của tôi <span className="text-sm text-blue-hi dark:text-blue-hi-dark">${balance.toFixed(2)}</span>
+                      {t('viewWallet')} <span className="text-sm text-blue-hi dark:text-blue-hi-dark">${balance.toFixed(2)}</span>
                     </div>
                   </div>
                 </Link>
@@ -120,7 +117,7 @@ const UserDropdown: React.FC<Props> = ({ user, userProfile, settings, handleLogo
                 >
                   <div className="flex items-center gap-2">
                     <SignOut className="w-5 h-5 text-red dark:text-red-dark" />
-                    <div>Đăng xuất</div>
+                    <div>{t('logout')}</div>
                   </div>
                 </button>
               </div>

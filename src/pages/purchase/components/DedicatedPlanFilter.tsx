@@ -13,6 +13,7 @@ import OrderSummary from './OrderSumary';
 import { CartTabKey, getTabKeyFromPlan } from '@/contexts/CartContext';
 import { Country as OrderCountry } from './table/CountrySelector';
 import { Tabs } from '@/components/tabs/Tabs';
+import { useTranslation } from 'react-i18next';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -55,6 +56,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   proxyType,
   servers
 }) => {
+  const { t } = useTranslation();
   const cart = useCart();
 
   // Determine tab key for this component (based on first plan or proxyType)
@@ -418,7 +420,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   // Build period options
   const periodOptions = availablePeriods.map((period) => ({
     key: `${period}d`,
-    label: `${period} ngày`,
+    label: `${period} ${t('day')}`,
     value: period
   }));
 

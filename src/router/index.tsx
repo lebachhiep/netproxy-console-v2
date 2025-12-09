@@ -74,58 +74,61 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
 };
 
 // Create admin sections with components
-export const adminSections = navigationSections.map((section) => ({
-  ...section,
-  routes: mapRoutesToComponents(section.routes)
-}));
+export const adminSections = (t: any) =>
+  navigationSections(t).map((section) => ({
+    ...section,
+    routes: mapRoutesToComponents(section.routes)
+  }));
 
-const routes: Route[] = [
-  {
-    path: '/',
-    name: '/',
-    element: (
-      <ProtectedRoute>
-        <ResponsiveLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true, // Route mặc định khi vào /
-        element: <Navigate to="/home" replace />
-      },
-      ...adminSections.flatMap((section) => section.routes),
-      {
-        path: '/order/:id',
-        name: '/order/:id',
-        element: <OrderDetailPage />
-      }
-    ]
-  },
-  {
-    name: '/login',
-    element: <LoginPage />,
-    path: '/login'
-  },
-  {
-    name: '/register',
-    element: <RegisterPage />,
-    path: '/register'
-  },
-  {
-    name: '/forgot-password',
-    element: <ForgotPasswordPage />,
-    path: '/forgot-password'
-  },
-  {
-    name: '/reset-password',
-    element: <ResetPasswordPage />,
-    path: '/reset-password'
-  },
-  {
-    element: <NotFoundPage />,
-    name: '*',
-    path: '*'
-  }
-];
+const routes = (t: any): Route[] => {
+  return [
+    {
+      path: '/',
+      name: '/',
+      element: (
+        <ProtectedRoute>
+          <ResponsiveLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          index: true, // Route mặc định khi vào /
+          element: <Navigate to="/home" replace />
+        },
+        ...adminSections(t).flatMap((section) => section.routes),
+        {
+          path: '/order/:id',
+          name: '/order/:id',
+          element: <OrderDetailPage />
+        }
+      ]
+    },
+    {
+      name: '/login',
+      element: <LoginPage />,
+      path: '/login'
+    },
+    {
+      name: '/register',
+      element: <RegisterPage />,
+      path: '/register'
+    },
+    {
+      name: '/forgot-password',
+      element: <ForgotPasswordPage />,
+      path: '/forgot-password'
+    },
+    {
+      name: '/reset-password',
+      element: <ResetPasswordPage />,
+      path: '/reset-password'
+    },
+    {
+      element: <NotFoundPage />,
+      name: '*',
+      path: '*'
+    }
+  ];
+};
 
 export { routes };

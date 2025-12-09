@@ -1,6 +1,7 @@
 {
   "home": "Home",
   "loading": "Loading...",
+  "recaptchaNotReady": "reCAPTCHA is not ready. Please try again.",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",

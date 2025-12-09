@@ -1,6 +1,7 @@
 {
   "home": "Trang chủ",
   "loading": "Đang tải...",
+  "recaptchaNotReady": "reCAPTCHA không sẵn sàng. Vui lòng thử lại.",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm",

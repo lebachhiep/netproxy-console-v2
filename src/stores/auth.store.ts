@@ -18,7 +18,7 @@ interface AuthState {
   login: (login: string, password: string, rememberMe: boolean) => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
+  resetPassword: (email: string, captchaToken: string) => Promise<void>;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   setUser: (user: AuthUser | null) => void;
@@ -160,10 +160,10 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      resetPassword: async (email: string) => {
+      resetPassword: async (email: string, captchaToken: string) => {
         set({ loading: true, error: null });
         try {
-          await authService.requestPasswordReset(email);
+          await authService.requestPasswordReset(email, captchaToken);
           set({ loading: false });
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.message || 'Gửi email đặt lại mật khẩu thất bại';

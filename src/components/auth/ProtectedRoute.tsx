@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { AppLoading } from '@/components/app/AppLoading';
 import { AUTH_ROUTES } from '@/utils/constants';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NavbarProvider } from '@/contexts/NavbarContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -42,5 +43,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={AUTH_ROUTES.VERIFY_EMAIL} state={{ from: location.pathname }} replace />;
   }
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavbarProvider>{children}</NavbarProvider>
+    </QueryClientProvider>
+  );
 };

@@ -9,12 +9,13 @@ import {
   Reload,
   CloudSwap,
   CloudSwapOutlined,
-  ArrowSync
+  ArrowSync,
+  DashboardFilled
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Select } from '@/components/select/Select';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -34,6 +35,7 @@ import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { queryClient } from '@/components/auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
+import { useNavbar } from '@/contexts/NavbarContext';
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
   { label: 'Vietnam', value: 'VN' },
@@ -104,6 +106,15 @@ const OrderDetailPage = () => {
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
   const [renewCount, setRenewCount] = useState(0);
   const { t } = useTranslation();
+
+  const { setNavbarItems } = useNavbar();
+
+  useEffect(() => {
+    return () => {
+      setNavbarItems([]);
+    };
+  }, []);
+
   const { data: subscriptions, refetch } = useQuery({
     queryKey: ['order-subscriptions', id, currentPage, pageSize],
     enabled: !!id,
@@ -120,6 +131,12 @@ const OrderDetailPage = () => {
 
         // Extract subscriptions array from response
         if (response && Array.isArray(response.subscriptions)) {
+          setNavbarItems([
+            {
+              label: response.subscriptions[0]?.plan?.name || t('orderDetail.name'),
+              icon: <DashboardFilled width={32} height={32} className="text-primary" />
+            }
+          ]);
           return response.subscriptions;
         } else {
           console.error('API response is not valid:', response);

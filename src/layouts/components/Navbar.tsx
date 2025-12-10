@@ -15,6 +15,7 @@ import { Route, adminSections } from '@/router';
 import { toast } from 'sonner';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { Dropdown } from '@/components/dropdown';
+import { useNavbar } from '@/contexts/NavbarContext';
 
 interface Breadcrumb {
   title: string;
@@ -33,6 +34,8 @@ export const Navbar: React.FC = () => {
     const saved = localStorage.getItem('theme');
     return saved === 'dark';
   });
+
+  const overrideNavbarItems = useNavbar().navbarItems;
 
   const dropdownRef = useRef<HTMLDivElement>(null); // ref cho user info + menu
   const { user, userProfile, logout, fetchUserProfile } = useAuth();
@@ -177,16 +180,29 @@ export const Navbar: React.FC = () => {
           <IconButton icon={<Chevron />} disabled={!canGoBack} onClick={handleBack} />
 
           {/* Dashboard / Breadcrumb */}
-          <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
-            {breadcrumbs.length && breadcrumbs[breadcrumbs.length - 1].icon ? (
-              <div>{breadcrumbs[breadcrumbs.length - 1].icon}</div>
-            ) : (
-              <MdDashboard className="text-text-hi dark:text-text-hi-dark text-xl" />
-            )}
-            <span className="text-text-hi dark:text-text-hi-dark text-xl font-averta tracking-[-0.3px]">
-              {breadcrumbs.length ? breadcrumbs[breadcrumbs.length - 1].title : 'Dashboard'}
-            </span>
-          </div>
+          {overrideNavbarItems.length ? (
+            overrideNavbarItems.map((item, index) => {
+              return (
+                <div key={index} className="flex items-center gap-2 text-xl font-semibold text-text-hi">
+                  <div>{item.icon}</div>
+                  <span className="text-text-hi dark:text-text-hi-dark text-xl font-averta tracking-[-0.3px]">
+                    {item.label ? item.label : 'Dashboard'}
+                  </span>
+                </div>
+              );
+            })
+          ) : (
+            <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
+              {breadcrumbs.length && breadcrumbs[breadcrumbs.length - 1].icon ? (
+                <div>{breadcrumbs[breadcrumbs.length - 1].icon}</div>
+              ) : (
+                <MdDashboard className="text-text-hi dark:text-text-hi-dark text-xl" />
+              )}
+              <span className="text-text-hi dark:text-text-hi-dark text-xl font-averta tracking-[-0.3px]">
+                {breadcrumbs.length ? breadcrumbs[breadcrumbs.length - 1].title : 'Dashboard'}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Right */}

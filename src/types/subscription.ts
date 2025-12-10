@@ -89,6 +89,7 @@ export interface ListSubscriptionsRequest {
   Page?: number;
   PerPage?: number;
   Status?: 'active' | 'paused' | 'cancelled' | 'expired';
+  search?: string;
 }
 
 export interface ListOrderSubscriptionsRequest {

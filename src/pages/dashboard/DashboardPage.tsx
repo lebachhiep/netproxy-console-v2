@@ -38,8 +38,8 @@ import { queryClient } from '@/components/auth/ProtectedRoute';
 import { Pagination } from '@/components/pagination/Pagination';
 import { CheckingModal } from './CheckingModal';
 import { useTranslation } from 'react-i18next';
-import { serverService } from '@/services/server/server.service';
 import { userService } from '@/services/user/user.service';
+import { useDebounce } from '@/hooks/useDebounce';
 const easeInOutCustom = [0.44, 0, 0.56, 1];
 
 const pageVariants: Variants = {
@@ -92,25 +92,25 @@ const DashboardPage = () => {
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
   // Checking modal state
   const [openCheckingModal, setOpenCheckingModal] = useState(false);
+  // Searching
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 400);
 
-  const { data: serverStatus } = useQuery({
-    queryKey: ['query-server-status'],
-    queryFn: async () => serverService.checkServerStatus()
-  });
   const { data: platformStats } = useQuery({
     queryKey: ['platform-status'],
     queryFn: () => userService.getPlatformStat()
   });
-  console.log('test' + platformStats);
+
   useQuery({
-    queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
+    queryKey: ['dashboard-get-subscriptions', currentPage, pageSize, debouncedSearch],
     queryFn: async () => {
       setLoading(true);
       try {
         const ordersResponse = await subscriptionService.getSubscriptions({
           Status: 'active',
           Page: currentPage,
-          PerPage: pageSize
+          PerPage: pageSize,
+          search: debouncedSearch
         });
 
         setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
@@ -283,9 +283,9 @@ const DashboardPage = () => {
         mainContent={
           <div>
             <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">
-              {serverStatus?.nodes?.length}
+              {platformStats?.total_relay_nodes}
             </span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ {serverStatus?.nodes?.length} </span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ {platformStats?.total_relay_nodes} </span>
             <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.operating')}</span>
           </div>
         }
@@ -399,7 +399,7 @@ const DashboardPage = () => {
               placeholder={t('dashboard.search')}
               wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
               icon={<MagnifyingGlass />}
-              onChange={(e) => console.log(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <div className="flex items-center gap-2">
               <IconButton

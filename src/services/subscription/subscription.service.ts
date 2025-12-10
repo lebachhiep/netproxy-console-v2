@@ -22,7 +22,8 @@ class SubscriptionService {
     const queryParams = {
       page: params?.Page,
       perPage: params?.PerPage,
-      Status: params?.Status
+      Status: params?.Status,
+      search: params?.search
     };
 
     const response = await apiService.get<ListSubscriptionsResponse>(this.BASE_PATH, { params: queryParams });

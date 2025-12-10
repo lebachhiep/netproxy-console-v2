@@ -17,6 +17,8 @@ import { transformOrder, formatDateForAPI, getOrderTypeColor, formatOrderDate } 
 import { OrderDetailsModal } from './components/OrderDetailsModal';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useTranslation } from 'react-i18next';
+import { useDebounce } from '@/hooks/useDebounce';
+
 const HistoryPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Lịch sử' });
   const { isMobile, isTablet } = useResponsive();
@@ -41,6 +43,8 @@ const HistoryPage: React.FC = () => {
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
   const { t } = useTranslation();
+  const debouncedSearchQuery = useDebounce<string>(searchQuery, 400);
+
   // Fetch orders
   const fetchOrders = useCallback(async () => {
     try {
@@ -52,8 +56,8 @@ const HistoryPage: React.FC = () => {
       };
 
       // Add search query if present
-      if (searchQuery.trim()) {
-        params.search = searchQuery.trim();
+      if (debouncedSearchQuery.trim()) {
+        params.search = debouncedSearchQuery.trim();
       }
 
       // Add date range if present
@@ -86,7 +90,7 @@ const HistoryPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, searchQuery, dateRange, selectedType, selectedStatus]);
+  }, [currentPage, pageSize, debouncedSearchQuery, dateRange, selectedType, selectedStatus]);
 
   // Fetch data on mount and when dependencies change
   useEffect(() => {
@@ -194,7 +198,7 @@ const HistoryPage: React.FC = () => {
       align: 'center',
       render: (value, record) => (
         <div className="group relative">
-          <span className="font-medium text-blue cursor-help">${Number(value).toFixed(2)}</span>
+          <span className="font-medium text-[#ff1818] cursor-help">${Number(value).toFixed(2)}</span>
           {/* Tooltip */}
           <div className="absolute z-50 bottom-full left-0 mb-2 hidden group-hover:block w-48 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-lg p-3">
             <div className="space-y-1 text-xs">

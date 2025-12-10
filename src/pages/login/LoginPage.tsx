@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
   const rememberMeTick = (): boolean => {
     try {
       const ticked = localStorage.getItem('RememberMeTicked');
-      if (ticked && ticked === 'true') {
+      if (!ticked || (ticked && ticked === 'true')) {
         return true;
       }
       return false;

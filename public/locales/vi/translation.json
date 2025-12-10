@@ -5,7 +5,7 @@
   "calculating": "Đang tính...",
   "dashboard": {
     "balance": "Số dư",
-    "topUp": "Nạp Thêm",
+    "topUp": "Nạp Thêm Tiền",
     "activePlan": "Các gói đang hoạt động",
     "activePlans": "Gói đang hoạt động",
     "buyMore": "Mua thêm",
@@ -60,6 +60,7 @@
   "day": "Ngày",
   "minute": "Phút",
   "second": "Giây",
+  "hour": "Giờ",
   "affiliateProgram": "Chương trình đại lý",
   "apiDocumentation": "Tài liệu API",
   "help": "Trợ giúp",
@@ -89,7 +90,7 @@
   "success": "thành công",
   "copied": "Đã sao chép",
   "for": "sang",
-   "totalLoca": "Tổng số vị trí",
+  "totalLoca": "Tổng số vị trí",
   "totalIP": "Tổng số lượng IP",
   "subtotal": "Tổng Phụ",
   "currentBalance": "Số dự hiện tại",
@@ -119,6 +120,8 @@
   "retry": "Thử lại",
   "cancel": "Hủy",
   "pickCountry": "Chọn quốc gia",
+  "score": "Điểm số",
+  "items": "Gói",
   "purchase": {
     "title": "Mua hàng",
     "loadingError": "Không thể tải dữ liệu",
@@ -255,19 +258,19 @@
   "support": {
     "chrome": {
       "title": "Ứng dụng trên Chrome",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Tiện ích mở rộng này cho phép bạn sử dụng dịch vụ của chúng tôi trực tiếp trên trình duyệt, mang đến trải nghiệm nhanh chóng, tiện lợi và mượt mà với đầy đủ tính năng hỗ trợ."
     },
     "android": {
       "title": "Ứng dụng trên Android",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Ứng dụng Windows mang đến trải nghiệm ổn định và tối ưu, giúp bạn làm việc hiệu quả với đầy đủ tính năng được tích hợp trực tiếp vào môi trường máy tính."
     },
     "window": {
       "title": "Ứng dụng trên Windows",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Ứng dụng dành cho macOS được tối ưu để hoạt động mượt mà và hiệu quả, với giao diện trực quan và khả năng tương thích hoàn chỉnh trong hệ sinh thái Apple."
     },
     "mac": {
       "title": "Ứng dụng trên Mac",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Ứng dụng Android giúp bạn sử dụng dịch vụ mọi lúc, mọi nơi với giao diện tối ưu cho thiết bị di động và đầy đủ tính năng khi di chuyển."
     }
   },
   "months": {
@@ -340,5 +343,19 @@
       "minMoney": "Số tiền tối thiểu là: ",
       "pickCountry": "Vui lòng chọn Quốc Gia"
     }
-  }
+  },
+  "countryList": {
+    "vn": "Việt Nam",
+    "us": "Mỹ",
+    "jp": "Nhật Bản",
+    "sg": "Singapo",
+    "kr": "Hàn Quốc",
+    "uk": "Anh",
+    "de": "Đức",
+    "fr": "Pháp",
+    "ca": "Canada",
+    "au": "Úc"
+  },
+  "refreshRot": "{{every}} {{number}} {{time}}",
+  "every": "Mỗi"
 }

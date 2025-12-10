@@ -6,6 +6,7 @@ import { usePaymentMethods } from '@/hooks/usePayments';
 import TazapayForm from './modal/TazapayForm';
 import CryptomusForm from './modal/CryptomusForm';
 import Web2MInfo from './modal/Web2MInfo';
+import { t } from 'i18next';
 
 interface TopUpModalProps {
   open: boolean;
@@ -95,7 +96,13 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose, allowClos
   };
 
   return (
-    <Modal open={open} title="Nạp tiền" onClose={onClose} bodyClassName="p-0" allowCloseByBackdrop={allowCloseByBackdrop}>
+    <Modal
+      open={open}
+      title={t('dashboard.topUp').toUpperCase()}
+      onClose={onClose}
+      bodyClassName="p-0"
+      allowCloseByBackdrop={allowCloseByBackdrop}
+    >
       <Tabs
         tabs={tabs}
         type="card"

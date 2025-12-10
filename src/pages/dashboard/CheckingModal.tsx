@@ -33,7 +33,7 @@ export const CheckingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
       },
       {
         key: 'score',
-        title: 'Score',
+        title: t('score'),
         align: 'center'
       }
     ];

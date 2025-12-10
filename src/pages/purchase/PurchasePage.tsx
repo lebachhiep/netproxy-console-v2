@@ -229,7 +229,7 @@ const PurchasePage: React.FC = () => {
         label: (
           <div className="text-base">
             <label>{t('purchase.rotationTime')}: </label>
-            <span className="font-bold">{formatFrequency(plan.frequency)}</span>
+            <span className="font-bold">{formatFrequency(plan.frequency, t)}</span>
           </div>
         )
       });

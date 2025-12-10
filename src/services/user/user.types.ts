@@ -31,3 +31,9 @@ export enum UserRole {
   USER = 'user',
   ADMIN = 'admin'
 }
+
+export interface PlatformStat {
+  total_users: number;
+  total_orders: number;
+  total_relay_nodes: number;
+}

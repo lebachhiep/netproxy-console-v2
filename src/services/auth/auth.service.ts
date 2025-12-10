@@ -7,14 +7,12 @@ class AuthService {
    * Sign in with email or username and password
    * POST /auth/login
    */
-  async login(login: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
+  async login(login: string, password: string, rememberMe: boolean): Promise<AuthResponse> {
     try {
       const response = await apiService.post<AuthResponse>('/auth/login', {
         login,
         password
-      });
-
-      // Save tokens to storage
+      }); // Save tokens to storage
       saveTokens(response, rememberMe);
 
       return response;

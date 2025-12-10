@@ -57,8 +57,9 @@
   "viewWallet": "View my wallet",
   "logout": "Logout",
   "day": "Day(s)",
-  "minute": "Minute",
-  "second": "Second",
+  "minute": "Minute(s)",
+  "second": "Second(s)",
+  "hour": "Hour(s)",
   "affiliateProgram": "Affiliate Program",
   "apiDocumentation": "API Documentation",
   "help": "Help",
@@ -114,9 +115,13 @@
   "pleaseInput2": "to enable automatic transaction confirmation by the system. After the transfer is successful, your balance will be updated within 1–5 minutes.",
   "added": "Added",
   "toCard": "to your Cart",
-  "addToCard": "Thêm vào giỏ hàng",
-  "retry": "Thử lại",
+  "addToCard": "Added to your Cart",
+  "retry": "Retry",
+  "cancel": "Cancel",
   "pickCountry": "Choose Your Country",
+  "score":"Score",
+  "money":"Money",
+  "items": "Item(s)",
   "purchase": {
     "title": "Purchase",
     "loadingError": "Unable to load data",
@@ -253,19 +258,19 @@
   "support": {
     "chrome": {
       "title": "Chrome Extensions",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "This extension allows you to access our service directly from your browser, providing a fast, convenient, and seamless experience across all supported features."
     },
     "android": {
       "title": "Android Extensions",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Our Windows application delivers a stable and optimized experience, enabling you to work efficiently with all features integrated natively into your desktop environment."
     },
     "window": {
       "title": "Window Extensions",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "Designed for macOS, the app runs smoothly and efficiently, offering an intuitive interface and full compatibility with the Apple ecosystem."
     },
     "mac": {
       "title": "Mac Extensions",
-      "content": "It is a long established fact that a reader will be distracted by the readable content"
+      "content": "The Android app gives you the flexibility to use our service anytime, anywhere, with a mobile-friendly design and full feature support on the go."
     }
   },
   "months": {
@@ -338,5 +343,20 @@
       "minMoney": "Minimum amount of money: ",
       "pickCountry": "Please choose Your Country"
     }
-  }
+  },
+  "countryList":
+  {
+    "vn":"Vietnam",
+    "us":"America",
+    "jp":"Japan",
+    "sg":"Singapore",
+    "kr":"Korea",
+    "uk":"United Kingdom",
+    "de":"Germany",
+    "fr":"France",
+    "ca":"Canada",
+    "au":"Australia"
+  },
+  "refreshRot": "{{every}} {{number}} {{time}}",
+  "every": "Mỗi"
 }

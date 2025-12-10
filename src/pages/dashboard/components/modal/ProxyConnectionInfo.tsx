@@ -9,6 +9,7 @@ import { SubscriptionWithPlan, ProxyCredentials } from '@/types/subscription';
 import { useSubscriptionData } from '@/stores/subscription.store';
 import { useAuthStore } from '@/stores/auth.store';
 import { useTranslation } from 'react-i18next';
+
 interface ProxyConnectionInfoProps {
   subscription: SubscriptionWithPlan;
   username?: string; // Current user's username for generating proxy username
@@ -18,20 +19,6 @@ interface ProxyConnectionInfoProps {
 const hasValidCredentials = (creds: any): creds is ProxyCredentials => {
   return creds && typeof creds === 'object' && 'proxy_ip' in creds && 'username' in creds && 'password' in creds;
 };
-
-// Country options for username builder
-const countryOptions = [
-  { label: 'Việt Nam', value: 'vn' },
-  { label: 'Mỹ', value: 'us' },
-  { label: 'Nhật Bản', value: 'jp' },
-  { label: 'Singapore', value: 'sg' },
-  { label: 'Hàn Quốc', value: 'kr' },
-  { label: 'Anh', value: 'uk' },
-  { label: 'Đức', value: 'de' },
-  { label: 'Pháp', value: 'fr' },
-  { label: 'Canada', value: 'ca' },
-  { label: 'Úc', value: 'au' }
-];
 
 export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscription, username: propUsername }) => {
   const { t } = useTranslation();
@@ -48,6 +35,20 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
   const hasExternalCredentials = hasValidCredentials(subscription.provider_credentials);
   // const isRotatingProxy = subscription.plan?.type === 'rotating' || subscription.plan?.category === 'rotating';
+
+  // Country options for username builder
+  const countryOptions = [
+    { label: t('countryList.vn'), value: 'vn' },
+    { label: t('countryList.us'), value: 'us' },
+    { label: t('countryList.jp'), value: 'jp' },
+    { label: t('countryList.sg'), value: 'sg' },
+    { label: t('countryList.kr'), value: 'kr' },
+    { label: t('countryList.uk'), value: 'uk' },
+    { label: t('countryList.de'), value: 'de' },
+    { label: t('countryList.fr'), value: 'fr' },
+    { label: t('countryList.ca'), value: 'ca' },
+    { label: t('countryList.au'), value: 'au' }
+  ];
 
   // Load saved country and sessionId from store on mount
   useEffect(() => {

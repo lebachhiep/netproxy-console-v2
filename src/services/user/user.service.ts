@@ -1,5 +1,5 @@
 import { apiService } from '@/services/api/api.service';
-import { UserProfile, UpdateProfileRequest, UpdateProfileResponse } from './user.types';
+import { UserProfile, UpdateProfileRequest, UpdateProfileResponse, PlatformStat } from './user.types';
 
 class UserService {
   /**
@@ -29,7 +29,15 @@ class UserService {
       throw error;
     }
   }
-
+  async getPlatformStat(): Promise<PlatformStat> {
+    try {
+      const response = await apiService.get<PlatformStat>('user/platform-stats');
+      return response;
+    } catch (error) {
+      console.error('Lỗi lấy Flatform status');
+      throw error;
+    }
+  }
   /**
    * Check if user profile is complete
    */

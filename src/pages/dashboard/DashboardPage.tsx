@@ -39,7 +39,7 @@ import { Pagination } from '@/components/pagination/Pagination';
 import { CheckingModal } from './CheckingModal';
 import { useTranslation } from 'react-i18next';
 import { serverService } from '@/services/server/server.service';
-
+import { userService } from '@/services/user/user.service';
 const easeInOutCustom = [0.44, 0, 0.56, 1];
 
 const pageVariants: Variants = {
@@ -97,7 +97,11 @@ const DashboardPage = () => {
     queryKey: ['query-server-status'],
     queryFn: async () => serverService.checkServerStatus()
   });
-
+  const { data: platformStats } = useQuery({
+    queryKey: ['platform-status'],
+    queryFn: () => userService.getPlatformStat()
+  });
+  console.log('test' + platformStats);
   useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize],
     queryFn: async () => {
@@ -250,7 +254,9 @@ const DashboardPage = () => {
         title={t('dashboard.user')}
         mainContent={
           <div>
-            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">2500</span>
+            <span className="text-pink dark:text-pink-dark font-semibold text-xl tracking-[-0.3px] font-averta">
+              {platformStats?.total_users}
+            </span>
             <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.customer')}</span>
           </div>
         }
@@ -259,8 +265,8 @@ const DashboardPage = () => {
             label: t('dashboard.totalOrders'),
             value: (
               <div>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">155.231</span>
-                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> Orders</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">{platformStats?.total_orders}</span>
+                <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('order.name')} </span>
               </div>
             )
           }
@@ -304,7 +310,7 @@ const DashboardPage = () => {
     ];
     if (isMobile || isTablet) return items.reverse();
     return items;
-  }, [isDesktop, isLargeDesktop]);
+  }, [isDesktop, isLargeDesktop, platformStats]);
 
   const handleChangeMode = (mode: 'list' | 'grid') => {
     setViewMode(mode);

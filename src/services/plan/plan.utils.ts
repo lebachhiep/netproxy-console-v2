@@ -1,5 +1,4 @@
 import { Plan, PLAN_TYPE_LABELS, PLAN_CATEGORY_LABELS, PlanType, PlanCategory } from './plan.types';
-
 /**
  * Format price with currency symbol
  * @param price - Price amount
@@ -91,19 +90,30 @@ export function formatThroughput(throughput: number): string {
  * @param frequency - Frequency in seconds
  * @returns Formatted frequency string
  */
-export function formatFrequency(frequency: number): string {
+export function formatFrequency(frequency: number, t: any): string {
   const minutes = Math.floor(frequency / 60);
   const hours = Math.floor(minutes / 60);
-
   if (hours > 0) {
-    return `Mỗi ${hours} giờ`;
+    return t('refreshRot', {
+      every: t('every'),
+      number: hours,
+      time: t('hour')
+    });
   }
 
   if (minutes > 0) {
-    return `Mỗi ${minutes} phút`;
+    return t('refreshRot', {
+      every: t('every'),
+      number: minutes,
+      time: t('hour')
+    });
   }
 
-  return `Mỗi ${frequency} giây`;
+  return t('refreshRot', {
+    every: t('every'),
+    number: frequency,
+    time: t('hour')
+  });
 }
 
 /**

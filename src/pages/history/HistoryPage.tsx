@@ -225,7 +225,7 @@ const HistoryPage: React.FC = () => {
     },
     {
       key: 'items',
-      title: 'Items',
+      title: t('quantity'),
       width: 150,
       align: 'center',
       render: (_value, record) => {
@@ -235,7 +235,7 @@ const HistoryPage: React.FC = () => {
             onClick={(e) => handleViewItems(e, record)}
             className="px-3 py-1 bg-blue text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
           >
-            {itemsCount} items
+            {itemsCount} {t('items')}
           </button>
         ) : (
           <span className="text-text-lo dark:text-text-lo-dark">-</span>
@@ -294,9 +294,9 @@ const HistoryPage: React.FC = () => {
               className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
               options={[
                 { value: '', label: t('historyPage.allTypes') },
-                ...Object.entries(ORDER_TYPE_LABELS).map(([value, label]) => ({
+                ...Object.entries(ORDER_TYPE_LABELS).map(([value]) => ({
                   value,
-                  label
+                  label: t(`order.${value}`)
                 }))
               ]}
             />
@@ -308,10 +308,10 @@ const HistoryPage: React.FC = () => {
               placeholder={t('historyPage.allStatuses')}
               className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
               options={[
-                { value: '', label: 'Tất cả trạng thái' },
-                ...Object.entries(ORDER_STATUS_DISPLAY).map(([value, display]) => ({
+                { value: '', label: t('historyPage.allStatus') },
+                ...Object.entries(ORDER_STATUS_DISPLAY).map(([value]) => ({
                   value,
-                  label: display.text
+                  label: t(`order.${value}`)
                 }))
               ]}
             />

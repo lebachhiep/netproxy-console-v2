@@ -4,7 +4,7 @@ import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
 import { Select } from '@/components/select/Select';
 import { useTazapayPayment } from '@/hooks/usePayments';
-
+import { useTranslation } from 'react-i18next';
 const MIN_AMOUNT = 10;
 
 const getCountryFlag = (countryCode: string): string => {
@@ -37,6 +37,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
   const amount = propAmount !== undefined ? String(propAmount) : internalAmount;
   const country = propCountry !== undefined ? propCountry : internalCountry;
   const { mutate: generatePayment, isPending } = useTazapayPayment();
+  const { t } = useTranslation();
   console.log('countries', countries);
 
   const countryOptions = countries
@@ -56,12 +57,12 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
     const numAmount = parseFloat(amount);
 
     if (isNaN(numAmount) || numAmount < MIN_AMOUNT) {
-      toast.error(`Số tiền tối thiểu là $${MIN_AMOUNT}`);
+      toast.error(t('toast.warn.minMoney') + `$${MIN_AMOUNT}`);
       return;
     }
 
     if (!country) {
-      toast.error('Vui lòng chọn quốc gia');
+      toast.error(t('toast.warn.pickCountry'));
       return;
     }
 
@@ -76,11 +77,12 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
       {
         onSuccess: (data) => {
           window.open(data.payment_url, '_blank');
-          toast.success('Đã mở cửa sổ thanh toán');
+          toast.success(t('toast.success.windowPaymentPop'));
           onSuccess();
         },
         onError: (error) => {
-          toast.error(error.message || 'Không thể tạo thanh toán');
+          toast.error(t('toast.error.cantCreatePay'));
+          console.log('Tazapay payment error:', error);
         }
       }
     );
@@ -94,7 +96,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
           type="number"
           min={MIN_AMOUNT}
           step="0.01"
-          placeholder={`Tối thiểu: $${MIN_AMOUNT}`}
+          placeholder={t('minMoney') + `$${MIN_AMOUNT}`}
           value={amount}
           onChange={(e) => {
             if (onAmountChange) {
@@ -127,12 +129,10 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
       </div>
 
       <Button type="submit" variant="primary" loading={isPending} className="w-full h-10">
-        Thanh toán
+        {t('payment')}
       </Button>
 
-      <p className="text-xs text-text-lo dark:text-text-lo-dark text-center">
-        Bạn sẽ được chuyển đến trang thanh toán Tazapay để hoàn tất giao dịch
-      </p>
+      <p className="text-xs text-text-lo dark:text-text-lo-dark text-center">{t('toTazapay')}</p>
     </form>
   );
 };

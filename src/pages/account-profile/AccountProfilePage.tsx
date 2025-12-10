@@ -17,18 +17,18 @@ import ProfileForm from './components/ProfileForm';
 import { motion } from 'framer-motion';
 import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTranslation } from 'react-i18next';
 
-interface AccountProfilePageProps {}
-
-export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
+export const AccountProfilePage: React.FC = () => {
+  const { t } = useTranslation();
   const pageTitle = usePageTitle({ pageName: 'Tài khoản' });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
-  const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
+  const apiValue = 'https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...';
   const [isHideApiValue, setIsHideApiValue] = useState(true);
-  const { user, userProfile, logout, fetchUserProfile } = useAuth();
+  const { user, userProfile, fetchUserProfile } = useAuth();
   const accountTabs = [
-    { key: 'info', label: 'Thông tin chung' },
-    { key: 'change-password', label: 'Đổi mật khẩu' },
+    { key: 'info', label: t('GeneralInformation') || 'Thông tin chung' },
+    { key: 'change-password', label: t('changePassword') || 'Đổi mật khẩu' },
     { key: 'api-key', label: 'API Key' }
   ];
 
@@ -104,10 +104,10 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
       await fetchUserProfile();
 
       // Show success message
-      toast.success('Cập nhật hồ sơ thành công');
+      toast.success(t('toast.success.profileUpdated'));
     } catch (error) {
       const errorMessage = mapApiError(error);
-      toast.error(errorMessage || 'Cập nhật hồ sơ thất bại');
+      toast.error('toast.error.profileUpdated' + errorMessage || 'Cập nhật hồ sơ thất bại');
     }
   };
 
@@ -157,7 +157,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                           {...field}
                           type="password"
                           inputClassName="w-full"
-                          label="Nhập mật khẩu mới"
+                          label={t('form.newPassword') || 'Mật khẩu mới'}
                           showPasswordToggle
                           disabled={isPasswordSubmitting}
                         />
@@ -175,7 +175,7 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                           wrapperClassName="h-10"
                           {...field}
                           type="password"
-                          label="Nhập lại mật khẩu mới"
+                          label={t('form.confirmNewPassword') || 'Nhập lại mật khẩu mới'}
                           showPasswordToggle
                           disabled={isPasswordSubmitting}
                           inputClassName="w-full"
@@ -202,7 +202,9 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                 <span className="font-semibold text-text-hi dark:text-text-hi-dark">API Key</span>
                 <div className="bg-blue rounded-[2px] text-white px-1">1 / 5</div>
               </motion.div>
-              <motion.div variants={itemVariants} className="text-text-me dark:text-text-me-dark mb-4">Không chia sẻ mã API cho bất kỳ ai hoặc bên thứ 3 nào</motion.div>
+              <motion.div variants={itemVariants} className="text-text-me dark:text-text-me-dark mb-4">
+                {t('warnAPI')}
+              </motion.div>
 
               <motion.div variants={itemVariants} className="flex flex-row justify-center items-center gap-5">
                 <ApiInput
@@ -220,13 +222,13 @@ export const AccountProfilePage: React.FC<AccountProfilePageProps> = () => {
                       icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
                       onClick: () => {
                         navigator.clipboard.writeText(apiValue);
-                        toast.success('Đã sao chép API Endpoint');
+                        toast.success(t('toast.success.copyAPIEndpoint'));
                       }
                     }
                   ]}
                 />
                 <Button variant="default" className="w-fit h-10 px-4 rounded-md" icon={<AddCircle />}>
-                  TẠO MÃ API MỚI
+                  {t('createAPIKey')}
                 </Button>
               </motion.div>
             </div>

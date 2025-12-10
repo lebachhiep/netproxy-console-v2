@@ -13,7 +13,7 @@ import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
 import moment from 'moment';
 import clsx from 'clsx';
-
+import { useTranslation } from 'react-i18next';
 export const RotateDesktopSummary = ({
   orders,
   // totalIps,
@@ -39,7 +39,7 @@ export const RotateDesktopSummary = ({
   const [couponInput, setCouponInput] = useState<string>('');
   const [isValidatingCoupon, setIsValidatingCoupon] = useState<boolean>(false);
   const [isCheckingOut, setIsCheckingOut] = useState<boolean>(false);
-
+  const { t } = useTranslation();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
   const userProfile = useAuthStore((state) => state.userProfile);
@@ -62,7 +62,7 @@ export const RotateDesktopSummary = ({
   // Handle coupon apply
   const handleApplyCoupon = async () => {
     if (!couponInput.trim()) {
-      toast.error('Vui lòng nhập mã giảm giá');
+      toast.error(t('toast.warn.enterValidCoupon'));
       return;
     }
 
@@ -79,10 +79,10 @@ export const RotateDesktopSummary = ({
         toast.success(`Đã áp dụng mã giảm giá ${result.discount.toFixed(2)}$`);
         setCouponInput('');
       } else {
-        toast.error(result.error || 'Mã giảm giá không hợp lệ');
+        toast.error(t('toast.warn.enterValidCoupon') || 'Mã giảm giá không hợp lệ');
       }
     } catch (error) {
-      toast.error('Không thể xác thực mã giảm giá');
+      toast.error(t('toast.error.cantValidCoupon'));
       console.log('Coupon validation error:', error);
     } finally {
       setIsValidatingCoupon(false);
@@ -93,7 +93,7 @@ export const RotateDesktopSummary = ({
   const handleRemoveCoupon = () => {
     if (cart) {
       cart.removeCoupon();
-      toast.info('Đã xóa mã giảm giá');
+      toast.info(t('toast.success.couponRemove'));
     }
   };
 
@@ -115,13 +115,13 @@ export const RotateDesktopSummary = ({
 
     // Validate cart not empty
     if (itemsToCheckout.length === 0) {
-      toast.error('Giỏ hàng trống');
+      toast.error('emptyCard');
       return;
     }
 
     // Validate sufficient balance (already checked in UI, but double-check)
     if (hasInsufficientFunds) {
-      toast.error('Số dư không đủ. Vui lòng nạp thêm tiền.');
+      toast.error(t('toast.warn.outOfBalance'));
       return;
     }
 
@@ -161,16 +161,38 @@ export const RotateDesktopSummary = ({
       // Handle different order statuses
       if (order.status === 'fulfilled') {
         // Fast provider - subscriptions ready immediately
-        toast.success(`Đơn hàng #${order.order_number} đã hoàn thành!`);
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('been'),
+            action: t('payment'),
+            result: t('success')
+          })
+        );
       } else if (order.status === 'processing') {
         // Slow provider - async fulfillment
-        toast.success(`Đơn hàng #${order.order_number} đang được xử lý...`, {
-          description: 'Bạn sẽ nhận được thông báo khi proxy sẵn sàng (30-90 giây)',
-          duration: 5000
-        });
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('being'),
+            action: t('process'),
+            result: ''
+          }),
+          {
+            description: t('toast.warn.notif30sec'),
+            duration: 5000
+          }
+        );
       } else {
         // Other statuses (shouldn't happen, but handle gracefully)
-        toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('been'),
+            action: t('create'),
+            result: t('success')
+          })
+        );
       }
     } catch (error: any) {
       console.error('Checkout error:', error);
@@ -179,16 +201,16 @@ export const RotateDesktopSummary = ({
       const errorMessage = error.response?.data?.message || error.message || '';
 
       if (errorMessage.includes('insufficient balance')) {
-        toast.error('Số dư không đủ. Vui lòng nạp thêm tiền.');
+        toast.error(t('toast.warn.outOfBalance'));
       } else if (errorMessage.includes('Coupon') || errorMessage.includes('coupon')) {
-        toast.error('Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+        toast.error(t('toast.warn.enterValidCoupon'));
         cart.removeCoupon(); // Remove invalid coupon
       } else if (errorMessage.includes('plan') && errorMessage.includes('not active')) {
-        toast.error('Một số gói đã ngừng cung cấp. Vui lòng làm mới trang.');
+        toast.error(t('toast.warn.planOutdate'));
       } else if (error.code === 'ERR_NETWORK' || errorMessage.includes('network')) {
-        toast.error('Không thể kết nối. Vui lòng thử lại.');
+        toast.error(t('toast.error.connect'));
       } else {
-        toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
+        toast.error(t('toast.error.unknown'));
       }
     } finally {
       setIsCheckingOut(false);
@@ -214,20 +236,20 @@ export const RotateDesktopSummary = ({
                           className="w-6 h-6"
                           icon={<DismissCircle className="w-4 h-4 text-text-lo dark:text-text-lo-dark" />}
                           onClick={handleRemoveCoupon}
-                          aria-label="Xóa mã giảm giá"
+                          aria-label={t('discountRemo')}
                         />
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
                         <Input
                           icon={<></>}
-                          placeholder="Mã giảm giá"
+                          placeholder={t('discountCode')}
                           value={couponInput}
                           onChange={(e) => setCouponInput(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                           wrapperClassName="flex-1 h-10"
                           inputClassName="text-sm"
-                          aria-label="Nhập mã giảm giá"
+                          aria-label="enterDiscount"
                         />
                         <Button
                           className="text-xs h-10 px-4"
@@ -235,7 +257,7 @@ export const RotateDesktopSummary = ({
                           loading={isValidatingCoupon}
                           disabled={!couponInput.trim()}
                         >
-                          Áp dụng
+                          {t('apply')}
                         </Button>
                       </div>
                     )}
@@ -244,7 +266,7 @@ export const RotateDesktopSummary = ({
 
                 {proxyType && (
                   <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-                    <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP type:</span>
+                    <span className="text-text-me dark:text-text-me-dark text-sm font-medium">{t('ipType')}:</span>
                     <span className="font-semibold text-text-hi dark:text-text-hi-dark">{proxyType}</span>
                   </div>
                 )}
@@ -256,13 +278,13 @@ export const RotateDesktopSummary = ({
               {useCartContext && cart && (
                 <div className="flex flex-col border-b border-border-element dark:border-border-element-dark">
                   <div className="flex justify-between text-sm py-2 border-b border-border-element dark:border-border-element-dark">
-                    <span className="text-text-me dark:text-text-me-dark">IP Type:</span>
+                    <span className="text-text-me dark:text-text-me-dark">{t('ipType')}:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">{cart.getTabItems('rotating')[0]?.plan?.name}</span>
                   </div>
 
                   {duration && (
                     <div className="flex justify-between border-b border-border-element dark:border-border-element-dark py-2 ">
-                      <span className="text-text-me dark:text-text-me-dark text-sm font-medium">IP Duration:</span>
+                      <span className="text-text-me dark:text-text-me-dark text-sm font-medium">{t('ipDuration')}:</span>
                       <span className="font-semibold text-text-hi dark:text-text-hi-dark">
                         {moment.duration(duration, 'seconds').humanize()}
                       </span>
@@ -271,25 +293,25 @@ export const RotateDesktopSummary = ({
 
                   {cart.discountAmount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-text-me dark:text-text-me-dark">Giảm giá:</span>
+                      <span className="text-text-me dark:text-text-me-dark">{t('.historyPage.messages.discount')}:</span>
                       <span className="text-green dark:text-green-dark font-semibold">-${cart.discountAmount.toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm pt-2 border-t border-border-element dark:border-border-element-dark py-2">
-                    <span className="text-text-me dark:text-text-me-dark">Giá:</span>
+                    <span className="text-text-me dark:text-text-me-dark">{t('price')}:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">
                       ${cart.getTabItems('rotating')[0]?.plan?.price?.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm border-t border-border-element dark:border-border-element-dark py-2">
-                    <span className="text-text-me dark:text-text-me-dark">Số lượng:</span>
+                    <span className="text-text-me dark:text-text-me-dark">{t('quantity')}:</span>
                     <span className="text-text-hi dark:text-text-hi-dark font-semibold">{cart.getTabItems('rotating')[0]?.quantity}</span>
                   </div>
 
                   {hasInsufficientFunds && (
                     <div className="bg-red-bg dark:bg-red-bg p-2 rounded-lg mt-2">
                       <span className="text-red dark:text-red-dark text-xs font-medium">
-                        ⚠️ Số dư không đủ. Vui lòng nạp thêm ${Math.abs(balanceAfter).toFixed(2)}
+                        ⚠️ {t('toast.warn.outOfBalance')} ${Math.abs(balanceAfter).toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -298,7 +320,7 @@ export const RotateDesktopSummary = ({
 
               <div className="flex justify-between items-center font-semibold text-lg pt-2">
                 <div className="py-2">
-                  <span className="text-text-hi dark:text-text-hi-dark text-lg font-semibold font-averta">Tổng cộng:</span>
+                  <span className="text-text-hi dark:text-text-hi-dark text-lg font-semibold font-averta">{t('sum')}:</span>
                 </div>
                 <div className="flex items-start gap-1 font-averta">
                   <span className="text-green font-semibold text-lg tracking-[-0.66px]">$</span>
@@ -317,7 +339,7 @@ export const RotateDesktopSummary = ({
           onClick={useCartContext ? handleCheckout : undefined}
           variant={(useCartContext ? hasInsufficientFunds || cart?.itemCount === 0 : false) ? 'disabled' : 'primary'}
         >
-          THANH TOÁN
+          {t('checkOut')}
         </Button>
       </div>
     </>

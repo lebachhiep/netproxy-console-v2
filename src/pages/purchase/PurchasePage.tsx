@@ -27,7 +27,6 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { PurchaseConfirmModal } from './PurchaseConfirmModal';
 import { useTranslation } from 'react-i18next';
-
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
@@ -74,7 +73,7 @@ const PurchasePage: React.FC = () => {
   const [filteredDuration, setFilteredDuration] = useState('');
   const [durationOptions, setDurationOptions] = useState<number[]>([]);
   const [confirmModal, setConfirmModalOpen] = useState(false);
-  const pageTitle = usePageTitle({ pageName: 'Mua hàng' });
+  const pageTitle = usePageTitle({ pageName: t('purchase.title') });
   // API data state
   const [plansData, setPlansData] = useState<PlansResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +83,6 @@ const PurchasePage: React.FC = () => {
   const [activeMain, setActiveMain] = useState<TabKey>('rotating');
   const [activeDedicatedTab, setActiveDedicatedTab] = useState<string>('');
   const [cartOpen, setCartOpen] = useState(false);
-
   // Default prices for external provider plans (price = 0)
   // const [defaultPrices, setDefaultPrices] = useState<Record<string, number>>({});
 
@@ -128,7 +126,7 @@ const PurchasePage: React.FC = () => {
       // Không tự động gọi calculate-price, chỉ fetch khi user yêu cầu
     } catch (err) {
       console.error('Failed to fetch plans:', err);
-      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+      setError(t('purchase.loadingErrorMessage'));
     } finally {
       setLoading(false);
     }
@@ -144,10 +142,10 @@ const PurchasePage: React.FC = () => {
 
   // Dedicated tabs cố định
   const dedicatedTabs = [
-    { label: 'Premium ISP', key: 'premium_isp' },
-    { label: 'Private IPv4', key: 'private_ipv4' },
-    { label: 'Shared IPv4', key: 'shared_ipv4' },
-    { label: 'IPv6', key: 'ipv6' }
+    { label: t('purchase.premiumIsp'), key: 'premium_isp' },
+    { label: t('purchase.privateIpv4'), key: 'private_ipv4' },
+    { label: t('purchase.sharedIpv4'), key: 'shared_ipv4' },
+    { label: t('purchase.ipv6'), key: 'ipv6' }
   ];
 
   // Set active dedicated tab when plans load
@@ -210,7 +208,7 @@ const PurchasePage: React.FC = () => {
   };
 
   // Helper to build features for PricingCard
-  const buildPlanFeatures = (plan: Plan) => {
+  const buildPlanFeatures = (plan: Plan, t: (key: string) => string) => {
     const features: Array<{ icon: React.ReactNode; label: React.ReactNode }> = [];
 
     // Protocol support (hardcoded for now - could come from plan.package in future)
@@ -218,8 +216,8 @@ const PurchasePage: React.FC = () => {
       icon: <ShieldCheckmark className="w-6 h-6 text-primary" />,
       label: (
         <div className="text-base">
-          <label>Hỗ trợ: </label>
-          <span className="font-bold">HTTP/HTTPS</span>
+          <label>{t('purchase.support')}: </label>
+          <span className="font-bold">{t('purchase.httpHttps')}</span>
         </div>
       )
     });
@@ -230,7 +228,7 @@ const PurchasePage: React.FC = () => {
         icon: <Clock className="w-6 h-6 text-yellow" />,
         label: (
           <div className="text-base">
-            <label>Thời gian xoay IP: </label>
+            <label>{t('purchase.rotationTime')}: </label>
             <span className="font-bold">{formatFrequency(plan.frequency)}</span>
           </div>
         )
@@ -243,7 +241,7 @@ const PurchasePage: React.FC = () => {
         icon: <CalendarClockOutline className="w-6 h-6 text-blue" />,
         label: (
           <div className="text-base">
-            <label>Thời hạn: </label>
+            <label>{t('purchase.duration')}: </label>
             <span className="font-bold">{formatDuration(plan.duration, t)}</span>
           </div>
         )
@@ -256,7 +254,7 @@ const PurchasePage: React.FC = () => {
         icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
-            <label>Băng thông: </label>
+            <label>{t('purchase.bandwidth')}: </label>
             <span className="font-bold">{formatBandwidth(plan.bandwidth)}</span>
           </div>
         )
@@ -267,8 +265,8 @@ const PurchasePage: React.FC = () => {
         icon: <DatabaseStackOutlined className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
-            <label>Băng thông: </label>
-            <span className="font-bold">Không giới hạn</span>
+            <label>{t('purchase.bandwidth')}: </label>
+            <span className="font-bold">{t('purchase.unlimited')}</span>
           </div>
         )
       });
@@ -280,8 +278,8 @@ const PurchasePage: React.FC = () => {
         icon: <ArrowRotate className="w-6 h-6 text-blue" />,
         label: (
           <div className="text-base">
-            <label>Lượt xoay IP: </label>
-            <span className="font-bold">Không giới hạn</span>
+            <label>{t('purchase.rotationCount')}: </label>
+            <span className="font-bold">{t('purchase.unlimited')}</span>
           </div>
         )
       });
@@ -293,7 +291,7 @@ const PurchasePage: React.FC = () => {
         icon: <TopSpeed className="w-6 h-6 text-pink" />,
         label: (
           <div className="text-base">
-            <label>Tốc độ: </label>
+            <label>{t('purchase.speedLimit')}: </label>
             <span className="font-bold">{formatThroughput(plan.throughput)}</span>
           </div>
         )
@@ -306,7 +304,7 @@ const PurchasePage: React.FC = () => {
         icon: <Grid className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
-            <label>Kết nối đồng thời: </label>
+            <label>{t('purchase.maxConnections')}: </label>
             <span className="font-bold">{plan.max_concurrent}</span>
           </div>
         )
@@ -317,8 +315,8 @@ const PurchasePage: React.FC = () => {
         icon: <Grid className="w-6 h-6 text-green" />,
         label: (
           <div className="text-base">
-            <label>Kết nối đồng thời: </label>
-            <span className="font-bold">Không giới hạn</span>
+            <label>{t('purchase.maxConnections')}: </label>
+            <span className="font-bold">{t('purchase.unlimited')}</span>
           </div>
         )
       });
@@ -330,8 +328,8 @@ const PurchasePage: React.FC = () => {
         icon: <Fire className="w-6 h-6 text-orange" />,
         label: (
           <div className="text-base">
-            <label>Riêng biệt: </label>
-            <span className="font-bold">Chỉ một mình bạn sử dụng</span>
+            <label>{t('purchase.dedicated')}: </label>
+            <span className="font-bold">{t('purchase.dedicatedMessage')}</span>
           </div>
         )
       });
@@ -357,10 +355,10 @@ const PurchasePage: React.FC = () => {
   // Error state - uses ErrorDisplay component with retry
   const ErrorState = () => (
     <ErrorDisplay
-      title="Không thể tải dữ liệu"
-      message={error || 'Vui lòng kiểm tra kết nối mạng và thử lại.'}
+      title={t('purchase.loadingError')}
+      message={error || t('purchase.loadingErrorMessage')}
       onRetry={handleRetry}
-      retryText="Thử lại"
+      retryText={t('purchase.retryButton')}
     />
   );
 
@@ -368,13 +366,13 @@ const PurchasePage: React.FC = () => {
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
       <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark opacity-70 mb-4" aria-hidden="true" />
-      <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Không có gói nào</h2>
-      <p className="text-text-me dark:text-text-me-dark text-sm">Hiện tại chưa có gói dịch vụ trong danh mục này.</p>
+      <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">{t('purchase.noPackages')}</h2>
+      <p className="text-text-me dark:text-text-me-dark text-sm">{t('purchase.noPackagesMessage')}</p>
     </div>
   );
 
   // Build main tabs: Rotating + dedicated tabs cố định
-  const mainTabs = [{ label: 'Rotating', key: 'rotating' }, ...dedicatedTabs];
+  const mainTabs = [{ label: t('purchase.rotating'), key: 'rotating' }, ...dedicatedTabs];
 
   return (
     <motion.div
@@ -390,7 +388,9 @@ const PurchasePage: React.FC = () => {
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2 text-xl font-semibold text-text-hi">
             <CartFilled width={24} height={24} className="text-yellow" />
-            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">Mua hàng</span>
+            <span className="text-text-hi dark:text-text-hi-dark text-lg md:text-xl font-averta tracking-[-0.3px]">
+              {t('purchase.title')}
+            </span>
           </div>
 
           {/* Cart Icon */}
@@ -456,24 +456,30 @@ const PurchasePage: React.FC = () => {
                       ) : (
                         groupPlans
                           .filter((plan) => !filteredDuration || plan.duration === Number(filteredDuration))
-                          .map((plan, index) => (
-                            <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
-                              <PricingCard
-                                tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
-                                description={plan.description || ''}
-                                title={plan.name}
-                                price={getDisplayPrice(plan)}
-                                features={buildPlanFeatures(plan)}
-                                buttonText="MUA GÓI"
-                                enableCart
-                                plan={plan}
-                                cartOptions={{
-                                  speedLimit: plan.throughput?.toString()
-                                }}
-                                preventNotification
-                              />
-                            </motion.div>
-                          ))
+                          .map((plan, index) => {
+                            const enrichedPlan = {
+                              ...plan,
+                              buttonText: t('buyPackage')
+                            };
+                            return (
+                              <motion.div key={plan.id || `${plan.name}-${index}`} variants={itemVariants}>
+                                <PricingCard
+                                  tag={plan.featured ? { text: 'POPULAR', icon: <Fire /> } : undefined}
+                                  description={plan.description || ''}
+                                  title={plan.name}
+                                  price={getDisplayPrice(plan)}
+                                  features={buildPlanFeatures(plan, t)}
+                                  buttonText={enrichedPlan.buttonText}
+                                  enableCart
+                                  plan={enrichedPlan}
+                                  cartOptions={{
+                                    speedLimit: plan.throughput?.toString()
+                                  }}
+                                  preventNotification
+                                />
+                              </motion.div>
+                            );
+                          })
                       )}
                     </motion.div>
 
@@ -592,13 +598,13 @@ const PurchasePage: React.FC = () => {
               <div className="flex h-[64px] items-center justify-between p-5 border-b border-border dark:border-border-dark">
                 <div className="flex items-center gap-2">
                   <CartFilled className="text-yellow" width={24} height={24} />
-                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">Giỏ hàng</span>
+                  <span className="text-lg font-semibold text-text-hi dark:text-text-hi-dark">{t('purchase.cartTitle')}</span>
                 </div>
                 <IconButton
                   className="w-10 h-10"
                   icon={<Dismiss className="text-text-me dark:text-text-me-dark" />}
                   onClick={() => setCartOpen(false)}
-                  aria-label="Đóng giỏ hàng"
+                  aria-label={t('purchase.closeCart')}
                 />
               </div>
 
@@ -612,8 +618,8 @@ const PurchasePage: React.FC = () => {
                 <div className="flex-1 flex items-center justify-center">
                   <div className="text-center">
                     <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70 mx-auto" />
-                    <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
-                    <p className="text-text-me dark:text-text-me-dark text-sm">Hãy chọn gói rotating để thêm vào giỏ hàng.</p>
+                    <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">{t('purchase.emptyCart')}</h2>
+                    <p className="text-text-me dark:text-text-me-dark text-sm">{t('purchase.emptyCartMessage')}</p>
                   </div>
                 </div>
               )}

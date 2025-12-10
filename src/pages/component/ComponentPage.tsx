@@ -34,6 +34,7 @@ import { FaRegCalendar } from 'react-icons/fa';
 import { IoFlame, IoLanguage } from 'react-icons/io5';
 import { ColorPalette } from './ColorPallete';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { t } from 'i18next';
 
 export interface ProxyData {
   id: number;
@@ -103,7 +104,7 @@ const ComponentPage = () => {
   const columns: TableColumn<ProxyData>[] = [
     {
       key: 'id',
-      title: 'STT',
+      title: t('STT'),
       width: '60px',
       align: 'center'
     },

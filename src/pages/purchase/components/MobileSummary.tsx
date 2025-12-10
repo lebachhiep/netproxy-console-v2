@@ -12,6 +12,7 @@ import { couponService } from '@/services/coupon/coupon.service';
 import { orderService } from '@/services/order/order.service';
 import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
+import { t } from 'i18next';
 
 export const MobileSummary = ({
   orders,
@@ -158,16 +159,38 @@ export const MobileSummary = ({
       // Handle different order statuses
       if (order.status === 'fulfilled') {
         // Fast provider - subscriptions ready immediately
-        toast.success(`Đơn hàng #${order.order_number} đã hoàn thành!`);
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('been'),
+            action: t('payment'),
+            result: t('success')
+          })
+        );
       } else if (order.status === 'processing') {
         // Slow provider - async fulfillment
-        toast.success(`Đơn hàng #${order.order_number} đang được xử lý...`, {
-          description: 'Bạn sẽ nhận được thông báo khi proxy sẵn sàng (30-90 giây)',
-          duration: 5000
-        });
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('being'),
+            action: t('process'),
+            result: ''
+          }),
+          {
+            description: t('toast.warn.notif30sec'),
+            duration: 5000
+          }
+        );
       } else {
         // Other statuses (shouldn't happen, but handle gracefully)
-        toast.success(`Đơn hàng #${order.order_number} đã được tạo thành công!`);
+        toast.success(
+          t('detail-order', {
+            orderId: order.order_number,
+            adj: t('been'),
+            action: t('create'),
+            result: t('success')
+          })
+        );
       }
     } catch (error: any) {
       console.error('Checkout error:', error);
@@ -176,16 +199,16 @@ export const MobileSummary = ({
       const errorMessage = error.response?.data?.message || error.message || '';
 
       if (errorMessage.includes('insufficient balance')) {
-        toast.error('Số dư không đủ. Vui lòng nạp thêm tiền.');
+        toast.error(t('toast.warn.outOfBalance'));
       } else if (errorMessage.includes('Coupon') || errorMessage.includes('coupon')) {
-        toast.error('Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+        toast.error(t('toast.error.invalidDiscount'));
         cart.removeCoupon(); // Remove invalid coupon
       } else if (errorMessage.includes('plan') && errorMessage.includes('not active')) {
-        toast.error('Một số gói đã ngừng cung cấp. Vui lòng làm mới trang.');
+        toast.error(t('toast.warn.planOutdate'));
       } else if (error.code === 'ERR_NETWORK' || errorMessage.includes('network')) {
-        toast.error('Không thể kết nối. Vui lòng thử lại.');
+        toast.error(t('toast.error.connect'));
       } else {
-        toast.error('Có lỗi xảy ra. Vui lòng thử lại.');
+        toast.error(t('toast.error.unknown'));
       }
     } finally {
       setIsCheckingOut(false);
@@ -200,7 +223,7 @@ export const MobileSummary = ({
             className="w-6 h-6"
             icon={<Chevron className={clsx('w-4 h-4', isExpanded && '-rotate-90', !isExpanded && 'rotate-90')} />}
             onClick={() => setExpanded(!isExpanded)}
-            aria-label={isExpanded ? 'Thu gọn chi tiết' : 'Mở rộng chi tiết'}
+            aria-label={isExpanded ? t('detailCollap') : t('detailExpand')}
             aria-expanded={isExpanded}
           />
         </div>
@@ -217,20 +240,20 @@ export const MobileSummary = ({
                     className="w-6 h-6"
                     icon={<DismissCircle className="w-4 h-4 text-text-lo dark:text-text-lo-dark" />}
                     onClick={handleRemoveCoupon}
-                    aria-label="Xóa mã giảm giá"
+                    aria-label={t('discountRemo')}
                   />
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Input
                     icon={<></>}
-                    placeholder="Mã giảm giá"
+                    placeholder={t('discountCode')}
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleApplyCoupon()}
                     wrapperClassName="flex-1 h-10"
                     inputClassName="text-sm"
-                    aria-label="Nhập mã giảm giá"
+                    aria-label={t('enterDiscount')}
                   />
                   <Button
                     className="text-xs h-10 px-4"
@@ -238,7 +261,7 @@ export const MobileSummary = ({
                     loading={isValidatingCoupon}
                     disabled={!couponInput.trim()}
                   >
-                    Áp dụng
+                    {t('apply')}
                   </Button>
                 </div>
               )}
@@ -247,22 +270,24 @@ export const MobileSummary = ({
 
           {proxyType && (
             <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-              <span className="text-text-me dark:text-text-me-dark font-medium">IP type:</span>
+              <span className="text-text-me dark:text-text-me-dark font-medium">{t('ipType)')}:</span>
               <span className="font-semibold text-text-hi dark:text-text-hi-dark">{proxyType}</span>
             </div>
           )}
           {duration && (
             <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-              <span className="text-text-me dark:text-text-me-dark font-medium">IP Duration:</span>
-              <span className="font-semibold text-text-hi dark:text-text-hi-dark">{duration} days</span>
+              <span className="text-text-me dark:text-text-me-dark font-medium">{t('ipDuration')}:</span>
+              <span className="font-semibold text-text-hi dark:text-text-hi-dark">
+                {duration} {t('day')}{' '}
+              </span>
             </div>
           )}
           <div className="flex justify-between border-b border-border-element dark:border-border-element-dark pb-3">
-            <span className="text-text-me dark:text-text-me-dark font-medium">Total location:</span>
+            <span className="text-text-me dark:text-text-me-dark font-medium">{t('totalLoca')}:</span>
             <span className="font-semibold text-text-hi dark:text-text-hi-dark">{totalLocation}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-text-me dark:text-text-me-dark font-medium">Total number of IPs:</span>
+            <span className="text-text-me dark:text-text-me-dark font-medium">{t('totalIP')}:</span>
             <span className="font-semibold text-text-hi dark:text-text-hi-dark">{totalIps}</span>
           </div>
         </div>
@@ -272,21 +297,21 @@ export const MobileSummary = ({
           {useCartContext && cart && (
             <div className="flex flex-col gap-2 border-b border-border-element dark:border-border-element-dark pb-4">
               <div className="flex justify-between text-sm">
-                <span className="text-text-me dark:text-text-me-dark">Tổng phụ:</span>
+                <span className="text-text-me dark:text-text-me-dark">{t('subtotal')}:</span>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold">${subtotalForCalculation.toFixed(2)}</span>
               </div>
               {cart.discountAmount > 0 && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-text-me dark:text-text-me-dark">Giảm giá:</span>
+                  <span className="text-text-me dark:text-text-me-dark">{t('historyPage.messages.discount')}:</span>
                   <span className="text-green dark:text-green-dark font-semibold">-${cart.discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <div className="flex justify-between text-sm mt-2 pt-2 border-t border-border-element dark:border-border-element-dark">
-                <span className="text-text-me dark:text-text-me-dark">Số dư hiện tại:</span>
+                <span className="text-text-me dark:text-text-me-dark">{t('currentBalance')}:</span>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold">${balance.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-text-me dark:text-text-me-dark">Số dư sau:</span>
+                <span className="text-text-me dark:text-text-me-dark">{t('balanceAfter')}:</span>
                 <span
                   className={clsx(
                     'font-semibold',
@@ -299,7 +324,7 @@ export const MobileSummary = ({
               {hasInsufficientFunds && (
                 <div className="bg-red-bg dark:bg-red-bg p-2 rounded-lg mt-2">
                   <span className="text-red dark:text-red-dark text-xs font-medium">
-                    ⚠️ Số dư không đủ. Vui lòng nạp thêm ${Math.abs(balanceAfter).toFixed(2)}
+                    ⚠️ {t('toast.warn.outOfBalance')} ${Math.abs(balanceAfter).toFixed(2)}
                   </span>
                 </div>
               )}
@@ -308,7 +333,7 @@ export const MobileSummary = ({
 
           <div className="flex justify-between items-center font-semibold text-lg">
             <div className="py-2">
-              <span className="text-text-hi dark:text-text-hi-dark font-averta">Tổng cộng:</span>
+              <span className="text-text-hi dark:text-text-hi-dark font-averta">{t('sum')}:</span>
             </div>
             <div className="flex items-start gap-1 font-averta">
               <span className="text-green font-semibold text-lg tracking-[-0.66px]">$</span>
@@ -323,7 +348,7 @@ export const MobileSummary = ({
               loading={isCheckingOut}
               onClick={useCartContext ? handleCheckout : undefined}
             >
-              THANH TOÁN
+              {t('checkOut')}
             </Button>
           </div>
         </div>

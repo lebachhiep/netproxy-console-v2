@@ -45,7 +45,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
       toast.success(AUTH_MESSAGES.LOGOUT_SUCCESS);
       navigate('/login');
     } catch (error) {
-      toast.error('Đăng xuất thất bại');
+      toast.error(t('toast.error.logout'));
       console.log('Logout error:', error);
     }
   };
@@ -102,8 +102,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const handleEnter = async (value: string) => {
     const trimmedCode = value.trim();
     if (!trimmedCode) {
-      toast.error('Vui lòng nhập mã kích hoạt');
-      return;
+      toast.error(t('toast.warn.enterActiveCode'));
     }
 
     if (isRedeeming) return;
@@ -120,7 +119,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
       }
 
       if (response.order_id) {
-        toast.success(`Đơn hàng đã được tạo thành công!`, {
+        toast.success(t('toast.success.orderCreate'), {
           duration: 5000
         });
       }
@@ -186,7 +185,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
           <div className="flex-1 min-w-0">
             <HeaderSearchInput
               ref={inputRef}
-              placeholder={'Nhập mã kích hoạt'}
+              placeholder={t('navbar.activeCode')}
               wrapperClassName="rounded-[100px] h-10"
               value={code}
               onChange={(e) => handleChange(e.target.value)}

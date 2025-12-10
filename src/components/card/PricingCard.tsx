@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { CountrySelectionModal } from '../modals/CountrySelectionModal';
 import { planService } from '@/services/plan/plan.service';
 import { getTabKeyFromPlan } from '@/contexts/CartContext';
-
+import { useTranslation } from 'react-i18next';
 interface Feature {
   icon?: React.ReactNode;
   label: React.ReactNode;
@@ -55,7 +55,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
   const cart = enableCart ? useCart() : null;
   const [isAdding, setIsAdding] = useState(false);
   const [showCountryModal, setShowCountryModal] = useState(false);
-
+  const { t } = useTranslation();
   const handleClick = async (e: React.MouseEvent) => {
     // If cart is enabled and plan is provided, add to cart
     if (enableCart && plan && cart) {
@@ -68,7 +68,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       if (plan.type === 'rotating') {
         cart.addToCart(tabKey, plan, 1, cartOptions);
         if (!preventNotification) {
-          toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+          toast.success(t('added') + ` "${plan.name}" ` + t('toCard'));
         }
         setIsAdding(false);
         return;
@@ -87,7 +87,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
           // No country selection needed, add directly to cart
           cart.addToCart(tabKey, plan, 1, cartOptions);
           if (!preventNotification) {
-            toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+            toast.success(t('added') + ` "${plan.name}" ` + t('toCard'));
           }
           setIsAdding(false);
         }
@@ -96,7 +96,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
         console.log('Country selection not available, adding directly to cart: ', error);
         cart.addToCart(tabKey, plan, 1, cartOptions);
         if (!preventNotification) {
-          toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+          toast.success(t('added') + ` "${plan.name}" ` + t('toCard'));
         }
         setIsAdding(false);
       }
@@ -111,7 +111,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
       const tabKey = getTabKeyFromPlan(plan);
       cart.addToCart(tabKey, plan, quantity, cartOptions, country, calculatedPrice);
       if (!preventNotification) {
-        toast.success(`Đã thêm "${plan.name}" vào giỏ hàng`);
+        toast.success(t('added') + ` "${plan.name}" ` + t('toCard'));
       }
     }
   };
@@ -126,7 +126,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
         {tag && (
           <span className="absolute -top-3 -left-[2px] flex items-center gap-1 bg-primary dark:bg-primary-dark text-white text-xs font-semibold pl-1 pr-3 py-1 rounded-[50px_100px_100px_0] shadow">
             {tag.icon && <span className="text-sm">{tag.icon}</span>}
-            {tag.text}
+            {tag.text.toLowerCase() === 'popular' ? t('popular') : tag.text}
           </span>
         )}
 

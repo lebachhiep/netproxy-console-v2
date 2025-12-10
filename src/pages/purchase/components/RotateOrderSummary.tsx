@@ -10,6 +10,7 @@ import vi from 'i18n-iso-countries/langs/vi.json';
 import { RotateDesktopSummary } from './RotateDesktopSummary';
 import { toast } from 'sonner';
 import clsx from 'clsx';
+import { t } from 'i18next';
 
 // Register locales
 countries.registerLocale(en);
@@ -72,7 +73,7 @@ const RotateOrderSummary: React.FC<Props> = ({
     return (
       <div className="flex flex-col items-center justify-center  bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
         <CartFilled className="w-16 h-16 text-text-lo dark:text-text-lo-dark mb-4 opacity-70" />
-        <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">Giỏ hàng trống</h2>
+        <h2 className="text-text-hi dark:text-text-hi-dark font-semibold text-lg mb-2">{t('emptyCard')}</h2>
         <p className="text-text-me dark:text-text-me-dark text-sm mb-6">
           {useCartContext ? 'Hãy chọn gói dịch vụ để thêm vào giỏ hàng.' : 'Hãy chọn quốc gia để thêm IP vào giỏ hàng của bạn.'}
         </p>
@@ -224,9 +225,9 @@ const RotateOrderSummary: React.FC<Props> = ({
           <div className="flex-1 flex flex-col overflow-visible  rounded-xl shadow-xs text-sm sticky bottom-5 bg-bg-canvas dark:dark:bg-bg-primary-dark border border-border-element dark:border-border-element-dark">
             {/* Header row */}
             <div className="grid grid-cols-[1fr_1fr_1fr] gap-5 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark p-2">
-              <span className="w-full text-start">Giá</span>
-              <span className="w-full text-center">Số lượng</span>
-              <span className="text-end w-full">Thành tiền</span>
+              <span className="w-full text-start">{t('price')}</span>
+              <span className="w-full text-center">{t('quantity')}</span>
+              <span className="text-end w-full">{t('totalPrice')}</span>
             </div>
 
             {/* List items */}
@@ -261,7 +262,7 @@ const RotateOrderSummary: React.FC<Props> = ({
                                 )}
                                 onClick={() => {
                                   if (item.quantity <= 1) {
-                                    toast.error('Số lượng tối thiểu là 1');
+                                    toast.error(t('toast.success.minAmount'));
                                     return;
                                   }
                                   handleUpdateQuantity(item, item.quantity - 1);

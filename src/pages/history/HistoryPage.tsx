@@ -16,7 +16,7 @@ import { OrderDisplay, OrderType, OrderStatus, ORDER_TYPE_LABELS, ORDER_STATUS_D
 import { transformOrder, formatDateForAPI, getOrderTypeColor, formatOrderDate } from '@/utils/order.utils';
 import { OrderDetailsModal } from './components/OrderDetailsModal';
 import { usePageTitle } from '@/hooks/usePageTitle';
-
+import { useTranslation } from 'react-i18next';
 const HistoryPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Lịch sử' });
   const { isMobile, isTablet } = useResponsive();
@@ -40,7 +40,7 @@ const HistoryPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
-
+  const { t } = useTranslation();
   // Fetch orders
   const fetchOrders = useCallback(async () => {
     try {
@@ -77,11 +77,11 @@ const HistoryPage: React.FC = () => {
       const response = await orderService.getOrders(params);
 
       // Transform data for display
-      const transformedData = response.orders.map(transformOrder);
+      const transformedData = response.orders.map((order) => transformOrder(order, t));
       setOrders(transformedData);
       setTotal(response.total);
     } catch (err: any) {
-      toast.error('Không thể tải lịch sử đơn hàng');
+      toast.error(t('toast.error.loadOrderHistory'));
       console.error('Error fetching orders:', err);
     } finally {
       setLoading(false);
@@ -122,7 +122,7 @@ const HistoryPage: React.FC = () => {
 
   const handleRefresh = () => {
     fetchOrders();
-    toast.success('Đã làm mới dữ liệu');
+    toast.success('toast.success.newData');
   };
 
   const handleRowClick = (order: OrderDisplay) => {
@@ -147,7 +147,7 @@ const HistoryPage: React.FC = () => {
   const columns: TableColumn<OrderDisplay>[] = [
     {
       key: 'stt',
-      title: 'STT',
+      title: t('historyPage.columns.stt'),
       width: '60px',
       align: 'center',
       render: (_value, _record, index) => index + 1,
@@ -155,7 +155,7 @@ const HistoryPage: React.FC = () => {
     },
     {
       key: 'orderNumber',
-      title: 'Mã đơn hàng',
+      title: t('historyPage.columns.orderNumber'),
       width: 200,
       align: 'center',
       sortable: true,
@@ -168,7 +168,7 @@ const HistoryPage: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation();
               copyToClipboard(value);
-              toast.success('Đã sao chép mã đơn hàng vào clipboard');
+              toast.success(t('toast.success.copyOrderId'));
             }}
           />
         </div>
@@ -176,20 +176,20 @@ const HistoryPage: React.FC = () => {
     },
     {
       key: 'createdAt',
-      title: 'Thời gian',
+      title: t('historyPage.columns.createdAt'),
       width: 150,
       render: (value) => formatOrderDate(value.toISOString())
     },
     {
       width: 150,
       key: 'typeLabel',
-      title: 'Loại đơn',
+      title: t('historyPage.columns.type'),
       align: 'center',
       render: (value, record) => <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
     },
     {
       key: 'total',
-      title: 'Tổng tiền',
+      title: t('historyPage.columns.total'),
       width: 150,
       align: 'center',
       render: (value, record) => (
@@ -199,23 +199,23 @@ const HistoryPage: React.FC = () => {
           <div className="absolute z-50 bottom-full left-0 mb-2 hidden group-hover:block w-48 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-lg p-3">
             <div className="space-y-1 text-xs">
               <div className="flex justify-between">
-                <span className="text-text-lo dark:text-text-lo-dark">Tạm tính:</span>
+                <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.subtotal')}</span>
                 <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.subtotal}</span>
               </div>
               {record.discountAmount > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-text-lo dark:text-text-lo-dark">Giảm giá:</span>
+                  <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.discount')}</span>
                   <span className="text-green">-{record.priceBreakdown.discount}</span>
                 </div>
               )}
               {record.taxAmount > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-text-lo dark:text-text-lo-dark">Thuế:</span>
+                  <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.tax')}</span>
                   <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.tax}</span>
                 </div>
               )}
               <div className="border-t border-border-element dark:border-border-element-dark pt-1 mt-1 flex justify-between font-semibold">
-                <span className="text-text-hi dark:text-text-hi-dark">Tổng:</span>
+                <span className="text-text-hi dark:text-text-hi-dark">{t('historyPage.messages.total')}</span>
                 <span className="text-blue">{record.priceBreakdown.total}</span>
               </div>
             </div>
@@ -245,14 +245,14 @@ const HistoryPage: React.FC = () => {
     {
       width: 150,
       key: 'statusDisplay',
-      title: 'Trạng thái',
+      title: t('historyPage.columns.status'),
       align: 'center',
       render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
     },
     {
       width: 150,
       key: 'description',
-      title: 'Mô tả',
+      title: t('historyPage.columns.description'),
       align: 'left',
       render: (value) => <div className="truncate">{value || '...'}</div>
     }
@@ -272,7 +272,7 @@ const HistoryPage: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-3 w-full flex-wrap">
             {/* Search field */}
             <Input
-              placeholder="Tìm kiếm theo mã đơn hàng..."
+              placeholder={t('historyPage.searchPlaceholder')}
               wrapperClassName="bg-bg-input border-2 h-10 w-full md:w-[240px]"
               icon={<MagnifyingGlass />}
               value={searchQuery}
@@ -282,7 +282,7 @@ const HistoryPage: React.FC = () => {
             <DateRangePicker
               value={dateRange}
               onChange={setDateRange}
-              placeholder="Chọn khoảng thời gian"
+              placeholder={t('DateRangePicker')}
               className="h-10 w-full md:w-[220px]"
               triggerClassName="dark:pseudo-border-top dark:border-transparent"
             />
@@ -290,10 +290,10 @@ const HistoryPage: React.FC = () => {
             <Select
               value={selectedType}
               onChange={(val) => setSelectedType(val as OrderType | '')}
-              placeholder="Tất cả loại đơn"
+              placeholder={t('historyPage.allTypes')}
               className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
               options={[
-                { value: '', label: 'Tất cả loại đơn' },
+                { value: '', label: t('historyPage.allTypes') },
                 ...Object.entries(ORDER_TYPE_LABELS).map(([value, label]) => ({
                   value,
                   label
@@ -305,7 +305,7 @@ const HistoryPage: React.FC = () => {
             <Select
               value={selectedStatus}
               onChange={(val) => setSelectedStatus(val as OrderStatus | '')}
-              placeholder="Tất cả trạng thái"
+              placeholder={t('historyPage.allStatuses')}
               className="h-10 w-full md:w-[200px] dark:pseudo-border-top dark:border-transparent"
               options={[
                 { value: '', label: 'Tất cả trạng thái' },

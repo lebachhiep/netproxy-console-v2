@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import ProfileForm from '../ProfileForm';
 import { SuccessModal } from './SuccessModal';
-
+import { useTranslation } from 'react-i18next';
 interface AccountProfileModalProps {
   open: boolean;
   user?: UserProfile | null;
@@ -22,8 +22,9 @@ interface AccountProfileModalProps {
 
 export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, user, onClose }) => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
-  const [apiValue, setApiValue] = useState('https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...');
+  const apiValue = 'https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...';
   const [isHideApiValue, setIsHideApiValue] = useState(true);
+  const { t } = useTranslation();
   const accountTabs = [
     { key: 'info', label: 'Thông tin chung' },
     { key: 'change-password', label: 'Đổi mật khẩu' }
@@ -70,7 +71,8 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
       console.log('Profile data:', data);
       // TODO: call API update profile
     } catch (error) {
-      toast.error('Cập nhật hồ sơ thất bại');
+      toast.error('toast.error.profileUpdated');
+      console.log('Profile update error:', error);
     }
   };
 
@@ -128,7 +130,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ open, 
                       icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
                       onClick: () => {
                         navigator.clipboard.writeText(apiValue);
-                        toast.success('Đã sao chép API Endpoint');
+                        toast.success(t('toast.success.copyAPIEndPoint'));
                       }
                     }
                   ]}

@@ -1,45 +1,40 @@
 import androidIcon from '@/assets/images/android.png';
 import chromeIcon from '@/assets/images/chrome.png';
-import linuxIcon from '@/assets/images/linux.png';
 import macIcon from '@/assets/images/mac.png';
 import windowsIcon from '@/assets/images/windows.png';
 import { AppCard } from '@/components/card/AppCard';
 import { pageVariants } from '@/utils/animation';
 import { motion } from 'framer-motion';
 import { usePageTitle } from '@/hooks/usePageTitle';
-
+import { useTranslation } from 'react-i18next';
 const SupportSoftwarePage = () => {
   const pageTitle = usePageTitle({ pageName: 'Phần mềm hỗ trợ' });
+  const { t } = useTranslation();
   const apps = [
     {
       icon: <img src={chromeIcon} alt="Chrome" className="w-10 h-10" />,
-      title: 'Ứng dụng trên Chrome',
-      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      title: t('support.chrome.title'),
+      description: t('support.chrome.content'),
       href: 'https://chromewebstore.google.com/detail/mnloefcpaepkpmhaoipjkpikbnkmbnic?utm_source=item-share-cb'
     },
     {
       icon: <img src={androidIcon} alt="Android" className="w-10 h-10" />,
-      title: 'Ứng dụng trên Android',
-      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      title: t('support.android.title'),
+      description: t('support.android.content'),
       href: 'https://play.google.com/store/apps/details?id=com.scheler.superproxy'
     },
     {
       icon: <img src={windowsIcon} alt="Windows" className="w-10 h-10" />,
-      title: 'Ứng dụng trên Windows',
-      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      title: t('support.window.title'),
+      description: t('support.window.content'),
       href: 'https://www.proxifier.com/'
     },
     {
       icon: <img src={macIcon} alt="Mac" className="w-10 h-10" />,
-      title: 'Ứng dụng trên Mac',
-      description: 'It is a long established fact that a reader will be distracted by the readable content',
+      title: t('support.mac.title'),
+      description: t('support.mac.content'),
       href: 'https://apps.apple.com/us/app/shadowrocket/id932747118'
     }
-    // {
-    //   icon: <img src={linuxIcon} alt="Linux" className="w-10 h-10" />,
-    //   title: 'Ứng dụng trên Linux',
-    //   description: 'It is a long established fact that a reader will be distracted by the readable content'
-    // }
   ];
 
   return (

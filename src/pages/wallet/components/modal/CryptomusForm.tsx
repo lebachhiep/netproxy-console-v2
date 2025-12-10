@@ -4,7 +4,7 @@ import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
 import { useCryptomusPayment } from '@/hooks/usePayments';
 import type { CryptoService } from '@/services/payment/payment.types';
-
+import { useTranslation } from 'react-i18next';
 const MIN_AMOUNT = 10;
 
 interface CryptomusFormProps {
@@ -16,13 +16,13 @@ interface CryptomusFormProps {
 export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSuccess, amount: propAmount }) => {
   const [amount, setAmount] = useState(propAmount ? propAmount.toString() : '');
   const { mutate: generatePayment, isPending } = useCryptomusPayment();
-
+  const { t } = useTranslation();
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const numAmount = parseFloat(amount);
 
     if (isNaN(numAmount) || numAmount < MIN_AMOUNT) {
-      toast.error(`Số tiền tối thiểu là $${MIN_AMOUNT}`);
+      toast.error(t('toast.warn.minMoney') + MIN_AMOUNT);
       return;
     }
 
@@ -31,11 +31,12 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
       {
         onSuccess: (data) => {
           window.open(data.payment_url, '_blank');
-          toast.success('Đã mở cửa sổ thanh toán');
+          toast.success(t('toast.success.windowPaymentPop'));
           onSuccess();
         },
         onError: (error) => {
-          toast.error(error.message || 'Không thể tạo thanh toán');
+          toast.error(t('toast.error.cantCreatePay'));
+          console.log('Cryptomus payment error:', error);
         }
       }
     );
@@ -46,7 +47,9 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
   return (
     <form onSubmit={handleSubmit} className="p-5 space-y-4">
       <div>
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">Số tiền (USD)</label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">
+          {t('money')} {`(USD)`}
+        </label>
         <InputField
           type="number"
           min={MIN_AMOUNT}
@@ -60,7 +63,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
 
       {availableServices.length > 0 && (
         <div className="p-3 rounded-lg bg-bg-mute dark:bg-bg-mute-dark border-2 border-border-element dark:border-border-element-dark">
-          <p className="text-sm text-text-lo dark:text-text-lo-dark mb-2">Tiền điện tử được hỗ trợ:</p>
+          <p className="text-sm text-text-lo dark:text-text-lo-dark mb-2">{t('supportCryp')}</p>
           <div className="flex flex-wrap gap-2">
             {availableServices.map((service) => (
               <span
@@ -75,12 +78,10 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
       )}
 
       <Button type="submit" variant="primary" loading={isPending} className="w-full h-10">
-        Thanh toán
+        {t('payment')}
       </Button>
 
-      <p className="text-xs text-text-lo dark:text-text-lo-dark text-center">
-        Bạn sẽ được chuyển đến trang thanh toán Cryptomus để chọn loại tiền điện tử
-      </p>
+      <p className="text-xs text-text-lo dark:text-text-lo-dark text-center">{t('toCryptomus')}</p>
     </form>
   );
 };

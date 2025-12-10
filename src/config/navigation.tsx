@@ -114,13 +114,13 @@ export const navigationSections = (t: (key: string) => string): NavigationSectio
           hidden: true
         },
         {
-          title: t('order'),
+          title: t('order.name'),
           icon: <ArrowCounter />,
           iconClass: 'text-blue',
           breadcrumbIcon: <DashboardFilled width={32} height={32} className="text-primary" />,
           path: '/order',
           name: '/order',
-          breadcrumb: t('order'),
+          breadcrumb: t('order.name'),
           hidden: true
         }
       ]

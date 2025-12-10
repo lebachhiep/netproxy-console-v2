@@ -45,7 +45,7 @@ export const Navbar: React.FC = () => {
       toast.success(AUTH_MESSAGES.LOGOUT_SUCCESS);
       navigate('/login');
     } catch (error) {
-      toast.error('Đăng xuất thất bại');
+      toast.error(t('toast.error.logout'));
       console.log('Logout error:', error);
     }
   };
@@ -104,7 +104,7 @@ export const Navbar: React.FC = () => {
   const handleEnter = async (value: string) => {
     const trimmedCode = value.trim();
     if (!trimmedCode) {
-      toast.error('Vui lòng nhập mã kích hoạt');
+      toast.error(t('toast.warn.enterActiveCode'));
       return;
     }
 
@@ -122,7 +122,7 @@ export const Navbar: React.FC = () => {
       }
 
       if (response.order_id) {
-        toast.success(`Đơn hàng đã được tạo thành công!`, {
+        toast.success(t('toast.success.orderCreate'), {
           duration: 5000
         });
       }
@@ -193,7 +193,7 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-2 flex-1 justify-end">
           <HeaderSearchInput
             ref={inputRef}
-            placeholder={'Nhập mã kích hoạt'}
+            placeholder={t('navbar.activeCode')}
             wrapperClassName="rounded-[100px]"
             value={code}
             onChange={(e) => handleChange(e.target.value)}

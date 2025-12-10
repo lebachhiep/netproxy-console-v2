@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { SubscriptionWithPlan, ProxyCredentials } from '@/types/subscription';
 import { useSubscriptionData } from '@/stores/subscription.store';
 import { useAuthStore } from '@/stores/auth.store';
-
+import { useTranslation } from 'react-i18next';
 interface ProxyConnectionInfoProps {
   subscription: SubscriptionWithPlan;
   username?: string; // Current user's username for generating proxy username
@@ -16,11 +16,7 @@ interface ProxyConnectionInfoProps {
 
 // Helper function to check if credentials are valid
 const hasValidCredentials = (creds: any): creds is ProxyCredentials => {
-  return creds &&
-         typeof creds === 'object' &&
-         'proxy_ip' in creds &&
-         'username' in creds &&
-         'password' in creds;
+  return creds && typeof creds === 'object' && 'proxy_ip' in creds && 'username' in creds && 'password' in creds;
 };
 
 // Country options for username builder
@@ -38,6 +34,7 @@ const countryOptions = [
 ];
 
 export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscription, username: propUsername }) => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<string>('us'); // Default US
   const [sessionId, setSessionId] = useState('');
@@ -50,7 +47,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
   const authUsername = authUser?.username || propUsername || 'user';
 
   const hasExternalCredentials = hasValidCredentials(subscription.provider_credentials);
-  const isRotatingProxy = subscription.plan?.type === 'rotating' || subscription.plan?.category === 'rotating';
+  // const isRotatingProxy = subscription.plan?.type === 'rotating' || subscription.plan?.category === 'rotating';
 
   // Load saved country and sessionId from store on mount
   useEffect(() => {
@@ -79,13 +76,13 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
   const handleRefreshSessionId = () => {
     const newSessionId = subscriptionData.generateNewSessionId();
     setSessionId(newSessionId);
-    toast.success('Session ID refreshed');
+    toast.success(t('toast.success.sessionF5'));
   };
 
   // Build username for internal plans
   // Format: npx-customer-{username}-country-{country_code}-session-{session_id}
   const generatedUsername = useMemo(() => {
-    let base = `npx-customer-${authUsername}`;
+    const base = `npx-customer-${authUsername}`;
     const parts: string[] = [];
 
     // Always add country (default or selected)
@@ -104,7 +101,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
-    toast.success(`Đã sao chép ${label}`);
+    toast.success(t('copied') + label);
   };
 
   // Render external plan connection info (with provider_credentials)
@@ -128,16 +125,12 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
       <div className="p-5 flex flex-col gap-5">
         {/* Header */}
         <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-            Thông tin kết nối proxy
-          </span>
+          <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Thông tin kết nối proxy</span>
         </div>
 
         {/* RFC Format 1: http://user:pass@host:port */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-            Format 1: http://user:pass@host:port
-          </label>
+          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Format 1: http://user:pass@host:port</label>
           <ApiInput
             className="h-10"
             value={format1}
@@ -161,9 +154,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
         {/* RFC Format 2: host:port:username:password */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-            Format 2: host:port:username:password
-          </label>
+          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Format 2: host:port:username:password</label>
           <ApiInput
             className="h-10"
             value={format2}
@@ -187,9 +178,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
         {/* RFC Format 3: username:password@host:port */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-            Format 3: username:password@host:port
-          </label>
+          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Format 3: username:password@host:port</label>
           <ApiInput
             className="h-10"
             value={format3}
@@ -213,9 +202,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
         {/* RFC Format 4: host,port,username,password */}
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-            Format 4: host,port,username,password
-          </label>
+          <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Format 4: host,port,username,password</label>
           <ApiInput
             className="h-10"
             value={format4}
@@ -256,16 +243,12 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
     <div className="p-5 flex flex-col gap-5">
       {/* Header */}
       <div className="flex items-center gap-2">
-        <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-          Thông tin kết nối proxy
-        </span>
+        <span className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Thông tin kết nối proxy</span>
       </div>
 
       {/* Proxy Host */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-          Proxy Host
-        </label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Proxy Host</label>
         <ApiInput
           className="h-10"
           value={host}
@@ -334,7 +317,8 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
         </div>
 
         <p className="text-xs text-text-lo dark:text-text-lo-dark">
-          Format: <code className="bg-bg-mute dark:bg-bg-mute-dark px-1 py-0.5 rounded">
+          Format:{' '}
+          <code className="bg-bg-mute dark:bg-bg-mute-dark px-1 py-0.5 rounded">
             npx-customer-{'{username}'}-country-{'{xx}'}-session-{'{id}'}
           </code>
         </p>
@@ -342,9 +326,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
       {/* Password (API Key) */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">
-          Password (API Key)
-        </label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark">Password (API Key)</label>
         <ApiInput
           className="h-10"
           value={showPassword ? password : '•'.repeat(password.length)}
@@ -368,13 +350,17 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
 
       {/* Example configuration */}
       <div className="bg-bg-mute dark:bg-bg-mute-dark p-4 rounded-lg">
-        <p className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2">
-          Ví dụ cấu hình:
-        </p>
+        <p className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2">Ví dụ cấu hình:</p>
         <div className="text-xs text-text-me dark:text-text-me-dark space-y-1 font-mono">
-          <div>Host: <span className="text-blue dark:text-blue-dark">{host}</span></div>
-          <div>Username: <span className="text-blue dark:text-blue-dark">{generatedUsername}</span></div>
-          <div>Password: <span className="text-blue dark:text-blue-dark">{'•'.repeat(20)}</span></div>
+          <div>
+            Host: <span className="text-blue dark:text-blue-dark">{host}</span>
+          </div>
+          <div>
+            Username: <span className="text-blue dark:text-blue-dark">{generatedUsername}</span>
+          </div>
+          <div>
+            Password: <span className="text-blue dark:text-blue-dark">{'•'.repeat(20)}</span>
+          </div>
         </div>
       </div>
     </div>

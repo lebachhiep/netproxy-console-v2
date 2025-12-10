@@ -6,6 +6,7 @@ import { NodeStatus } from '@/services/server/server.types';
 import { itemVariants } from '@/utils/animation';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { t } from 'i18next';
 import { useMemo } from 'react';
 
 export const CheckingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -19,7 +20,7 @@ export const CheckingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: (
     return [
       {
         key: 'stt',
-        title: 'STT',
+        title: t('STT'),
         width: '60px',
         align: 'center',
         render: (_, _record, index) => index + 1,

@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CalendarPlus } from '../icons';
-
+import { useTranslation } from 'react-i18next';
 interface DateRange {
   from: Date | null;
   to: Date | null;
 }
-
 interface DateRangePickerProps {
   value?: DateRange;
   onChange: (range: DateRange) => void;
@@ -13,7 +12,6 @@ interface DateRangePickerProps {
   className?: string;
   triggerClassName?: string;
 }
-
 const formatDate = (date: Date): string => {
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -67,31 +65,36 @@ const getMonthDays = (year: number, month: number): Date[] => {
 export const DateRangePicker: React.FC<DateRangePickerProps> = ({
   value = { from: null, to: null },
   onChange,
-  placeholder = 'Chọn khoảng thời gian',
+  placeholder,
   className = '',
   triggerClassName = ''
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
+
+  const placeholderText = useMemo(() => {
+    return placeholder || t('DateRangePicker') || 'Select date range';
+  }, [placeholder, t]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const days = getMonthDays(year, month);
 
   const monthNames = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
+    t('months.january') || 'January',
+    t('months.february') || 'February',
+    t('months.march') || 'March',
+    t('months.april') || 'April',
+    t('months.may') || 'May',
+    t('months.june') || 'June',
+    t('months.july') || 'July',
+    t('months.august') || 'August',
+    t('months.september') || 'September',
+    t('months.october') || 'October',
+    t('months.november') || 'November',
+    t('months.december') || 'December'
   ];
 
   const handleSelect = (day: Date) => {
@@ -144,7 +147,7 @@ export const DateRangePicker: React.FC<DateRangePickerProps> = ({
     } else if (value.from) {
       return formatDate(value.from);
     }
-    return placeholder;
+    return placeholderText;
   };
 
   const hasValue = value.from && value.to;

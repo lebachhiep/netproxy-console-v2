@@ -22,6 +22,7 @@ import { walletService } from '@/services/wallet/wallet.service';
 import { WalletBalance } from '@/services/wallet/wallet.types';
 import { useAuth } from '@/hooks/useAuth';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { InputField } from '@/components/input/InputField';
@@ -32,6 +33,7 @@ import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
 
 const WalletPage: React.FC = () => {
   const { data: paymentMethods } = usePaymentMethods();
+  const { t } = useTranslation();
   const pageTitle = usePageTitle({ pageName: 'Xem ví' });
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
@@ -164,7 +166,7 @@ const WalletPage: React.FC = () => {
       const balanceData = await walletService.getBalance();
       setBalance(balanceData);
     } catch (error) {
-      toast.error('Không thể tải thông tin ví');
+      toast.error(t('toast.success.walletLoad'));
       console.log('Error fetching wallet balance:', error);
     }
   }, []);
@@ -194,17 +196,16 @@ const WalletPage: React.FC = () => {
       const response = await transactionService.getBalanceHistory(params);
 
       // Transform data for display
-      const transformedData = response.items.map(transformTransaction);
+      const transformedData = response.items.map((item) => transformTransaction(item, t));
       setTransactions(transformedData);
       setTotal(response.total);
     } catch (error) {
-      toast.error('Không thể tải lịch sử giao dịch');
+      toast.error(t('toast.error.historyLoad'));
       console.log('Error fetching transaction history:', error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, searchQuery, dateRange]);
-
+  }, [currentPage, pageSize, searchQuery, dateRange, t]);
   // Fetch data on mount
   useEffect(() => {
     fetchBalance();
@@ -241,14 +242,16 @@ const WalletPage: React.FC = () => {
   const handleRefresh = () => {
     fetchBalance();
     fetchTransactions();
-    toast.success('Đã làm mới dữ liệu');
+    toast.success(t('toast.success.newData'));
   };
+
+  const walletCols = t('wallet.columns', { returnObjects: true }) as Record<string, string>;
 
   const columns: TableColumn<TransactionDisplay>[] = useMemo(() => {
     return [
       {
         key: 'stt',
-        title: 'STT',
+        title: walletCols.stt || 'STT',
         width: '60px',
         align: 'center',
         render: (_value, _record, index) => index + 1,
@@ -256,7 +259,7 @@ const WalletPage: React.FC = () => {
       },
       {
         key: 'id',
-        title: 'Mã',
+        title: walletCols.id || 'ID',
         width: '160px',
         align: 'left',
         fixed: 'left',
@@ -268,7 +271,7 @@ const WalletPage: React.FC = () => {
               className="text-blue cursor-pointer ml-2"
               onClick={() => {
                 copyToClipboard(value);
-                toast.success('Đã sao chép mã giao dịch vào clipboard');
+                toast.success(t('toast.success.transactionIdClipboard'));
               }}
             />
           </div>
@@ -276,20 +279,20 @@ const WalletPage: React.FC = () => {
       },
       {
         key: 'date',
-        title: 'Thời gian',
+        title: walletCols.date || 'Date',
         width: 200,
         render: (value) => value || '-'
       },
       {
         width: 120,
         key: 'typeLabel',
-        title: 'Loại',
+        title: walletCols.type || 'Nạp Tiền',
         align: 'left',
         render: (value, record) => <Badge color={record.type === 'credit' ? 'green' : 'blue'}>{value}</Badge>
       },
       {
         key: 'amount',
-        title: 'Số tiền',
+        title: walletCols.amount || 'Amount',
         width: '120px',
         render: (value, record) => (
           <span className={record.type === 'credit' ? 'text-green' : 'text-red'}>
@@ -300,19 +303,19 @@ const WalletPage: React.FC = () => {
       {
         width: isMobile || isTablet ? 150 : '',
         key: 'description',
-        title: 'Mô tả',
+        title: walletCols.description || 'Description',
         align: 'left',
         render: (value) => <div className="truncate">{value || '...'}</div>
       },
       {
         key: 'status',
-        title: 'Trạng thái',
+        title: walletCols.status || 'Status',
         width: '160px',
         align: 'center',
         render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
       }
     ];
-  }, [currentPage, pageSize, isMobile, isTablet]);
+  }, [currentPage, pageSize, isMobile, isTablet, walletCols]);
 
   const handleTopup = () => {
     if (topUpMethod === 'web2m') {
@@ -331,11 +334,12 @@ const WalletPage: React.FC = () => {
         {
           onSuccess: (data) => {
             window.open(data.payment_url, '_blank');
-            toast.success('Đã mở cửa sổ thanh toán');
+            toast.success(t('toast.success.windowPaymentPop'));
             setTopUpModalOpen(false);
           },
           onError: (error) => {
-            toast.error(error.message || 'Không thể tạo thanh toán');
+            toast.error(t('toast.error.cantCreatePay'));
+            console.log('Wallet payment error:', error);
           }
         }
       );
@@ -347,11 +351,12 @@ const WalletPage: React.FC = () => {
         {
           onSuccess: (data) => {
             window.open(data.payment_url, '_blank');
-            toast.success('Đã mở cửa sổ thanh toán');
+            toast.success(t('toast.success.windowPaymentPop'));
             setTopUpModalOpen(false);
           },
           onError: (error) => {
-            toast.error(error.message || 'Không thể tạo thanh toán');
+            toast.error(t('toast.error.cantCreatePay'));
+            console.log('Wallet payment error:', error);
           }
         }
       );
@@ -371,7 +376,7 @@ const WalletPage: React.FC = () => {
         <div className="flex-1 p-5 shadow-md rounded-xl border border-border-element dark:border-border-element-dark dark:bg-bg-secondary-dark">
           <div className="flex flex-col gap-4">
             <div>
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">Nạp thêm tiền vào ví</h3>
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">{t('wallet.topUpYourWallet')}</h3>
               {/* Amount Display */}
               <div>
                 <div className="relative text-text-hi dark:text-text-hi-dark">
@@ -402,7 +407,7 @@ const WalletPage: React.FC = () => {
 
             {/* Payment Method */}
             <div className="">
-              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">Phương thức</h3>
+              <h3 className="text-sm font-bold text-text-hi dark:text-text-hi-dark mb-1 font-inter">{t('wallet.Method')}</h3>
               <Select
                 options={options}
                 value={selectedMethod}
@@ -417,7 +422,7 @@ const WalletPage: React.FC = () => {
                     setTazapayCountry(val.split('-')[1].toUpperCase());
                   }
                 }}
-                placeholder="Chọn phương thức thanh toán"
+                placeholder={t('wallet.SelectMethod') || 'Select a top-up method'}
                 placement="bottom"
                 className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
               />
@@ -428,23 +433,23 @@ const WalletPage: React.FC = () => {
 
               {/* Terms */}
               <p className="text-sm flex-1 text-text-lo dark:text-text-lo-dark font-medium">
-                Bằng cách nhấp vào tiếp tục thanh toán, bạn đồng ý với{' '}
+                {t('wallet.EULA')}
                 <a
                   href="https://netproxy.io/en/term-service"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue dark:text-blue-dark underline"
                 >
-                  Điều khoản dịch vụ
+                  {t('wallet.EULA_link1')}
                 </a>{' '}
-                và{' '}
+                {t('wallet.EULA_connect')}
                 <a
                   href="https://netproxy.io/en/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue dark:text-blue-dark underline"
                 >
-                  Chính sách bảo mật
+                  {t('wallet.EULA_link3')}
                 </a>
               </p>
               <Button
@@ -453,7 +458,7 @@ const WalletPage: React.FC = () => {
                 onClick={handleTopup}
                 loading={isTazapayPending || isCryptomusPending}
               >
-                NẠP TIỀN
+                {t('wallet.topUp')}
               </Button>
             </div>
           </div>
@@ -473,14 +478,14 @@ const WalletPage: React.FC = () => {
       {/* Filter section */}
       <motion.div variants={itemVariants} className="p-5 pb-2">
         <div>
-          <SectionTitle text="Lịch sử giao dịch" />
+          <SectionTitle text={t('wallet.history')} />
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
             {/* Left group (Search + Filter + Button) */}
             <div className={clsx('w-full flex flex-col gap-3', (isDesktop || isLargeDesktop) && '!flex-row')}>
               {/* Search field */}
               <Input
-                placeholder="Tìm kiếm giao dịch..."
+                placeholder={t('wallet.findingHistory') || 'Tìm lịch sử giao dịch...'}
                 wrapperClassName={clsx(
                   'bg-bg-input border-2 h-10 w-full sm:w-[240px]',
                   isTablet && '!w-full',
@@ -497,7 +502,7 @@ const WalletPage: React.FC = () => {
                   <DateRangePicker
                     value={dateRange}
                     onChange={setDateRange}
-                    placeholder="Chọn khoảng thời gian"
+                    placeholder={t('DateRangePicker') || 'Chọn khoảng thời gian'}
                     className={clsx('h-10 w-full sm:flex-none ', isTablet && '!w-full', (isDesktop || isLargeDesktop) && 'max-w-[220px]')}
                     triggerClassName="dark:bg-bg-primary-dark dark:pseudo-border-top dark:border-transparent"
                   />

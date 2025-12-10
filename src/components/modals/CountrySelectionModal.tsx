@@ -10,16 +10,14 @@ import { Country } from '@/services/plan/plan.types';
 import countriesLib from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
-
+import { useTranslation } from 'react-i18next';
 // Register locales
 countriesLib.registerLocale(en);
 countriesLib.registerLocale(vi);
 
 // Helper function to get country name from code in Vietnamese
 const getCountryName = (code: string): string => {
-  return countriesLib.getName(code, 'vi', { select: 'official' }) ||
-         countriesLib.getName(code, 'en', { select: 'official' }) ||
-         code;
+  return countriesLib.getName(code, 'vi', { select: 'official' }) || countriesLib.getName(code, 'en', { select: 'official' }) || code;
 };
 
 interface CountrySelectionModalProps {
@@ -34,13 +32,7 @@ interface CountrySelectionModalProps {
   };
 }
 
-export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
-  open,
-  plan,
-  onClose,
-  onAddToCart,
-  cartOptions
-}) => {
+export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({ open, plan, onClose, onAddToCart }) => {
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [quantity, setQuantity] = useState(1);
   const [calculatedPrice, setCalculatedPrice] = useState<number>(plan.price);
@@ -49,7 +41,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
   const [countryRequired, setCountryRequired] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const { t } = useTranslation();
   // Fetch countries on mount
   useEffect(() => {
     if (open) {
@@ -71,7 +63,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
       const response = await planService.getPlanCountries(plan.id);
 
       // Filter out unavailable countries
-      const availableCountries = response.countries.filter(c => c.available);
+      const availableCountries = response.countries.filter((c) => c.available);
       setCountries(availableCountries);
       setCountryRequired(response.country_required);
 
@@ -82,7 +74,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
     } catch (err) {
       console.error('Failed to fetch countries:', err);
       setError('Không thể tải danh sách quốc gia');
-      toast.error('Không thể tải danh sách quốc gia');
+      toast.error(t('toast.error.countryList'));
     } finally {
       setLoading(false);
     }
@@ -122,7 +114,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
   const handleAddToCart = () => {
     // Validate: if country is required, must select one
     if (countryRequired && !selectedCountry) {
-      toast.error('Vui lòng chọn quốc gia');
+      toast.error(t('toast.warn.pickCountry'));
       return;
     }
 
@@ -135,24 +127,19 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
   return (
     <Modal
       open={open}
-      title={`Chọn quốc gia - ${plan.name}`}
+      title={t('pickCountry') + ` - ${plan.name}`}
       onClose={onClose}
       className="max-w-2xl"
       bodyClassName="p-5"
       footerClassName="p-5"
       cancelButton={
         <Button variant="default" onClick={onClose}>
-          HỦY
+          {t('cancel').toUpperCase()}
         </Button>
       }
       actions={[
-        <Button
-          key="add"
-          onClick={handleAddToCart}
-          disabled={!canAddToCart || loading}
-          loading={isCalculating}
-        >
-          THÊM VÀO GIỎ
+        <Button key="add" onClick={handleAddToCart} disabled={!canAddToCart || loading} loading={isCalculating}>
+          {t('addToCard')}
         </Button>
       ]}
     >
@@ -161,7 +148,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
         <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
           <Button variant="default" size="sm" onClick={fetchCountries} className="mt-2">
-            Thử lại
+            {t('retry')}
           </Button>
         </div>
       )}
@@ -175,21 +162,19 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
         <>
           {/* Base Price */}
           <div className="mb-4">
-            <span className="text-text-lo dark:text-text-lo-dark text-sm">Giá cơ bản: </span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-lg">
-              ${plan.price.toFixed(2)}
-            </span>
+            <span className="text-text-lo dark:text-text-lo-dark text-sm">{t('basePrice')}: </span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-lg">${plan.price.toFixed(2)}</span>
           </div>
 
           {/* Country Selection */}
           <div className="mb-4">
             <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-              Quốc gia: {countryRequired && <span className="text-red-500">*</span>}
+              {t('Country')}: {countryRequired && <span className="text-red-500">*</span>}
             </label>
 
             {countries.length === 0 ? (
               <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
-                Hiện tại không có quốc gia khả dụng cho gói này
+                {t('noAvaiCountry')}
               </div>
             ) : (
               <div className="flex flex-wrap gap-3 max-h-60 overflow-y-auto p-4 border border-border-element dark:border-border-element-dark rounded-lg">
@@ -202,12 +187,12 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
                     `}
                   >
                     <span>🌐</span>
-                    <span>Any Country</span>
+                    <span>{t('anyCountry')}</span>
                   </div>
                 )}
 
                 {/* Country list */}
-                {countries.map(country => (
+                {countries.map((country) => (
                   <CountryTag
                     key={country.code}
                     name={getCountryName(country.code)}
@@ -222,9 +207,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
 
           {/* Quantity Selector */}
           <div className="mb-4">
-            <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-              Số lượng:
-            </label>
+            <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">{t('quantity')}:</label>
             <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] rounded-md w-32">
               <button
                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-8 h-8 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
@@ -234,7 +217,9 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
               >
                 <Subtract className="text-text-lo dark:text-text-lo-dark" aria-hidden="true" />
               </button>
-              <span className="text-text-hi dark:text-text-hi-dark font-medium" aria-label={`Số lượng: ${quantity}`}>{quantity}</span>
+              <span className="text-text-hi dark:text-text-hi-dark font-medium" aria-label={t('quantity') + `: ${quantity}`}>
+                {quantity}
+              </span>
               <button
                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-8 h-8 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                 onClick={() => handleQuantityChange(quantity + 1)}
@@ -247,14 +232,10 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({
 
           {/* Total Price */}
           <div className="pt-4 border-t border-border-element dark:border-border-element-dark">
-            <span className="text-text-lo dark:text-text-lo-dark text-sm">Tổng giá: </span>
-            <span className="text-primary dark:text-primary-dark font-bold text-2xl">
-              ${calculatedPrice.toFixed(2)}
-            </span>
+            <span className="text-text-lo dark:text-text-lo-dark text-sm">{t('sumPrice')}: </span>
+            <span className="text-primary dark:text-primary-dark font-bold text-2xl">${calculatedPrice.toFixed(2)}</span>
             {isCalculating && (
-              <span className="ml-2 text-text-lo dark:text-text-lo-dark text-sm animate-pulse">
-                (đang tính...)
-              </span>
+              <span className="ml-2 text-text-lo dark:text-text-lo-dark text-sm animate-pulse">({t('calculating')}...)</span>
             )}
           </div>
         </>

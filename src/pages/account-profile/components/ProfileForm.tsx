@@ -4,7 +4,7 @@ import { UserProfile } from '@/services/user/user.types';
 import { itemVariants } from '@/utils/animation';
 import { motion } from 'framer-motion';
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-
+import { useTranslation } from 'react-i18next';
 interface ProfileFormProps {
   control: Control<UserProfile>;
   errors: FieldErrors<UserProfile>;
@@ -12,10 +12,11 @@ interface ProfileFormProps {
 }
 
 export default function ProfileForm({ control, errors, isSubmitting }: ProfileFormProps) {
+  const { t } = useTranslation();
   return (
     <>
       {/* Form inputs */}
-      <motion.div variants={itemVariants}  className="space-y-4">
+      <motion.div variants={itemVariants} className="space-y-4">
         {/* Họ tên */}
         <Controller
           name="full_name"
@@ -27,8 +28,8 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
                 {...field}
                 value={field.value ?? ''}
                 type="text"
-                placeholder="Họ tên"
-                label="Họ tên"
+                placeholder={t('form.fullname') || 'Họ tên'}
+                label={t('form.fullname') || 'Họ tên'}
                 disabled={isSubmitting}
               />
               {errors.full_name && <span className="text-red text-sm mt-1">{errors.full_name.message}</span>}
@@ -42,14 +43,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
           control={control}
           render={({ field }) => (
             <div>
-              <InputField
-                wrapperClassName="h-10"
-                {...field}
-                type="email"
-                placeholder="Email"
-                label="Email"
-                disabled={true}
-              />
+              <InputField wrapperClassName="h-10" {...field} type="email" placeholder="Email" label="Email" disabled={true} />
               {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
             </div>
           )}
@@ -65,8 +59,8 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
                 wrapperClassName="h-10"
                 {...field}
                 type="text"
-                placeholder="Tên đăng nhập"
-                label="Tên đăng nhập"
+                placeholder={t('form.loginName') || 'Tên đăng nhập'}
+                label={t('form.loginName') || 'Tên đăng nhập'}
                 disabled={true}
               />
               {errors.username && <span className="text-red text-sm mt-1">{errors.username.message}</span>}
@@ -85,8 +79,8 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
                 {...field}
                 value={field.value ?? ''}
                 type="tel"
-                placeholder="Số điện thoại"
-                label="Số điện thoại"
+                placeholder={t('form.phone') || 'Số điện thoại'}
+                label={t('form.phone') || 'Số điện thoại'}
                 disabled={isSubmitting}
               />
               {errors.phone_number && <span className="text-red text-sm mt-1">{errors.phone_number.message}</span>}
@@ -105,7 +99,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
                 {...field}
                 value={field.value ?? ''}
                 type="url"
-                placeholder="URL ảnh đại diện"
+                placeholder={t('form.avaUrl') || 'URL Ảnh Đại Diện'}
                 label="Avatar URL"
                 disabled={isSubmitting}
               />
@@ -116,7 +110,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
 
         {/* Save button */}
         <Button type="submit" disabled={isSubmitting} className="h-10 px-4">
-          {isSubmitting ? 'Đang lưu...' : 'LƯU THÔNG TIN'}
+          {isSubmitting ? t('form.saving') || 'Đang lưu...' : t('form.buttonSave') || 'LƯU THÔNG TIN'}
         </Button>
       </motion.div>
     </>

@@ -33,7 +33,7 @@ import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { queryClient } from '@/components/auth/ProtectedRoute';
-
+import { useTranslation } from 'react-i18next';
 // ISO alpha-2 country codes
 const COUNTRY_OPTIONS = [
   { label: 'Vietnam', value: 'VN' },
@@ -66,6 +66,7 @@ interface CountrySelectCellProps {
 }
 
 const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
+  const { t } = useTranslation();
   const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
   const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
 
@@ -73,7 +74,7 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
     const countryCode = String(value);
     setSelectedCountry(countryCode);
     useSubscriptionStore.getState().setSubscriptionData(subscriptionId, { country: countryCode });
-    toast.success(`Country changed to ${countryCode}`);
+    toast.success(t('changeCountry') + countryCode);
   };
 
   return (
@@ -102,7 +103,7 @@ const OrderDetailPage = () => {
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
   const [renewCount, setRenewCount] = useState(0);
-
+  const { t } = useTranslation();
   const { data: subscriptions, refetch } = useQuery({
     queryKey: ['order-subscriptions', id, currentPage, pageSize],
     enabled: !!id,
@@ -156,7 +157,7 @@ const OrderDetailPage = () => {
           await refetch();
           setSelectedRows([]);
           setSelectedIds([]);
-          toast.success('Protocol switched successfully');
+          toast.success('toast.success.changeProtocol');
         }
       } else if (protocolModalType === 'bulk') {
         // Bulk switch - filter out rotating proxies
@@ -185,9 +186,9 @@ const OrderDetailPage = () => {
 
         // Show appropriate toast message
         if (failureCount === 0) {
-          toast.success(`Protocol switched successfully for ${successCount} subscription(s)`);
+          toast.success(t('toast.success.changeProtocol') + ' ' + t('for') + ' ' + successCount + 'subscription(s)');
         } else {
-          toast.error(`Failed to switch protocol for ${failureCount} subscription(s). ${successCount} succeeded.`);
+          toast.error(t('toast.error.changeProtocolSub') + failureCount + 'subscription(s)');
         }
       }
     } catch (err) {
@@ -200,14 +201,14 @@ const OrderDetailPage = () => {
     try {
       const subscription = subscriptions?.find((sub) => sub.id === subscriptionId);
       if (!subscription) {
-        toast.error('Subscription not found');
+        toast.error(t('toast.error.notFoundSub'));
         return;
       }
 
       // Only allow for non-rotating proxies
       const isRotating = isRotatingProxy(subscription);
       if (isRotating) {
-        toast.error('Get Proxy is not available for rotating proxies');
+        toast.error('toast.error.rotateProxy');
         return;
       }
 
@@ -235,10 +236,10 @@ const OrderDetailPage = () => {
       setSelectedRows([]);
       setSelectedIds([]);
 
-      toast.success('Proxy information retrieved successfully');
+      toast.success(t('toast.success.proxyInfo'));
     } catch (err) {
       console.error('Failed to get proxy:', err);
-      toast.error('Failed to get proxy information');
+      toast.error(t('toast.error.proxyInfo'));
     }
   };
 
@@ -272,12 +273,12 @@ const OrderDetailPage = () => {
       await copyToClipboard(proxyString);
 
       setCopiedId(record.id);
-      toast.success('Rotating proxy copied to clipboard');
+      toast.success('toast.success.rotateProxyCopy');
     } else {
       // For fixed proxy: protocol://username:password@ip:port
       const credentials = record.provider_credentials as any;
       if (!credentials || !credentials.proxy_ip) {
-        toast.error('No credentials available');
+        toast.error('toast.error.credentialFail');
         return;
       }
 
@@ -293,7 +294,7 @@ const OrderDetailPage = () => {
       await copyToClipboard(proxyString);
 
       setCopiedId(record.id);
-      toast.success('Proxy copied to clipboard');
+      toast.success(t('toast.success.proxyCopy'));
     }
 
     // Reset after 2 seconds
@@ -320,7 +321,7 @@ const OrderDetailPage = () => {
     return [
       {
         key: 'id',
-        title: 'STT',
+        title: t('STT'),
         width: 50,
         align: 'center',
         render: (_, __, index) => index + 1
@@ -338,7 +339,7 @@ const OrderDetailPage = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 copyToClipboard(record.id);
-                toast.success('Đã sao chép mã đơn hàng vào clipboard');
+                toast.success(t('toast.success.copyOrderId'));
               }}
             />
           </div>
@@ -347,7 +348,7 @@ const OrderDetailPage = () => {
       {
         width: 100,
         key: 'ip',
-        title: 'IP Address',
+        title: t('ipAddress'),
         align: 'left',
         render: (_, record) => {
           const ipAddress = getIpAddressByProxyType(record);
@@ -359,7 +360,7 @@ const OrderDetailPage = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   copyToClipboard(ipAddress);
-                  toast.success('Đã sao chép ipAddress vào clipboard');
+                  toast.success(t('toast.success.ipAddressClipboard'));
                 }}
               />
             </div>
@@ -381,7 +382,7 @@ const OrderDetailPage = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   copyToClipboard(port);
-                  toast.success('Đã sao chép ipAddress vào clipboard');
+                  toast.success(t('toast.success.ipAddressClipBoard'));
                 }}
               />
             </div>
@@ -391,7 +392,7 @@ const OrderDetailPage = () => {
       {
         width: 100,
         key: 'username',
-        title: 'Username',
+        title: t('Username'),
         align: 'left',
         render: (_, record) => {
           const username = getUsernameByProxyType(record);
@@ -403,7 +404,7 @@ const OrderDetailPage = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   copyToClipboard(username);
-                  toast.success('Đã sao chép username vào clipboard');
+                  toast.success(t('toast.success.usernameClipboard'));
                 }}
               />
             </div>
@@ -413,7 +414,7 @@ const OrderDetailPage = () => {
       {
         width: 100,
         key: 'password',
-        title: 'Password',
+        title: t('password'),
         align: 'left',
         render: (_, record) => {
           const { plainPassword } = getPasswordByProxyType(record);
@@ -425,7 +426,7 @@ const OrderDetailPage = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   copyToClipboard(plainPassword);
-                  toast.success('Đã sao chép password vào clipboard');
+                  toast.success(t('toast.success.passwordClipboard'));
                 }}
               />
             </div>
@@ -435,7 +436,7 @@ const OrderDetailPage = () => {
       {
         width: 180,
         key: 'country_code',
-        title: 'Country',
+        title: t('country'),
         align: 'center',
         render: (_, record) => {
           const isRotating = isRotatingProxy(record);
@@ -461,7 +462,7 @@ const OrderDetailPage = () => {
       {
         width: 100,
         key: 'auto_renew',
-        title: 'Renew-Auto',
+        title: t('autoRenew'),
         align: 'center',
         render: (_, record) => (
           <div>
@@ -472,14 +473,14 @@ const OrderDetailPage = () => {
       {
         width: 150,
         key: 'next_renewal_date',
-        title: 'Ngày hết hạn',
+        title: t('expired'),
         render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
       },
       {
         width: 200,
         fixed: 'right',
         key: 'actions',
-        title: 'Hành động',
+        title: t('action'),
         align: 'center',
         render: (_, record) => {
           const isRotating = isRotatingProxy(record);
@@ -528,7 +529,7 @@ const OrderDetailPage = () => {
                   link.click();
                   document.body.removeChild(link);
                   URL.revokeObjectURL(url);
-                  toast.success('Proxy exported successfully');
+                  toast.success(t('proxy.success.proxyExport'));
                 }}
                 title="Export Proxy"
               />
@@ -601,7 +602,7 @@ const OrderDetailPage = () => {
                       setSelectedIds([]);
                     }
                     setLoading(false);
-                    toast.success('Protocol switched for selected subscriptions');
+                    toast.success(t('toast.success.changeProxySub'));
                   }}
                   title="Change Protocol"
                 />
@@ -662,7 +663,7 @@ const OrderDetailPage = () => {
                   link.click();
                   document.body.removeChild(link);
                   URL.revokeObjectURL(url);
-                  toast.success('Proxies exported successfully');
+                  toast.success(t('toast.success.proxyExport'));
                 }}
                 title="Export Selected Proxies"
               />
@@ -682,7 +683,7 @@ const OrderDetailPage = () => {
                   params.delete('page');
                   params.delete('pageSize');
                   window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
-                  toast.success('Làm mới dữ liệu thành công');
+                  toast.success(t('toast.success.newData'));
                 }}
               />
             </div>

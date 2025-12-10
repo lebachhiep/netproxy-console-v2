@@ -59,7 +59,12 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
       <script>
-        document.getElementsByName('grecaptcha-badge')[0].style.display = 'none';
+        const grecaptchaBadge = document.getElementsByName('grecaptcha-badge')[0];
+        if(!grecaptchaBadge) return;
+        if(!grecaptchaBadge.style) {
+          grecaptchaBadge.style = {};
+        };
+        grecaptchaBadge.style.display = 'none';
       </script>
   </body>
 </html>

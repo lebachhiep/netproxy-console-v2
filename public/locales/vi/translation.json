@@ -354,7 +354,22 @@
     "de": "Đức",
     "fr": "Pháp",
     "ca": "Canada",
-    "au": "Úc"
+    "au": "Úc",
+    "in": "Ấn Độ",
+    "br": "Brazil",
+    "mx": "Mexico",
+    "th": "Thái Lan",
+    "ph": "Philippines",
+    "my": "Malaysia",
+    "id": "Indonesia",
+    "hk": "Hồng Kông",
+    "tw": "Đài Loan",
+    "pk": "Pakistan"
+  },
+  "orderInfoModal": {
+    "title": "Hướng dẫn sử dụng đơn hàng",
+    "welcome": "Chào mừng bạn đến với trang chi tiết đơn hàng của chúng tôi! Dưới đây là hướng dẫn sử dụng để giúp bạn tận dụng tối đa các tính năng và thông tin có sẵn.",
+    "orderInfoTitle": ""
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Mỗi"

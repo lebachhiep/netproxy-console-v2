@@ -11,6 +11,7 @@ import Tooltip from '@/components/tooltip/Tooltip';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
+import { PlanType } from '@/services/plan/plan.types';
 
 // Register locales
 countries.registerLocale(en);
@@ -36,7 +37,7 @@ interface Props {
   useCartContext?: boolean; // Flag to use cart context instead of props
   proxyType?: string; // Proxy type for dedicated tabs (e.g., "Premium ISP", "Private IPv4")
   duration?: number; // Duration in days (e.g., 7, 30)
-  filterPlanType?: 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6'; // Filter cart items by plan type
+  filterPlanType?: PlanType; // Filter cart items by plan type
 }
 
 const OrderSummary: React.FC<Props> = ({

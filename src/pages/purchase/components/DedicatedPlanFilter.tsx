@@ -281,62 +281,9 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           cart.addToCart(tabKey, selectedPlan, 1, { duration: durationOption }, countryCode, finalTotal);
           toast.success(`Đã thêm ${countryName} vào giỏ hàng`);
         }
-        // setCalculatingPrices((prev) => {
-        //   const next = new Set(prev);
-        //   next.delete(countryCode);
-        //   return next;
-        // });
       });
     }
   };
-
-  // const handleQuantityChange = async (countryCode: string, newQuantity: number) => {
-  //   if (newQuantity < 1 || !selectedPlan) return;
-
-  //   const selected = selectedCountries.get(countryCode);
-  //   if (!selected) return;
-
-  //   // Prevent multiple simultaneous updates
-  //   if (isUpdatingCartRef.current.has(countryCode)) {
-  //     return;
-  //   }
-
-  //   // Mark as updating
-  //   isUpdatingCartRef.current.add(countryCode);
-
-  //   // Use the stored price per IP (already calculated when country was added)
-  //   const pricePerIP = selected.price;
-  //   const newTotal = pricePerIP * newQuantity;
-
-  //   // Update selectedCountries with new quantity and total
-  //   setSelectedCountries((prev) => {
-  //     const next = new Map(prev);
-  //     const existing = next.get(countryCode);
-  //     if (existing) {
-  //       next.set(countryCode, {
-  //         ...existing,
-  //         quantity: newQuantity,
-  //         total: newTotal
-  //       });
-  //       setUpdateTrigger((prev) => prev + 1);
-  //     }
-  //     return next;
-  //   });
-
-  //   // Find cart item
-  //   const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
-  //   const tabItems = cart.getTabItems(tabKey);
-  //   const cartItem = tabItems.find(
-  //     (item) => item.plan.id === selectedPlan.id && item.country === countryCode && item.duration === durationOption
-  //   );
-
-  //   // Update cart: use updateCartItem to atomically update quantity and calculatedPrice
-  //   if (cartItem) {
-  //     cart.updateCartItem(tabKey, cartItem.id, newQuantity, newTotal);
-  //   }
-
-  //   isUpdatingCartRef.current.delete(countryCode);
-  // };
 
   const handleRemoveCountry = (countryCode: string) => {
     if (!selectedPlan) return;
@@ -359,14 +306,6 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     newMap.delete(countryCode);
     setSelectedCountries(newMap);
   };
-
-  // const totalPrice = useMemo(() => {
-  //   let total = 0;
-  //   selectedCountries.forEach((selected) => {
-  //     total += selected.total || 0;
-  //   });
-  //   return total;
-  // }, [selectedCountries, updateTrigger]);
 
   // Sync selectedCountries with cart items (but skip if we're currently updating)
   useEffect(() => {
@@ -538,16 +477,6 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     return countries.filter((c) => !allGrouped.has(c.code));
   }, [countries, asiaCountries, europeCountries]);
 
-  // Filtered cart items for this tab (plan + duration)
-  // const filteredCartItems = useMemo(() => {
-  //   if (!selectedPlan || !selectedPeriod) return [];
-
-  //   const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
-
-  //   const tabItems = cart.getTabItems(tabKey);
-  //   return tabItems.filter((item) => item.plan.id === selectedPlan.id && item.duration === durationOption);
-  // }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
-
   // Component to render filtered OrderSummary
   const FilteredOrderSummary: React.FC<{ selectedPlan: Plan; selectedPeriod: number }> = ({ selectedPlan, selectedPeriod }) => {
     const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
@@ -619,15 +548,6 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     // Get proxyType from plan metadata or use prop
     const displayProxyType = proxyType || selectedPlan.metadata?.proxy_type || 'Dedicated Proxy';
 
-    // Calculate totals from filtered items for dedicated tabs
-    // const filteredSubtotal = filteredItems.reduce((sum, item) => {
-    //   const itemPrice = item.calculatedPrice ?? item.plan.price;
-    //   return sum + itemPrice * item.quantity;
-    // }, 0);
-
-    // const filteredTotalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
-    // const filteredTotalLocation = filteredItems.length;
-
     // Render OrderSummary with useCartContext=true to enable coupon and balance features
     // But pass filtered orders to override the display
     return (
@@ -638,7 +558,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         onRemove={handleRemove}
         proxyType={displayProxyType}
         duration={selectedPeriod}
-        // filterPlanType="dedicated"
+        filterPlanType={'dedicated'}
       />
     );
   };
@@ -653,6 +573,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           setSelectedServer(String(value));
           setSelectedCountries(new Map());
           cart.clearTabCart(tabKey);
+          cart.clearCart();
         }}
         className="w-full h-full flex-1 flex flex-col"
         cardWrapperClass="w-full h-full flex-1 flex flex-col"
@@ -703,12 +624,12 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                       {/* Country Selection */}
                       <div>
                         <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-                          Quốc gia: {countryRequired && <span className="text-red-500">*</span>}
+                          {t('country')}: {countryRequired && <span className="text-red-500">*</span>}
                         </label>
 
                         {countries.length === 0 ? (
                           <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
-                            Hiện tại không có quốc gia khả dụng cho gói này
+                            {t('noAvaiCountry')}
                           </div>
                         ) : (
                           <div className="space-y-4">

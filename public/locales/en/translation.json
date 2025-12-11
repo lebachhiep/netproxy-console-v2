@@ -119,8 +119,8 @@
   "retry": "Retry",
   "cancel": "Cancel",
   "pickCountry": "Choose Your Country",
-  "score":"Score",
-  "money":"Money",
+  "score": "Score",
+  "money": "Money",
   "items": "Item(s)",
   "purchase": {
     "title": "Purchase",
@@ -344,19 +344,29 @@
       "pickCountry": "Please choose Your Country"
     }
   },
-  "countryList":
-  {
-    "vn":"Vietnam",
-    "us":"America",
-    "jp":"Japan",
-    "sg":"Singapore",
-    "kr":"Korea",
-    "uk":"United Kingdom",
-    "de":"Germany",
-    "fr":"France",
-    "ca":"Canada",
-    "au":"Australia"
+  "countryList": {
+    "vn": "Vietnam",
+    "us": "America",
+    "jp": "Japan",
+    "sg": "Singapore",
+    "kr": "Korea",
+    "uk": "United Kingdom",
+    "de": "Germany",
+    "fr": "France",
+    "ca": "Canada",
+    "au": "Australia",
+    "in": "India",
+    "br": "Brazil",
+    "mx": "Mexico",
+    "th": "Thailand",
+    "ph": "Philippines",
+    "my": "Malaysia",
+    "id": "Indonesia",
+    "hk": "Hong Kong",
+    "tw": "Taiwan",
+    "pk": "Pakistan"
   },
+  "orderInfoModal": {},
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Mỗi"
 }

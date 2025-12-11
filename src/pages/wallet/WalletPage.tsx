@@ -485,6 +485,7 @@ const WalletPage: React.FC = () => {
             <div className={clsx('w-full flex flex-col gap-3', (isDesktop || isLargeDesktop) && '!flex-row')}>
               {/* Search field */}
               <Input
+                inputWrapperClassName="w-full"
                 placeholder={t('wallet.findingHistory') || 'Tìm lịch sử giao dịch...'}
                 wrapperClassName={clsx(
                   'bg-bg-input border-2 h-10 w-full sm:w-[240px]',

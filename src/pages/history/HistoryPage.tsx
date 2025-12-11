@@ -126,7 +126,7 @@ const HistoryPage: React.FC = () => {
 
   const handleRefresh = () => {
     fetchOrders();
-    toast.success('toast.success.newData');
+    toast.success(t('toast.success.newData'));
   };
 
   const handleRowClick = (order: OrderDisplay) => {

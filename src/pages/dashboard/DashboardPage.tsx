@@ -40,6 +40,7 @@ import { CheckingModal } from './CheckingModal';
 import { useTranslation } from 'react-i18next';
 import { userService } from '@/services/user/user.service';
 import { useDebounce } from '@/hooks/useDebounce';
+import { tableDashboardDate } from '@/utils/date';
 const easeInOutCustom = [0.44, 0, 0.56, 1];
 
 const pageVariants: Variants = {
@@ -124,7 +125,7 @@ const DashboardPage = () => {
             plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
             subscription_count: order.subscriptions?.length || 0,
             fulfilled_at: order.fulfilled_at || order.created_at,
-            duration: firstSubscription?.plan?.duration ? moment.duration(firstSubscription.plan.duration, 'seconds').humanize() : 'N/A'
+            duration: firstSubscription?.plan?.duration ? tableDashboardDate(firstSubscription?.plan.duration, t) : 'N/A'
           };
         });
 
@@ -198,7 +199,7 @@ const DashboardPage = () => {
       title: t('duration'),
       width: isMobile || isTablet ? 150 : 200,
       render: (_, record) => {
-        return <div className="font-semibold capitalize">{record.duration}</div>;
+        return <div className="font-semibold">{record.duration}</div>;
       }
     },
     {

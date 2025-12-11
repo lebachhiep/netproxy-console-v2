@@ -12,7 +12,8 @@ import { useMemo } from 'react';
 export const CheckingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { data, isLoading } = useQuery({
     queryKey: ['server-check-status'],
-    queryFn: () => serverService.checkServerStatus()
+    queryFn: () => serverService.checkServerStatus(),
+    enabled: isOpen
   });
   const { isMobile, isTablet } = useResponsive();
 

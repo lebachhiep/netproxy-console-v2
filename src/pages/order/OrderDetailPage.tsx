@@ -37,27 +37,27 @@ import { queryClient } from '@/components/auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useNavbar } from '@/contexts/NavbarContext';
 // ISO alpha-2 country codes
-const COUNTRY_OPTIONS = [
-  { label: 'Vietnam', value: 'VN' },
-  { label: 'United States', value: 'US' },
-  { label: 'United Kingdom', value: 'GB' },
-  { label: 'Japan', value: 'JP' },
-  { label: 'Singapore', value: 'SG' },
-  { label: 'South Korea', value: 'KR' },
-  { label: 'Germany', value: 'DE' },
-  { label: 'France', value: 'FR' },
-  { label: 'Canada', value: 'CA' },
-  { label: 'Australia', value: 'AU' },
-  { label: 'India', value: 'IN' },
-  { label: 'Brazil', value: 'BR' },
-  { label: 'Mexico', value: 'MX' },
-  { label: 'Thailand', value: 'TH' },
-  { label: 'Philippines', value: 'PH' },
-  { label: 'Malaysia', value: 'MY' },
-  { label: 'Indonesia', value: 'ID' },
-  { label: 'Hong Kong', value: 'HK' },
-  { label: 'Taiwan', value: 'TW' },
-  { label: 'Pakistan', value: 'PK' }
+export const getCountryOptions = (t: any) => [
+  { label: t('countryList.vn'), value: 'VN' },
+  { label: t('countryList.us'), value: 'US' },
+  { label: t('countryList.uk'), value: 'GB' },
+  { label: t('countryList.jp'), value: 'JP' },
+  { label: t('countryList.sg'), value: 'SG' },
+  { label: t('countryList.kr'), value: 'KR' },
+  { label: t('countryList.de'), value: 'DE' },
+  { label: t('countryList.fr'), value: 'FR' },
+  { label: t('countryList.ca'), value: 'CA' },
+  { label: t('countryList.au'), value: 'AU' },
+  { label: t('countryList.in'), value: 'IN' },
+  { label: t('countryList.br'), value: 'BR' },
+  { label: t('countryList.mx'), value: 'MX' },
+  { label: t('countryList.th'), value: 'TH' },
+  { label: t('countryList.ph'), value: 'PH' },
+  { label: t('countryList.my'), value: 'MY' },
+  { label: t('countryList.id'), value: 'ID' },
+  { label: t('countryList.hk'), value: 'HK' },
+  { label: t('countryList.tw'), value: 'TW' },
+  { label: t('countryList.pk'), value: 'PK' }
 ];
 
 // Country Select Cell Component for Table
@@ -83,7 +83,7 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
     <Select
       value={selectedCountry}
       onChange={handleCountryChange}
-      options={COUNTRY_OPTIONS}
+      options={getCountryOptions(t)}
       placeholder="Select country"
       className={clsx('h-8 min-w-[140px]', className)}
       optionClassName="max-h-60 overflow-y-auto"
@@ -290,7 +290,7 @@ const OrderDetailPage = () => {
       await copyToClipboard(proxyString);
 
       setCopiedId(record.id);
-      toast.success('toast.success.rotateProxyCopy');
+      toast.success(t('toast.success.rotateProxyCopy'));
     } else {
       // For fixed proxy: protocol://username:password@ip:port
       const credentials = record.provider_credentials as any;
@@ -546,7 +546,7 @@ const OrderDetailPage = () => {
                   link.click();
                   document.body.removeChild(link);
                   URL.revokeObjectURL(url);
-                  toast.success(t('proxy.success.proxyExport'));
+                  toast.success(t('toast.success.proxyExport'));
                 }}
                 title="Export Proxy"
               />

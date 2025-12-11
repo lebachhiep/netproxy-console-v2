@@ -27,9 +27,7 @@ export function generateDuration() {
   let seconds = 300;
   const durations = [];
   while (seconds <= 60 * 60 * 12) {
-    const h = Math.floor(seconds / 3600);
-    const m = (seconds % 3600) / 60;
-    let label = secondToMinuteString(seconds);
+    const label = secondToMinuteString(seconds);
     durations.push({
       label,
       value: seconds
@@ -70,4 +68,16 @@ export const dateRanges: any = {
 
 export function formatDateTime(date: string | Date): string {
   return dayjs(date).format('HH:mm DD/MM/YYYY');
+}
+export function tableDashboardDate(time: number, t: any) {
+  let d = 0;
+  let h = 0;
+  let m = 0;
+  d = Math.trunc(time / 86400);
+  h = Math.trunc((time % 86400) / 3600);
+  m = Math.trunc((time % 3600) / 60);
+  if (d > 0) return `${d} ${t('day')}`;
+  else if (h > 0) return `${d} ${t('hour')}`;
+  else if (m > 0) return `${d} ${t('minute')}`;
+  else return `${d} ${t('sec')}`;
 }

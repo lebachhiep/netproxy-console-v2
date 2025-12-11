@@ -13,6 +13,7 @@ import { orderService } from '@/services/order/order.service';
 import { CreateOrderRequest } from '@/services/order/order.types';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { PlanType } from '@/services/plan/plan.types';
 export const DesktopSummary = ({
   orders,
   totalIps,
@@ -30,7 +31,7 @@ export const DesktopSummary = ({
   useCartContext?: boolean;
   proxyType?: string;
   duration?: number;
-  filterPlanType?: 'rotating' | 'premium_isp' | 'private_ipv4' | 'shared_ipv4' | 'ipv6';
+  filterPlanType?: PlanType;
 }) => {
   const [isExpanded, setExpanded] = useState<boolean>(false);
   const [couponInput, setCouponInput] = useState<string>('');

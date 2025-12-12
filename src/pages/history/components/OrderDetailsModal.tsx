@@ -144,7 +144,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
           {/* Description */}
           {order.description && (
             <div className="border-t border-border-element dark:border-border-element-dark pt-4">
-              <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2">{t('order.description')}</h4>
+              <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2 capitalize">{t('description')}</h4>
               <p className="text-sm text-text-med dark:text-text-med-dark">{order.description}</p>
             </div>
           )}
@@ -206,7 +206,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
           {/* Notes */}
           {order.notes && (
             <div className="border-t border-border-element dark:border-border-element-dark pt-4">
-              <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2">Ghi chú</h4>
+              <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2 capitalize">{t('note')}</h4>
               <p className="text-sm text-text-med dark:text-text-med-dark">{order.notes}</p>
             </div>
           )}

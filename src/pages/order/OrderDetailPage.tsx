@@ -94,7 +94,7 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng' });
+  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: id || '' });
   const [loading, setLoading] = useState(false);
   const { isMobile } = useResponsive();
   const [error, setError] = useState<string | null>(null);

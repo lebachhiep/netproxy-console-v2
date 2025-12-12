@@ -54,7 +54,7 @@ export const CryptomusForm: React.FC<CryptomusFormProps> = ({ services, onSucces
           type="number"
           min={MIN_AMOUNT}
           step="0.01"
-          placeholder={`Tối thiểu: $${MIN_AMOUNT}`}
+          placeholder={t('minMoney') + `$${MIN_AMOUNT}`}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           wrapperClassName="h-10"

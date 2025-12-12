@@ -53,17 +53,17 @@ export const TopUpModal: React.FC<TopUpModalProps> = ({ open, onClose, allowClos
   const tabs = [
     {
       key: 'tazapay',
-      label: 'Thẻ/Ví',
+      label: t('walletAndLabel'),
       icon: <WalletCreditCardOutlined className="w-5 h-5" />
     },
     {
       key: 'cryptomus',
-      label: 'Crypto',
+      label: t('crypto'),
       icon: <Globe className="w-5 h-5" />
     },
     {
       key: 'web2m',
-      label: 'Ngân hàng',
+      label: t('bank'),
       icon: <DatabaseStackOutlined className="w-5 h-5" />
     }
   ];

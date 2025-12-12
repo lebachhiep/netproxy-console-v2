@@ -236,36 +236,11 @@ const HistoryPage: React.FC = () => {
       title: t('historyPage.columns.total'),
       width: 150,
       align: 'center',
-      render: (value, record) => (
-        <div className="group relative">
-          <span className="font-medium text-[#ff1818] cursor-help">${Number(value).toFixed(2)}</span>
-          {/* Tooltip */}
-          <div className="absolute z-50 bottom-full left-0 mb-2 hidden group-hover:block w-48 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-lg p-3">
-            <div className="space-y-1 text-xs">
-              <div className="flex justify-between">
-                <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.subtotal')}</span>
-                <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.subtotal}</span>
-              </div>
-              {record.discountAmount > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.discount')}</span>
-                  <span className="text-green">-{record.priceBreakdown.discount}</span>
-                </div>
-              )}
-              {record.taxAmount > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-text-lo dark:text-text-lo-dark">{t('historyPage.messages.tax')}</span>
-                  <span className="text-text-hi dark:text-text-hi-dark">{record.priceBreakdown.tax}</span>
-                </div>
-              )}
-              <div className="border-t border-border-element dark:border-border-element-dark pt-1 mt-1 flex justify-between font-semibold">
-                <span className="text-text-hi dark:text-text-hi-dark">{t('historyPage.messages.total')}</span>
-                <span className="text-blue">{record.priceBreakdown.total}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )
+      render: (value) => {
+        const amount = Number(value);
+        const formattedAmount = amount.toFixed(2);
+        return <span className="text-[#ff1818]">{amount > 0 ? `-$${formattedAmount}` : `$${formattedAmount}`}</span>;
+      }
     },
     {
       key: 'items',

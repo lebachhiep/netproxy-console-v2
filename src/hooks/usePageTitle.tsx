@@ -3,6 +3,9 @@ import { useAuth } from './useAuth';
 
 interface UsePageTitleOptions {
   pageName: string;
+  tabName?: string;
+  plan?: string;
+  orderId?: string;
 }
 
 /**
@@ -10,7 +13,7 @@ interface UsePageTitleOptions {
  * - When authenticated: "User: {username} - Site: {domain} - Page: {pageName}"
  * - When not authenticated: "Site: {domain} - Page: {pageName}"
  */
-export const usePageTitle = ({ pageName }: UsePageTitleOptions) => {
+export const usePageTitle = ({ pageName, tabName, plan, orderId }: UsePageTitleOptions) => {
   const { isAuthenticated, userProfile } = useAuth();
   const domain = window.location.hostname;
 
@@ -18,10 +21,24 @@ export const usePageTitle = ({ pageName }: UsePageTitleOptions) => {
   if (isAuthenticated && userProfile) {
     const username = userProfile.username || 'User';
     title = `User: ${username} - Site: ${domain} - Page: ${pageName}`;
+    if (tabName) {
+      title += ` - Tab: ${tabName}`;
+    }
+    if (plan) {
+      title += ` - Plan: ${plan}`;
+    }
+    if (orderId) {
+      title += ` - Order ID: ${orderId}`;
+    }
   } else {
     title = `Site: ${domain} - Page: ${pageName}`;
   }
 
-  return <Helmet><title>{title}</title></Helmet>;
-};
+  console.log('Setting page title to:', title);
 
+  return (
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
+  );
+};

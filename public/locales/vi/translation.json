@@ -3,6 +3,10 @@
   "loading": "Đang tải...",
   "recaptchaNotReady": "reCAPTCHA không sẵn sàng. Vui lòng thử lại.",
   "calculating": "Đang tính...",
+  "orderHistory": "Lịch sử đơn hàng",
+  "note": "Ghi chú",
+  "minMoney": "Số tiền tối thiểu: ",
+  "crypto": "Tiền điện tử",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm Tiền",
@@ -15,7 +19,9 @@
     "copyOrderIDSuccess": "Đã sao chép mã đơn hàng vào clipboard",
     "totalTopUp": "Tổng tiền đã nạp",
     "totalPlans": "Tổng gói",
+    "totalPurchasedPlans": "Tổng gói đã mua",
     "totalOrders": "Tổng đơn hàng",
+    "totalOrdersSold": "Tổng đơn hàng đã bán",
     "operating": "hoạt động",
     "server": "Máy chủ",
     "user": "Người dùng",
@@ -49,6 +55,7 @@
   "proxyDetails": "Chi tiết proxy",
   "buy": "Mua hàng",
   "wallet_label": "Ví",
+  "walletAndLabel": "Thẻ/Ví",
   "checkWallet": "Xem ví",
   "history": "Lịch sử",
   "account": "Tài khoản",
@@ -232,6 +239,7 @@
     "refunded": "Đã hoàn tiền",
     "failed": "Thất bại"
   },
+  "description": "Mô tả",
   "orderDetail": {
     "name": "Chi tiết đơn hàng",
     "itemsList": "Danh sách sản phẩm",

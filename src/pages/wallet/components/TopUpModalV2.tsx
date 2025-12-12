@@ -6,6 +6,7 @@ import { usePaymentMethods } from '@/hooks/usePayments';
 import TazapayForm from './modal/TazapayForm';
 import CryptomusForm from './modal/CryptomusForm';
 import Web2MInfo from './modal/Web2MInfo';
+import { useTranslation } from 'react-i18next';
 
 interface TopUpModalProps {
   open: boolean;
@@ -29,6 +30,7 @@ const UnavailableMethod: React.FC = () => (
 );
 
 export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, paymentMethod, amount, country }) => {
+  const { t } = useTranslation();
   const { data: paymentMethods, isLoading } = usePaymentMethods();
   const [activeTab, setActiveTab] = useState<string | number>('tazapay');
 
@@ -55,17 +57,17 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
   const tabs = [
     {
       key: 'tazapay',
-      label: 'Thẻ/Ví',
+      label: t('walletAndLabel'),
       icon: <WalletCreditCardOutlined className="w-5 h-5" />
     },
     {
       key: 'cryptomus',
-      label: 'Crypto',
+      label: t('crypto'),
       icon: <Globe className="w-5 h-5" />
     },
     {
       key: 'web2m',
-      label: 'Ngân hàng',
+      label: t('bank'),
       icon: <DatabaseStackOutlined className="w-5 h-5" />
     }
   ];

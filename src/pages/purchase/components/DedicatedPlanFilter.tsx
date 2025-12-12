@@ -14,6 +14,7 @@ import { CartTabKey, getTabKeyFromPlan } from '@/contexts/CartContext';
 import { Country as OrderCountry } from './table/CountrySelector';
 import { Tabs } from '@/components/tabs/Tabs';
 import { useTranslation } from 'react-i18next';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -123,6 +124,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     });
     return Array.from(periods).sort((a, b) => a - b);
   }, [plansFilteredByServer]);
+
+  // Helmet page title
+  const pageTitle = usePageTitle({
+    pageName: 'Mua hàng',
+    tabName: plans[0] ? getTabKeyFromPlan(plans[0]) : '',
+    plan: selectedServer
+  });
 
   // Initialize server when plans change
   useEffect(() => {
@@ -565,6 +573,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
   return (
     <div className="flex gap-5 h-full w-full flex-1 flex-col">
+      {pageTitle}
       <Tabs
         type="card"
         tabs={serverOptions}

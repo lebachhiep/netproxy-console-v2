@@ -83,14 +83,14 @@ export const navigationSections = (t: (key: string) => string): NavigationSectio
           breadcrumb: t('checkWallet')
         },
         {
-          title: t('history'),
+          title: t('orderHistory'),
           icon: <ClockBillFilled />,
           collapsedIcon: <ClockBill />,
           iconClass: 'text-blue',
           breadcrumbIcon: <ClockBillFilled width={32} height={32} className="text-blue" />,
           path: '/history',
           name: '/history',
-          breadcrumb: t('history')
+          breadcrumb: t('orderHistory')
         },
         {
           title: t('account'),

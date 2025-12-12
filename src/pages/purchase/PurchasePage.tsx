@@ -73,7 +73,6 @@ const PurchasePage: React.FC = () => {
   const [filteredDuration, setFilteredDuration] = useState('');
   const [durationOptions, setDurationOptions] = useState<number[]>([]);
   const [confirmModal, setConfirmModalOpen] = useState(false);
-  const pageTitle = usePageTitle({ pageName: t('purchase.title') });
   // API data state
   const [plansData, setPlansData] = useState<PlansResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -147,6 +146,8 @@ const PurchasePage: React.FC = () => {
   }, [rotatingPlans]);
 
   const [activeGroup, setActiveGroup] = useState(speedGroups[0]?.key || '');
+
+  const pageTitle = usePageTitle({ pageName: 'Mua hàng', tabName: activeMain, plan: activeGroup });
 
   // Update active group when speed groups change
   useEffect(() => {

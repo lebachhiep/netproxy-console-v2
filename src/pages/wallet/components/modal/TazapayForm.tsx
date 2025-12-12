@@ -110,7 +110,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
       </div>
 
       <div>
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">Quốc gia</label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">{t('country')}</label>
         <Select
           options={countryOptions}
           value={country}
@@ -121,7 +121,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
               setInternalCountry(val);
             }
           }}
-          placeholder="Chọn quốc gia"
+          placeholder={t('pickCountry')}
           optionClassName="max-h-[100px]"
           placement="top-right"
           className="w-full h-10 dark:bg-[#2B405A] dark:pseudo-border-top dark:border-transparent"

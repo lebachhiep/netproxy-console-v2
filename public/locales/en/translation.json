@@ -3,6 +3,10 @@
   "loading": "Loading...",
   "recaptchaNotReady": "reCAPTCHA is not ready. Please try again.",
   "calculating": "Calculating...",
+  "orderHistory": "Order History",
+  "note": "Note",
+  "minMoney": "Minimum amount of money: ",
+  "crypto": "Cryptocurrency",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",
@@ -15,7 +19,9 @@
     "copyOrderIDSuccess": "Order ID copied to clipboard",
     "totalTopUp": "Total top-up amount",
     "totalPlans": "Total plans",
+    "totalPurchasedPlans": "Tổng gói đã mua",
     "totalOrders": "Total orders",
+    "totalOrdersSold": "Total orders sold",
     "operating": "operating",
     "server": "Server",
     "user": "User",
@@ -48,6 +54,7 @@
   "proxyDetails": "Proxy details",
   "buy": "Buy",
   "wallet_label": "Wallet",
+  "walletAndLabel": "Card/Wallet",
   "checkWallet": "Check wallet",
   "history": "History",
   "account": "Account",
@@ -232,6 +239,7 @@
     "refunded": "Refunded",
     "failed": "Failed"
   },
+  "description": "Description",
   "orderDetail": {
     "name": "Order Details",
     "itemsList": "Item List",
@@ -421,11 +429,10 @@
     "resendEmail": "resent mail"
   },
   "sending": "Sending...",
-    "resetPasswordPage":
-  {
-    "resetPassword":"Reset password",
-    "askingForEnterPassword":"Please enter your new password",
-    "settingUp":"Setting up...",
+  "resetPasswordPage": {
+    "resetPassword": "Reset password",
+    "askingForEnterPassword": "Please enter your new password",
+    "settingUp": "Setting up...",
     "alertResetSuccess": "Password has been reset successfully",
     "alertReset-ed": "Your password has been reset"
   }

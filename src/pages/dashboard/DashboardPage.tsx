@@ -263,7 +263,7 @@ const DashboardPage = () => {
         }
         subInfo={[
           {
-            label: t('dashboard.totalOrders'),
+            label: t('dashboard.totalOrdersSold'),
             value: (
               <div>
                 <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">{platformStats?.total_orders}</span>
@@ -373,7 +373,10 @@ const DashboardPage = () => {
                   </div>
                 }
                 subInfo={[
-                  { label: t('dashboard.totalPlans'), value: `${loading ? '...' : totalSubscriptions} ${t('plan').toLocaleLowerCase()}` }
+                  {
+                    label: t('dashboard.totalPurchasedPlans'),
+                    value: `${loading ? '...' : totalSubscriptions} ${t('plan').toLocaleLowerCase()}`
+                  }
                 ]}
                 buttonText={t('dashboard.buyMore').toUpperCase()}
                 onButtonClick={() => navigate('/buy')}

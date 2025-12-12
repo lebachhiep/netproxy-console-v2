@@ -176,7 +176,7 @@ const DashboardPage = () => {
           />
         </div>
       ),
-      fixed: 'left'
+      fixed: isMobile || isTablet ? undefined : 'left'
     },
     {
       width: 200,
@@ -218,7 +218,7 @@ const DashboardPage = () => {
       render: () => <Badge color={'blue'}>{t('dashboard.active')}</Badge> // Always active for now
     },
     {
-      width: isMobile || isTablet ? 150 : 200,
+      width: isMobile || isTablet ? 100 : 200,
       fixed: 'right',
       key: 'buttonText',
       title: t('action'),
@@ -333,7 +333,7 @@ const DashboardPage = () => {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 "
+            className="grid grid-cols-1 min-[448px]:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 "
           >
             {[
               <OverViewCard
@@ -398,16 +398,16 @@ const DashboardPage = () => {
             </p>
             <div className="h-[2px] bg-border-element dark:bg-border-element-dark flex-1"></div>
           </div>
-          <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center justify-between mt-3 gap-2">
             <Input
               placeholder={t('dashboard.search')}
-              wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
+              wrapperClassName="bg-bg-input border-2 h-10 md:min-w-[223px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => setSearch(e.target.value)}
             />
             <div className="flex items-center gap-2">
               <IconButton
-                className="w-10 h-10 hidden lg:flex"
+                className="w-10 h-10 lg:flex"
                 icon={viewMode === 'list' ? <TextColumnOne /> : <GridDots />}
                 onClick={() => handleChangeMode(viewMode === 'list' ? 'grid' : 'list')}
               />

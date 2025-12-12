@@ -7,10 +7,11 @@
   "note": "Ghi chú",
   "minMoney": "Số tiền tối thiểu: ",
   "crypto": "Tiền điện tử",
+  "activePackage": "Gói hoạt động",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm Tiền",
-    "activePlan": "Các gói đang hoạt động",
+    "activePlan": "Gói hoạt động",
     "activePlans": "Gói đang hoạt động",
     "buyMore": "Mua thêm",
     "refreshSuccess": "Làm mới dữ liệu thành công",

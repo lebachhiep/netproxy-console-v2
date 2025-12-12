@@ -384,7 +384,7 @@ const PurchasePage: React.FC = () => {
       {/* Main Tabs */}
       <Tabs
         defaultWrapperClass="h-full flex flex-col"
-        className="overflow-auto min-h-fit whitespace-nowrap scrollbar-hide"
+        className="overflow-auto min-h-11 whitespace-nowrap scrollbar-hide"
         tabs={mainTabs}
         activeKey={activeMain}
         onChange={(key) => {

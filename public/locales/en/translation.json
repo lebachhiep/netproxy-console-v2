@@ -7,6 +7,7 @@
   "note": "Note",
   "minMoney": "Minimum amount of money: ",
   "crypto": "Cryptocurrency",
+  "activePackage": "Active Package",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",

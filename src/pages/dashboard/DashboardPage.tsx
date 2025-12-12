@@ -4,7 +4,7 @@ import { OverViewCard } from '@/components/card/OverViewCard';
 import {
   Add,
   ArrowCounter,
-  CalendarClock,
+  CalendarClockOutline,
   CartFilled,
   ContentCopy,
   DataPie,
@@ -527,7 +527,7 @@ const DashboardPage = () => {
                             <Card.ListItem label="Duration" icon={<HourglassHalf />} value={item.duration} />
                             <Card.ListItem
                               label={t('purchaseDate')}
-                              icon={<CalendarClock />}
+                              icon={<CalendarClockOutline className="w-6 h-6 text-blue" />}
                               value={moment(item.fulfilled_at).format('DD/MM/YYYY HH:mm')}
                             />
                           </Card.List>

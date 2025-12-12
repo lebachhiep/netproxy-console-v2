@@ -7,7 +7,7 @@ import { Select } from '@/components/select/Select';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useResponsive } from '@/hooks/useResponsive';
 import { copyToClipboard } from '@/utils/copyToClipboard';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { itemVariants, pageVariants } from '@/utils/animation';
@@ -18,10 +18,12 @@ import { OrderDetailsModal } from './components/OrderDetailsModal';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useTranslation } from 'react-i18next';
 import { useDebounce } from '@/hooks/useDebounce';
+import useFilter from '@/hooks/useFilter';
 
 const HistoryPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Lịch sử' });
   const { isMobile, isTablet } = useResponsive();
+  const { t } = useTranslation();
 
   // State
   const [orders, setOrders] = useState<OrderDisplay[]>([]);
@@ -42,8 +44,39 @@ const HistoryPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
-  const { t } = useTranslation();
+
   const debouncedSearchQuery = useDebounce<string>(searchQuery, 400);
+
+  // Filter items configuration
+  const filterItems = useMemo(
+    () => [
+      {
+        title: 'search',
+        format: 'search' as const,
+        field: ['orderNumber', 'description'],
+        data: debouncedSearchQuery
+      },
+      {
+        title: 'dateRange',
+        format: 'dateRange' as const,
+        field: ['createdAt'],
+        data: dateRange.from && dateRange.to ? [dateRange.from.toISOString(), dateRange.to.toISOString()] : []
+      },
+      {
+        title: 'type',
+        format: 'select' as const,
+        field: ['type'],
+        data: selectedType || null
+      },
+      {
+        title: 'status',
+        format: 'select' as const,
+        field: ['status'],
+        data: selectedStatus || null
+      }
+    ],
+    [debouncedSearchQuery, dateRange, selectedType, selectedStatus]
+  );
 
   // Fetch orders
   const fetchOrders = useCallback(async () => {
@@ -116,6 +149,13 @@ const HistoryPage: React.FC = () => {
       setCurrentPage(1);
     }
   }, [dateRange, selectedType, selectedStatus]);
+
+  // Apply Filter hook (call at top-level) and log result
+  const filterResult = useFilter('/history', filterItems, orders);
+
+  useEffect(() => {
+    console.log('Filter Result:', filterResult);
+  }, [filterResult]);
 
   const handlePageChange = (page: number, newPageSize?: number) => {
     setCurrentPage(page);

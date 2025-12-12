@@ -105,14 +105,14 @@ export function formatFrequency(frequency: number, t: any): string {
     return t('refreshRot', {
       every: t('every'),
       number: minutes,
-      time: t('hour')
+      time: t('minute')
     });
   }
 
   return t('refreshRot', {
     every: t('every'),
     number: frequency,
-    time: t('hour')
+    time: t('second')
   });
 }
 

@@ -420,5 +420,13 @@
     "alreadySentEmailMessage": "We sent you an email. Please follow the link in the email to reset your password. Or ",
     "resendEmail": "resent mail"
   },
-  "sending": "Sending..."
+  "sending": "Sending...",
+    "resetPasswordPage":
+  {
+    "resetPassword":"Reset password",
+    "askingForEnterPassword":"Please enter your new password",
+    "settingUp":"Setting up...",
+    "alertResetSuccess": "Password has been reset successfully",
+    "alertReset-ed": "Your password has been reset"
+  }
 }

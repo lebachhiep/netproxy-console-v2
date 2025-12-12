@@ -225,7 +225,7 @@
     "redeem": "Đổi quà",
     "transfer": "Chuyển khoản",
     "pending": "Đang xử lý",
-    "paid": "Hoàn thành",
+    "paid": "Trả phí",
     "processing": "Đang tiến hành",
     "fulfilled": "Hoàn thành",
     "canceled": "Đã hủy",
@@ -424,5 +424,12 @@
     "alreadySentEmailMessage": "Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu. Hoặc ",
     "resendEmail": "gởi lại email"
   },
-  "sending": "Đang Gửi ..."
+  "sending": "Đang Gửi ...",
+  "resetPasswordPage": {
+    "resetPassword": "Đặt lại mật khẩu",
+    "askingForEnterPassword": "Vui lòng nhập mật khẩu mới",
+    "settingUp": "Đang đặt lại...",
+    "alertResetSuccess": "Đổi mật khẩu thành công",
+    "alertReset-ed": "Mật khẩu của bạn đã được đặt lại"
+  }
 }

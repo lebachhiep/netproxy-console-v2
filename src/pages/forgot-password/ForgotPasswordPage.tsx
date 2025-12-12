@@ -106,7 +106,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
                   <div className="flex flex-col gap-3">
                     <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
-                      {isSubmitting ? t('forgotPasswordPage.sending') : t('forgotPasswordPage.confirm')}
+                      {isSubmitting ? t('sending') : t('forgotPasswordPage.confirm')}
                     </Button>
 
                     <Link to={AUTH_ROUTES.LOGIN} className="text-blue text-sm text-center hover:underline">

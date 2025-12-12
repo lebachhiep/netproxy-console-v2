@@ -8,12 +8,13 @@ import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from '@/router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { AUTH_MESSAGES } from '@/utils/constants';
 import UserDropdown from '@/components/UserDropdown';
 import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
 import { motion } from 'framer-motion';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { useTranslation } from 'react-i18next';
+import { Dropdown } from '@/components/dropdown';
+import i18n from '@/i18n';
 
 interface Breadcrumb {
   title: string;
@@ -42,7 +43,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success(AUTH_MESSAGES.LOGOUT_SUCCESS);
+      toast.success(t('auth.LOGOUT_SUCCESS'));
       navigate('/login');
     } catch (error) {
       toast.error(t('toast.error.logout'));
@@ -194,7 +195,41 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
             />
           </div>
           {/* Ngôn ngữ */}
-          <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
+          <Dropdown trigger={'click'} placement="bottom-right">
+            <Dropdown.Trigger asIcon>
+              <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
+            </Dropdown.Trigger>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={() => {
+                  const currentLang = i18n.language;
+                  if (currentLang === 'en') {
+                    toast.info('Language is already English');
+                    return;
+                  }
+                  i18n.changeLanguage('en');
+                  toast.success('Language changed to English');
+                  window.location.reload();
+                }}
+              >
+                English
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={async () => {
+                  const currentLang = i18n.language;
+                  if (currentLang === 'vi') {
+                    toast.info('Ngôn ngữ đã được chuyển sang Tiếng Việt');
+                    return;
+                  }
+                  await i18n.changeLanguage('vi');
+                  toast.success('Ngôn ngữ đã được chuyển sang Tiếng Việt');
+                  window.location.reload();
+                }}
+              >
+                Tiếng Việt
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           <IconButton
             className="w-10 h-10"
             icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}

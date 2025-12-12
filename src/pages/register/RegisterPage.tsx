@@ -3,23 +3,23 @@ import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
 import { useAuth } from '@/hooks/useAuth';
 import { RegisterFormData, registerSchema } from '@/services/auth/auth.schemas';
-import { AUTH_MESSAGES, AUTH_ROUTES } from '@/utils/constants';
+import { AUTH_ROUTES } from '@/utils/constants';
 import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
-
+import { Select } from '@/components/select/Select';
 export const RegisterPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Đăng ký' });
   const navigate = useNavigate();
   const { register, isAuthenticated, clearError } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const {
     control,
@@ -36,7 +36,26 @@ export const RegisterPage: React.FC = () => {
       confirmPassword: ''
     }
   });
+  const options = [
+    { label: t('english'), value: 'en' },
+    { label: t('vnese'), value: 'vi' }
+  ];
+  const getInitialLanguage = (): 'vi' | 'en' => {
+    try {
+      const savedLang = localStorage.getItem('i18nextLng');
+      if (savedLang) {
+        const langLower = savedLang.toLowerCase();
+        if (langLower.includes('vi')) return 'vi';
+        if (langLower.includes('en')) return 'en';
+      }
+    } catch (error) {
+      console.log('lỗi: ' + error);
+    }
 
+    return 'vi';
+  };
+
+  const [selectLanguage, setSelectedLanguage] = useState<'vi' | 'en'>(getInitialLanguage());
   // Watch password for strength indicator (if needed in future)
   // const password = watch('password');
 
@@ -68,7 +87,7 @@ export const RegisterPage: React.FC = () => {
         fullName: data.fullName,
         captchaToken
       });
-      toast.success(AUTH_MESSAGES.REGISTER_SUCCESS);
+      toast.success(t('auth.REGISTER_SUCCESS'));
       navigate('/', { replace: true });
     } catch (error) {
       const errorMessage = mapApiError(error);
@@ -81,7 +100,7 @@ export const RegisterPage: React.FC = () => {
     <>
       {pageTitle}
       <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
-        <AuthFormWrapper title="Đăng Ký" subtitle="Vui lòng nhập thông tin đăng ký!">
+        <AuthFormWrapper title={t('signIn')} subtitle={t('registerPage.subtitle')}>
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
             <div className="flex flex-col gap-5">
               <form onSubmit={handleSubmit(onSubmit)}>
@@ -92,7 +111,7 @@ export const RegisterPage: React.FC = () => {
                       control={control}
                       render={({ field }) => (
                         <div>
-                          <InputField {...field} type="text" placeholder="Nhập họ và tên" disabled={isSubmitting} />
+                          <InputField {...field} type="text" placeholder={t('registerPage.fullname')} disabled={isSubmitting} />
                           {errors.fullName && <span className="text-red text-sm mt-1">{errors.fullName.message}</span>}
                         </div>
                       )}
@@ -103,7 +122,7 @@ export const RegisterPage: React.FC = () => {
                       control={control}
                       render={({ field }) => (
                         <div>
-                          <InputField {...field} type="email" placeholder="Nhập email" disabled={isSubmitting} />
+                          <InputField {...field} type="email" placeholder={t('registerPage.email')} disabled={isSubmitting} />
                           {errors.email && <span className="text-red text-sm mt-1">{errors.email.message}</span>}
                         </div>
                       )}
@@ -114,7 +133,7 @@ export const RegisterPage: React.FC = () => {
                       control={control}
                       render={({ field }) => (
                         <div>
-                          <InputField {...field} type="text" placeholder="Nhập tên đăng nhập" disabled={isSubmitting} />
+                          <InputField {...field} type="text" placeholder={t('registerPage.username')} disabled={isSubmitting} />
                           {errors.username && <span className="text-red text-sm mt-1">{errors.username.message}</span>}
                         </div>
                       )}
@@ -128,7 +147,7 @@ export const RegisterPage: React.FC = () => {
                           <InputField
                             {...field}
                             type="password"
-                            placeholder="Mật khẩu"
+                            placeholder={t('registerPage.pass')}
                             // icon={<LockClosed className="text-primary" />}
                             showPasswordToggle
                             disabled={isSubmitting}
@@ -146,7 +165,7 @@ export const RegisterPage: React.FC = () => {
                           <InputField
                             {...field}
                             type="password"
-                            placeholder="Nhập lại mật khẩu"
+                            placeholder={t('registerPage.repass')}
                             // icon={<Lock className="text-primary" />}
                             showPasswordToggle
                             disabled={isSubmitting}
@@ -161,7 +180,7 @@ export const RegisterPage: React.FC = () => {
 
                   <div className="flex flex-col gap-5">
                     <Button type="submit" loading={isSubmitting} disabled={isSubmitting} className="w-full">
-                      {isSubmitting ? 'Đang tạo tài khoản...' : 'TẠO TÀI KHOẢN'}
+                      {isSubmitting ? t('registerPage.registering') : t('signup').toUpperCase()}
                     </Button>
                   </div>
                 </div>
@@ -169,13 +188,34 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
           <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
-            Bạn đã có tài khoản?{' '}
+            {t('registerPage.haveAcc')}{' '}
             <Link to={AUTH_ROUTES.LOGIN} className="text-blue hover:underline">
-              Đăng nhập
+              {t('login')}
             </Link>
           </p>
         </AuthFormWrapper>
-        <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
+
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-text-lo dark:text-text-lo-dark font-medium text-sm w-full max-w-xs px-4 flex justify-center gap-3 flex-col">
+          <div className="bottom-50 text-center w-[130px] mx-auto">
+            <Select
+              options={options}
+              value={selectLanguage}
+              onChange={(val) => {
+                const language = val === 'vi' ? 'vi' : 'en';
+                setSelectedLanguage(language);
+                if (val == 'vi') {
+                  i18n.changeLanguage('vi');
+                } else {
+                  i18n.changeLanguage('en');
+                }
+              }}
+              placeholder={t('language') || 'Ngôn ngữ'}
+              placement="bottom"
+              className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
+            />
+          </div>
+          <span className="align-center mx-auto">© Netproxy</span>
+        </div>
       </div>
     </>
   );

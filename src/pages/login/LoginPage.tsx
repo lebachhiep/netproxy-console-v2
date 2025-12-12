@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/services/auth/auth.schemas';
 import { useAuth } from '@/hooks/useAuth';
 import { mapApiError } from '@/utils/errors';
-import { AUTH_MESSAGES, AUTH_ROUTES, PROTECTED_ROUTES } from '@/utils/constants';
+import { AUTH_ROUTES, PROTECTED_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { AuthShowcase } from './components/AuthShowCase';
 import bgAuth from '/images/bg_auth.png';
@@ -20,7 +20,7 @@ import img9 from '@/assets/images/image-9.png';
 import productCardImg from '@/assets/images/product-card.png';
 import pcImg from '@/assets/images/pc.png';
 import { usePageTitle } from '@/hooks/usePageTitle';
-
+import { useTranslation } from 'react-i18next';
 interface LocationState {
   from?: string;
 }
@@ -31,7 +31,7 @@ export const LoginPage: React.FC = () => {
   const location = useLocation();
   const locationState = location.state as LocationState;
   const { login, isAuthenticated, clearError } = useAuth();
-
+  const { t } = useTranslation();
   const rememberMeTick = (): boolean => {
     try {
       const ticked = localStorage.getItem('RememberMeTicked');
@@ -75,7 +75,7 @@ export const LoginPage: React.FC = () => {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data.login, data.password, data.remember || false);
-      toast.success(AUTH_MESSAGES.LOGIN_SUCCESS);
+      toast.success(t('auth.LOGIN_SUCCESS'));
       const from = locationState?.from || PROTECTED_ROUTES.HOME;
       navigate(from, { replace: true });
     } catch (error) {
@@ -89,7 +89,7 @@ export const LoginPage: React.FC = () => {
       {pageTitle}
       <AuthLayout
         left={
-          <AuthFormWrapper title="Đăng Nhập" subtitle="Chào mừng bạn đã quay trở lại !">
+          <AuthFormWrapper title={t('signIn')} subtitle={t('loginPage.welcome')}>
             <div className="flex flex-col gap-5 p-5 md:p-0 shadow-lg md:shadow-none rounded-[20px] border md:border-none border-border-element dark:border-border-element-dark">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-4">
@@ -102,7 +102,7 @@ export const LoginPage: React.FC = () => {
                           <InputField
                             {...field}
                             type="text"
-                            placeholder="Email hoặc tên đăng nhập"
+                            placeholder={t('loginPage.emailOrUserName')}
                             icon={<EmojiLaugh className="text-primary" />}
                             disabled={isSubmitting}
                           />
@@ -119,7 +119,7 @@ export const LoginPage: React.FC = () => {
                           <InputField
                             {...field}
                             type="password"
-                            placeholder="Nhập mật khẩu"
+                            placeholder={t('loginPage.password')}
                             icon={<LockClosed className="text-blue" />}
                             showPasswordToggle
                             disabled={isSubmitting}
@@ -130,7 +130,7 @@ export const LoginPage: React.FC = () => {
                     />
 
                     <Link to={AUTH_ROUTES.FORGOT_PASSWORD} className="text-blue text-sm text-underline text-end font-medium">
-                      Quên mật khẩu?
+                      {t('loginPage.forgot')}
                     </Link>
                   </div>
 
@@ -140,7 +140,7 @@ export const LoginPage: React.FC = () => {
                     render={({ field: { value, onChange } }) => (
                       <label className="flex items-center gap-2 w-fit">
                         <Checkbox checked={value} onChange={onChange} disabled={isSubmitting} />
-                        <span className="font-normal text-sm text-text-hi dark:text-text-hi-dark">Lưu trạng thái đăng nhập</span>
+                        <span className="font-normal text-sm text-text-hi dark:text-text-hi-dark">{t('loginPage.remember')}</span>
                       </label>
                     )}
                   />
@@ -154,7 +154,7 @@ export const LoginPage: React.FC = () => {
                       disabled={isSubmitting}
                       className="w-full dark:pseudo-border-top-orange dark:border-transparent"
                     >
-                      {isSubmitting ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP'}
+                      {isSubmitting ? t('loginPage.signingIn') : t('signIn').toUpperCase()}
                     </Button>
                   </div>
                 </div>
@@ -162,9 +162,9 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <p className="text-text-hi dark:text-text-hi-dark text-center text-sm">
-              Bạn chưa có tài khoản?{' '}
+              {t('loginPage.dontHaveAnAccount')}{' '}
               <Link to={AUTH_ROUTES.REGISTER} className="text-blue text-underline">
-                Đăng ký
+                {t('signup')}
               </Link>
             </p>
           </AuthFormWrapper>
@@ -192,12 +192,12 @@ export const LoginPage: React.FC = () => {
                   className: 'absolute w-[132px] lg:h-[154px] top-[274px] left-0 object-contain'
                 }
               ]}
-              title="Proxy Tốc Độ Cao"
+              title={t('loginPage.highSpeedProxy')}
               description={
                 <>
-                  Giải pháp an toàn, tăng cường bảo mật
+                  {t('loginPage.secureSolutionThatEnhanceProtection')}
                   <br />
-                  và tối ưu hiệu suất kết nối.
+                  {t('loginPage.andOptimizeConnectionPerformance')}
                 </>
               }
             />

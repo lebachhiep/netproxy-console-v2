@@ -52,6 +52,7 @@
   "checkWallet": "Xem ví",
   "history": "Lịch sử",
   "account": "Tài khoản",
+  "components": "Thành phần",
   "Component": "Thành phần",
   "Settings": "Cài đặt",
   "viewProfile": "Xem hồ sơ",
@@ -372,5 +373,56 @@
     "orderInfoTitle": ""
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
-  "every": "Mỗi"
+  "every": "Mỗi",
+  "pick": "Pick",
+  "language": "Ngôn Ngữ",
+  "selectLanguage": "Chọn ngôn ngữ",
+  "english": "Tiếng Anh",
+  "vnese": "Tiếng Việt",
+  "signIn": "Đăng nhập",
+  "signup": "Đăng ký",
+  "loginPage": {
+    "welcome": "Chào mừng bạn đã quay trở lại !",
+    "username": "Email hoặc tên đăng nhập",
+    "password": "Nhập mật khẩu",
+    "forgot": "Quên mật khẩu?",
+    "remember": "Lưu trạng thái đăng nhập",
+    "signingIn": "Đang đăng nhập ...",
+    "dontHaveAnAccount": "Bạn chưa có tài khoản?",
+    "highSpeedProxy": "Proxy Tốc Độ Cao",
+    "secureSolutionThatEnhanceProtection": "Giải pháp an toàn, tăng cường bảo mật",
+    "andOptimizeConnectionPerformance": "và tối ưu hiệu suất kết nối."
+  },
+  "auth": {
+    "LOGIN_SUCCESS": "Đăng nhập thành công!",
+    "REGISTER_SUCCESS": "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+    "LOGOUT_SUCCESS": "Đăng xuất thành công!",
+    "PASSWORD_RESET_SENT": "Email đặt lại mật khẩu đã được gửi!",
+    "EMAIL_VERIFICATION_SENT": "Email xác thực đã được gửi!",
+    "PROFILE_UPDATED": "Cập nhật ,thông tin thành công!"
+  },
+  "registerPage": {
+    "subtitle": "Vui lòng nhập thông tin đăng ký",
+    "fullname": "Nhập họ và tên",
+    "email": "Nhập email",
+    "emailOrUserName": "Nhập tên dăng nhập",
+    "pass": "Mật Khẩu",
+    "repass": "Nhập lại mật khẩu",
+    "haveAcc": "Bạn đã có tài khoản?",
+    "registering": "Đang Đăng ký ..."
+  },
+  "login": "Đăng nhập",
+  "forgotPasswordPage": {
+    "title": "Lấy lại mật khẩu",
+    "subtitle": "Vui lòng nhập email đã đăng ký",
+    "inputPlaceholder": "Nhập email",
+    "confirm": "Xác thực",
+    "login": "Quay lại đăng nhập",
+    "noAcc": "Bạn chưa có tài khoản?",
+    "register": "Đăng ký ",
+    "sent": "Đã gửi email",
+    "alreadySentEmailMessage": "Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu. Hoặc ",
+    "resendEmail": "gởi lại email"
+  },
+  "sending": "Đang Gửi ..."
 }

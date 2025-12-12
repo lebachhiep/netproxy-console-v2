@@ -51,6 +51,7 @@
   "checkWallet": "Check wallet",
   "history": "History",
   "account": "Account",
+  "components": "component",
   "Component": "Component",
   "Settings": "Settings",
   "viewProfile": "View profile",
@@ -368,5 +369,56 @@
   },
   "orderInfoModal": {},
   "refreshRot": "{{every}} {{number}} {{time}}",
-  "every": "Mỗi"
+  "every": "Every",
+  "pick": "Choose",
+  "language": "Language",
+  "selectLanguage": "Select Language",
+  "english": "English",
+  "vnese": "Vietnamese",
+  "signIn": "Sign In",
+  "signup": "Register",
+  "loginPage": {
+    "welcome": "Welcome Back!",
+    "emailOrUserName": "Email or Username",
+    "password": "Enter password",
+    "forgot": "Forgot your password?",
+    "remember": "Remember me",
+    "signingIn": "Signing in ...",
+    "dontHaveAnAccount": "Don't have an account?",
+    "highSpeedProxy": "High Speed Proxy",
+    "secureSolutionThatEnhanceProtection": "Secure solutions that enhance protection",
+    "andOptimizeConnectionPerformance": "and optimize connection performance."
+  },
+  "auth": {
+    "LOGIN_SUCCESS": "Signed in!",
+    "REGISTER_SUCCESS": "Registered ! Please check your email to verify your account",
+    "LOGOUT_SUCCESS": "Signed out!",
+    "PASSWORD_RESET_SENT": "An Email has sent to you to reset your password!",
+    "EMAIL_VERIFICATION_SENT": "Verifing Email has been sent!",
+    "PROFILE_UPDATED": "Update your info successfully!"
+  },
+  "registerPage": {
+    "subtitle": "Please enter your register infomations",
+    "fullname": "Enter your full name",
+    "email": "Enter your email",
+    "username": "Enter your username",
+    "pass": "Enter your Password",
+    "repass": "Re-Enter Your Password",
+    "haveAcc": "Having an account?",
+    "registering": "Registering ..."
+  },
+  "login": "Sign in",
+  "forgotPasswordPage": {
+    "title": "Retrieve your password",
+    "subtitle": "Please enter your email registered",
+    "inputPlaceholder": "Enter your email",
+    "confirm": "VERIFY",
+    "login": "Back to Sign in",
+    "noAcc": "Don't have an account?",
+    "register": "Register",
+    "sent": "Email has been sent",
+    "alreadySentEmailMessage": "We sent you an email. Please follow the link in the email to reset your password. Or ",
+    "resendEmail": "resent mail"
+  },
+  "sending": "Sending..."
 }

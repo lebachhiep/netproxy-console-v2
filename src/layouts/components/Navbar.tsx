@@ -6,7 +6,6 @@ import UserDropdown from '@/components/UserDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
 import { settings } from '@/settings';
-import { AUTH_MESSAGES } from '@/utils/constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdDashboard } from 'react-icons/md';
@@ -16,7 +15,6 @@ import { toast } from 'sonner';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { Dropdown } from '@/components/dropdown';
 import { useNavbar } from '@/contexts/NavbarContext';
-
 interface Breadcrumb {
   title: string;
   icon?: React.ReactNode;
@@ -45,7 +43,7 @@ export const Navbar: React.FC = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success(AUTH_MESSAGES.LOGOUT_SUCCESS);
+      toast.success(t('auth.LOGOUT_SUCCESS'));
       navigate('/login');
     } catch (error) {
       toast.error(t('toast.error.logout'));
@@ -217,8 +215,8 @@ export const Navbar: React.FC = () => {
             disabled={isRedeeming}
           />
           {/* Ngôn ngữ */}
-          <Dropdown>
-            <Dropdown.Trigger asIcon showChevron={false}>
+          <Dropdown trigger={'both'} placement="bottom-right">
+            <Dropdown.Trigger asIcon>
               <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
             </Dropdown.Trigger>
             <Dropdown.Menu>

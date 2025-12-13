@@ -333,7 +333,7 @@ export const MobileSummary = ({
           )}
 
           <div className="flex justify-between items-center font-semibold text-lg">
-            <div className="py-2">
+            <div>
               <span className="text-text-hi dark:text-text-hi-dark font-averta">{t('sum')}:</span>
             </div>
             <div className="flex items-start gap-1 font-averta">

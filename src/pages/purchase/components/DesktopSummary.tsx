@@ -300,7 +300,7 @@ export const DesktopSummary = ({
           </div>
         </div>
 
-        <div className={clsx('flex flex-col gap-5', isExpanded && 'mt-5')}>
+        <div className={clsx('flex flex-col gap-3', isExpanded && 'mt-5')}>
           {/* Balance and pricing - Only show for cart context */}
           {useCartContext && cart && (
             <div className="flex flex-col gap-2 border-b border-border-element dark:border-border-element-dark pb-4">
@@ -345,7 +345,7 @@ export const DesktopSummary = ({
             </div>
             <div className="flex items-start gap-1 font-averta">
               <span className="text-green font-semibold text-lg tracking-[-0.66px]">$</span>
-              <span className="font-semibold text-blue text-[33px] leading-[120%] tracking-[-0.66px]">{finalTotal.toFixed(2)}</span>
+              <h3 className="font-semibold text-blue text-[33px] leading-[120%] tracking-[-0.66px]">{finalTotal.toFixed(2)}</h3>
             </div>
           </div>
 

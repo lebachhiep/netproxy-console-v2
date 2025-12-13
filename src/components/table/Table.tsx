@@ -278,13 +278,9 @@ export function Table<T extends Record<string, any>>({
                 justifyClass = 'justify-between';
               }
 
-              let thClassName = `h-9 py-1 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
-  ${col.sortable ? 'cursor-pointer !text-text-hi dark:!text-text-hi-dark' : ''} 
-  bg-bg-canvas dark:bg-bg-canvas-dark`;
+              let thClassName = `h-9 py-1 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark ${col.sortable ? 'cursor-pointer !text-text-hi dark:!text-text-hi-dark' : ''} bg-bg-canvas dark:bg-bg-canvas-dark`;
 
-              const className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark
-  ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} 
-  bg-bg-canvas dark:bg-bg-canvas-dark`;
+              const className = `h-8 ${alignClass} text-sm font-medium text-text-lo dark:text-text-lo-dark ${col.sortable ? 'cursor-pointer hover:!text-text-hi dark:hover:!text-text-hi-dark' : ''} bg-bg-canvas dark:bg-bg-canvas-dark`;
 
               if (isSorted) {
                 thClassName += ' font-medium';
@@ -352,7 +348,7 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="overflow-auto relative flex-1 dark:bg-bg-canvas-dark z-50 overflow-x-scroll"
+      className="relative flex-1 dark:bg-bg-canvas-dark z-50 overflow-x-scroll"
       style={{
         maxHeight: maxHeight || '',
         overflowX: 'auto',

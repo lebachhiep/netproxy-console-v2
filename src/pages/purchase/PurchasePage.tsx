@@ -353,7 +353,7 @@ const PurchasePage: React.FC = () => {
       variants={pageVariants}
       initial="hidden"
       animate="visible"
-      className="overflow-auto min-h-0 h-[100dvh] md:h-[calc(100dvh-104px)] flex flex-col flex-1"
+      className="overflow-auto flex flex-col flex-1"
       style={{ scrollbarGutter: 'stable' }}
     >
       {pageTitle}
@@ -424,7 +424,7 @@ const PurchasePage: React.FC = () => {
                       variants={containerVariants}
                       initial="hidden"
                       animate="visible"
-                      className={`flex-1 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-295px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-215px)] overflow-y-auto`}
+                      className={`flex-1 grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 p-5 max-h-[calc(100dvh-365px)] md:max-h-[calc(100dvh-335px)] lg:max-h-[calc(100dvh-265px)] overflow-y-auto`}
                     >
                       {groupPlans.length === 0 ? (
                         <div className="col-span-full">

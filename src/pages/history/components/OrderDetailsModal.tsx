@@ -63,36 +63,37 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
       render: (_value, _record, index) => index + 1
     },
     {
+      width: 150,
       key: 'plan_name',
       title: t('planName') || 'Tên gói',
       align: 'left',
       render: (value) => <span className="font-medium text-text-hi dark:text-text-hi-dark">{value}</span>
     },
     {
+      width: 100,
       key: 'country',
       title: t('country') || 'Quốc gia',
-      width: '100px',
       align: 'center',
       render: (value) => (value ? <Badge color="gray">{value}</Badge> : <span className="text-text-lo dark:text-text-lo-dark">-</span>)
     },
     {
+      width: 100,
       key: 'quantity',
       title: t('quantityShort') || 'Số lượng',
-      width: '70px',
       align: 'center',
       render: (value) => <span className="font-medium text-text-hi dark:text-text-hi-dark">{value}</span>
     },
     {
+      width: 100,
       key: 'unit_price',
       title: t('unitPrice') || 'Đơn giá',
-      width: '100px',
       align: 'right',
       render: (value) => <span className="text-text-med dark:text-text-med-dark">${Number(value).toFixed(2)}</span>
     },
     {
+      width: 100,
       key: 'total_price',
       title: t('totalPrice') || 'Thành tiền',
-      width: '110px',
       align: 'right',
       render: (value) => <span className="font-medium text-blue">${Number(value).toFixed(2)}</span>
     }
@@ -145,7 +146,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
           {order.description && (
             <div className="border-t border-border-element dark:border-border-element-dark pt-4">
               <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2 capitalize">{t('description')}</h4>
-              <p className="text-sm text-text-med dark:text-text-med-dark">{order.description}</p>
+              <p className="text-sm text-text-med dark:text-text-hi-dark">{order.description}</p>
             </div>
           )}
 
@@ -207,7 +208,7 @@ export const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ open, orde
           {order.notes && (
             <div className="border-t border-border-element dark:border-border-element-dark pt-4">
               <h4 className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-2 capitalize">{t('note')}</h4>
-              <p className="text-sm text-text-med dark:text-text-med-dark">{order.notes}</p>
+              <p className="text-sm text-text-med dark:text-text-hi-dark">{order.notes}</p>
             </div>
           )}
         </div>

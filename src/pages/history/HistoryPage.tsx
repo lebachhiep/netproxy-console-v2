@@ -200,7 +200,7 @@ const HistoryPage: React.FC = () => {
     {
       key: 'orderNumber',
       title: t('historyPage.columns.orderNumber'),
-      width: 200,
+      width: isMobile || isTablet ? 120 : 200,
       align: 'center',
       sortable: true,
       fixed: 'left',

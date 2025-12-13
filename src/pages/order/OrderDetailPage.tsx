@@ -96,7 +96,7 @@ const OrderDetailPage = () => {
   const navigate = useNavigate();
   const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: id || '' });
   const [loading, setLoading] = useState(false);
-  const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -455,7 +455,7 @@ const OrderDetailPage = () => {
         key: 'country_code',
         title: t('country'),
         align: 'center',
-        render: (_, record) => {
+        render: (_: any, record: Subscription) => {
           const isRotating = isRotatingProxy(record);
           if (isRotating) {
             return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} className="max-w-40 mx-auto" />;
@@ -495,7 +495,7 @@ const OrderDetailPage = () => {
       },
       {
         width: 200,
-        fixed: 'right',
+        fixed: isMobile || isTablet ? undefined : 'right',
         key: 'actions',
         title: t('action'),
         align: 'center',
@@ -583,14 +583,14 @@ const OrderDetailPage = () => {
       >
         {/* Header */}
         <div className="px-5 border-t mt-6 py-2 bg-bg-canvas dark:bg-bg-canvas-dark border-border-element dark:border-border-element-dark">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-cold xs:flex-row flex-wrap gap-2">
             <Input
               placeholder="Tìm kiếm"
-              wrapperClassName="bg-bg-input border-2 h-10 min-w-[223px]"
+              wrapperClassName="bg-bg-input border-2 h-10 md:min-w-[223px]"
               icon={<MagnifyingGlass />}
               onChange={(e) => console.log(e.target.value)}
             />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ml-auto">
               {/* Change protocol */}
               {!isBelongRotatingProxy && (
                 <IconButton

@@ -583,7 +583,7 @@ const OrderDetailPage = () => {
       >
         {/* Header */}
         <div className="px-5 border-t mt-6 py-2 bg-bg-canvas dark:bg-bg-canvas-dark border-border-element dark:border-border-element-dark">
-          <div className="flex items-center justify-between flex-cold xs:flex-row flex-wrap gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Input
               placeholder="Tìm kiếm"
               wrapperClassName="bg-bg-input border-2 h-10 md:min-w-[223px]"

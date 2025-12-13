@@ -244,8 +244,8 @@ export function Table<T extends Record<string, any>>({
         <thead className="z-20">
           <tr>
             {rowSelection && !loading && (
-              <th className="w-12 h-8 px-2 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-canvas-dark">
-                <div className="flex items-center justify-center px-2 gap-1 border-r-[1.25px] border-border-element dark:border-border-element-dark h-full">
+              <th className="w-12 h-8 py-1 text-left sticky left-0 z-30 bg-bg-canvas dark:bg-bg-canvas-dark">
+                <div className="flex items-center justify-center px-4 gap-1 border-r-[1.25px] border-border-element dark:border-border-element-dark h-full">
                   <Checkbox
                     indeterminate={isIndeterminate}
                     checked={!!isAllSelected}

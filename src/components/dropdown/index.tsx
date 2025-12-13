@@ -170,7 +170,7 @@ function Trigger({ children, className = '', asIcon = false, showChevron = false
   const { isOpen, setIsOpen, trigger, refs, handleMouseEnter, handleMouseLeave } = context as any;
 
   const baseClasses = asIcon
-    ? 'w-25 h-10 p-2 rounded-lg transition-colors flex items-center justify-center'
+    ? 'w-25 h-10 rounded-lg transition-colors flex items-center justify-center'
     : twMerge(
         'shadow-xs transition-all duration-300 flex items-center gap-1 justify-between w-full h-12 px-3 border-2 rounded-lg bg-bg-secondary dark:bg-bg-primary-dark text-sm dark:text-text-me-dark',
         isOpen

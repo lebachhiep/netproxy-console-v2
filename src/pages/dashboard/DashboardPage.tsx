@@ -219,7 +219,7 @@ const DashboardPage = () => {
       render: () => <Badge color={'blue'}>{t('dashboard.active')}</Badge> // Always active for now
     },
     {
-      width: isMobile || isTablet ? 100 : 200,
+      width: isMobile || isTablet ? 100 : 130,
       fixed: 'right',
       key: 'buttonText',
       title: t('action'),

@@ -223,16 +223,16 @@ export function Table<T extends Record<string, any>>({
     <div
       ref={headerScrollRef}
       className={clsx(
-        'overflow-auto relative bg-bg-canvas border-border-element dark:border-border-element-dark border-b-2 border-t-2 dark:bg-bg-canvas-dark'
+        'overflow-scroll [scrollbar-gutter:stable] relative bg-bg-canvas border-border-element dark:border-border-element-dark border-b-2 border-t-2 dark:bg-bg-canvas-dark'
       )}
       style={{
         overflowX: 'hidden',
-        overflowY: scroll?.y ? 'scroll' : 'visible',
+        overflowY: 'scroll',
         scrollbarGutter: 'stable'
       }}
     >
       <table
-        className={`px-5 shadow-xs ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
+        className={`shadow-xs ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
         style={{
           tableLayout: 'fixed',
           minWidth: tableMinWidth,
@@ -292,7 +292,7 @@ export function Table<T extends Record<string, any>>({
                 thClassName += ' sticky z-30 bg-white';
                 const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                 if (isLastLeftFixed) {
-                  thClassName += ' fixed-left-shadow';
+                  thClassName += ' fixed-left-shadow border-r border-border-element dark:border-border-element-dark';
                 }
               } else if (isRightFixed) {
                 thClassName += ' sticky z-30';
@@ -320,7 +320,7 @@ export function Table<T extends Record<string, any>>({
                 borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
               }
               // Using for case last column does not sticky, it should add right border to second last column
-              if (!isLastColSticky && isSecondLastCol) {
+              if ((!isLastColSticky && isSecondLastCol) || isLeftFixed) {
                 borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
               }
 
@@ -348,7 +348,8 @@ export function Table<T extends Record<string, any>>({
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
-      className="relative flex-1 dark:bg-bg-canvas-dark z-50 overflow-x-scroll"
+      // margin-right for the scroll bar space
+      className="[scrollbar-gutter:stable] relative flex-1 dark:bg-bg-canvas-dark z-50 overflow-x-scroll"
       style={{
         maxHeight: maxHeight || '',
         overflowX: 'auto',
@@ -357,7 +358,7 @@ export function Table<T extends Record<string, any>>({
       onScroll={handleBodyScroll}
     >
       <table
-        className={`px-5 dark:bg-bg-canvas-dark ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
+        className={`dark:bg-bg-canvas-dark ${sizeClasses[size]} ${bordered ? 'border-l-2 border-r-2 border-border-element dark:border-border-element-dark' : ''}`}
         style={{
           tableLayout: 'fixed',
           minWidth: tableMinWidth,
@@ -405,7 +406,7 @@ export function Table<T extends Record<string, any>>({
                     className += ' sticky z-10';
                     const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                     if (isLastLeftFixed) {
-                      className += ` fixed-left-shadow ${actualRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                      className += ` fixed-left-shadow border-r border-border-element dark:border-border-element-dark ${actualRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
                     }
                   }
                   if (isRightFixed) {

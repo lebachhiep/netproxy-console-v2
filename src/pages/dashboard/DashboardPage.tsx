@@ -68,6 +68,7 @@ interface OrderTableData {
 const DashboardPage = () => {
   const { t } = useTranslation();
   const pageTitle = usePageTitle({ pageName: t('home') });
+
   const [currentPage, setCurrentPage] = useState(() => {
     const pageQuery = new URLSearchParams(window.location.search).get('page');
     return pageQuery ? parseInt(pageQuery, 10) : 1;

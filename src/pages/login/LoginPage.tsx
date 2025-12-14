@@ -181,7 +181,7 @@ export const LoginPage: React.FC = () => {
                 {
                   src: img9,
                   className:
-                    'aspect-[91/60] md:w-[360px] lg:w-[606px] lg:h-[405px] md:top-[183px] lg:top-[100px] lg:left-[37px] absolute object-contain'
+                    'aspect-[91/60] md:w-[360px] lg:w-[606px] lg:h-[405px] md:top-[183px] lg:top-[100px] lg:left-[37px] absolute object-contain border border-[8px] border-[#FDCFA8] rounded-3xl  object-fill'
                 },
                 {
                   src: productCardImg,

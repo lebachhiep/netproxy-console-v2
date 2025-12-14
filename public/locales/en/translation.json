@@ -272,15 +272,15 @@
     },
     "android": {
       "title": "Android Extensions",
-      "content": "Our Windows application delivers a stable and optimized experience, enabling you to work efficiently with all features integrated natively into your desktop environment."
+      "content": "The Android app gives you the flexibility to use our service anytime, anywhere, with a mobile-friendly design and full feature support on the go."
     },
     "window": {
       "title": "Window Extensions",
-      "content": "Designed for macOS, the app runs smoothly and efficiently, offering an intuitive interface and full compatibility with the Apple ecosystem."
+      "content": "Our Windows application delivers a stable and optimized experience, enabling you to work efficiently with all features integrated natively into your desktop environment."
     },
     "mac": {
-      "title": "Mac Extensions",
-      "content": "The Android app gives you the flexibility to use our service anytime, anywhere, with a mobile-friendly design and full feature support on the go."
+      "title": "IOS Extensions",
+      "content": "Designed for IOS, the app runs smoothly and efficiently, offering an intuitive interface and full compatibility with the Apple ecosystem."
     }
   },
   "months": {

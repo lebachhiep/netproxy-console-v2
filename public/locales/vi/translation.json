@@ -20,7 +20,7 @@
     "copyOrderIDSuccess": "Đã sao chép mã đơn hàng vào clipboard",
     "totalTopUp": "Tổng tiền đã nạp",
     "totalPlans": "Tổng gói",
-    "totalPurchasedPlans": "Tổng gói đã mua",
+    "totalPurchasedPlans": "Total purchase plans",
     "totalOrders": "Tổng đơn hàng",
     "totalOrdersSold": "Tổng đơn hàng đã bán",
     "operating": "hoạt động",
@@ -272,15 +272,15 @@
     },
     "android": {
       "title": "Ứng dụng trên Android",
-      "content": "Ứng dụng Windows mang đến trải nghiệm ổn định và tối ưu, giúp bạn làm việc hiệu quả với đầy đủ tính năng được tích hợp trực tiếp vào môi trường máy tính."
+      "content": "Ứng dụng Android giúp bạn sử dụng dịch vụ mọi lúc, mọi nơi với giao diện tối ưu cho thiết bị di động và đầy đủ tính năng khi di chuyển."
     },
     "window": {
       "title": "Ứng dụng trên Windows",
-      "content": "Ứng dụng dành cho macOS được tối ưu để hoạt động mượt mà và hiệu quả, với giao diện trực quan và khả năng tương thích hoàn chỉnh trong hệ sinh thái Apple."
+      "content": "Ứng dụng Windows mang đến trải nghiệm ổn định và tối ưu, giúp bạn làm việc hiệu quả với đầy đủ tính năng được tích hợp trực tiếp vào môi trường máy tính."
     },
     "mac": {
-      "title": "Ứng dụng trên Mac",
-      "content": "Ứng dụng Android giúp bạn sử dụng dịch vụ mọi lúc, mọi nơi với giao diện tối ưu cho thiết bị di động và đầy đủ tính năng khi di chuyển."
+      "title": "Ứng dụng trên IOS",
+      "content": "Ứng dụng dành cho IOS được tối ưu để hoạt động mượt mà và hiệu quả, với giao diện trực quan và khả năng tương thích hoàn chỉnh trong hệ sinh thái Apple."
     }
   },
   "months": {

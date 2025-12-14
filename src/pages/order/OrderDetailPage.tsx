@@ -94,7 +94,6 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: id || '' });
   const [loading, setLoading] = useState(false);
   const { isMobile, isTablet } = useResponsive();
   const [error, setError] = useState<string | null>(null);
@@ -106,6 +105,7 @@ const OrderDetailPage = () => {
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
   const [renewCount, setRenewCount] = useState(0);
   const { t } = useTranslation();
+  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: id || '' });
 
   const { setNavbarItems } = useNavbar();
 

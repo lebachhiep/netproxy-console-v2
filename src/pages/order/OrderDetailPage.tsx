@@ -583,7 +583,7 @@ const OrderDetailPage = () => {
       },
       {
         width: 150,
-        key: 'next_renewal_date',
+        key: 'expires_at',
         title: t('expired'),
         render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
       },

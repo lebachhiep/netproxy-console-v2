@@ -8,6 +8,10 @@
   "minMoney": "Minimum amount of money: ",
   "crypto": "Cryptocurrency",
   "activePackage": "Active Package",
+  "total": "Total",
+  "asia": "Asia",
+  "europe": "Europe",
+  "otherRegions": "Other Regions",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",

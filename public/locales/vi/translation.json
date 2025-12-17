@@ -8,6 +8,10 @@
   "minMoney": "Số tiền tối thiểu: ",
   "crypto": "Tiền điện tử",
   "activePackage": "Gói hoạt động",
+  "total": "Tổng",
+  "asia": "Châu Á",
+  "europe": "Châu Âu",
+  "otherRegions": "Khu vực khác",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm Tiền",

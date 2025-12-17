@@ -174,7 +174,7 @@ const RotateOrderSummary: React.FC<Props> = ({
   };
 
   // Handle double click to edit quantity
-  const handleDoubleClickQuantity = (item: CartItem) => {
+  const handleClickQuantity = (item: CartItem) => {
     if (useCartContext && cart) {
       setEditingItemId(item.id);
       setEditValue(item.quantity.toString());
@@ -277,14 +277,14 @@ const RotateOrderSummary: React.FC<Props> = ({
                                   onChange={handleQuantityInputChange}
                                   onBlur={handleQuantityInputBlur}
                                   onKeyDown={handleQuantityInputKeyPress}
-                                  className="w-12 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
+                                  className="max-w-10 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
                                   autoFocus
                                 />
                               ) : (
                                 <span
                                   className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
-                                  onDoubleClick={() => handleDoubleClickQuantity(item)}
-                                  title="Double click để chỉnh sửa"
+                                  onClick={() => handleClickQuantity(item)}
+                                  title="Click để chỉnh sửa"
                                 >
                                   {item.quantity}
                                 </span>

@@ -45,8 +45,6 @@ export const RotateDesktopSummary = ({
   const userProfile = useAuthStore((state) => state.userProfile);
   const balance = userProfile?.balance ?? 0;
 
-  console.log('cart in RotateDesktopSummary:', cart);
-
   // Calculate final total with discount
   // For dedicated tabs (when orders prop is provided), use the passed total (which is already filtered)
   // For rotating tabs, use the passed total (which is already filtered by OrderSummary)

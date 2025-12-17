@@ -12,6 +12,7 @@ import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
 import { PlanType } from '@/services/plan/plan.types';
+import { useTranslation } from 'react-i18next';
 
 // Register locales
 countries.registerLocale(en);
@@ -49,6 +50,7 @@ const OrderSummary: React.FC<Props> = ({
   duration,
   filterPlanType
 }) => {
+  const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const cart = useCartContext ? useCart() : null;
@@ -194,7 +196,7 @@ const OrderSummary: React.FC<Props> = ({
   };
 
   // Handle double click to edit quantity
-  const handleDoubleClickQuantity = (item: CartItem) => {
+  const handleClickQuantity = (item: CartItem) => {
     if (useCartContext && cart) {
       setEditingItemId(item.id);
       setEditValue(item.quantity.toString());
@@ -246,11 +248,11 @@ const OrderSummary: React.FC<Props> = ({
           <div className="flex-1 mt-5 flex flex-col min-h-28 overflow-visible">
             {/* Header row */}
             <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 pb-3 text-sm font-medium text-text-lo dark:text-text-lo-dark border-b border-border-element dark:border-border-element-dark">
-              <span>Country</span>
-              <span className="w-[42px] text-center">Giá</span>
-              <span className="w-[100px] text-center">Số lượng</span>
-              <span className="w-[60px] text-center">Tổng</span>
-              <span className="w-[20px] text-center"></span>
+              <span>{t('country')}</span>
+              <span className="w-[42px] text-center">{t('price')}</span>
+              <span className="w-[100px] text-center">{t('quantity')}</span>
+              <span className="w-[60px] text-center">{t('total')}</span>
+              <span className="w-[40px] text-center"></span>
             </div>
 
             {/* List items */}
@@ -308,14 +310,14 @@ const OrderSummary: React.FC<Props> = ({
                                   onChange={handleQuantityInputChange}
                                   onBlur={handleQuantityInputBlur}
                                   onKeyDown={handleQuantityInputKeyPress}
-                                  className="w-12 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
+                                  className="max-w-8 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
                                   autoFocus
                                 />
                               ) : (
                                 <span
                                   className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
-                                  onDoubleClick={() => handleDoubleClickQuantity(item)}
-                                  title="Double click để chỉnh sửa"
+                                  onDoubleClick={() => handleClickQuantity(item)}
+                                  title="Click để chỉnh sửa"
                                 >
                                   {item.quantity}
                                 </span>
@@ -324,7 +326,6 @@ const OrderSummary: React.FC<Props> = ({
                                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                                 onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
                               >
-                                asdf
                                 <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
                               </div>
                             </div>
@@ -512,7 +513,7 @@ const OrderSummary: React.FC<Props> = ({
                                 ) : (
                                   <span
                                     className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
-                                    onDoubleClick={() => handleDoubleClickQuantity(item)}
+                                    onClick={() => handleClickQuantity(item)}
                                     title="Double click để chỉnh sửa"
                                   >
                                     {item.quantity}
@@ -645,7 +646,6 @@ const OrderSummary: React.FC<Props> = ({
                     </div>
                   </div>
                 ))}
-            summary
           </div>
 
           {/* CTA area fixed at bottom */}

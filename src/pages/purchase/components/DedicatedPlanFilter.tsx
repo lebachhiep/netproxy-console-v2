@@ -21,7 +21,10 @@ countriesLib.registerLocale(en);
 countriesLib.registerLocale(vi);
 
 // Helper function to get country name from code in Vietnamese
-const getCountryName = (code: string): string => {
+const getCountryName = (code: string, locale?: string): string => {
+  if (locale) {
+    return countriesLib.getName(code, locale, { select: 'official' }) || code;
+  }
   return countriesLib.getName(code, 'vi', { select: 'official' }) || countriesLib.getName(code, 'en', { select: 'official' }) || code;
 };
 
@@ -57,7 +60,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
   proxyType,
   servers
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const cart = useCart();
 
   // Determine tab key for this component (based on first plan or proxyType)
@@ -233,7 +236,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     const country = countries.find((c) => c.code === countryCode);
     if (!country || !selectedPlan) return;
 
-    const countryName = getCountryName(countryCode);
+    const countryName = getCountryName(countryCode, i18n.language);
     const newMap = new Map(selectedCountries);
 
     if (newMap.has(countryCode)) {
@@ -335,7 +338,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
           return;
         }
 
-        const countryName = getCountryName(item.country);
+        const countryName = getCountryName(item.country, i18n.language);
 
         // Calculate price per IP: if calculatedPrice exists, divide by quantity
         // Otherwise use plan.price as price per IP
@@ -505,7 +508,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         return {
           country: {
             id: item.country || '',
-            name: item.country ? getCountryName(item.country) : '',
+            name: item.country ? getCountryName(item.country, i18n.language) : '',
             code: item.country?.toLowerCase() || ''
           } as OrderCountry,
           price: pricePerIP,
@@ -646,14 +649,14 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                             {/* Asia Countries */}
                             {asiaCountries.length > 0 && (
                               <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Á</h3>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2 capitalize">{t('asia')}</h3>
                                 <div className="flex flex-wrap gap-3">
                                   {asiaCountries.map((country) => {
                                     const isSelected = selectedCountries.has(country.code);
                                     return (
                                       <CountryTag
                                         key={country.code}
-                                        name={getCountryName(country.code)}
+                                        name={getCountryName(country.code, i18n.language)}
                                         flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
                                         active={isSelected}
                                         removable={isSelected}
@@ -669,14 +672,14 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                             {/* Europe Countries */}
                             {europeCountries.length > 0 && (
                               <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Châu Âu</h3>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('europe')}</h3>
                                 <div className="flex flex-wrap gap-3">
                                   {europeCountries.map((country) => {
                                     const isSelected = selectedCountries.has(country.code);
                                     return (
                                       <CountryTag
                                         key={country.code}
-                                        name={getCountryName(country.code)}
+                                        name={getCountryName(country.code, i18n.language)}
                                         flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
                                         active={isSelected}
                                         removable={isSelected}
@@ -692,14 +695,14 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
                             {/* Other Countries */}
                             {otherCountries.length > 0 && (
                               <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">Khác</h3>
+                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('otherRegions')}</h3>
                                 <div className="flex flex-wrap gap-3">
                                   {otherCountries.map((country) => {
                                     const isSelected = selectedCountries.has(country.code);
                                     return (
                                       <CountryTag
                                         key={country.code}
-                                        name={getCountryName(country.code)}
+                                        name={getCountryName(country.code, i18n.language)}
                                         flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
                                         active={isSelected}
                                         removable={isSelected}

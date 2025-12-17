@@ -231,7 +231,11 @@ const OrderDetailPage = () => {
       }
 
       console.log('Getting proxy information for subscription:', subscriptionId);
-      // const response = await subscriptionService.getProxy(subscriptionId);
+      const response = await subscriptionService.getProxy(subscriptionId);
+      if (!response) {
+        toast.error(t('toast.error.proxyInfo'));
+        return;
+      }
 
       // Update subscriptions state with new proxy credentials
       // setSubscriptions((prev) =>
@@ -504,7 +508,6 @@ const OrderDetailPage = () => {
           const isRotating = isRotatingProxy(record);
           return (
             <div className="flex items-center justify-center gap-2">
-              {' '}
               {!isRotating && (
                 <>
                   <IconButton

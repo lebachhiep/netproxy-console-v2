@@ -100,6 +100,7 @@ const OrderSummary: React.FC<Props> = ({
       // If propOrders is provided (for dedicated tabs), calculate from orders
       // We need to map back to cart items to get calculatedPrice
       const allItems = cart.getAllItems();
+
       filteredItems = orders
         .map((orderItem) => {
           // Find corresponding cart item
@@ -120,8 +121,8 @@ const OrderSummary: React.FC<Props> = ({
         totalLocation = (propOrders as OrderItemType[]).length;
       } else {
         total = filteredItems.reduce((sum, item) => {
-          const itemPrice = item.calculatedPrice ?? item.plan.price;
-          return sum + itemPrice * item.quantity;
+          const itemPrice = item.calculatedPrice ?? item.plan.price * item.quantity;
+          return sum + itemPrice;
         }, 0);
         totalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
         totalLocation = filteredItems.length;
@@ -131,8 +132,8 @@ const OrderSummary: React.FC<Props> = ({
       filteredItems = filterPlanType ? allItems.filter((item) => item.plan.type === filterPlanType) : allItems;
 
       total = filteredItems.reduce((sum, item) => {
-        const itemPrice = item.calculatedPrice ?? item.plan.price;
-        return sum + itemPrice * item.quantity;
+        const itemPrice = item.calculatedPrice ?? item.plan.price * item.quantity;
+        return sum + itemPrice;
       }, 0);
       totalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
       totalLocation = filteredItems.length;
@@ -241,9 +242,6 @@ const OrderSummary: React.FC<Props> = ({
       {/* Desktop */}
       {!isMobile && !isTablet ? (
         <div className="bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark p-5 flex flex-col h-full !pb-0">
-          {/* Header */}
-          {/* <SectionTitle text="Đơn hàng" icon={<Delete className="cursor-pointer text-text-lo dark:text-text-lo-dark" onClick={onClearAll} />} /> */}
-
           {/* Scrollable order list */}
           <div className="flex-1 mt-5 flex flex-col min-h-28 overflow-visible">
             {/* Header row */}
@@ -326,6 +324,7 @@ const OrderSummary: React.FC<Props> = ({
                                 className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
                                 onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
                               >
+                                asdf
                                 <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
                               </div>
                             </div>
@@ -646,6 +645,7 @@ const OrderSummary: React.FC<Props> = ({
                     </div>
                   </div>
                 ))}
+            summary
           </div>
 
           {/* CTA area fixed at bottom */}

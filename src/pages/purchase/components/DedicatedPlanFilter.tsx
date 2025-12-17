@@ -517,6 +517,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     // Handlers for OrderSummary
     const handleUpdateQuantity = (country: OrderCountry, quantity: number) => {
       const item = filteredItems.find((i) => i.country?.toLowerCase() === country.code);
+
       if (item) {
         if (quantity < 1) {
           cart.removeItem(tabKey, item.id);

@@ -3,6 +3,7 @@ import { NavigationRoute, navigationSections } from '@/config/navigation';
 import { ResponsiveLayout } from '@/layouts/ResponsiveLayout';
 import { NotFoundPage } from '@/pages/404/NotFoundPage';
 import { AccountProfilePage } from '@/pages/account-profile/AccountProfilePage';
+import { APIDocsPage } from '@/pages/api-docs/APIDocs';
 import ComponentPage from '@/pages/component/ComponentPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
@@ -61,6 +62,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
         break;
       case '/support-software':
         element = <SupportSoftwarePage />;
+        break;
+      case '/api-docs':
+        element = <APIDocsPage />;
         break;
       default:
         element = <></>;

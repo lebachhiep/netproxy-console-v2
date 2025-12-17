@@ -113,8 +113,8 @@ const RotateOrderSummary: React.FC<Props> = ({
         totalLocation = (propOrders as OrderItemType[]).length;
       } else {
         total = filteredItems.reduce((sum, item) => {
-          const itemPrice = item.calculatedPrice ?? item.plan.price;
-          return sum + itemPrice * item.quantity;
+          const itemPrice = item.calculatedPrice ?? item.plan.price * item.quantity;
+          return sum + itemPrice;
         }, 0);
         totalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
         totalLocation = filteredItems.length;
@@ -124,8 +124,8 @@ const RotateOrderSummary: React.FC<Props> = ({
       filteredItems = filterPlanType ? allItems.filter((item) => item.plan.type === filterPlanType) : allItems;
 
       total = filteredItems.reduce((sum, item) => {
-        const itemPrice = item.calculatedPrice ?? item.plan.price;
-        return sum + itemPrice * item.quantity;
+        const itemPrice = item.calculatedPrice ?? item.plan.price * item.quantity;
+        return sum + itemPrice;
       }, 0);
       totalIps = filteredItems.reduce((sum, item) => sum + item.quantity, 0);
       totalLocation = filteredItems.length;

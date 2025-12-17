@@ -20,7 +20,7 @@
     "copyOrderIDSuccess": "Đã sao chép mã đơn hàng vào clipboard",
     "totalTopUp": "Tổng tiền đã nạp",
     "totalPlans": "Tổng gói",
-    "totalPurchasedPlans": "Total purchase plans",
+    "totalPurchasedPlans": "Tổng gói đã mua",
     "totalOrders": "Tổng đơn hàng",
     "totalOrdersSold": "Tổng đơn hàng đã bán",
     "operating": "hoạt động",
@@ -180,7 +180,8 @@
     "SelectMethod": "Chọn phương thức nạp tiền",
     "topUp": "NẠP TIỀN",
     "history": "Lịch sử giao dịch",
-    "findingHistory": "Đang tìm lịch sử giao dịch..."
+    "findingHistory": "Đang tìm lịch sử giao dịch...",
+    "selectMethodPrompt": "Vui lòng chọn phương thức nạp tiền"
   },
   "BalanceCard": {
     "currentBalance": "Số dư Tài Khoản",

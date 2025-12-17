@@ -56,7 +56,14 @@ interface CartContextType {
   getAllItems: () => CartItem[];
 
   // Actions
-  addToCart: (tabKey: CartTabKey, plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => void;
+  addToCart: (
+    tabKey: CartTabKey,
+    plan: Plan,
+    quantity: number,
+    options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>,
+    country?: string,
+    calculatedPrice?: number
+  ) => void;
   removeItem: (tabKey: CartTabKey, itemId: string) => void;
   updateQuantity: (tabKey: CartTabKey, itemId: string, quantity: number) => void;
   updateCartItem: (tabKey: CartTabKey, itemId: string, quantity: number, calculatedPrice?: number) => void;
@@ -66,7 +73,11 @@ interface CartContextType {
   clearCartByItemIds: (tabKey: CartTabKey, itemIds: string[]) => void;
   applyCoupon: (code: string, couponData: CouponData, discount: number) => void;
   removeCoupon: () => void;
-  getItemByPlan: (tabKey: CartTabKey, planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>) => CartItem | undefined;
+  getItemByPlan: (
+    tabKey: CartTabKey,
+    planId: string,
+    options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>
+  ) => CartItem | undefined;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -197,9 +208,13 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Get item by plan ID and options from specific tab
-  const getItemByPlan = (tabKey: CartTabKey, planId: string, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>): CartItem | undefined => {
+  const getItemByPlan = (
+    tabKey: CartTabKey,
+    planId: string,
+    options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>
+  ): CartItem | undefined => {
     const tabItems = itemsByTab[tabKey];
-    return tabItems.find(item => {
+    return tabItems.find((item) => {
       if (item.plan.id !== planId) return false;
 
       // Check if options match
@@ -213,22 +228,24 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   // Add item to cart (or update quantity if exists)
-  const addToCart = (tabKey: CartTabKey, plan: Plan, quantity: number, options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>, country?: string, calculatedPrice?: number) => {
+  const addToCart = (
+    tabKey: CartTabKey,
+    plan: Plan,
+    quantity: number,
+    options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>,
+    country?: string,
+    calculatedPrice?: number
+  ) => {
     if (quantity < 1) return;
 
     const itemId = generateItemId(plan, options, country);
     const tabItems = itemsByTab[tabKey];
-    const existingItem = tabItems.find(item => item.id === itemId);
-
+    const existingItem = tabItems.find((item) => item.id === itemId);
     if (existingItem) {
       // Update existing item quantity
       setItemsByTab({
         ...itemsByTab,
-        [tabKey]: tabItems.map(item =>
-          item.id === itemId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        )
+        [tabKey]: tabItems.map((item) => (item.id === itemId ? { ...item, quantity: item.quantity + quantity } : item))
       });
     } else {
       // Add new item
@@ -252,7 +269,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const tabItems = itemsByTab[tabKey];
     setItemsByTab({
       ...itemsByTab,
-      [tabKey]: tabItems.filter(item => item.id !== itemId)
+      [tabKey]: tabItems.filter((item) => item.id !== itemId)
     });
   };
 
@@ -266,11 +283,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const tabItems = itemsByTab[tabKey];
     setItemsByTab({
       ...itemsByTab,
-      [tabKey]: tabItems.map(item =>
-        item.id === itemId
-          ? { ...item, quantity }
-          : item
-      )
+      [tabKey]: tabItems.map((item) => (item.id === itemId ? { ...item, quantity } : item))
     });
   };
 
@@ -284,10 +297,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const tabItems = itemsByTab[tabKey];
     setItemsByTab({
       ...itemsByTab,
-      [tabKey]: tabItems.map(item =>
-        item.id === itemId
-          ? { ...item, quantity, ...(calculatedPrice !== undefined && { calculatedPrice }) }
-          : item
+      [tabKey]: tabItems.map((item) =>
+        item.id === itemId ? { ...item, quantity, ...(calculatedPrice !== undefined && { calculatedPrice }) } : item
       )
     });
   };
@@ -297,11 +308,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const tabItems = itemsByTab[tabKey];
     setItemsByTab({
       ...itemsByTab,
-      [tabKey]: tabItems.map(item =>
-        item.id === itemId
-          ? { ...item, country }
-          : item
-      )
+      [tabKey]: tabItems.map((item) => (item.id === itemId ? { ...item, country } : item))
     });
   };
 
@@ -335,7 +342,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   // Clear cart by item IDs (for clearing only specific items after checkout)
   const clearCartByItemIds = (tabKey: CartTabKey, itemIds: string[]) => {
     const tabItems = itemsByTab[tabKey];
-    const updatedTabItems = tabItems.filter(item => !itemIds.includes(item.id));
+    const updatedTabItems = tabItems.filter((item) => !itemIds.includes(item.id));
 
     setItemsByTab({
       ...itemsByTab,

@@ -318,6 +318,9 @@ const WalletPage: React.FC = () => {
   }, [currentPage, pageSize, isMobile, isTablet, walletCols]);
 
   const handleTopup = () => {
+    if (!topUpMethod) {
+      toast.info(t('wallet.selectMethodPrompt') || 'Vui lòng chọn phương thức nạp tiền');
+    }
     if (topUpMethod === 'web2m') {
       setTopUpModalOpen(true);
     }

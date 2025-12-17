@@ -20,7 +20,7 @@
     "copyOrderIDSuccess": "Order ID copied to clipboard",
     "totalTopUp": "Total top-up amount",
     "totalPlans": "Total plans",
-    "totalPurchasedPlans": "Tổng gói đã mua",
+    "totalPurchasedPlans": "Total purchase plans",
     "totalOrders": "Total orders",
     "totalOrdersSold": "Total orders sold",
     "operating": "operating",
@@ -180,7 +180,8 @@
     "SelectMethod": "Select a top-up method",
     "topUp": "Top Up",
     "history": "Transaction History",
-    "findingHistory": "Finding transaction history..."
+    "findingHistory": "Finding transaction history...",
+    "selectMethodPrompt": "Please select a top-up method"
   },
   "BalanceCard": {
     "currentBalance": "Current Balance",

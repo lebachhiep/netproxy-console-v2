@@ -105,7 +105,6 @@ const OrderDetailPage = () => {
   const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
   const [renewCount, setRenewCount] = useState(0);
   const { t } = useTranslation();
-  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: id || '' });
 
   const { setNavbarItems } = useNavbar();
 
@@ -152,6 +151,8 @@ const OrderDetailPage = () => {
       }
     }
   });
+
+  const pageTitle = usePageTitle({ pageName: 'Chi tiết đơn hàng', orderId: subscriptions?.[0]?.notes || '' });
 
   const isBelongRotatingProxy = useMemo(() => {
     if (!subscriptions || subscriptions.length === 0) return false;

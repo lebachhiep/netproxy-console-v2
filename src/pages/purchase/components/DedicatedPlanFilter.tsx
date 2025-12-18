@@ -30,10 +30,9 @@ const getCountryName = (code: string, locale?: string): string => {
 
 interface DedicatedPlanFilterProps {
   plans: Plan[];
-  // getDisplayPrice: (plan: Plan) => string;
-  // buildPlanFeatures: (plan: Plan) => Array<{ icon: React.ReactNode; label: React.ReactNode }>;
   proxyType?: string; // Proxy type name (tab name) like "Premium ISP", "Private IPv4", etc.
   servers?: string[]; // Ordered list of servers from API
+  isIPv6?: boolean;
 }
 
 interface SelectedCountry {
@@ -53,15 +52,16 @@ const getPeriodDays = (plan: Plan): number | null => {
   return null;
 };
 
-export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
-  plans,
-  // getDisplayPrice,
-  // buildPlanFeatures,
-  proxyType,
-  servers
-}) => {
+export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans, proxyType, servers, isIPv6 }) => {
   const { t, i18n } = useTranslation();
   const cart = useCart();
+  // Filter state
+  const [selectedServer, setSelectedServer] = useState<string>('');
+  const [selectedPeriod, setSelectedPeriod] = useState<number | ''>('');
+
+  const defaultQuantity = useMemo<number>(() => {
+    return isIPv6 && selectedServer === 'Dawn Server' ? 10 : 1;
+  }, [isIPv6, selectedServer]);
 
   // Determine tab key for this component (based on first plan or proxyType)
   const tabKey: CartTabKey = useMemo(() => {
@@ -75,10 +75,6 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
     if (proxyType === 'IPv6') return 'ipv6';
     return 'private_ipv4'; // default
   }, [plans, proxyType]);
-
-  // Filter state
-  const [selectedServer, setSelectedServer] = useState<string>('');
-  const [selectedPeriod, setSelectedPeriod] = useState<number | ''>('');
 
   // Countries state
   const [countries, setCountries] = useState<Country[]>([]);
@@ -223,10 +219,12 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
         country: countryCode,
         quantity: quantity
       });
+
       // Return price per IP (total price / quantity)
       return response.price / quantity;
     } catch (err) {
       console.error('Failed to calculate price:', err);
+      toast.error('Không thể tính giá cho quốc gia đã chọn');
       // Fallback to plan price
       return selectedPlan.price || 0;
     }
@@ -272,13 +270,13 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
       setSelectedCountries(newMap);
 
       // Calculate real price asynchronously with quantity=1
-      calculatePriceForCountry(countryCode, 1).then((pricePerIP) => {
+      calculatePriceForCountry(countryCode, defaultQuantity).then((pricePerIP) => {
         const updated = new Map(newMap);
         const existing = updated.get(countryCode);
         if (existing) {
           // pricePerIP is already price per IP (from quantity=1)
           const finalPrice = pricePerIP;
-          const finalTotal = finalPrice * 1; // quantity is 1
+          const finalTotal = finalPrice * defaultQuantity; // quantity is 1
 
           updated.set(countryCode, {
             ...existing,
@@ -289,7 +287,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({
 
           // Add to cart with calculated price (total for quantity 1)
           const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
-          cart.addToCart(tabKey, selectedPlan, 1, { duration: durationOption }, countryCode, finalTotal);
+          cart.addToCart(tabKey, selectedPlan, defaultQuantity, { duration: durationOption }, countryCode, finalTotal);
           toast.success(`Đã thêm ${countryName} vào giỏ hàng`);
         }
       });

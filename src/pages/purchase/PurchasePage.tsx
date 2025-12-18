@@ -539,6 +539,7 @@ const PurchasePage: React.FC = () => {
                 // buildPlanFeatures={buildPlanFeatures}
                 proxyType="IPv6"
                 servers={plansData?.servers}
+                isIPv6
               />
             </motion.div>
           )}

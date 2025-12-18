@@ -1,13 +1,5 @@
 import { apiService } from '@/services/api/api.service';
-import {
-  ListPlansParams,
-  ListPlansResponse,
-  PlansResponse,
-  Plan,
-  GetCountriesResponse,
-  CalculatePriceParams,
-  CalculatePriceResponse
-} from './plan.types';
+import { PlansResponse, Plan, GetCountriesResponse, CalculatePriceParams, CalculatePriceResponse } from './plan.types';
 
 class PlanService {
   /**
@@ -43,18 +35,16 @@ class PlanService {
    * @param type - Plan type ('static', 'rotating', 'dedicated')
    * @returns Promise with filtered plans
    */
-  async getPlansByType(
-    type: 'static' | 'rotating' | 'dedicated'
-  ): Promise<Plan[]> {
+  async getPlansByType(type: 'static' | 'rotating' | 'dedicated'): Promise<Plan[]> {
     const data = await this.getAllPlans();
-    
+
     if (type === 'rotating') {
       return data.rotate;
     }
-    
+
     // For dedicated/static, get from dedicated object
     const allDedicatedPlans = Object.values(data.dedicated).flat();
-    return allDedicatedPlans.filter(plan => plan.type === type);
+    return allDedicatedPlans.filter((plan) => plan.type === type);
   }
 
   /**
@@ -63,15 +53,10 @@ class PlanService {
    * @param category - Plan category
    * @returns Promise with filtered plans
    */
-  async getPlansByCategory(
-    category: 'datacenter' | 'mobile' | 'residential' | 'isp' | 'mixed'
-  ): Promise<Plan[]> {
+  async getPlansByCategory(category: 'datacenter' | 'mobile' | 'residential' | 'isp' | 'mixed'): Promise<Plan[]> {
     const data = await this.getAllPlans();
-    const allPlans = [
-      ...data.rotate,
-      ...Object.values(data.dedicated).flat()
-    ];
-    return allPlans.filter(plan => plan.category === category);
+    const allPlans = [...data.rotate, ...Object.values(data.dedicated).flat()];
+    return allPlans.filter((plan) => plan.category === category);
   }
 
   /**
@@ -81,11 +66,8 @@ class PlanService {
    */
   async getFeaturedPlans(): Promise<Plan[]> {
     const data = await this.getAllPlans();
-    const allPlans = [
-      ...data.rotate,
-      ...Object.values(data.dedicated).flat()
-    ];
-    return allPlans.filter(plan => plan.featured);
+    const allPlans = [...data.rotate, ...Object.values(data.dedicated).flat()];
+    return allPlans.filter((plan) => plan.featured);
   }
 
   /**
@@ -94,9 +76,7 @@ class PlanService {
    * @returns Promise with countries list and country_required flag
    */
   async getPlanCountries(planId: string): Promise<GetCountriesResponse> {
-    const response = await apiService.get<GetCountriesResponse>(
-      `/user/plans/${planId}/countries`
-    );
+    const response = await apiService.get<GetCountriesResponse>(`/user/plans/${planId}/countries`);
     return response;
   }
 
@@ -106,14 +86,8 @@ class PlanService {
    * @param params - Calculation parameters (country, quantity)
    * @returns Promise with calculated price
    */
-  async calculatePlanPrice(
-    planId: string,
-    params: CalculatePriceParams
-  ): Promise<CalculatePriceResponse> {
-    const response = await apiService.post<CalculatePriceResponse>(
-      `/user/plans/${planId}/calculate-price`,
-      params
-    );
+  async calculatePlanPrice(planId: string, params: CalculatePriceParams): Promise<CalculatePriceResponse> {
+    const response = await apiService.post<CalculatePriceResponse>(`/user/plans/${planId}/calculate-price`, params);
     return response;
   }
 }

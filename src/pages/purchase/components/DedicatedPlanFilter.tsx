@@ -562,6 +562,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     // But pass filtered orders to override the display
     return (
       <OrderSummary
+        minQuantity={isIPv6 && selectedServer === 'Dawn Server' ? defaultQuantity : undefined}
         useCartContext={true}
         orders={orderItems}
         onUpdateQuantity={handleUpdateQuantity}

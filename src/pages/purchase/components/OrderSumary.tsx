@@ -13,6 +13,8 @@ import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
 import { PlanType } from '@/services/plan/plan.types';
 import { useTranslation } from 'react-i18next';
+import { twMerge } from 'tailwind-merge';
+import clsx from 'clsx';
 
 // Register locales
 countries.registerLocale(en);
@@ -39,6 +41,7 @@ interface Props {
   proxyType?: string; // Proxy type for dedicated tabs (e.g., "Premium ISP", "Private IPv4")
   duration?: number; // Duration in days (e.g., 7, 30)
   filterPlanType?: PlanType; // Filter cart items by plan type
+  minQuantity?: number;
 }
 
 const OrderSummary: React.FC<Props> = ({
@@ -48,7 +51,8 @@ const OrderSummary: React.FC<Props> = ({
   useCartContext = false,
   proxyType,
   duration,
-  filterPlanType
+  filterPlanType,
+  minQuantity
 }) => {
   const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
@@ -365,8 +369,20 @@ const OrderSummary: React.FC<Props> = ({
                           <div className="w-[100px]">
                             <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
                               <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity - 1)}
+                                className={twMerge(
+                                  clsx(
+                                    'shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent',
+                                    {
+                                      'opacity-50 cursor-not-allowed': minQuantity && orderItem.quantity <= minQuantity
+                                    }
+                                  )
+                                )}
+                                onClick={() => {
+                                  if (minQuantity) {
+                                    if (orderItem.quantity <= minQuantity) return;
+                                  }
+                                  return onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity - 1);
+                                }}
                               >
                                 <Subtract className="text-text-lo dark:text-text-lo-dark " />
                               </div>
@@ -412,8 +428,20 @@ const OrderSummary: React.FC<Props> = ({
                       <div className="w-[100px]">
                         <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
                           <div
-                            className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                            onClick={() => onUpdateQuantity && onUpdateQuantity(o.country, o.quantity - 1)}
+                            className={twMerge(
+                              clsx(
+                                'shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent',
+                                {
+                                  'opacity-50 cursor-not-allowed': minQuantity && o.quantity <= minQuantity
+                                }
+                              )
+                            )}
+                            onClick={() => {
+                              if (minQuantity) {
+                                if (o.quantity <= minQuantity) return;
+                              }
+                              return onUpdateQuantity && onUpdateQuantity(o.country, o.quantity - 1);
+                            }}
                           >
                             <Subtract className="text-text-lo dark:text-text-lo-dark " />
                           </div>

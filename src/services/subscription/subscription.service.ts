@@ -46,12 +46,12 @@ class SubscriptionService {
    * @param autoRenew - New auto-renew value
    * @returns Promise with updated subscription
    */
-  async updateAutoRenew(id: string, autoRenew: boolean): Promise<SubscriptionWithPlan> {
+  async updateAutoRenew(id: string, autoRenew: boolean): Promise<{ success: boolean }> {
     const data: UpdateAutoRenewRequest = {
       auto_renew: autoRenew
     };
 
-    const response = await apiService.put<SubscriptionWithPlan>(`${this.BASE_PATH}/${id}/auto-renew`, data);
+    const response = await apiService.put<{ success: boolean }>(`${this.BASE_PATH}/${id}/auto-renew`, data);
     return response;
   }
 

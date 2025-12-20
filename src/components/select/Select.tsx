@@ -49,7 +49,7 @@ interface SelectProps {
   /**
    * Callback được gọi khi người dùng chọn option.
    */
-  onChange?: (value: string | number) => void;
+  onChange?: (value: string | number, label: React.ReactNode) => void;
 
   /**
    * Vị trí hiển thị dropdown: 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right'.
@@ -95,7 +95,7 @@ export const Select: React.FC<SelectProps> = ({
       setInternalValue(opt.value);
     }
     setOpen(false);
-    onChange?.(opt.value);
+    onChange?.(opt.value, opt.label);
   };
 
   // Click outside close

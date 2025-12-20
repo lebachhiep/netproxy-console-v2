@@ -15,12 +15,12 @@ import {
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Select } from '@/components/select/Select';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, ReactNode } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { subscriptionService } from '@/services/subscription/subscription.service';
-import { Subscription } from '@/types/subscription';
+import { Subscription, SwitchProtocolResponse } from '@/types/subscription';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants } from '@/utils/animation';
@@ -36,6 +36,7 @@ import clsx from 'clsx';
 import { queryClient } from '@/components/auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useNavbar } from '@/contexts/NavbarContext';
+
 // ISO alpha-2 country codes
 export const getCountryOptions = (t: any) => [
   { label: t('countryList.vn'), value: 'VN' },
@@ -72,11 +73,15 @@ const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, c
   const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
   const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
 
-  const handleCountryChange = (value: string | number | undefined) => {
+  const handleCountryChange = (value: string | number | undefined, label: ReactNode) => {
     const countryCode = String(value);
     setSelectedCountry(countryCode);
     useSubscriptionStore.getState().setSubscriptionData(subscriptionId, { country: countryCode });
-    toast.success(t('changeCountry') + countryCode);
+    toast.success(
+      t('toast.success.changeCountry', {
+        country: label
+      })
+    );
   };
 
   return (
@@ -102,9 +107,8 @@ const OrderDetailPage = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
-  const [protocolModalType, setProtocolModalType] = useState<'single' | 'bulk'>('single');
-  const [renewCount, setRenewCount] = useState(0);
   const { t } = useTranslation();
+  const [loadingRowIndexes, setLoadingRowIndexes] = useState<number[]>([]);
 
   const { setNavbarItems } = useNavbar();
 
@@ -114,7 +118,7 @@ const OrderDetailPage = () => {
     };
   }, []);
 
-  const { data: subscriptions, refetch } = useQuery({
+  const { data: subscriptions } = useQuery({
     queryKey: ['order-subscriptions', id, currentPage, pageSize],
     enabled: !!id,
     queryFn: async () => {
@@ -159,65 +163,62 @@ const OrderDetailPage = () => {
     return subscriptions?.some((sub) => isRotatingProxy(sub));
   }, [subscriptions]);
 
-  const handleSwitchProtocol = async ({
-    selectedSubscriptionId,
-    protocol
-  }: {
-    selectedSubscriptionId: string;
-    protocol: 'http' | 'socks5';
-  }) => {
+  const handleSwitchProtocol = async ({ subs }: { subs: Subscription[] }) => {
     try {
-      if (protocolModalType === 'single' && selectedSubscriptionId) {
-        // Single subscription switch
-        const response = await subscriptionService.switchProtocol(selectedSubscriptionId, protocol);
+      // Build a list of promises with metadata (subId)
+      const promiseList = subs.map((sub) => {
+        const connectionType =
+          sub?.provider_credentials?.http_port > 0 ? 'http' : sub?.provider_credentials?.socks5_port > 0 ? 'socks5' : '-';
+        // Attach subId as metadata to each promise
+        return {
+          subId: sub.id,
+          promise: subscriptionService.switchProtocol(sub.id, connectionType === 'http' ? 'socks5' : 'http')
+        };
+      });
 
-        if (response.success) {
-          await refetch();
-          setSelectedRows([]);
-          setSelectedIds([]);
-          toast.success('toast.success.changeProtocol');
-        }
-      } else if (protocolModalType === 'bulk') {
-        // Bulk switch - filter out rotating proxies
-        const selectedSubscriptions = (subscriptions || [])
-          .filter((sub) => selectedIds.includes(sub.id))
-          .filter((sub) => !isRotatingProxy(sub)); // Skip rotating proxies
+      // Wait for all promises to settle
+      const results = await Promise.allSettled(promiseList.map((item) => item.promise));
+      let successCount = 0;
+      let failureCount = 0;
+      const switchedSubMap = new Map<string, SwitchProtocolResponse>();
 
-        let successCount = 0;
-        let failureCount = 0;
-
-        for (const sub of selectedSubscriptions) {
-          try {
-            const response = await subscriptionService.switchProtocol(sub.id, protocol);
-
-            if (response.success) {
-              successCount++;
-              refetch();
-              setSelectedRows([]);
-              setSelectedIds([]);
-            }
-          } catch (err) {
-            failureCount++;
-            console.error(`Failed to switch protocol for subscription ${sub.id}:`, err);
-          }
-        }
-
-        // Show appropriate toast message
-        if (failureCount === 0) {
-          toast.success(t('toast.success.changeProtocol') + ' ' + t('for') + ' ' + successCount + 'subscription(s)');
+      // Map results back to subId using the original array index
+      results.forEach((res, idx) => {
+        const subId = promiseList[idx].subId;
+        if (res.status === 'fulfilled' && res.value.success) {
+          successCount++;
+          switchedSubMap.set(subId, res.value);
         } else {
-          toast.error(t('toast.error.changeProtocolSub') + failureCount + 'subscription(s)');
+          failureCount++;
         }
-      }
+      });
+
+      queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+        return oldSubs.map((sub) => {
+          const switchedSub = switchedSubMap.get(sub.id);
+          if (switchedSub) {
+            return {
+              ...sub,
+              provider_credentials: {
+                ...sub.provider_credentials,
+                ...switchedSub
+              }
+            };
+          }
+          return sub;
+        });
+      });
+
+      return { successCount, failureCount };
     } catch (err) {
       console.error('Failed to switch protocol:', err);
       toast.error('Failed to switch protocol');
     }
   };
 
-  const handleGetProxy = async (subscriptionId: string) => {
+  const handleGetProxy = async (sub: Subscription) => {
     try {
-      const subscription = subscriptions?.find((sub) => sub.id === subscriptionId);
+      const subscription = subscriptions?.find((sub) => sub.id === sub.id);
       if (!subscription) {
         toast.error(t('toast.error.notFoundSub'));
         return;
@@ -230,33 +231,25 @@ const OrderDetailPage = () => {
         return;
       }
 
-      console.log('Getting proxy information for subscription:', subscriptionId);
-      const response = await subscriptionService.getProxy(subscriptionId);
+      const response = await subscriptionService.getProxy(sub.id);
       if (!response) {
         toast.error(t('toast.error.proxyInfo'));
         return;
       }
 
-      // Update subscriptions state with new proxy credentials
-      // setSubscriptions((prev) =>
-      //   prev.map((sub) =>
-      //     sub.id === subscriptionId
-      //       ? {
-      //           ...sub,
-      //           provider_credentials: {
-      //             ProxyIP: response.proxy_ip,
-      //             HTTPPort: response.http_port,
-      //             SOCKS5Port: response.socks5_port,
-      //             Username: response.username,
-      //             Password: response.password
-      //           } as any
-      //         }
-      //       : sub
-      //   )
-      // );
-      refetch();
-      setSelectedRows([]);
-      setSelectedIds([]);
+      queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+        return oldSubs.map((s) => {
+          if (s.id === sub.id) {
+            return {
+              ...s,
+              provider_credentials: {
+                ...response
+              }
+            };
+          }
+          return s;
+        });
+      });
 
       toast.success(t('toast.success.proxyInfo'));
     } catch (err) {
@@ -325,17 +318,53 @@ const OrderDetailPage = () => {
     }, 2000);
   };
 
-  const handleAutoRenewChange = async (subscriptionId: string, checked: boolean) => {
+  const handleToggleAutoRenew = async (subs: Subscription[]): Promise<{ successfullyCount: number; failedCount: number }> => {
+    const loadingRowIndexes = subs.map((sub) => (subscriptions?.findIndex((s) => s.id === sub.id) || 0) + 1);
+    setLoadingRowIndexes(loadingRowIndexes);
     try {
-      const result = await subscriptionService.updateAutoRenew(subscriptionId, checked);
-      console.log('Auto-renew update result:', result);
-      if (result) {
-        refetch();
-        setSelectedRows([]);
-        setSelectedIds([]);
-      }
+      const promiseList = subs.map((sub) => {
+        return {
+          subId: sub.id,
+          autoRenew: !sub.auto_renew,
+          promise: subscriptionService.updateAutoRenew(sub.id, !sub.auto_renew)
+        };
+      });
+
+      const results = await Promise.allSettled(promiseList.map((item) => item.promise));
+      queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+        // Fill result to map
+        const renewResultUpdateMap = new Map<string, boolean>();
+        results.forEach((sub, idx) => {
+          if (promiseList?.[idx] && sub.status === 'fulfilled') {
+            renewResultUpdateMap.set(promiseList[idx].subId, promiseList[idx].autoRenew);
+          }
+        });
+
+        return oldSubs.map((sub) => {
+          // Checking status is fulfilled before update the UI
+          if (renewResultUpdateMap.has(sub.id)) {
+            return {
+              ...sub,
+              auto_renew: renewResultUpdateMap.get(sub.id)
+            };
+          }
+          return sub;
+        });
+      });
+
+      const successfullyCount = results.filter((res) => res.status === 'fulfilled').length;
+      const failedCount = results.length - successfullyCount;
+
+      return {
+        successfullyCount,
+        failedCount
+      };
     } catch (err) {
       console.error('Failed to update auto-renew:', err);
+      toast.error(t('toast.error.autoRenew'));
+      return { successfullyCount: 0, failedCount: subs.length };
+    } finally {
+      setLoadingRowIndexes((prev) => prev.filter((index) => !loadingRowIndexes.includes(index)));
     }
   };
 
@@ -482,14 +511,23 @@ const OrderDetailPage = () => {
         }
       },
       {
-        width: 100,
+        width: 130,
         key: 'auto_renew',
         title: t('autoRenew'),
         align: 'center',
         render: (_, record) => (
-          <div>
-            <Switch size="md" checked={record.auto_renew} onChange={(checked) => handleAutoRenewChange(record.id, checked)} />
-          </div>
+          <Switch
+            size="md"
+            checked={record.auto_renew}
+            onChange={async () => {
+              const result = await handleToggleAutoRenew([record]);
+              if (result.successfullyCount) {
+                toast.success(t('toast.success.autoRenew'));
+              } else {
+                toast.error(t('toast.error.autoRenew'));
+              }
+            }}
+          />
         )
       },
       {
@@ -504,7 +542,7 @@ const OrderDetailPage = () => {
         key: 'actions',
         title: t('action'),
         align: 'center',
-        render: (_, record) => {
+        render: (_, record: Subscription) => {
           const isRotating = isRotatingProxy(record);
           return (
             <div className="flex items-center justify-center gap-2">
@@ -513,11 +551,15 @@ const OrderDetailPage = () => {
                   <IconButton
                     icon={<CloudSwap />}
                     className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                    onClick={() => {
-                      setProtocolModalType('single');
-                      const credentials = record.provider_credentials as any;
-                      const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
-                      handleSwitchProtocol({ selectedSubscriptionId: record.id, protocol: connectionType === 'http' ? 'socks5' : 'http' });
+                    onClick={async () => {
+                      setLoadingRowIndexes((prev) => [...prev, currentPage]);
+                      const result = await handleSwitchProtocol({ subs: [record] });
+                      if (result?.successCount && result.successCount > 0) {
+                        toast.success(t('toast.success.changeProxySub'));
+                      } else {
+                        toast.error(t('toast.error.changeProxySub'));
+                      }
+                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== currentPage));
                     }}
                     title="Change Protocol"
                   />
@@ -525,7 +567,12 @@ const OrderDetailPage = () => {
                     icon={<Reload />}
                     iconClassName="text-[#FDBE02] hover:!text-[#FDBE02] dark:text-[#FDBE02]"
                     className="rounded-lg w-8 h-8"
-                    onClick={() => handleGetProxy(record.id)}
+                    onClick={async () => {
+                      const rowIndex = subscriptions?.findIndex((sub) => sub.id === record.id) || 0;
+                      setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
+                      await handleGetProxy(record);
+                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
+                    }}
                     title="Get Proxy"
                   />
                 </>
@@ -565,7 +612,7 @@ const OrderDetailPage = () => {
         }
       }
     ];
-  }, [subscriptions]);
+  }, [t, isMobile, isTablet, copiedId, handleSwitchProtocol, currentPage, subscriptions, handleGetProxy, handleCopyProxy]);
 
   if (error || subscriptions?.length === 0) {
     return (
@@ -602,28 +649,21 @@ const OrderDetailPage = () => {
                   icon={<CloudSwapOutlined className="w-5 h-5" />}
                   className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   onClick={async () => {
-                    setLoading(true);
-                    const promiseList = selectedRows.map((record) => {
-                      setProtocolModalType('single');
-                      const credentials = record.provider_credentials as any;
-                      const connectionType = credentials?.http_port > 0 ? 'http' : credentials?.socks5_port > 0 ? 'socks5' : '-';
-
-                      return handleSwitchProtocol({
-                        selectedSubscriptionId: record.id,
-                        protocol: connectionType === 'http' ? 'socks5' : 'http'
-                      });
+                    const loadingRowIndexes = selectedRows.map((row) => (subscriptions?.findIndex((sub) => sub.id === row.id) || 0) + 1);
+                    setLoadingRowIndexes(loadingRowIndexes);
+                    const result = await handleSwitchProtocol({
+                      subs: selectedRows
                     });
 
-                    const results = await Promise.allSettled(promiseList);
-                    const needRefresh = results.some((res) => res.status === 'fulfilled');
-
-                    if (needRefresh) {
-                      await refetch();
-                      setSelectedRows([]);
-                      setSelectedIds([]);
+                    if (result?.successCount && result.successCount > 0) {
+                      toast.success(
+                        t('toast.success.changeProxySubCount', { successfullyCount: result.successCount, failedCount: result.failureCount })
+                      );
+                    } else {
+                      toast.error(t('toast.error.changeProxySub'));
                     }
-                    setLoading(false);
-                    toast.success(t('toast.success.changeProxySub'));
+
+                    setLoadingRowIndexes((prev) => prev.filter((index) => !loadingRowIndexes.includes(index)));
                   }}
                   title="Change Protocol"
                 />
@@ -635,23 +675,14 @@ const OrderDetailPage = () => {
                 icon={<ArrowSync className="w-5 h-5" />}
                 className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                 onClick={async () => {
-                  setLoading(true);
-                  const renewChecked = renewCount % 2 === 0;
-                  const promiseList = selectedRows.map((record) => {
-                    return handleAutoRenewChange(record.id, renewChecked);
-                  });
-                  const results = await Promise.allSettled(promiseList);
-                  const needRefresh = results.some((res) => res.status === 'fulfilled');
-
-                  if (needRefresh) {
-                    await refetch();
-
-                    setSelectedRows([]);
-                    setSelectedIds([]);
+                  const result = await handleToggleAutoRenew(selectedRows);
+                  if (result && result.successfullyCount) {
+                    toast.success(
+                      t('toast.success.toggleAutoRenew', { successfullyCount: result.successfullyCount, failedCount: result.failedCount })
+                    );
+                  } else {
+                    toast.error(t('toast.error.autoRenew'));
                   }
-                  setLoading(false);
-                  setRenewCount((prev) => prev + 1);
-                  toast.success(`Auto-renew ${renewChecked ? 'enabled' : 'disabled'} for selected subscriptions`);
                 }}
                 title="Renew Auto Toggle"
               />
@@ -741,6 +772,10 @@ const OrderDetailPage = () => {
                 setSelectedRows(selectedRows);
               }
             }}
+            rowDisabled={(r) => {
+              return r.status !== 'active';
+            }}
+            rowLoading={loadingRowIndexes}
             loading={loading}
           />
         </div>

@@ -247,3 +247,140 @@ code {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
 }
+
+/* Style for row disabled */
+tr.row-disabled {
+  opacity: 0.2;
+}
+
+/* 🚫 chặn toàn bộ click + hover + focus */
+tr.row-disabled,
+tr.row-disabled * {
+  pointer-events: none;
+}
+
+/* 🚫 đảm bảo không có hover highlight */
+tr.row-disabled:hover td {
+  background: inherit !important;
+}
+
+/* cursor disabled */
+tr.row-disabled {
+  cursor: not-allowed;
+}
+
+/* Style for row loading */
+
+/* Row đang loading */
+/* ===============================
+   Row Skeleton (Single file)
+   =============================== */
+
+tr {
+  position: relative;
+}
+
+td {
+  position: relative;
+  background-clip: padding-box;
+}
+
+/* -------------------------------
+   Row loading
+-------------------------------- */
+
+tr.row-loading {
+  pointer-events: none;
+}
+/* Main row skeleton overlay */
+tr.row-loading::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+
+  background-image: linear-gradient(
+    90deg,
+    rgba(240, 240, 240, 0.6) 25%,
+    rgba(220, 220, 220, 0.8) 37%,
+    rgba(240, 240, 240, 0.6) 63%
+  );
+
+  background-size: 400% 100%;
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Dark mode – chỉ override background-image */
+.dark tr.row-loading::after {
+  background-image: linear-gradient(
+    90deg,
+    rgba(22, 42, 62, 0.55) 25%,
+    rgba(44, 74, 104, 0.85) 37%,
+    rgba(22, 42, 62, 0.55) 63%
+  );
+}
+
+/* Dim only normal cells */
+tr.row-loading td {
+  opacity: 0.5;
+}
+
+/* -------------------------------
+   Sticky cell
+-------------------------------- */
+
+tr.row-loading td > .sticky {
+  position: sticky;
+  left: 0; /* hoặc right */
+
+  opacity: 1;
+  z-index: 5;
+
+  /* Solid background (che nội dung bên dưới) */
+  background-color: #ffffff;
+}
+
+/* Dark mode background cho sticky */
+@media (prefers-color-scheme: dark) {
+  tr.row-loading td > .sticky {
+    background-color: #191919;
+  }
+}
+
+/* Skeleton riêng cho sticky */
+tr.row-loading td > .sticky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(90deg, rgba(22, 42, 62, 0.55) 25%, rgba(44, 74, 104, 0.85) 37%, rgba(22, 42, 62, 0.55) 63%);
+
+  background-size: 400% 100%;
+  animation: skeleton-loading 12.2s linear infinite;
+
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Dark mode skeleton cho sticky */
+@media (prefers-color-scheme: dark) {
+  tr.row-loading td > .sticky::after {
+    background: linear-gradient(90deg, rgba(60, 60, 60, 0.8) 25%, rgba(90, 90, 90, 1) 37%, rgba(60, 60, 60, 0.8) 63%);
+  }
+}
+
+/* -------------------------------
+   Animation
+-------------------------------- */
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 50% 0;
+  }
+  100% {
+    background-position: -50% 0;
+  }
+}

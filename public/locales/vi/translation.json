@@ -302,6 +302,7 @@
     "november": "Tháng Mười Một",
     "december": "Tháng Mười Hai"
   },
+  "changeProtocolSuccessfully": "Thay đổi giao thức thành công",
   "toast": {
     "success": {
       "orderCreate": "Đơn hàng đã được tạo thành công",
@@ -309,8 +310,8 @@
       "copyAPIEndpoint": "Đã sao chép API Endpoint",
       "loadOrderData": "Lấy danh sách Đơn hàng thất bại",
       "newData": "Đã làm mới dữ liệu",
-      "changeCountry": "Đã đổi quốc gia thành ",
-      "changeProtocol": "Đã đổi Protocal sang ",
+      "changeCountry": "Đã đổi quốc gia thành {{country}}",
+      "changeProtocol": "Protocol switched successfully",
       "couponRemove": "Đã xóa mã giảm giá",
       "sessionF5": "ID của phiên đăng nhập này đã được reset",
       "proxyInfo": "Đã khôi phục lại thông tin Proxy",
@@ -323,8 +324,11 @@
       "transactionIdClipboard": "Đã sao chép mã giao dịch vào Clipboard",
       "copyClipboard": "Đã sao chép vào Clipboard",
       "proxyExport": "Xuất proxy thành công",
-      "changeProxySub": "Đã chuyển giao thức qua gói đã chọn",
-      "windowPaymentPop": "Đã mở cửa số thanh toán"
+      "changeProxySub": "Đã thay đổi giao thức thành công",
+      "changeProxySubCount": "Đã chuyển giao thức: {{successfullyCount}} thành công, {{failedCount}} thất bại",
+      "windowPaymentPop": "Đã mở cửa sổ thanh toán",
+      "toggleAutoRenew": "Thay đổi trạng thái tự động gia hạn: {{successfullyCount}} thành công, {{failedCount}} thất bại",
+      "autoRenew": "Thay đổi trạng thái tự động gia hạn thành công"
     },
     "error": {
       "logout": "Đăng xuất thất bại",
@@ -345,7 +349,8 @@
       "cantCopy": "Không thể copy",
       "invalidDiscount": "Mã giảm giá không hợp hoặc đã hết hạn",
       "cantVeriDiscount": "Không thể xác thực mã giảm giá",
-      "countryList": "Không thể tải danh sách quốc gia"
+      "countryList": "Không thể tải danh sách quốc gia",
+      "autoRenew": "Thay đổi trạng thái tự động gia hạn thất bại"
     },
     "warn": {
       "enterValidCoupon": "Mã giảm giá không tồn tại hoặc đã được sử dụng trước đó",
@@ -384,7 +389,10 @@
   "orderInfoModal": {
     "title": "Hướng dẫn sử dụng đơn hàng",
     "welcome": "Chào mừng bạn đến với trang chi tiết đơn hàng của chúng tôi! Dưới đây là hướng dẫn sử dụng để giúp bạn tận dụng tối đa các tính năng và thông tin có sẵn.",
-    "orderInfoTitle": ""
+    "orderInformation": "Thông tin đơn hàng",
+    "orderInformationDetail": "Ở phần đầu trang, bạn sẽ thấy các thông tin quan trọng về đơn hàng của mình bao gồm mã đơn hàng, trạng thái, ngày tạo và tổng số tiền. Hãy chắc chắn kiểm tra kỹ các thông tin này để đảm bảo mọi thứ đều chính xác.",
+    "productDetailTitle": "Chi tiết sản phẩm",
+    "productDetails": "Phần chi tiết sản phẩm cung cấp thông tin về các mặt hàng bạn đã đặt mua, bao gồm tên sản phẩm, số lượng, giá cả và mô tả ngắn gọn. Điều này giúp bạn dễ dàng theo dõi những gì bạn đã mua."
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Mỗi",

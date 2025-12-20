@@ -229,7 +229,7 @@ export const Navbar: React.FC = () => {
                   }
                   i18n.changeLanguage('en');
                   toast.success('Language changed to English');
-                  window.location.reload();
+                  // window.location.reload();
                 }}
               >
                 English
@@ -243,7 +243,7 @@ export const Navbar: React.FC = () => {
                   }
                   await i18n.changeLanguage('vi');
                   toast.success('Ngôn ngữ đã được chuyển sang Tiếng Việt');
-                  window.location.reload();
+                  // window.location.reload();
                 }}
               >
                 Tiếng Việt

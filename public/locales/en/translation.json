@@ -302,6 +302,7 @@
     "november": "November",
     "december": "December"
   },
+  "changeProtocolSuccessfully": "Protocol switched successfully",
   "toast": {
     "success": {
       "orderCreate": "Your Order has been created",
@@ -309,7 +310,7 @@
       "copyAPIEndpoint": "Your API Endpoint has been copied",
       "loadOrderData": "Fail to load orders data",
       "newData": "Loading new data successfully",
-      "changeCountry": "Changed Country to ",
+      "changeCountry": "Changed Country to {{country}}",
       "changeProtocol": "Protocol switched successfully",
       "couponRemove": "Coupon has bên removed",
       "sessionF5": "Session ID Refreshed",
@@ -323,8 +324,11 @@
       "transactionIdClipboard": "Transaction ID copied to Clipboard",
       "cpuClipboard": "Copied to Clipboard",
       "proxyExport": "Proxy exported successfully",
-      "changeProxySub": "Protocol switched for selected subscriptions",
-      "windowPaymentPop": "Payment window opened successfully"
+      "changeProxySub": "Protocol switched successfully",
+      "changeProxySubCount": "Protocol switched: {{successfullyCount}} successful, {{failedCount}} failed",
+      "windowPaymentPop": "Payment window opened successfully",
+      "toggleAutoRenew": "Auto-renew toggled: {{successfullyCount}} successful, {{failedCount}} failed",
+      "autoRenew": "Auto-renew status changed successfully"
     },
     "error": {
       "logout": "Fail to Log out",
@@ -345,7 +349,8 @@
       "cantCopy": "Can't copy",
       "invalidDiscount": "Invalid Discount Code or it has been expired",
       "cantVeriDiscount": "Can't verify Discount Code",
-      "countryList": "Can retrieved Country List"
+      "countryList": "Can retrieved Country List",
+      "autoRenew": "Failed to toggle auto-renew status"
     },
     "warn": {
       "enterValidCoupon": "Coupon can't not be found or out of use",
@@ -381,7 +386,14 @@
     "tw": "Taiwan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {},
+  "orderInfoModal": {
+    "title": "Order Usage Guide",
+    "welcome": "Welcome to our order details page. Below is a user guide to help you fully utilize the available features and information.",
+    "orderInformation": "Order Information",
+    "orderInformationDetail": "At the top of the page, you will find important information about your order including order ID, status, creation date, and total amount. Please make sure to check these details carefully to ensure everything is correct.",
+    "productDetailTitle": "Product Details",
+    "productDetails": "The product details section provides information about the items you have purchased, including product name, quantity, price, and a brief description. This helps you easily keep track of what you have bought."
+  },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Every",
   "pick": "Choose",

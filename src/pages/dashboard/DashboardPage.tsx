@@ -88,7 +88,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-  const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   const userProfile = useAuthStore((state) => state.userProfile);
   const [totalSubscriptions, setTotalSubscriptions] = useState(0);
   const [activeSubscriptions, setActiveSubscriptions] = useState(0);
@@ -288,7 +288,7 @@ const DashboardPage = () => {
               {platformStats?.total_relay_nodes}
             </span>
             <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm">/ {platformStats?.total_relay_nodes} </span>
-            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm"> {t('dashboard.operating')}</span>
+            <span className="text-text-hi dark:text-text-hi-dark font-semibold text-sm capitalize"> {t('dashboard.operating')}</span>
           </div>
         }
         subInfo={[
@@ -312,7 +312,7 @@ const DashboardPage = () => {
     ];
     if (isMobile || isTablet) return items.reverse();
     return items;
-  }, [isDesktop, isLargeDesktop, platformStats]);
+  }, [isMobile, isTablet, platformStats?.total_orders, platformStats?.total_relay_nodes, platformStats?.total_users, t]);
 
   const handleChangeMode = (mode: 'list' | 'grid') => {
     setViewMode(mode);

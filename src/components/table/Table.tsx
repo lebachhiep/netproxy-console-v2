@@ -1,9 +1,11 @@
-import React, { useRef, createContext, useContext, useEffect, useState } from 'react';
+import React, { useRef, createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
 import { ExpandMore } from '../icons';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import { twMerge } from 'tailwind-merge';
+import { isArrayWithLength } from '@/utils/array';
 
 // Context to provide selected rows for compound pattern
 const TableSelectedContext = createContext<any[]>([]);
@@ -35,6 +37,8 @@ export interface TableProps<T> {
     onChange: (selectedRowKeys: (string | number)[], selectedRows: T[]) => void;
     getCheckboxProps?: (record: T) => { disabled?: boolean };
   };
+  rowDisabled?: (record: T, index: number) => boolean;
+  rowLoading?: number[];
   onRowClick?: (record: T, index: number) => void;
   className?: string;
   size?: 'small' | 'middle' | 'large';
@@ -76,7 +80,9 @@ export function Table<T extends Record<string, any>>({
   showEmptyRows = false,
   maxHeight,
   bodyClassName,
-  children
+  children,
+  rowLoading,
+  rowDisabled
 }: TableProps<T> & { children?: React.ReactNode }) {
   const { t } = useTranslation();
   const bodyScrollRef = useRef<HTMLDivElement>(null);
@@ -345,6 +351,17 @@ export function Table<T extends Record<string, any>>({
     </div>
   );
 
+  const getRowLoadingState = useCallback(
+    (index: number) => {
+      if (isArrayWithLength(rowLoading)) {
+        console.log('rowLoading', rowLoading);
+        console.log('index', index);
+        return rowLoading.includes(index);
+      }
+    },
+    [rowLoading]
+  );
+
   const renderBodyTable = () => (
     <div
       ref={bodyScrollRef}
@@ -379,8 +396,21 @@ export function Table<T extends Record<string, any>>({
               ...rowStyle?.(record, rowIndex)
             };
 
+            const isRowDisabled = rowDisabled ? rowDisabled(record, actualRowIndex) : false;
+            const isRowLoading = getRowLoadingState(rowIndex + 1);
+
             return (
-              <tr key={actualRowIndex} className={rowClass} style={rowStyleFinal} onClick={() => onRowClick?.(record, actualRowIndex)}>
+              <tr
+                key={actualRowIndex}
+                className={twMerge(
+                  clsx(rowClass, 'relative', {
+                    'row-disabled': isRowDisabled,
+                    'row-loading': isRowLoading
+                  })
+                )}
+                style={rowStyleFinal}
+                onClick={() => onRowClick?.(record, actualRowIndex)}
+              >
                 {rowSelection && (
                   <td className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`} style={rowStyleFinal}>
                     <Checkbox checked={!!isSelected} onChange={(checked) => handleSelectRow(actualRowIndex, record, checked)} />

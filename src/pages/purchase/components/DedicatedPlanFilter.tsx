@@ -15,6 +15,8 @@ import { Country as OrderCountry } from './table/CountrySelector';
 import { Tabs } from '@/components/tabs/Tabs';
 import { useTranslation } from 'react-i18next';
 import { usePageTitle } from '@/hooks/usePageTitle';
+import { Loader } from '@/components/loader';
+import { useMutation } from '@tanstack/react-query';
 
 // Register locales
 countriesLib.registerLocale(en);
@@ -105,6 +107,15 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     });
     return Array.from(serverSet).sort();
   }, [plans, servers]);
+
+  const calculatePlanPriceMutation = useMutation({
+    mutationKey: ['calculate-plan-price'],
+    mutationFn: async (variables: { planId: string; countryCode: string; quantity: number }) =>
+      await planService.calculatePlanPrice(variables.planId, {
+        country: variables.countryCode,
+        quantity: variables.quantity
+      })
+  });
 
   // Filter plans by server để tính available periods
   const plansFilteredByServer = useMemo(() => {
@@ -215,9 +226,10 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     if (!selectedPlan) return 0;
 
     try {
-      const response = await planService.calculatePlanPrice(selectedPlan.id, {
-        country: countryCode,
-        quantity: quantity
+      const response = await calculatePlanPriceMutation.mutateAsync({
+        countryCode,
+        planId: selectedPlan.id,
+        quantity
       });
 
       // Return price per IP (total price / quantity)
@@ -550,7 +562,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     if (orderItems.length === 0) {
       return (
         <div className="flex flex-col items-center justify-center h-[calc(100dvh-270px)] bg-bg-canvas dark:bg-bg-canvas-dark border-l-2 border-border-element dark:border-border-element-dark text-center p-8">
-          <p className="text-text-me dark:text-text-me-dark">Chưa có quốc gia nào được chọn</p>
+          <p className="text-text-me dark:text-text-me-dark">{t('noCountrySelected')}</p>
         </div>
       );
     }
@@ -594,141 +606,139 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
         {serverOptions &&
           serverOptions.map((server) => {
             return (
-              <div id={server.key} className="w-full flex flex-row gap-2 flex-1 h-full" key={server.key}>
-                {/* Left Panel - Filters and Country Selection */}
-                <div className="flex-1 overflow-y-auto max-h-[calc(100dvh-215px)]">
-                  {/* Filters Section */}
-                  <div className="border-b-2 border-border-element dark:border-border-element-dark">
-                    {periodOptions.length > 0 && (
-                      <div className="flex flex-col gap-2 whitespace-nowrap scrollbar-hide overflow-auto">
-                        <RadioGroup
-                          className="overflow-visible px-5 py-4"
-                          value={selectedPeriod}
-                          onChange={(value) => {
-                            setSelectedPeriod(Number(value));
-                            setSelectedCountries(new Map());
-                            cart.clearTabCart(tabKey);
-                          }}
-                          options={periodOptions}
-                          direction="row"
-                        />
+              <div id={server.key} className="w-full h-full" key={server.key}>
+                <Loader isLoading={countriesLoading || calculatePlanPriceMutation.isPending} className="flex flex-row gap-2 flex-1 h-full">
+                  {/* Left Panel - Filters and Country Selection */}
+                  <div className="flex-1 overflow-y-auto max-h-[calc(100dvh-215px)] flex flex-col">
+                    {/* Filters Section */}
+                    <div className="border-b-2 border-border-element dark:border-border-element-dark">
+                      {periodOptions.length > 0 && (
+                        <div className="flex flex-col gap-2 whitespace-nowrap scrollbar-hide overflow-auto">
+                          <RadioGroup
+                            className="overflow-visible px-5 py-4"
+                            value={selectedPeriod}
+                            onChange={(value) => {
+                              setSelectedPeriod(Number(value));
+                              setSelectedCountries(new Map());
+                              cart.clearTabCart(tabKey);
+                            }}
+                            options={periodOptions}
+                            direction="row"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Error State */}
+                    {countriesError && (
+                      <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <p className="text-sm text-red-600 dark:text-red-400">{countriesError}</p>
+                        <Button variant="default" size="sm" onClick={fetchCountries} className="mt-2 capitalize">
+                          {t('retry')}
+                        </Button>
                       </div>
                     )}
-                  </div>
 
-                  {/* Error State */}
-                  {countriesError && (
-                    <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                      <p className="text-sm text-red-600 dark:text-red-400">{countriesError}</p>
-                      <Button variant="default" size="sm" onClick={fetchCountries} className="mt-2">
-                        Thử lại
-                      </Button>
-                    </div>
-                  )}
+                    {/* Loading State */}
+                    {selectedPlan && selectedServer && selectedPeriod ? (
+                      <div className="space-y-4 p-5 flex-1 w-full">
+                        {/* Country Selection */}
+                        <div>
+                          <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
+                            {t('country')}: {countryRequired && <span className="text-red-500">*</span>}
+                          </label>
 
-                  {/* Loading State */}
-                  {countriesLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-primary-dark"></div>
-                    </div>
-                  ) : selectedPlan && selectedServer && selectedPeriod ? (
-                    <div className="space-y-4 p-5">
-                      {/* Country Selection */}
-                      <div>
-                        <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
-                          {t('country')}: {countryRequired && <span className="text-red-500">*</span>}
-                        </label>
-
-                        {countries.length === 0 ? (
-                          <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
-                            {t('noAvaiCountry')}
-                          </div>
-                        ) : (
-                          <div className="space-y-4">
-                            {/* Asia Countries */}
-                            {asiaCountries.length > 0 && (
-                              <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2 capitalize">{t('asia')}</h3>
-                                <div className="flex flex-wrap gap-3">
-                                  {asiaCountries.map((country) => {
-                                    const isSelected = selectedCountries.has(country.code);
-                                    return (
-                                      <CountryTag
-                                        key={country.code}
-                                        name={getCountryName(country.code, i18n.language)}
-                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                                        active={isSelected}
-                                        removable={isSelected}
-                                        onClick={() => handleCountryToggle(country.code)}
-                                        onRemove={() => handleRemoveCountry(country.code)}
-                                      />
-                                    );
-                                  })}
+                          {!countriesLoading && countries.length === 0 ? (
+                            <div className="p-4 text-center text-text-lo dark:text-text-lo-dark border border-border-element dark:border-border-element-dark rounded-lg">
+                              {t('noAvaiCountry')}
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {/* Asia Countries */}
+                              {asiaCountries.length > 0 && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2 capitalize">{t('asia')}</h3>
+                                  <div className="flex flex-wrap gap-3">
+                                    {asiaCountries.map((country) => {
+                                      const isSelected = selectedCountries.has(country.code);
+                                      return (
+                                        <CountryTag
+                                          key={country.code}
+                                          name={getCountryName(country.code, i18n.language)}
+                                          flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                          active={isSelected}
+                                          removable={isSelected}
+                                          onClick={() => handleCountryToggle(country.code)}
+                                          onRemove={() => handleRemoveCountry(country.code)}
+                                        />
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
 
-                            {/* Europe Countries */}
-                            {europeCountries.length > 0 && (
-                              <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('europe')}</h3>
-                                <div className="flex flex-wrap gap-3">
-                                  {europeCountries.map((country) => {
-                                    const isSelected = selectedCountries.has(country.code);
-                                    return (
-                                      <CountryTag
-                                        key={country.code}
-                                        name={getCountryName(country.code, i18n.language)}
-                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                                        active={isSelected}
-                                        removable={isSelected}
-                                        onClick={() => handleCountryToggle(country.code)}
-                                        onRemove={() => handleRemoveCountry(country.code)}
-                                      />
-                                    );
-                                  })}
+                              {/* Europe Countries */}
+                              {europeCountries.length > 0 && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('europe')}</h3>
+                                  <div className="flex flex-wrap gap-3">
+                                    {europeCountries.map((country) => {
+                                      const isSelected = selectedCountries.has(country.code);
+                                      return (
+                                        <CountryTag
+                                          key={country.code}
+                                          name={getCountryName(country.code, i18n.language)}
+                                          flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                          active={isSelected}
+                                          removable={isSelected}
+                                          onClick={() => handleCountryToggle(country.code)}
+                                          onRemove={() => handleRemoveCountry(country.code)}
+                                        />
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
 
-                            {/* Other Countries */}
-                            {otherCountries.length > 0 && (
-                              <div>
-                                <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('otherRegions')}</h3>
-                                <div className="flex flex-wrap gap-3">
-                                  {otherCountries.map((country) => {
-                                    const isSelected = selectedCountries.has(country.code);
-                                    return (
-                                      <CountryTag
-                                        key={country.code}
-                                        name={getCountryName(country.code, i18n.language)}
-                                        flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
-                                        active={isSelected}
-                                        removable={isSelected}
-                                        onClick={() => handleCountryToggle(country.code)}
-                                        onRemove={() => handleRemoveCountry(country.code)}
-                                      />
-                                    );
-                                  })}
+                              {/* Other Countries */}
+                              {otherCountries.length > 0 && (
+                                <div>
+                                  <h3 className="text-sm font-medium text-text-me dark:text-text-me-dark mb-2">{t('otherRegions')}</h3>
+                                  <div className="flex flex-wrap gap-3">
+                                    {otherCountries.map((country) => {
+                                      const isSelected = selectedCountries.has(country.code);
+                                      return (
+                                        <CountryTag
+                                          key={country.code}
+                                          name={getCountryName(country.code, i18n.language)}
+                                          flagUrl={`https://flagcdn.com/w20/${country.code.toLowerCase()}.png`}
+                                          active={isSelected}
+                                          removable={isSelected}
+                                          onClick={() => handleCountryToggle(country.code)}
+                                          onRemove={() => handleRemoveCountry(country.code)}
+                                        />
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
-                      <p className="text-text-me dark:text-text-me-dark">Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.</p>
+                    ) : !countriesLoading ? (
+                      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
+                        <p className="text-text-me dark:text-text-me-dark">{t('pleaseSelectServerAndDuration')}</p>
+                      </div>
+                    ) : null}
+                  </div>
+                  {/* Right Panel - Cart Summary */}
+                  {selectedPlan && selectedServer && selectedPeriod && selectedCountries.size > 0 && (
+                    <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
+                      <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
                     </div>
                   )}
-                </div>
-                {/* Right Panel - Cart Summary */}
-                {selectedPlan && selectedServer && selectedPeriod && selectedCountries.size > 0 && (
-                  <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
-                    <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
-                  </div>
-                )}
+                </Loader>
               </div>
             );
           })}

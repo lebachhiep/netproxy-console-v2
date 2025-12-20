@@ -12,6 +12,8 @@
   "asia": "Châu Á",
   "europe": "Châu Âu",
   "otherRegions": "Khu vực khác",
+  "pleaseSelectServerAndDuration": "Vui lòng chọn Server và Thời hạn để xem danh sách quốc gia.",
+  "noCountrySelected": "Chưa có quốc gia nào được chọn",
   "dashboard": {
     "balance": "Số dư",
     "topUp": "Nạp Thêm Tiền",

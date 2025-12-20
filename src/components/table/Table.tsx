@@ -3,9 +3,9 @@ import { Checkbox } from '../checkbox/Checkbox';
 import { Pagination, PaginationProps } from '../pagination/Pagination';
 import { ExpandMore } from '../icons';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
 import { twMerge } from 'tailwind-merge';
 import { isArrayWithLength } from '@/utils/array';
+import { Loader } from '../loader';
 
 // Context to provide selected rows for compound pattern
 const TableSelectedContext = createContext<any[]>([]);
@@ -84,7 +84,6 @@ export function Table<T extends Record<string, any>>({
   rowLoading,
   rowDisabled
 }: TableProps<T> & { children?: React.ReactNode }) {
-  const { t } = useTranslation();
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const [emptyRowsCount, setEmptyRowsCount] = useState(0);
@@ -354,8 +353,6 @@ export function Table<T extends Record<string, any>>({
   const getRowLoadingState = useCallback(
     (index: number) => {
       if (isArrayWithLength(rowLoading)) {
-        console.log('rowLoading', rowLoading);
-        console.log('index', index);
         return rowLoading.includes(index);
       }
     },
@@ -531,7 +528,7 @@ export function Table<T extends Record<string, any>>({
 
   return (
     <TableSelectedContext.Provider value={selectedRows}>
-      <div className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
+      <Loader isLoading={loading} className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
         {children}
         {showHeader && fixedHeader && (
           <div className="relative">
@@ -539,19 +536,13 @@ export function Table<T extends Record<string, any>>({
             <div className="absolute bottom-0 left-0 right-2 h-[2px] shadow-xxs z-10" />
           </div>
         )}
-        {!loading ? (
-          renderBodyTable()
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <span className="ml-2 text-gray-600">{t('loading')}</span>
-          </div>
-        )}
+        {renderBodyTable()}
+
         {pagination && paginationType === 'loadmore' && (
           <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />
         )}
         {pagination && paginationType === 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
-      </div>
+      </Loader>
     </TableSelectedContext.Provider>
   );
 }

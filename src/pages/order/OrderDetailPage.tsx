@@ -657,7 +657,10 @@ const OrderDetailPage = () => {
 
                     if (result?.successCount && result.successCount > 0) {
                       toast.success(
-                        t('toast.success.changeProxySubCount', { successfullyCount: result.successCount, failedCount: result.failureCount })
+                        t('toast.success.changeProxySubCount', {
+                          successfullyCount: result.successCount,
+                          failedCount: result.failureCount
+                        })
                       );
                     } else {
                       toast.error(t('toast.error.changeProxySub'));

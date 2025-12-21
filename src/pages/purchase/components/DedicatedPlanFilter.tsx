@@ -621,7 +621,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
               <div id={server.key} className="w-full h-full" key={server.key}>
                 <Loader isLoading={countriesLoading || calculatePlanPriceMutation.isPending} className="flex flex-row gap-2 flex-1 h-full">
                   {/* Left Panel - Filters and Country Selection */}
-                  <div className="flex-1 overflow-y-auto max-h-[calc(100dvh-215px)] flex flex-col">
+                  <div className="flex-1 max-h-[calc(100dvh-215px)] flex flex-col">
                     {/* Filters Section */}
                     <div className="border-b-2 border-border-element dark:border-border-element-dark">
                       {periodOptions.length > 0 && (
@@ -653,7 +653,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
 
                     {/* Loading State */}
                     {selectedPlan && selectedServer && selectedPeriod ? (
-                      <div className="space-y-4 p-5 flex-1 w-full">
+                      <div className="space-y-4 p-5 flex-1 w-full h-full  overflow-y-auto">
                         {/* Country Selection */}
                         <div>
                           <label className="text-text-hi dark:text-text-hi-dark font-medium mb-2 block">
@@ -746,7 +746,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
                   </div>
                   {/* Right Panel - Cart Summary */}
                   {selectedPlan && selectedServer && selectedPeriod && selectedCountries.size > 0 && (
-                    <div className="w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
+                    <div className="min-h-[480px] w-[473px] hidden lg:block overflow-y-auto max-h-[calc(100dvh-215px)]">
                       <FilteredOrderSummary selectedPlan={selectedPlan} selectedPeriod={selectedPeriod} />
                     </div>
                   )}

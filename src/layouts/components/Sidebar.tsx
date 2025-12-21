@@ -66,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
       )}
 
       {/* Main menu */}
-      <nav className="lg:mt-2 flex-1 overflow-y-auto flex flex-col gap-2 lg:gap-4">
+      <nav className={twMerge(clsx('lg:mt-2 flex-1 overflow-y-auto flex flex-col gap-2 lg:gap-4', { 'scrollbar-hide': collapsed }))}>
         {mainSections.map((section, index) => (
           <div key={section.title} className="flex flex-col gap-2">
             {/* Section Header / Divider */}

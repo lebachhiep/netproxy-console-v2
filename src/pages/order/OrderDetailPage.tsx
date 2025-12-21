@@ -15,7 +15,7 @@ import {
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
 import { Select } from '@/components/select/Select';
-import { useState, useMemo, useEffect, ReactNode } from 'react';
+import { useState, useMemo, useEffect, ReactNode, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -169,10 +169,18 @@ const OrderDetailPage = () => {
       const promiseList = subs.map((sub) => {
         const connectionType =
           sub?.provider_credentials?.http_port > 0 ? 'http' : sub?.provider_credentials?.socks5_port > 0 ? 'socks5' : '-';
+        const newConnectionType = connectionType === 'http' ? 'socks5' : 'http';
         // Attach subId as metadata to each promise
         return {
           subId: sub.id,
-          promise: subscriptionService.switchProtocol(sub.id, connectionType === 'http' ? 'socks5' : 'http')
+          promise: subscriptionService.switchProtocol(sub.id, newConnectionType),
+          newSub: {
+            ...sub,
+            provider_credentials: {
+              ...sub.provider_credentials,
+              http_port: newConnectionType
+            }
+          }
         };
       });
 
@@ -208,6 +216,25 @@ const OrderDetailPage = () => {
           return sub;
         });
       });
+
+      // Update selected rows
+      if (selectedRows?.length) {
+        const successFullSub = new Map<string, Subscription>();
+        promiseList.forEach((sub, idx) => {
+          if (results?.[idx]?.status === 'fulfilled') {
+            successFullSub.set(sub.subId, sub.newSub);
+          }
+        });
+        const newSelectedSubs = selectedRows
+          .map((sub) => {
+            if (successFullSub.has(sub.id)) {
+              return successFullSub.get(sub.id);
+            }
+            return sub;
+          })
+          .filter((sub): sub is Subscription => sub !== undefined);
+        setSelectedRows(newSelectedSubs);
+      }
 
       return { successCount, failureCount };
     } catch (err) {
@@ -318,55 +345,79 @@ const OrderDetailPage = () => {
     }, 2000);
   };
 
-  const handleToggleAutoRenew = async (subs: Subscription[]): Promise<{ successfullyCount: number; failedCount: number }> => {
-    const loadingRowIndexes = subs.map((sub) => (subscriptions?.findIndex((s) => s.id === sub.id) || 0) + 1);
-    setLoadingRowIndexes(loadingRowIndexes);
-    try {
-      const promiseList = subs.map((sub) => {
+  const handleToggleAutoRenew = useCallback(
+    async (subs: Subscription[]): Promise<{ successfullyCount: number; failedCount: number }> => {
+      const loadingRowIndexes = subs.map((sub) => (subscriptions?.findIndex((s) => s.id === sub.id) || 0) + 1);
+      setLoadingRowIndexes((prev) => [...prev, ...loadingRowIndexes]);
+      try {
+        const promiseList = subs.map((sub) => {
+          const newAutoRenewStatus = !sub.auto_renew;
+          return {
+            subId: sub.id,
+            autoRenew: newAutoRenewStatus,
+            newSub: { ...sub, auto_renew: newAutoRenewStatus },
+            promise: subscriptionService.updateAutoRenew(sub.id, newAutoRenewStatus)
+          };
+        });
+
+        const results = await Promise.allSettled(promiseList.map((item) => item.promise));
+        queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+          // Fill result to map
+          const renewResultUpdateMap = new Map<string, boolean>();
+          results.forEach((sub, idx) => {
+            if (promiseList?.[idx] && sub.status === 'fulfilled') {
+              renewResultUpdateMap.set(promiseList[idx].subId, promiseList[idx].autoRenew);
+            }
+          });
+
+          return oldSubs.map((sub) => {
+            // Checking status is fulfilled before update the UI
+            if (renewResultUpdateMap.has(sub.id)) {
+              return {
+                ...sub,
+                auto_renew: renewResultUpdateMap.get(sub.id)
+              };
+            }
+            return sub;
+          });
+        });
+
+        const successfullyCount = results.filter((res) => res.status === 'fulfilled').length;
+        const failedCount = results.length - successfullyCount;
+
+        // Update selected rows
+        if (selectedRows?.length) {
+          const successFullSub = new Map<string, Subscription>();
+          promiseList.forEach((sub, idx) => {
+            if (results?.[idx]?.status === 'fulfilled') {
+              successFullSub.set(sub.subId, sub.newSub);
+            }
+          });
+          const newSelectedSubs = selectedRows
+            .map((sub) => {
+              if (successFullSub.has(sub.id)) {
+                return successFullSub.get(sub.id);
+              }
+              return sub;
+            })
+            .filter((sub): sub is Subscription => sub !== undefined);
+          setSelectedRows(newSelectedSubs);
+        }
+
         return {
-          subId: sub.id,
-          autoRenew: !sub.auto_renew,
-          promise: subscriptionService.updateAutoRenew(sub.id, !sub.auto_renew)
+          successfullyCount,
+          failedCount
         };
-      });
-
-      const results = await Promise.allSettled(promiseList.map((item) => item.promise));
-      queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
-        // Fill result to map
-        const renewResultUpdateMap = new Map<string, boolean>();
-        results.forEach((sub, idx) => {
-          if (promiseList?.[idx] && sub.status === 'fulfilled') {
-            renewResultUpdateMap.set(promiseList[idx].subId, promiseList[idx].autoRenew);
-          }
-        });
-
-        return oldSubs.map((sub) => {
-          // Checking status is fulfilled before update the UI
-          if (renewResultUpdateMap.has(sub.id)) {
-            return {
-              ...sub,
-              auto_renew: renewResultUpdateMap.get(sub.id)
-            };
-          }
-          return sub;
-        });
-      });
-
-      const successfullyCount = results.filter((res) => res.status === 'fulfilled').length;
-      const failedCount = results.length - successfullyCount;
-
-      return {
-        successfullyCount,
-        failedCount
-      };
-    } catch (err) {
-      console.error('Failed to update auto-renew:', err);
-      toast.error(t('toast.error.autoRenew'));
-      return { successfullyCount: 0, failedCount: subs.length };
-    } finally {
-      setLoadingRowIndexes((prev) => prev.filter((index) => !loadingRowIndexes.includes(index)));
-    }
-  };
+      } catch (err) {
+        console.error('Failed to update auto-renew:', err);
+        toast.error(t('toast.error.autoRenew'));
+        return { successfullyCount: 0, failedCount: subs.length };
+      } finally {
+        setLoadingRowIndexes((prev) => prev.filter((index) => !loadingRowIndexes.includes(index)));
+      }
+    },
+    [currentPage, id, pageSize, subscriptions, t]
+  );
 
   const columns: TableColumn<Subscription>[] = useMemo(() => {
     return [
@@ -542,7 +593,7 @@ const OrderDetailPage = () => {
         key: 'actions',
         title: t('action'),
         align: 'center',
-        render: (_, record: Subscription) => {
+        render: (_, record: Subscription, rowIndex) => {
           const isRotating = isRotatingProxy(record);
           return (
             <div className="flex items-center justify-center gap-2">
@@ -552,14 +603,14 @@ const OrderDetailPage = () => {
                     icon={<CloudSwap />}
                     className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                     onClick={async () => {
-                      setLoadingRowIndexes((prev) => [...prev, currentPage]);
+                      setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
                       const result = await handleSwitchProtocol({ subs: [record] });
                       if (result?.successCount && result.successCount > 0) {
                         toast.success(t('toast.success.changeProxySub'));
                       } else {
                         toast.error(t('toast.error.changeProxySub'));
                       }
-                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== currentPage));
+                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
                     }}
                     title="Change Protocol"
                   />
@@ -612,7 +663,7 @@ const OrderDetailPage = () => {
         }
       }
     ];
-  }, [t, isMobile, isTablet, copiedId, handleSwitchProtocol, currentPage, subscriptions, handleGetProxy, handleCopyProxy]);
+  }, [t, isMobile, isTablet, handleToggleAutoRenew, copiedId, handleSwitchProtocol, subscriptions]);
 
   if (error || subscriptions?.length === 0) {
     return (
@@ -650,7 +701,7 @@ const OrderDetailPage = () => {
                   className="w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                   onClick={async () => {
                     const loadingRowIndexes = selectedRows.map((row) => (subscriptions?.findIndex((sub) => sub.id === row.id) || 0) + 1);
-                    setLoadingRowIndexes(loadingRowIndexes);
+                    setLoadingRowIndexes((prev) => [...prev, ...loadingRowIndexes]);
                     const result = await handleSwitchProtocol({
                       subs: selectedRows
                     });

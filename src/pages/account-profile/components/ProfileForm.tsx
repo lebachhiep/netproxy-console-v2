@@ -100,7 +100,7 @@ export default function ProfileForm({ control, errors, isSubmitting }: ProfileFo
                 value={field.value ?? ''}
                 type="url"
                 placeholder={t('form.avaUrl') || 'URL Ảnh Đại Diện'}
-                label="Avatar URL"
+                label={t('form.avaUrl')}
                 disabled={isSubmitting}
               />
               {errors.avatar_url && <span className="text-red text-sm mt-1">{errors.avatar_url.message}</span>}

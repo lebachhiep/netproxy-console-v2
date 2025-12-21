@@ -187,8 +187,8 @@ export const AccountProfilePage: React.FC = () => {
                     )}
                   />
 
-                  <Button type="submit" disabled={isPasswordSubmitting} className="h-10 px-4 ">
-                    {isPasswordSubmitting ? 'Đang lưu...' : 'ĐỔI MẬT KHẨU'}
+                  <Button type="submit" disabled={isPasswordSubmitting} className="h-10 px-4 capitalize">
+                    {isPasswordSubmitting ? t('form.saving') : t('changePassword')}
                   </Button>
                 </motion.div>
               </form>

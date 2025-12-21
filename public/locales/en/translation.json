@@ -15,6 +15,9 @@
   "pleaseSelectServerAndDuration": "Please select a server and duration to see the country list.",
   "noCountrySelected": "No country has been selected yet.",
   "clickToEdit": "Click to edit",
+  "comingSoon": "Coming soon",
+  "signInAgain": "Sign in again",
+  "resetPasswordComplete": "Your password has been reset successfully. Please sign in again",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",

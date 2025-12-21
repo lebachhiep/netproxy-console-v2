@@ -13,7 +13,7 @@ i18n
   .init({
     lng: storedLang || 'en',
     fallbackLng: 'en',
-    supportedLngs: ['en', 'vi'], // list of supported languages
+    supportedLngs: ['en', 'vi', 'hi'], // list of supported languages
     debug: process.env.NODE_ENV === 'development',
 
     interpolation: {

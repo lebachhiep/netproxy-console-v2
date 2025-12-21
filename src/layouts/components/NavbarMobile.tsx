@@ -15,6 +15,7 @@ import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { useTranslation } from 'react-i18next';
 import { Dropdown } from '@/components/dropdown';
 import i18n from '@/i18n';
+import { SupportedLanguages } from '@/config/constants';
 
 interface Breadcrumb {
   title: string;
@@ -200,34 +201,27 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
               <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
             </Dropdown.Trigger>
             <Dropdown.Menu>
-              <Dropdown.Item
-                onClick={() => {
-                  const currentLang = i18n.language;
-                  if (currentLang === 'en') {
-                    toast.info('Language is already English');
-                    return;
-                  }
-                  i18n.changeLanguage('en');
-                  toast.success('Language changed to English');
-                  // window.location.reload();
-                }}
-              >
-                English
-              </Dropdown.Item>
-              <Dropdown.Item
-                onClick={async () => {
-                  const currentLang = i18n.language;
-                  if (currentLang === 'vi') {
-                    toast.info('Ngôn ngữ đã được chuyển sang Tiếng Việt');
-                    return;
-                  }
-                  await i18n.changeLanguage('vi');
-                  toast.success('Ngôn ngữ đã được chuyển sang Tiếng Việt');
-                  // window.location.reload();
-                }}
-              >
-                Tiếng Việt
-              </Dropdown.Item>
+              {SupportedLanguages.map((language) => {
+                return (
+                  <Dropdown.Item
+                    key={language.code}
+                    onClick={() => {
+                      const currentLang = i18n.language;
+                      if (currentLang === language.code) {
+                        toast.info(language.infoMessage);
+                        return;
+                      }
+                      i18n.changeLanguage(language.code);
+                      toast.success(language.successMessage);
+                    }}
+                  >
+                    <div className="flex gap-2">
+                      <span>{language.flag}</span>
+                      <span>{language.displayName}</span>
+                    </div>
+                  </Dropdown.Item>
+                );
+              })}
             </Dropdown.Menu>
           </Dropdown>
           <IconButton

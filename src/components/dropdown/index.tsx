@@ -251,9 +251,10 @@ interface ItemProps {
   children: ReactNode;
   onClick?: () => void;
   className?: string;
+  isActive?: boolean;
 }
 
-function Item({ children, onClick, className = '' }: ItemProps) {
+function Item({ children, onClick, className = '', isActive }: ItemProps) {
   const context = useContext(DropdownContext);
   if (!context) throw new Error('Dropdown.Item must be used within Dropdown');
   const { setIsOpen } = context;
@@ -273,7 +274,8 @@ function Item({ children, onClick, className = '' }: ItemProps) {
       onTouchStart={handleTouchStart}
       className={twMerge(
         clsx(
-          'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm w-full text-left hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap'
+          'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm w-full text-left hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap',
+          { 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold ': isActive }
         ),
         className
       )}

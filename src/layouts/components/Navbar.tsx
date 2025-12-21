@@ -224,6 +224,7 @@ export const Navbar: React.FC = () => {
               {SupportedLanguages.map((language) => {
                 return (
                   <Dropdown.Item
+                    isActive={language.code === i18n.language}
                     key={language.code}
                     onClick={() => {
                       const currentLang = i18n.language;

@@ -41,15 +41,47 @@ export const SupportedLanguages = [
     flag: '🇧🇩',
     infoMessage: 'ভাষা ইতিমধ্যেই ইংরেজি সেট করা আছে',
     successMessage: 'ভাষা সফলভাবে ইংরেজিতে পরিবর্তন করা হয়েছে'
+  },
+  {
+    code: 'id',
+    displayName: 'Bahasa',
+    flag: '🇮🇩',
+    infoMessage: 'Bahasa sudah disetel ke Inggris',
+    successMessage: 'Bahasa berhasil diubah ke Inggris'
+  },
+  {
+    code: 'th',
+    displayName: 'ไทย',
+    flag: '🇹🇭',
+    infoMessage: 'ภาษาถูกตั้งค่าเป็นภาษาอังกฤษอยู่แล้ว',
+    successMessage: 'เปลี่ยนภาษาเป็นภาษาอังกฤษเรียบร้อยแล้ว'
+  },
+  {
+    code: 'tr',
+    displayName: 'Türkçe',
+    flag: '🇹🇷',
+    infoMessage: 'Dil zaten İngilizce olarak ayarlanmış',
+    successMessage: 'Dil başarıyla İngilizce olarak değiştirildi'
+  },
+  {
+    code: 'ph',
+    displayName: 'Filipino',
+    flag: '🇵🇭',
+    infoMessage: 'Nakatakda na ang wika sa Ingles',
+    successMessage: 'Matagumpay na napalitan ang wika sa Ingles'
+  },
+  {
+    code: 'br',
+    displayName: 'Português',
+    flag: '🇧🇷',
+    infoMessage: 'O idioma já está definido como inglês',
+    successMessage: 'O idioma foi alterado para inglês com sucesso'
+  },
+  {
+    code: 'fa',
+    displayName: 'فارسی',
+    flag: '🇮🇷',
+    infoMessage: 'زبان در حال حاضر روی انگلیسی تنظیم شده است',
+    successMessage: 'زبان با موفقیت به انگلیسی تغییر یافت'
   }
-  //   { code: 'id', displayName: 'Bahasa', flag: '🇮🇩' },
-  //   { code: 'th', displayName: 'ไทย', flag: '🇹🇭' },
-  //   { code: 'tr', displayName: 'Türkçe', flag: '🇹🇷' },
-  //   { code: 'ph', displayName: 'Filipino', flag: '🇵🇭' },
-  //   {
-  //     code: 'br',
-  //     displayName: 'Português',
-  //     flag: '🇧🇷'
-  //   },
-  //   { code: 'fa', displayName: 'فارسی', flag: '🇮🇷' }
 ];

@@ -7,7 +7,6 @@ import IconButton from '@/components/button/IconButton';
 import { MobileSummary } from './MobileSummary';
 import { useCart } from '@/hooks/useCart';
 import { CartItem, getTabKeyFromPlan } from '@/contexts/CartContext';
-import Tooltip from '@/components/tooltip/Tooltip';
 import countries from 'i18n-iso-countries';
 import en from 'i18n-iso-countries/langs/en.json';
 import vi from 'i18n-iso-countries/langs/vi.json';
@@ -15,6 +14,7 @@ import { PlanType } from '@/services/plan/plan.types';
 import { useTranslation } from 'react-i18next';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
+import { QuantityInput } from '@/components/quantity-input';
 
 // Register locales
 countries.registerLocale(en);
@@ -30,6 +30,10 @@ export type OrderItemType = {
   country: Country;
   price: number;
   quantity: number;
+  quantityBoundary?: {
+    min: number;
+    max?: number;
+  };
 };
 
 interface Props {
@@ -41,7 +45,6 @@ interface Props {
   proxyType?: string; // Proxy type for dedicated tabs (e.g., "Premium ISP", "Private IPv4")
   duration?: number; // Duration in days (e.g., 7, 30)
   filterPlanType?: PlanType; // Filter cart items by plan type
-  minQuantity?: number;
 }
 
 const OrderSummary: React.FC<Props> = ({
@@ -51,8 +54,7 @@ const OrderSummary: React.FC<Props> = ({
   useCartContext = false,
   proxyType,
   duration,
-  filterPlanType,
-  minQuantity
+  filterPlanType
 }) => {
   const { t } = useTranslation();
   const { isMobile, isTablet } = useResponsive();
@@ -265,152 +267,45 @@ const OrderSummary: React.FC<Props> = ({
                 ? // Render cart items (already filtered by filterPlanType if provided)
                   // Check if orders are CartItems or OrderItemTypes
                   orders.map((item: any) => {
-                    // If item has 'plan' property, it's a CartItem
-                    // If item has 'country' property, it's an OrderItemType
-                    const isCartItem = 'plan' in item;
+                    // Render as OrderItemType (for dedicated tabs)
+                    const orderItem = item as OrderItemType;
+                    return (
+                      <div
+                        key={orderItem.country.id}
+                        className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
+                      >
+                        {/* Quốc gia */}
+                        <div className="text-text-hi dark:text-text-hi-dark">{orderItem.country.name}</div>
 
-                    if (isCartItem) {
-                      // Render as CartItem
-                      return (
-                        <div
-                          key={item.id}
-                          className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
-                        >
-                          {/* Tên gói */}
-                          <div className="text-text-hi dark:text-text-hi-dark min-w-0">
-                            <Tooltip content={item.plan.name} position="top" disabled={item.plan.name.length <= 12}>
-                              <div className="truncate">{item.plan.name}</div>
-                            </Tooltip>
-                            {item.country && (
-                              <div className="text-xs text-text-lo dark:text-text-lo-dark mt-1 flex items-center gap-1">
-                                <img
-                                  src={`https://flagcdn.com/w20/${item.country.toLowerCase()}.png`}
-                                  className="inline w-4 h-3"
-                                  alt={item.country}
-                                />
-                                <span>{getCountryName(item.country)}</span>
-                              </div>
-                            )}
-                          </div>
+                        {/* Đơn giá */}
+                        <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
+                          ${orderItem.price.toFixed(2)}
+                        </div>
 
-                          {/* Đơn giá */}
-                          <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
-                            ${(item.calculatedPrice ?? item.plan.price).toFixed(2)}
-                          </div>
-
-                          {/* Số lượng */}
-                          <div className="w-[100px]">
-                            <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => handleUpdateQuantity(item, item.quantity - 1)}
-                              >
-                                <Subtract className="text-text-lo dark:text-text-lo-dark " />
-                              </div>
-                              {editingItemId === item.id ? (
-                                <input
-                                  type="text"
-                                  value={editValue}
-                                  onChange={handleQuantityInputChange}
-                                  onBlur={handleQuantityInputBlur}
-                                  onKeyDown={handleQuantityInputKeyPress}
-                                  className="max-w-8 text-center text-text-hi dark:text-text-hi-dark bg-bg-primary dark:bg-bg-primary-dark border border-primary dark:border-primary-dark rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
-                                  autoFocus
-                                />
-                              ) : (
-                                <span
-                                  className="text-text-hi dark:text-text-hi-dark cursor-pointer select-none px-2"
-                                  onDoubleClick={() => handleClickQuantity(item)}
-                                  title="Click để chỉnh sửa"
-                                >
-                                  {item.quantity}
-                                </span>
-                              )}
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => handleUpdateQuantity(item, item.quantity + 1)}
-                              >
-                                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Tổng */}
-                          <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
-                            ${((item.calculatedPrice ?? item.plan.price) * item.quantity).toFixed(2)}
-                          </div>
-
-                          {/* Nút xóa */}
-                          <IconButton
-                            className="w-8 h-8"
-                            icon={<Delete className="w-5 h-5" />}
-                            onClick={() => handleRemove(item)}
-                            aria-label="Xóa khỏi giỏ hàng"
+                        {/* Số lượng */}
+                        <div className="w-[100px]">
+                          <QuantityInput
+                            value={orderItem.quantity}
+                            min={item.quantityBoundary?.min}
+                            max={item.quantityBoundary?.max}
+                            onValueChange={(newValue) => onUpdateQuantity?.(orderItem.country, newValue)}
                           />
                         </div>
-                      );
-                    } else {
-                      // Render as OrderItemType (for dedicated tabs)
-                      const orderItem = item as OrderItemType;
-                      return (
-                        <div
-                          key={orderItem.country.id}
-                          className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-5 text-sm font-medium items-center border-b border-border-element dark:border-border-element-dark pb-2"
-                        >
-                          {/* Quốc gia */}
-                          <div className="text-text-hi dark:text-text-hi-dark">{orderItem.country.name}</div>
 
-                          {/* Đơn giá */}
-                          <div className="w-[42px] text-center text-primary dark:text-primary-dark font-semibold">
-                            ${orderItem.price.toFixed(2)}
-                          </div>
-
-                          {/* Số lượng */}
-                          <div className="w-[100px]">
-                            <div className="bg-bg-mute dark:bg-bg-mute-dark flex items-center gap-1 justify-between p-[2px] dark:border-border-element-dark rounded-md">
-                              <div
-                                className={twMerge(
-                                  clsx(
-                                    'shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent',
-                                    {
-                                      'opacity-50 cursor-not-allowed': minQuantity && orderItem.quantity <= minQuantity
-                                    }
-                                  )
-                                )}
-                                onClick={() => {
-                                  if (minQuantity) {
-                                    if (orderItem.quantity <= minQuantity) return;
-                                  }
-                                  return onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity - 1);
-                                }}
-                              >
-                                <Subtract className="text-text-lo dark:text-text-lo-dark " />
-                              </div>
-                              <span className="text-text-hi dark:text-text-hi-dark">{orderItem.quantity}</span>
-                              <div
-                                className="shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent"
-                                onClick={() => onUpdateQuantity && onUpdateQuantity(orderItem.country, orderItem.quantity + 1)}
-                              >
-                                <Add className="text-text-lo dark:text-text-lo-dark w-4 h-4 " />
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Tổng */}
-                          <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
-                            ${(orderItem.price * orderItem.quantity).toFixed(2)}
-                          </div>
-
-                          {/* Nút xóa */}
-                          <IconButton
-                            className="w-8 h-8"
-                            icon={<Delete className="w-5 h-5" />}
-                            onClick={() => onRemove && onRemove(orderItem.country)}
-                            aria-label="Xóa khỏi giỏ hàng"
-                          />
+                        {/* Tổng */}
+                        <div className="w-[60px] text-center text-text-hi dark:text-text-hi-dark">
+                          ${(orderItem.price * orderItem.quantity).toFixed(2)}
                         </div>
-                      );
-                    }
+
+                        {/* Nút xóa */}
+                        <IconButton
+                          className="w-8 h-8"
+                          icon={<Delete className="w-5 h-5" />}
+                          onClick={() => onRemove && onRemove(orderItem.country)}
+                          aria-label="Xóa khỏi giỏ hàng"
+                        />
+                      </div>
+                    );
                   })
                 : // Render dedicated orders (backward compatibility)
                   propOrders.map((o) => (
@@ -432,13 +327,13 @@ const OrderSummary: React.FC<Props> = ({
                               clsx(
                                 'shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark w-6 h-6 flex items-center justify-center rounded-[4px] border-2 border-border-element dark:border-border-element-dark cursor-pointer dark:pseudo-border-top dark:border-transparent',
                                 {
-                                  'opacity-50 cursor-not-allowed': minQuantity && o.quantity <= minQuantity
+                                  'opacity-50 cursor-not-allowed': o?.quantityBoundary && o.quantity <= o.quantityBoundary.min
                                 }
                               )
                             )}
                             onClick={() => {
-                              if (minQuantity) {
-                                if (o.quantity <= minQuantity) return;
+                              if (o?.quantityBoundary?.min) {
+                                if (o.quantity <= o.quantityBoundary.min) return;
                               }
                               return onUpdateQuantity && onUpdateQuantity(o.country, o.quantity - 1);
                             }}

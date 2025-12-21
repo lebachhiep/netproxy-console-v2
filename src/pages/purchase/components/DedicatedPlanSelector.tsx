@@ -96,8 +96,7 @@ export const DedicatedPlanSelector: React.FC<DedicatedPlanSelectorProps> = ({ pl
   const calculatePriceForCountry = async (countryCode: string, quantity: number): Promise<number> => {
     try {
       const response = await planService.calculatePlanPrice(plan.id, {
-        country: countryCode,
-        quantity: quantity
+        country: countryCode
       });
       return response.price / quantity; // Return price per IP
     } catch (err) {

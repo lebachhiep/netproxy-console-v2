@@ -34,7 +34,6 @@ interface DedicatedPlanFilterProps {
   plans: Plan[];
   proxyType?: string; // Proxy type name (tab name) like "Premium ISP", "Private IPv4", etc.
   servers?: string[]; // Ordered list of servers from API
-  isIPv6?: boolean;
 }
 
 interface SelectedCountry {
@@ -43,6 +42,7 @@ interface SelectedCountry {
   quantity: number;
   price: number; // Price per IP
   total: number; // Total price for this country
+  availableCount?: number;
 }
 
 // Helper to get period in days - CHỈ dùng metadata.period
@@ -54,16 +54,13 @@ const getPeriodDays = (plan: Plan): number | null => {
   return null;
 };
 
-export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans, proxyType, servers, isIPv6 }) => {
+export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans, proxyType, servers }) => {
   const { t, i18n } = useTranslation();
   const cart = useCart();
   // Filter state
   const [selectedServer, setSelectedServer] = useState<string>('');
   const [selectedPeriod, setSelectedPeriod] = useState<number | ''>('');
-
-  const defaultQuantity = useMemo<number>(() => {
-    return isIPv6 && selectedServer === 'Dawn Server' ? 10 : 1;
-  }, [isIPv6, selectedServer]);
+  const [quantityBoundary, setQuantityBoundary] = useState<{ min: number; max?: number }>({ min: 1 });
 
   // Determine tab key for this component (based on first plan or proxyType)
   const tabKey: CartTabKey = useMemo(() => {
@@ -110,10 +107,9 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
 
   const calculatePlanPriceMutation = useMutation({
     mutationKey: ['calculate-plan-price'],
-    mutationFn: async (variables: { planId: string; countryCode: string; quantity: number }) =>
+    mutationFn: async (variables: { planId: string; countryCode: string }) =>
       await planService.calculatePlanPrice(variables.planId, {
-        country: variables.countryCode,
-        quantity: variables.quantity
+        country: variables.countryCode
       })
   });
 
@@ -186,7 +182,11 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
 
   // Get the selected plan (first one from filtered plans)
   const selectedPlan = useMemo(() => {
-    return filteredPlans.length > 0 ? filteredPlans[0] : null;
+    const result = filteredPlans.length > 0 ? filteredPlans[0] : null;
+    if (result && result?.metadata && result?.metadata?.min_order_quantity) {
+      setQuantityBoundary((prev) => ({ ...prev, min: result?.metadata?.min_order_quantity || 1 }));
+    }
+    return result;
   }, [filteredPlans]);
 
   // Fetch countries when server and period are selected
@@ -222,23 +222,30 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     }
   };
 
-  const calculatePriceForCountry = async (countryCode: string, quantity: number = 1): Promise<number> => {
-    if (!selectedPlan) return 0;
+  const calculatePriceForCountry = async (countryCode: string): Promise<{ price: number; availableCount?: number }> => {
+    if (!selectedPlan)
+      return {
+        price: 0
+      };
 
     try {
       const response = await calculatePlanPriceMutation.mutateAsync({
         countryCode,
-        planId: selectedPlan.id,
-        quantity
+        planId: selectedPlan.id
       });
 
       // Return price per IP (total price / quantity)
-      return response.price / quantity;
+      return {
+        price: response.price,
+        availableCount: response?.available_count
+      };
     } catch (err) {
       console.error('Failed to calculate price:', err);
       toast.error('Không thể tính giá cho quốc gia đã chọn');
       // Fallback to plan price
-      return selectedPlan.price || 0;
+      return {
+        price: selectedPlan.price || 0
+      };
     }
   };
 
@@ -282,24 +289,28 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
       setSelectedCountries(newMap);
 
       // Calculate real price asynchronously with quantity=1
-      calculatePriceForCountry(countryCode, defaultQuantity).then((pricePerIP) => {
+      calculatePriceForCountry(countryCode).then(({ price: pricePerIP, availableCount }) => {
         const updated = new Map(newMap);
         const existing = updated.get(countryCode);
         if (existing) {
           // pricePerIP is already price per IP (from quantity=1)
           const finalPrice = pricePerIP;
-          const finalTotal = finalPrice * defaultQuantity; // quantity is 1
+          const finalTotal = finalPrice * quantityBoundary.min; // quantity is 1
 
           updated.set(countryCode, {
             ...existing,
             price: finalPrice, // Price per IP
-            total: finalTotal
+            total: finalTotal,
+            availableCount
           });
           setSelectedCountries(updated);
 
           // Add to cart with calculated price (total for quantity 1)
           const durationOption = selectedPeriod === 7 ? '7day' : selectedPeriod === 30 ? '30day' : undefined;
-          cart.addToCart(tabKey, selectedPlan, defaultQuantity, { duration: durationOption }, countryCode, finalTotal);
+          cart.addToCart(tabKey, selectedPlan, quantityBoundary.min, { duration: durationOption }, countryCode, finalTotal, {
+            min: quantityBoundary.min,
+            max: availableCount
+          });
           toast.success(`Đã thêm ${countryName} vào giỏ hàng`);
         }
       });
@@ -510,6 +521,7 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
 
     // Convert CartItem to OrderItemType format
     const orderItems = useMemo(() => {
+      console.log('filtered items: ...', filteredItems);
       return filteredItems.map((item) => {
         // Calculate price per IP: if calculatedPrice exists, divide by quantity
         // Otherwise use plan.price as price per IP
@@ -522,7 +534,8 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
             code: item.country?.toLowerCase() || ''
           } as OrderCountry,
           price: pricePerIP,
-          quantity: item.quantity
+          quantity: item.quantity,
+          quantityBoundary: item?.quantityBoundary
         };
       });
     }, [filteredItems]);
@@ -574,7 +587,6 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
     // But pass filtered orders to override the display
     return (
       <OrderSummary
-        minQuantity={isIPv6 && selectedServer === 'Dawn Server' ? defaultQuantity : undefined}
         useCartContext={true}
         orders={orderItems}
         onUpdateQuantity={handleUpdateQuantity}

@@ -84,8 +84,7 @@ export const CountrySelectionModal: React.FC<CountrySelectionModalProps> = ({ op
     try {
       setIsCalculating(true);
       const response = await planService.calculatePlanPrice(plan.id, {
-        country: selectedCountry,
-        quantity: quantity
+        country: selectedCountry
       });
       setCalculatedPrice(response.price);
     } catch (err) {

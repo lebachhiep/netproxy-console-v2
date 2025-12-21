@@ -19,7 +19,7 @@ import { AnimatePresence, motion, Variants } from 'framer-motion';
 import IconButton from '@/components/button/IconButton';
 import { useCart } from '@/hooks/useCart';
 import { planService } from '@/services/plan/plan.service';
-import { Plan, PlansResponse } from '@/services/plan/plan.types';
+import { Plan } from '@/services/plan/plan.types';
 import { formatFrequency, formatBandwidth, formatThroughput, formatDuration } from '@/services/plan/plan.utils';
 import { PlanCardSkeleton } from '@/components/skeleton/PlanCardSkeleton';
 import { ErrorDisplay } from '@/components/error/ErrorDisplay';
@@ -27,6 +27,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { RadioGroup } from '@/components/radio/RadioGroup';
 import { PurchaseConfirmModal } from './PurchaseConfirmModal';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 // Animation variants
 const easeInOutCustom = [0.44, 0, 0.56, 1] as const;
 
@@ -73,41 +74,22 @@ const PurchasePage: React.FC = () => {
   const [filteredDuration, setFilteredDuration] = useState('');
   const [durationOptions, setDurationOptions] = useState<number[]>([]);
   const [confirmModal, setConfirmModalOpen] = useState(false);
-  // API data state
-  const [plansData, setPlansData] = useState<PlansResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Tab state
   const [activeMain, setActiveMain] = useState<TabKey>('rotating');
   const [activeDedicatedTab, setActiveDedicatedTab] = useState<string>('');
   const [cartOpen, setCartOpen] = useState(false);
-  // Default prices for external provider plans (price = 0)
-  // const [defaultPrices, setDefaultPrices] = useState<Record<string, number>>({});
-
-  // Cart integration
   const cart = useCart();
 
-  // Shared fetch function (DRY principle)
-  const fetchPlans = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await planService.getAllPlans();
-      setPlansData(data);
-      // Không tự động gọi calculate-price, chỉ fetch khi user yêu cầu
-    } catch (err) {
-      console.error('Failed to fetch plans:', err);
-      setError(t('purchase.loadingErrorMessage'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch plans on mount
-  useEffect(() => {
-    fetchPlans();
-  }, []);
+  const {
+    data: plansData,
+    isLoading: loading,
+    refetch: refetchPlans,
+    error
+  } = useQuery({
+    queryKey: ['plans'],
+    queryFn: () => planService.getAllPlans()
+  });
 
   // Rotating plans from API response
   const rotatingPlans = useMemo(() => plansData?.rotate.sort((a, b) => a.sort_order - b.sort_order) || [], [plansData]);
@@ -314,7 +296,7 @@ const PurchasePage: React.FC = () => {
 
   // Retry handler (reuses shared fetchPlans function)
   const handleRetry = () => {
-    fetchPlans();
+    refetchPlans();
   };
 
   // Loading skeleton - uses PlanCardSkeleton component
@@ -330,7 +312,7 @@ const PurchasePage: React.FC = () => {
   const ErrorState = () => (
     <ErrorDisplay
       title={t('purchase.loadingError')}
-      message={error || t('purchase.loadingErrorMessage')}
+      message={error?.message || t('purchase.loadingErrorMessage')}
       onRetry={handleRetry}
       retryText={t('purchase.retryButton')}
     />
@@ -478,8 +460,6 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['premium_isp'] || []}
-                // getDisplayPrice={getDisplayPrice}
-                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Premium ISP"
                 servers={plansData?.servers}
               />
@@ -497,8 +477,6 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['private_ipv4'] || []}
-                // getDisplayPrice={getDisplayPrice}
-                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Private IPv4"
                 servers={plansData?.servers}
               />
@@ -516,8 +494,6 @@ const PurchasePage: React.FC = () => {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
               <DedicatedPlanFilter
                 plans={plansData?.dedicated?.['shared_ipv4'] || []}
-                // getDisplayPrice={getDisplayPrice}
-                // buildPlanFeatures={buildPlanFeatures}
                 proxyType="Shared IPv4"
                 servers={plansData?.servers}
               />
@@ -533,14 +509,7 @@ const PurchasePage: React.FC = () => {
             <ErrorState />
           ) : (
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="h-full flex-1 flex flex-col">
-              <DedicatedPlanFilter
-                plans={plansData?.dedicated?.['ipv6'] || []}
-                // getDisplayPrice={getDisplayPrice}
-                // buildPlanFeatures={buildPlanFeatures}
-                proxyType="IPv6"
-                servers={plansData?.servers}
-                isIPv6
-              />
+              <DedicatedPlanFilter plans={plansData?.dedicated?.['ipv6'] || []} proxyType="IPv6" servers={plansData?.servers} />
             </motion.div>
           )}
         </div>

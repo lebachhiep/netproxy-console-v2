@@ -14,6 +14,7 @@
   "otherRegions": "Other Regions",
   "pleaseSelectServerAndDuration": "Please select a server and duration to see the country list.",
   "noCountrySelected": "No country has been selected yet.",
+  "clickToEdit": "Click to edit",
   "dashboard": {
     "balance": "Balance",
     "topUp": "Top Up",

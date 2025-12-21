@@ -15,6 +15,10 @@ export interface CartItem {
   speedLimit?: string; // for rotating (5mbps, 10mbps, 25mbps, 50mbps)
   staticType?: 'bandwidth' | 'unlimited'; // for static proxies
   calculatedPrice?: number; // for external provider plans with dynamic pricing
+  quantityBoundary?: {
+    min: number;
+    max?: number;
+  };
 }
 
 // Cart items organized by tab
@@ -62,7 +66,11 @@ interface CartContextType {
     quantity: number,
     options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>,
     country?: string,
-    calculatedPrice?: number
+    calculatedPrice?: number,
+    quantityBoundary?: {
+      min: number;
+      max?: number;
+    }
   ) => void;
   removeItem: (tabKey: CartTabKey, itemId: string) => void;
   updateQuantity: (tabKey: CartTabKey, itemId: string, quantity: number) => void;
@@ -234,7 +242,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     quantity: number,
     options?: Partial<Omit<CartItem, 'id' | 'plan' | 'quantity'>>,
     country?: string,
-    calculatedPrice?: number
+    calculatedPrice?: number,
+    quantityBoundary?: {
+      min: number;
+      max?: number;
+    }
   ) => {
     if (quantity < 1) return;
 
@@ -255,6 +267,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         quantity,
         country,
         calculatedPrice,
+        quantityBoundary,
         ...options
       };
       setItemsByTab({

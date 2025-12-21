@@ -26,6 +26,11 @@ export interface Plan {
   package?: any; // Additional package data as JSON
   provider_name?: string; // Provider/server name
   metadata?: Record<string, any>; // Additional metadata
+  /*
+    min_order_quantity: 1,
+    period: 14,
+    proxy_type: "Private IPv4"
+  */
 
   // Status
   featured: boolean;
@@ -126,19 +131,6 @@ export const PLAN_CATEGORY_COLORS: Record<PlanCategory, string> = {
   mixed: 'gray'
 };
 
-/**
- * Check if a plan requires country selection
- * Note: This should be determined by calling GET /user/plans/:id/countries
- * which returns a country_required boolean field
- *
- * For Phase 2, we defer country selection implementation
- */
-export const isCountryRequired = (_plan: Plan): boolean => {
-  // TODO: Implement country requirement check via API endpoint
-  // GET /user/plans/:id/countries returns { country_required: boolean, ... }
-  return false;
-};
-
 // Country structure from API
 export interface Country {
   code: string; // ISO2 code (US, GB, etc.)
@@ -156,7 +148,6 @@ export interface GetCountriesResponse {
 // Request parameters for calculate price API
 export interface CalculatePriceParams {
   country?: string; // ISO2 country code
-  quantity: number; // Min=1, required
 }
 
 // Response from POST /user/plans/:id/calculate-price
@@ -165,4 +156,5 @@ export interface CalculatePriceResponse {
   currency: string;
   duration_seconds: number;
   country?: string;
+  available_count?: number;
 }

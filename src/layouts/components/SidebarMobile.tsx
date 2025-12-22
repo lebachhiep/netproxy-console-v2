@@ -1,17 +1,16 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { adminSections, Route } from 'router';
-import { ReactComponent as Logo } from 'assets/images/logo.svg';
-import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { adminSections, Route } from '@/router';
 import { Chevron } from '@/components/icons';
-import IconButton from '@/components/button/IconButton';
 import { twMerge } from 'tailwind-merge';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarMobileProps {
   onItemClick: () => void;
 }
 
 export const SidebarMobile = ({ onItemClick }: SidebarMobileProps) => {
+  const { t } = useTranslation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,8 +22,8 @@ export const SidebarMobile = ({ onItemClick }: SidebarMobileProps) => {
   const isActive = (path: string) => location.pathname === path;
 
   // chia section main và footer
-  const mainSections = adminSections.filter((s) => s.title !== 'FOOTER');
-  const footerSection = adminSections.find((s) => s.title === 'FOOTER');
+  const mainSections = adminSections(t).filter((s) => s.title !== 'FOOTER');
+  const footerSection = adminSections(t).find((s) => s.title === 'FOOTER');
 
   const handleItemClick = (path?: string) => {
     if (!path) return;

@@ -26,3 +26,4 @@ tsconfig.tsbuildinfo
 ._*
 *.map
 .env
+.claude/*

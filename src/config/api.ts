@@ -26,12 +26,14 @@ export const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Skip auth for public endpoints
-    if (config.url?.includes('/auth/login') ||
-        config.url?.includes('/auth/register') ||
-        config.url?.includes('/auth/request-password-reset') ||
-        config.url?.includes('/auth/reset-password') ||
-        config.url?.includes('/auth/verify-email') ||
-        config.url?.includes('/auth/refresh')) {
+    if (
+      config.url?.includes('/auth/login') ||
+      config.url?.includes('/auth/register') ||
+      config.url?.includes('/auth/request-password-reset') ||
+      config.url?.includes('/auth/reset-password') ||
+      config.url?.includes('/auth/verify-email') ||
+      config.url?.includes('/auth/refresh')
+    ) {
       return config;
     }
 
@@ -67,13 +69,17 @@ const refreshAccessToken = async (): Promise<string> => {
       }
 
       // Call refresh endpoint
-      const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-        refresh_token: refreshToken
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await axios.post(
+        `${API_BASE_URL}/auth/refresh`,
+        {
+          refresh_token: refreshToken
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
 
       // Determine if we should use localStorage or sessionStorage
       // by checking where the tokens are currently stored
@@ -116,9 +122,11 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       // Skip refresh for auth endpoints
-      if (originalRequest.url?.includes('/auth/login') ||
-          originalRequest.url?.includes('/auth/register') ||
-          originalRequest.url?.includes('/auth/refresh')) {
+      if (
+        originalRequest.url?.includes('/auth/login') ||
+        originalRequest.url?.includes('/auth/register') ||
+        originalRequest.url?.includes('/auth/refresh')
+      ) {
         return Promise.reject(error);
       }
 
@@ -175,5 +183,5 @@ export const apiConfig = {
   baseURL: API_BASE_URL,
   getAuthToken: () => {
     return getAccessToken();
-  },
+  }
 };

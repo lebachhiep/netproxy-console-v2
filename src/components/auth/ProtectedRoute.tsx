@@ -3,12 +3,22 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { AppLoading } from '@/components/app/AppLoading';
 import { AUTH_ROUTES } from '@/utils/constants';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NavbarProvider } from '@/contexts/NavbarContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireEmailVerification?: boolean;
   redirectTo?: string;
 }
+
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
@@ -33,5 +43,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={AUTH_ROUTES.VERIFY_EMAIL} state={{ from: location.pathname }} replace />;
   }
 
-  return <>{children}</>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavbarProvider>{children}</NavbarProvider>
+    </QueryClientProvider>
+  );
 };

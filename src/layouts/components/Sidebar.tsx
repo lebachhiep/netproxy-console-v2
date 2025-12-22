@@ -1,20 +1,22 @@
 import IconButton from '@/components/button/IconButton';
 import { Chevron } from '@/components/icons';
 import { useResponsive } from '@/hooks/useResponsive';
-import { ReactComponent as LogoText } from 'assets/images/logo-text.svg';
-import { ReactComponent as Logo } from 'assets/images/logo.svg';
+import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
+import { ReactComponent as Logo } from '@/assets/images/logo.svg';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { adminSections, Route } from 'router';
+import { adminSections, Route } from '@/router';
 import { twMerge } from 'tailwind-merge';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarProps {
   collapsed: boolean;
   toggle: (collapse: boolean) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarProps) => {
+  const { t } = useTranslation();
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
@@ -27,8 +29,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
   const isActive = (path: string) => location.pathname === path;
 
   // chia section main và footer
-  const mainSections = adminSections.filter((s) => s.title !== 'FOOTER');
-  const footerSection = adminSections.find((s) => s.title === 'FOOTER');
+  const mainSections = adminSections(t).filter((s) => s.title !== 'FOOTER');
+  const footerSection = adminSections(t).find((s) => s.title === 'FOOTER');
 
   return (
     <aside
@@ -64,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }) => {
       )}
 
       {/* Main menu */}
-      <nav className="lg:mt-2 flex-1 overflow-y-auto flex flex-col gap-2 lg:gap-4">
+      <nav className={twMerge(clsx('lg:mt-2 flex-1 overflow-y-auto flex flex-col gap-2 lg:gap-4', { 'scrollbar-hide': collapsed }))}>
         {mainSections.map((section, index) => (
           <div key={section.title} className="flex flex-col gap-2">
             {/* Section Header / Divider */}

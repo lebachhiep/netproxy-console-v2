@@ -7,14 +7,12 @@ class AuthService {
    * Sign in with email or username and password
    * POST /auth/login
    */
-  async login(login: string, password: string, rememberMe: boolean = false): Promise<AuthResponse> {
+  async login(login: string, password: string, rememberMe: boolean): Promise<AuthResponse> {
     try {
       const response = await apiService.post<AuthResponse>('/auth/login', {
         login,
         password
-      });
-
-      // Save tokens to storage
+      }); // Save tokens to storage
       saveTokens(response, rememberMe);
 
       return response;
@@ -34,7 +32,8 @@ class AuthService {
         email: credentials.email,
         username: credentials.username,
         password: credentials.password,
-        full_name: credentials.fullName
+        full_name: credentials.fullName,
+        captcha_token: credentials.captchaToken
       });
 
       // Save tokens to storage (default to session storage for registration)
@@ -105,10 +104,11 @@ class AuthService {
    * Request password reset email
    * POST /auth/request-password-reset
    */
-  async requestPasswordReset(email: string): Promise<void> {
+  async requestPasswordReset(email: string, captchaToken: string): Promise<void> {
     try {
       await apiService.post('/auth/request-password-reset', {
-        email
+        email,
+        captcha_token: captchaToken
       });
     } catch (error) {
       console.error('Password reset request failed:', error);

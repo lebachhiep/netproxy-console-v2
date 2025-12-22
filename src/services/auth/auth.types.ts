@@ -26,6 +26,7 @@ export interface RegisterCredentials {
   username: string;
   password: string;
   fullName: string;
+  captchaToken: string;
 }
 
 export interface PasswordResetRequest {

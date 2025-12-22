@@ -6,7 +6,7 @@ type ButtonVariant = 'primary' | 'outlined' | 'default' | 'disabled';
 type ButtonSize = 'sm' | 'md' | 'lg';
 type IconPosition = 'left' | 'right';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;

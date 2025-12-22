@@ -1,10 +1,14 @@
 import { useNavigate } from 'react-router-dom';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export const NotFoundPage: React.FC = () => {
+  const pageTitle = usePageTitle({ pageName: '404 - Không tìm thấy' });
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-gray-50 px-4">
+    <>
+      {pageTitle}
+      <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-gray-50 px-4">
       {/* Status Code */}
       <h1 className="text-9xl font-extrabold text-primary">404</h1>
 
@@ -21,6 +25,7 @@ export const NotFoundPage: React.FC = () => {
       >
         Về trang chủ
       </button>
-    </div>
+      </div>
+    </>
   );
 };

@@ -3,12 +3,13 @@ import { NavigationRoute, navigationSections } from '@/config/navigation';
 import { ResponsiveLayout } from '@/layouts/ResponsiveLayout';
 import { NotFoundPage } from '@/pages/404/NotFoundPage';
 import { AccountProfilePage } from '@/pages/account-profile/AccountProfilePage';
+import { APIDocsPage } from '@/pages/api-docs/APIDocs';
 import ComponentPage from '@/pages/component/ComponentPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
-import { ProxyDetailPage } from '@/pages/dashboard/ProxyDetailPage';
 import { ForgotPasswordPage } from '@/pages/forgot-password/ForgotPasswordPage';
 import HistoryPage from '@/pages/history/HistoryPage';
 import { LoginPage } from '@/pages/login/LoginPage';
+import OrderDetailPage from '@/pages/order/OrderDetailPage';
 import PurchasePage from '@/pages/purchase/PurchasePage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
@@ -44,9 +45,6 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
       case '/home':
         element = <DashboardPage />;
         break;
-      case '/proxy/detail/:id':
-        element = <ProxyDetailPage />;
-        break;
       case '/buy':
         element = <PurchasePage />;
         break;
@@ -65,6 +63,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
       case '/support-software':
         element = <SupportSoftwarePage />;
         break;
+      case '/api-docs':
+        element = <APIDocsPage />;
+        break;
       default:
         element = <></>;
     }
@@ -77,53 +78,61 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
 };
 
 // Create admin sections with components
-export const adminSections = navigationSections.map((section) => ({
-  ...section,
-  routes: mapRoutesToComponents(section.routes)
-}));
+export const adminSections = (t: any) =>
+  navigationSections(t).map((section) => ({
+    ...section,
+    routes: mapRoutesToComponents(section.routes)
+  }));
 
-const routes: Route[] = [
-  {
-    path: '/',
-    name: '/',
-    element: (
-      <ProtectedRoute>
-        <ResponsiveLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true, // Route mặc định khi vào /
-        element: <Navigate to="/home" replace />
-      },
-      ...adminSections.flatMap((section) => section.routes)
-    ]
-  },
-  {
-    name: '/login',
-    element: <LoginPage />,
-    path: '/login'
-  },
-  {
-    name: '/register',
-    element: <RegisterPage />,
-    path: '/register'
-  },
-  {
-    name: '/forgot-password',
-    element: <ForgotPasswordPage />,
-    path: '/forgot-password'
-  },
-  {
-    name: '/reset-password',
-    element: <ResetPasswordPage />,
-    path: '/reset-password'
-  },
-  {
-    element: <NotFoundPage />,
-    name: '*',
-    path: '*'
-  }
-];
+const routes = (t: any): Route[] => {
+  return [
+    {
+      path: '/',
+      name: '/',
+      element: (
+        <ProtectedRoute>
+          <ResponsiveLayout />
+        </ProtectedRoute>
+      ),
+      children: [
+        {
+          index: true, // Route mặc định khi vào /
+          element: <Navigate to="/home" replace />
+        },
+        ...adminSections(t).flatMap((section) => section.routes),
+        {
+          path: '/order/:id',
+          name: '/order/:id',
+          element: <OrderDetailPage />
+        }
+      ]
+    },
+    {
+      name: '/login',
+      element: <LoginPage />,
+      path: '/login'
+    },
+    {
+      name: '/register',
+      element: <RegisterPage />,
+      path: '/register'
+    },
+    {
+      name: '/forgot-password',
+      element: <ForgotPasswordPage />,
+      path: '/forgot-password'
+    },
+    {
+      name: '/reset-password',
+      element: <ResetPasswordPage />,
+      path: '/reset-password'
+    },
+    {
+      element: <NotFoundPage />,
+      name: '*',
+      path: '*'
+    }
+  ];
+};
 
 export { routes };

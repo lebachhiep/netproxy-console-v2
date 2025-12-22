@@ -6,10 +6,13 @@ import './index.css';
 import './styles/App.scss';
 import './styles/custom.scss';
 import { useEffect } from 'react';
+import { CartProvider } from './contexts/CartContext';
+import { useTranslation } from 'react-i18next';
 
 const App = () => {
   const location = useLocation();
-  const element = useRoutes(routes, location);
+  const { t } = useTranslation();
+  const element = useRoutes(routes(t), location);
 
   useEffect(() => {
     const currentTheme = localStorage.getItem('theme');
@@ -21,7 +24,7 @@ const App = () => {
   }, []);
 
   return (
-    <>
+    <CartProvider>
       {element}
       <Toaster
         position="top-right"
@@ -34,7 +37,7 @@ const App = () => {
           }
         }}
       />
-    </>
+    </CartProvider>
   );
 };
 

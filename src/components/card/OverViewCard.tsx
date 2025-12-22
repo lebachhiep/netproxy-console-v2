@@ -70,7 +70,7 @@ export const OverViewCard: React.FC<OverViewCardProps> = ({
               className="flex flex-col md:flex-col justify-between text-sm rounded-[4px] bg-bg-mute dark:bg-bg-mute-dark px-3 py-2 my-1 md:my-0"
             >
               <span className="text-text-me dark:text-text-me-dark">{item.label}</span>
-              <div className="font-semibold text-text-hi dark:text-text-hi-dark">{item.value}</div>
+              <div className="font-semibold text-text-hi dark:text-text-hi-dark capitalize">{item.value}</div>
             </div>
           ))}
         </div>

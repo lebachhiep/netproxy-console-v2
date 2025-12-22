@@ -49,13 +49,13 @@ interface SelectProps {
   /**
    * Callback được gọi khi người dùng chọn option.
    */
-  onChange?: (value: string | number) => void;
+  onChange?: (value: string | number, label: React.ReactNode) => void;
 
   /**
-   * Vị trí hiển thị dropdown: 'top' hoặc 'bottom'.
+   * Vị trí hiển thị dropdown: 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right'.
    * @default "bottom"
    */
-  placement?: 'top' | 'bottom';
+  placement?: 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
 /**
@@ -65,30 +65,9 @@ interface SelectProps {
  * - Hỗ trợ controlled và uncontrolled value
  * - Hiển thị placeholder khi chưa chọn
  * - Hỗ trợ click outside để đóng dropdown
- * - Tùy chỉnh vị trí hiển thị: 'top' hoặc 'bottom'
+ * - Tùy chỉnh vị trí hiển thị: 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right'
  *
  * @component
- *
- * @example
- * const options = [
- *   { value: '1', label: 'Lựa chọn 1' },
- *   { value: '2', label: 'Lựa chọn 2' },
- * ];
- *
- * <Select
- *   options={options}
- *   value={selectedValue}
- *   onChange={(val) => setSelectedValue(val)}
- *   placeholder="Chọn một lựa chọn"
- *   placement="bottom"
- * />
- *
- * <Select
- *   options={options}
- *   defaultValue="1"
- *   placeholder="Chọn một lựa chọn"
- * />
- *
  */
 export const Select: React.FC<SelectProps> = ({
   options,
@@ -103,6 +82,8 @@ export const Select: React.FC<SelectProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [internalValue, setInternalValue] = useState<string | number | undefined>(defaultValue);
+  // Only handle 'top' or 'bottom' for auto placement
+  const [autoPlacement, setAutoPlacement] = useState<'top' | 'bottom'>(placement === 'top' ? 'top' : 'bottom');
   const ref = useRef<HTMLDivElement>(null);
 
   const isControlled = value !== undefined;
@@ -114,7 +95,7 @@ export const Select: React.FC<SelectProps> = ({
       setInternalValue(opt.value);
     }
     setOpen(false);
-    onChange?.(opt.value);
+    onChange?.(opt.value, opt.label);
   };
 
   // Click outside close
@@ -132,8 +113,48 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
+  useEffect(() => {
+    if (!open || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const dropdownHeight = Math.min(options.length * 40, 300); // estimate or measure
+    if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+      setAutoPlacement('top');
+    } else {
+      setAutoPlacement('bottom');
+    }
+  }, [open, options.length]);
+
+  // Determine position classes based on placement
+  const getPositionClasses = () => {
+    // Only use autoPlacement for 'top'/'bottom', fallback to original for others
+    if (placement === 'top' || placement === 'bottom') {
+      switch (autoPlacement) {
+        case 'top':
+          return 'bottom-full mb-1 left-0 right-0';
+        case 'bottom':
+        default:
+          return 'top-full mt-1 left-0 right-0';
+      }
+    }
+    // Fallback for left/right placements
+    switch (placement) {
+      case 'top-left':
+        return 'bottom-full mb-1 right-0';
+      case 'top-right':
+        return 'bottom-full mb-1 left-0';
+      case 'bottom-left':
+        return 'top-full mt-1 right-0';
+      case 'bottom-right':
+        return 'top-full mt-1 left-0';
+      default:
+        return 'top-full mt-1 left-0 right-0';
+    }
+  };
+
   return (
-    <div ref={ref} className={twMerge('relative ')}>
+    <div ref={ref} className={twMerge('relative')}>
       {/* Trigger */}
       <button
         type="button"
@@ -146,9 +167,9 @@ export const Select: React.FC<SelectProps> = ({
           className
         )}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           {selectedOption ? (
-            <div className={twMerge('text-text-hi dark:text-text-me-dark font-bold', labelClassName)}>{selectedOption.label}</div>
+            <div className={twMerge('text-text-hi dark:text-text-me-dark font-bold w-full', labelClassName)}>{selectedOption.label}</div>
           ) : (
             <span className="text-text-me dark:text-text-me-dark">{placeholder}</span>
           )}
@@ -160,8 +181,11 @@ export const Select: React.FC<SelectProps> = ({
       {open && (
         <div
           className={twMerge(
-            'p-1 absolute w-full bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101]',
-            placement === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1',
+            'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[101] transition-all duration-300 ease-out overflow-y-auto flex flex-col gap-1',
+            getPositionClasses(),
+            open ? 'opacity-100 max-h-60 translate-y-0 pointer-events-auto' : 'opacity-0 max-h-0 -translate-y-2 pointer-events-none',
+            // Add width constraint for corner placements
+            placement.includes('left') || placement.includes('right') ? 'w-auto min-w-full' : 'w-full',
             optionClassName
           )}
         >
@@ -171,7 +195,7 @@ export const Select: React.FC<SelectProps> = ({
               onClick={() => handleSelect(opt)}
               className={twMerge(
                 clsx(
-                  'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold ',
+                  'text-text-hi dark:text-text-me-dark transition-all duration-300 rounded-lg font-medium px-3 py-2 cursor-pointer text-sm hover:bg-bg-hover-gray hover:dark:bg-bg-hover-gray-dark hover:font-bold whitespace-nowrap',
                   selectedOption?.value === opt.value && 'bg-bg-hover-gray dark:bg-bg-hover-gray-dark font-bold'
                 )
               )}

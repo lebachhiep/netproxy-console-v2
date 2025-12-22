@@ -2,7 +2,7 @@
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
 const TOKEN_EXPIRY_KEY = 'token_expiry';
-
+const RememberMeTicked = 'RememberMeTicked';
 // JWT payload interface
 export interface JWTPayload {
   sub: string; // subject (user_id)
@@ -25,9 +25,10 @@ export interface AuthTokens {
  * @param tokens - Access and refresh tokens with expiry
  * @param rememberMe - If true, use localStorage; otherwise use sessionStorage
  */
-export const saveTokens = (tokens: AuthTokens, rememberMe: boolean = false): void => {
+export const saveTokens = (tokens: AuthTokens, rememberMe: boolean): void => {
   const storage = rememberMe ? localStorage : sessionStorage;
 
+  localStorage.setItem(RememberMeTicked, rememberMe ? 'true' : 'false');
   storage.setItem(ACCESS_TOKEN_KEY, tokens.access_token);
   storage.setItem(REFRESH_TOKEN_KEY, tokens.refresh_token);
 
@@ -126,7 +127,7 @@ export const getTokenStorageType = (): 'localStorage' | 'sessionStorage' | null 
  */
 export const clearTokens = (): void => {
   // Clear from both storages
-  [localStorage, sessionStorage].forEach(storage => {
+  [localStorage, sessionStorage].forEach((storage) => {
     storage.removeItem(ACCESS_TOKEN_KEY);
     storage.removeItem(REFRESH_TOKEN_KEY);
     storage.removeItem(TOKEN_EXPIRY_KEY);
@@ -182,3 +183,4 @@ export const getUserFromToken = () => {
 export const hasTokens = (): boolean => {
   return !!(getAccessToken() && getRefreshToken());
 };
+//Save the saving button?

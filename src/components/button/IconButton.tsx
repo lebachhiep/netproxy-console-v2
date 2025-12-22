@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { cloneElement, isValidElement } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -18,6 +19,8 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
    * @default 'text-text-hi'
    */
   hoverIconColor?: string;
+
+  iconClassName?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
 /**
@@ -25,7 +28,15 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
  *
  * Nút dạng icon tròn, hỗ trợ hover đổi màu icon, active, disabled.
  */
-const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className, disabled, hoverIconColor = 'text-text-hi', ...rest }) => {
+const IconButton: React.FC<IconButtonProps> = ({
+  icon,
+  active = false,
+  className,
+  iconClassName,
+  disabled,
+  hoverIconColor = 'text-text-hi',
+  ...rest
+}) => {
   const baseClasses =
     'w-12 h-12 shadow-xs bg-bg-secondary dark:bg-bg-secondary-dark rounded-full flex items-center justify-center border-2 transition-colors duration-300 group hover:border-blue dark:hover:border-transparent';
 
@@ -37,9 +48,12 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className
   const iconWithHover = isValidElement(icon)
     ? cloneElement(icon as React.ReactElement<any>, {
         className: twMerge(
-          'text-text-me dark:text-text-lo-dark',
-          (icon as React.ReactElement<any>).props.className,
-          !disabled ? `group-hover:${hoverIconColor} group-hover:dark:${hoverIconColor}-dark transition-colors duration-300` : ''
+          clsx(
+            'text-text-me dark:text-text-lo-dark',
+            (icon as React.ReactElement<any>).props.className,
+            !disabled ? `group-hover:${hoverIconColor} group-hover:dark:${hoverIconColor}-dark transition-colors duration-300` : '',
+            iconClassName
+          )
         )
       })
     : icon;
@@ -47,7 +61,7 @@ const IconButton: React.FC<IconButtonProps> = ({ icon, active = false, className
   return (
     <button
       disabled={disabled}
-      className={twMerge(baseClasses, activeClasses, disabled ? disabledClasses : 'cursor-pointer', className)}
+      className={twMerge(clsx(baseClasses, activeClasses, disabled ? disabledClasses : 'cursor-pointer', className))}
       {...rest}
     >
       {iconWithHover}

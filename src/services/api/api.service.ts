@@ -1,6 +1,6 @@
 import { apiClient } from '@/config/api';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiResponse, PaginatedResponse, RequestOptions, QueryParams } from './api.types';
+import { PaginatedResponse, RequestOptions, QueryParams } from './api.types';
 
 class ApiService {
   /**
@@ -11,7 +11,7 @@ class ApiService {
       params: options?.params,
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.get(endpoint, config);
@@ -25,7 +25,7 @@ class ApiService {
     const config: AxiosRequestConfig = {
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.post(endpoint, data, config);
@@ -39,7 +39,7 @@ class ApiService {
     const config: AxiosRequestConfig = {
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.put(endpoint, data, config);
@@ -53,7 +53,7 @@ class ApiService {
     const config: AxiosRequestConfig = {
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.patch(endpoint, data, config);
@@ -68,7 +68,7 @@ class ApiService {
       params: options?.params,
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.delete(endpoint, config);
@@ -78,12 +78,7 @@ class ApiService {
   /**
    * Upload file with multipart/form-data
    */
-  async uploadFile<T = any>(
-    endpoint: string,
-    file: File,
-    additionalData?: Record<string, any>,
-    options?: RequestOptions
-  ): Promise<T> {
+  async uploadFile<T = any>(endpoint: string, file: File, additionalData?: Record<string, any>, options?: RequestOptions): Promise<T> {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -97,10 +92,10 @@ class ApiService {
     const config: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        ...options?.headers,
+        ...options?.headers
       },
       timeout: options?.timeout || 60000, // Longer timeout for file uploads
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<T> = await apiClient.post(endpoint, formData, config);
@@ -116,7 +111,7 @@ class ApiService {
       params: options?.params,
       headers: options?.headers,
       timeout: options?.timeout || 60000,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response = await apiClient.get(endpoint, config);
@@ -137,19 +132,15 @@ class ApiService {
   /**
    * Get paginated data
    */
-  async getPaginated<T = any>(
-    endpoint: string,
-    params?: QueryParams,
-    options?: RequestOptions
-  ): Promise<PaginatedResponse<T>> {
+  async getPaginated<T = any>(endpoint: string, params?: QueryParams, options?: RequestOptions): Promise<PaginatedResponse<T>> {
     const config: AxiosRequestConfig = {
       params: {
         ...params,
-        ...options?.params,
+        ...options?.params
       },
       headers: options?.headers,
       timeout: options?.timeout,
-      signal: options?.signal,
+      signal: options?.signal
     };
 
     const response: AxiosResponse<PaginatedResponse<T>> = await apiClient.get(endpoint, config);
@@ -165,7 +156,7 @@ class ApiService {
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach(item => queryParams.append(key, item));
+          value.forEach((item) => queryParams.append(key, item));
         } else if (typeof value === 'object') {
           queryParams.append(key, JSON.stringify(value));
         } else {

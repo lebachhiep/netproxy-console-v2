@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import React, { useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -34,6 +35,8 @@ interface TabsProps {
   className?: string;
   defaultWrapperClass?: string;
   cardWrapperClass?: string;
+  itemWrapperClass?: string;
+  contentCardWrapperClass?: string;
 }
 
 /**
@@ -63,7 +66,19 @@ interface TabsProps {
  * </Tabs>
  *
  */
-export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', activeKey, defaultActiveKey, onChange, className, defaultWrapperClass, cardWrapperClass }) => {
+export const Tabs: React.FC<TabsProps> = ({
+  tabs,
+  children,
+  type = 'default',
+  activeKey,
+  defaultActiveKey,
+  onChange,
+  className,
+  defaultWrapperClass,
+  cardWrapperClass,
+  itemWrapperClass,
+  contentCardWrapperClass
+}) => {
   const [internalActive, setInternalActive] = useState<string | number>(defaultActiveKey ?? tabs[0]?.key);
 
   const isControlled = activeKey !== undefined;
@@ -81,7 +96,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
       {type === 'default' && (
         <div className={defaultWrapperClass}>
           <div className={twMerge('relative border-b-2 h-10 border-border-element dark:border-border-element-dark pl-5', className)}>
-            <div className="flex w-fit gap-5 relative">
+            <div className={clsx('flex w-fit gap-5 relative', itemWrapperClass)}>
               {tabs.map((tab) => {
                 const isActive = currentActive === tab.key;
                 return (
@@ -118,7 +133,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
 
       {type === 'card' && (
         <div className={cardWrapperClass}>
-          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5 overflow-auto scrollbar-hide">
+          <div className="border-b-2 border-border-element dark:border-border-element-dark py-2 px-5 overflow-auto scrollbar-hide min-h-fit">
             {/* Wrapper có scroll ngang + ẩn scrollbar */}
             <div className="relative w-full overflow-x-visible" id="tab-scroll-container">
               <div className="flex w-fit flex-nowrap rounded-lg lg:gap-1 p-1 bg-bg-mute dark:bg-bg-mute-dark relative">
@@ -195,7 +210,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, children, type = 'default', ac
           </div>
 
           {/* Nội dung tab */}
-          <div>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
+          <div className={contentCardWrapperClass}>{children[tabs.findIndex((tab) => tab.key === currentActive)]}</div>
         </div>
       )}
     </>

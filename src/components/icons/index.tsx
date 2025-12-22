@@ -84,8 +84,22 @@ import { ReactComponent as AddCircle } from '@/assets/icons/add_circle.svg';
 import { ReactComponent as TextColumnOne } from '@/assets/icons/text_column_one.svg';
 import { ReactComponent as GridDots } from '@/assets/icons/grid_dots.svg';
 import { ReactComponent as Open } from '@/assets/icons/open.svg';
+import { ReactComponent as CopySelect } from '@/assets/icons/copy_select.svg';
+import { ReactComponent as ArrowDownload } from '@/assets/icons/arrow_download.svg';
+import { ReactComponent as Reload } from '@/assets/icons/reload.svg';
+import { ReactComponent as CloudSwap } from '@/assets/icons/cloud_swap.svg';
+import { ReactComponent as ArrowSync } from '@/assets/icons/arrow_sync.svg';
+import { ReactComponent as CalendarClockOutline } from '@/assets/icons/calendar_clock_outline.svg';
+import { ReactComponent as Target } from '@/assets/icons/target.svg';
 
 export {
+  Target,
+  CalendarClockOutline,
+  ArrowSync,
+  CloudSwap,
+  Reload,
+  ArrowDownload,
+  CopySelect,
   Person,
   PersonOutlined,
   PersonFilled,

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { CaretLeft, CaretRight } from '../icons';
 import { Select } from '../select/Select';
 
@@ -31,9 +32,10 @@ export function Pagination({
   loading = false,
   hasMore = true
 }: PaginationProps) {
+  const { t } = useTranslation();
   const totalPages = Math.ceil(total / pageSize);
-  const startItem = Math.min((current - 1) * pageSize + 1, total);
-  const endItem = Math.min(current * pageSize, total);
+  // const startItem = Math.min((current - 1) * pageSize + 1, total);
+  // const endItem = Math.min(current * pageSize, total);
 
   // Nếu pageSize hiện tại không có trong options, thêm nó vào
   const sizeOptionsWithCurrent = pageSizeOptions.includes(pageSize) ? pageSizeOptions : [...pageSizeOptions, pageSize];
@@ -157,28 +159,31 @@ export function Pagination({
             trong <span className="text-text-hi dark:text-text-hi-dark">{total}</span> mục
           </div>
         </div> */}
-        {
-          <div className="md:flex items-center ">
-            <Select
-              placeholder={current ? 'Trang ' + current : `Chọn trang`}
-              optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
-              options={Array(totalPages)
-                .fill(null)
-                .map((_, index) => {
-                  const size = index + 1;
-                  return {
-                    label: <div key={size}>Trang {size}</div>,
-                    value: size
-                  };
-                })}
-              className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent dark:pseudo-border-top"
-              labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
-              value={current}
-              onChange={(value) => handlePageChange(value as number)}
-              placement="top"
-            />
-          </div>
-        }
+
+        <div className="md:flex items-center ">
+          <Select
+            placeholder={current ? t('page') + ' ' + current : t('page')}
+            optionClassName="gap-1 flex flex-col max-h-40 overflow-y-auto"
+            options={Array(totalPages)
+              .fill(null)
+              .map((_, index) => {
+                const size = index + 1;
+                return {
+                  label: (
+                    <div key={size}>
+                      {t('page')} {size}
+                    </div>
+                  ),
+                  value: size
+                };
+              })}
+            className="shadow-none h-8 rounded-lg border-border dark:border-transparent dark:pseudo-border-top w-[118px] font-medium hover:font-bold hover:border-blue dark:hover:border-transparent dark:pseudo-border-top"
+            labelClassName="font-medium text-text-me hover:text-text-hi hover:font-bold"
+            value={current}
+            onChange={(value) => handlePageChange(value as number)}
+            placement="top"
+          />
+        </div>
 
         {showSizeChanger && (
           <div className="flex md:hidden items-center">

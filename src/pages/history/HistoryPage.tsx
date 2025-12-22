@@ -45,7 +45,7 @@ const HistoryPage: React.FC = () => {
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
 
-  const debouncedSearchQuery = useDebounce<string>(searchQuery, 400);
+  const debouncedSearchQuery = useDebounce<string>(searchQuery, 300);
 
   // Filter items configuration
   const filterItems = useMemo(
@@ -118,30 +118,17 @@ const HistoryPage: React.FC = () => {
       setOrders(transformedData);
       setTotal(response.total);
     } catch (err: any) {
-      toast.error(t('toast.error.loadOrderHistory'));
+      toast.error(t('dashboard.copyOrderIDSuccess'));
       console.error('Error fetching orders:', err);
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, debouncedSearchQuery, dateRange, selectedType, selectedStatus]);
+  }, [currentPage, pageSize, debouncedSearchQuery, dateRange.from, dateRange.to, selectedType, selectedStatus, t]);
 
   // Fetch data on mount and when dependencies change
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
-
-  // Debounce search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (currentPage !== 1) {
-        setCurrentPage(1); // Reset to first page on search
-      } else {
-        fetchOrders();
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -188,94 +175,97 @@ const HistoryPage: React.FC = () => {
     setSelectedOrderItems([]);
   };
 
-  const columns: TableColumn<OrderDisplay>[] = [
-    {
-      key: 'stt',
-      title: t('historyPage.columns.stt'),
-      width: '60px',
-      align: 'center',
-      render: (_value, _record, index) => index + 1,
-      fixed: 'left'
-    },
-    {
-      key: 'orderNumber',
-      title: t('historyPage.columns.orderNumber'),
-      width: isMobile || isTablet ? 120 : 200,
-      align: 'center',
-      sortable: true,
-      fixed: 'left',
-      render: (value) => (
-        <div className="flex items-center justify-between">
-          <span className="truncate">{value}</span>
-          <ContentCopy
-            className="text-blue cursor-pointer ml-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              copyToClipboard(value);
-              toast.success(t('toast.success.copyOrderId'));
-            }}
-          />
-        </div>
-      )
-    },
-    {
-      key: 'createdAt',
-      title: t('historyPage.columns.createdAt'),
-      width: 150,
-      render: (value) => formatOrderDate(value.toISOString())
-    },
-    {
-      width: 150,
-      key: 'typeLabel',
-      title: t('historyPage.columns.type'),
-      align: 'center',
-      render: (value, record) => <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
-    },
-    {
-      key: 'total',
-      title: t('historyPage.columns.total'),
-      width: 150,
-      align: 'center',
-      render: (value) => {
-        const amount = Number(value);
-        const formattedAmount = amount.toFixed(2);
-        return <span className="text-[#ff1818]">{amount > 0 ? `-$${formattedAmount}` : `$${formattedAmount}`}</span>;
+  const columns: TableColumn<OrderDisplay>[] = useMemo(
+    () => [
+      {
+        key: 'stt',
+        title: t('historyPage.columns.stt'),
+        width: '60px',
+        align: 'center',
+        render: (_value, _record, index) => index + 1,
+        fixed: 'left'
+      },
+      {
+        key: 'orderNumber',
+        title: t('historyPage.columns.orderNumber'),
+        width: isMobile || isTablet ? 120 : 200,
+        align: 'center',
+        sortable: true,
+        fixed: 'left',
+        render: (value) => (
+          <div className="flex items-center justify-between">
+            <span className="truncate">{value}</span>
+            <ContentCopy
+              className="text-blue cursor-pointer ml-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                copyToClipboard(value);
+                toast.success(t('dashboard.copyOrderIDSuccess'));
+              }}
+            />
+          </div>
+        )
+      },
+      {
+        key: 'createdAt',
+        title: t('historyPage.columns.createdAt'),
+        width: 150,
+        render: (value) => formatOrderDate(value.toISOString())
+      },
+      {
+        width: 150,
+        key: 'typeLabel',
+        title: t('historyPage.columns.type'),
+        align: 'center',
+        render: (value, record) => <Badge color={getOrderTypeColor(record.type)}>{value}</Badge>
+      },
+      {
+        key: 'total',
+        title: t('historyPage.columns.total'),
+        width: 150,
+        align: 'center',
+        render: (value) => {
+          const amount = Number(value);
+          const formattedAmount = amount.toFixed(2);
+          return <span className="text-[#ff1818]">{amount > 0 ? `-$${formattedAmount}` : `$${formattedAmount}`}</span>;
+        }
+      },
+      {
+        key: 'items',
+        title: t('quantity'),
+        width: 150,
+        align: 'center',
+        render: (_value, record) => {
+          const itemsCount = record.items?.length || 0;
+          return itemsCount > 0 ? (
+            <button
+              onClick={(e) => handleViewItems(e, record)}
+              className="px-3 py-1 bg-blue text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
+            >
+              {itemsCount} {t('items')}
+            </button>
+          ) : (
+            <span className="text-text-lo dark:text-text-lo-dark">-</span>
+          );
+        }
+      },
+      {
+        width: 150,
+        key: 'statusDisplay',
+        title: t('historyPage.columns.status'),
+        align: 'center',
+        render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
+      },
+      {
+        width: 150,
+        key: 'description',
+        title: t('historyPage.columns.description'),
+        align: 'left',
+        render: (value) => <div className="truncate">{value || '...'}</div>
       }
-    },
-    {
-      key: 'items',
-      title: t('quantity'),
-      width: 150,
-      align: 'center',
-      render: (_value, record) => {
-        const itemsCount = record.items?.length || 0;
-        return itemsCount > 0 ? (
-          <button
-            onClick={(e) => handleViewItems(e, record)}
-            className="px-3 py-1 bg-blue text-white rounded-md hover:bg-blue-600 transition-colors text-sm font-medium"
-          >
-            {itemsCount} {t('items')}
-          </button>
-        ) : (
-          <span className="text-text-lo dark:text-text-lo-dark">-</span>
-        );
-      }
-    },
-    {
-      width: 150,
-      key: 'statusDisplay',
-      title: t('historyPage.columns.status'),
-      align: 'center',
-      render: (status) => <Badge color={status?.color || 'gray'}>{status?.text || '-'}</Badge>
-    },
-    {
-      width: 150,
-      key: 'description',
-      title: t('historyPage.columns.description'),
-      align: 'left',
-      render: (value) => <div className="truncate">{value || '...'}</div>
-    }
-  ];
+    ],
+    [t]
+  );
 
   return (
     <motion.div

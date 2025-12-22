@@ -220,7 +220,7 @@ export const Navbar: React.FC = () => {
             <Dropdown.Trigger asIcon>
               <IconButton className="w-10 h-10" icon={<Translate className="w-5 h-5" />} />
             </Dropdown.Trigger>
-            <Dropdown.Menu>
+            <Dropdown.Menu className="max-h-[100px]">
               {SupportedLanguages.map((language) => {
                 return (
                   <Dropdown.Item

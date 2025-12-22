@@ -1,9 +1,9 @@
-import { apiClient } from '@/config/api';
+import { apiService } from '@/services/api/api.service';
 import { ValidateCouponRequest, ValidateCouponResponse, CouponValidationResult } from './coupon.types';
 
 /**
  * Coupon Service
- * Handles coupon validation via public API endpoint
+ * Handles coupon validation via authenticated API endpoint
  */
 class CouponService {
   /**
@@ -12,15 +12,9 @@ class CouponService {
    * @param code - Coupon code to validate
    * @param orderAmount - Total order amount for validation
    * @param planId - Optional plan ID to check plan eligibility
-   * @param resellerId - Optional reseller ID for reseller-specific coupons
    * @returns Validation result with discount amount if valid
    */
-  async validateCoupon(
-    code: string,
-    orderAmount: number,
-    planId?: string,
-    resellerId?: string
-  ): Promise<CouponValidationResult> {
+  async validateCoupon(code: string, orderAmount: number, planId?: string): Promise<CouponValidationResult> {
     try {
       const payload: ValidateCouponRequest = {
         code,
@@ -28,20 +22,19 @@ class CouponService {
       };
 
       if (planId) payload.plan_id = planId;
-      if (resellerId) payload.reseller_id = resellerId;
 
-      const response = await apiClient.post<ValidateCouponResponse>('/public/coupons/validate', payload);
+      const response = await apiService.post<ValidateCouponResponse>('/user/coupons/validate', payload);
 
-      if (response.data.valid) {
+      if (response.valid) {
         return {
           success: true,
-          discount: response.data.discount_amount || 0,
-          coupon: response.data.coupon
+          discount: response.discount_amount || 0,
+          coupon: response.coupon
         };
       } else {
         return {
           success: false,
-          error: response.data.validation_error || 'Mã giảm giá không hợp lệ'
+          error: response.validation_error || 'Mã giảm giá không hợp lệ'
         };
       }
     } catch (error: any) {
@@ -49,9 +42,7 @@ class CouponService {
 
       // Handle specific error messages from backend
       const errorMessage =
-        error.response?.data?.validation_error ||
-        error.response?.data?.message ||
-        'Không thể xác thực mã giảm giá. Vui lòng thử lại.';
+        error.response?.data?.validation_error || error.response?.data?.message || 'Không thể xác thực mã giảm giá. Vui lòng thử lại.';
 
       return {
         success: false,

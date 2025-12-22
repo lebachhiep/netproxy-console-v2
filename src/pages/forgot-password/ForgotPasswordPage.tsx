@@ -1,7 +1,7 @@
 import { AuthFormWrapper } from '@/components/AuthFormWrapper';
 import { Button } from '@/components/button/Button';
 import { InputField } from '@/components/input/InputField';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +14,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
+import { SupportedLanguages } from '@/config/constants';
 
 export const ForgotPasswordPage: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -22,13 +23,6 @@ export const ForgotPasswordPage: React.FC = () => {
   const { resetPassword, isAuthenticated, clearError } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [emailSent, setEmailSent] = useState(false);
-
-  const languageOptions = useMemo(() => {
-    return [
-      { label: t('english'), value: 'en' },
-      { label: t('vnese'), value: 'vi' }
-    ];
-  }, [t]);
 
   const {
     control,
@@ -146,15 +140,10 @@ export const ForgotPasswordPage: React.FC = () => {
         <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm flex justify-center flex-col">
           <div className="mb-3 w-[130px]">
             <Select
-              options={languageOptions}
+              options={SupportedLanguages.map((l) => ({ label: l.displayName, value: l.code }))}
               value={i18n.language}
               onChange={(val) => {
-                console.log('Selected language:', val);
-                if (val == 'vi') {
-                  i18n.changeLanguage('vi');
-                } else {
-                  i18n.changeLanguage('en');
-                }
+                i18n.changeLanguage(String(val));
               }}
               placeholder={t('language') || 'Ngôn ngữ'}
               placement="bottom"

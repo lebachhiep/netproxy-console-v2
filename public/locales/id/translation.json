@@ -392,13 +392,24 @@
     "tw": "Taiwan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {
-    "title": "Panduan Penggunaan Pesanan",
-    "welcome": "Selamat datang di halaman detail pesanan kami. Di bawah ini adalah panduan pengguna untuk membantu Anda memanfaatkan fitur dan informasi yang tersedia.",
-    "orderInformation": "Informasi Pesanan",
-    "orderInformationDetail": "Di bagian atas halaman, Anda akan menemukan informasi penting tentang pesanan Anda termasuk ID pesanan, status, tanggal pembuatan, dan jumlah total.",
-    "productDetailTitle": "Detail Produk",
-    "productDetails": "Bagian detail produk menyediakan informasi tentang item yang telah Anda beli, termasuk nama produk, kuantitas, harga, dan deskripsi singkat."
+  "proxyGuide": {
+    "title": "Panduan Proxy NPX",
+    "usernameStructure": "Struktur Username",
+    "selectCountry": "Pilih negara",
+    "selectCountryDescription": "Jika tidak ditentukan = negara acak.",
+    "keepIP": "Pertahankan IP tetap",
+    "isRandom": "dapat berupa string apa pun",
+    "onceDontHavePlan": "Jika tidak ditentukan = rotasi otomatis berdasarkan durasi paket",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "Panduan Penanganan Kesalahan Proxy",
+      "intro": "Jika proxy mengalami kesalahan, silakan ikuti langkah-langkah berikut:",
+      "steps.getProxy": "Klik tombol {{getProxy}} untuk mendapatkan proxy baru",
+      "steps.contactSupport": "Jika masalah masih terjadi setelah mendapatkan proxy baru, silakan hubungi Support."
+    }
   },
   "refreshRot": "Setiap {{number}} {{time}}",
   "every": "Setiap",

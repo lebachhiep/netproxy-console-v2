@@ -392,13 +392,24 @@
     "tw": "Đài Loan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {
-    "title": "Hướng dẫn sử dụng đơn hàng",
-    "welcome": "Chào mừng bạn đến với trang chi tiết đơn hàng của chúng tôi! Dưới đây là hướng dẫn sử dụng để giúp bạn tận dụng tối đa các tính năng và thông tin có sẵn.",
-    "orderInformation": "Thông tin đơn hàng",
-    "orderInformationDetail": "Ở phần đầu trang, bạn sẽ thấy các thông tin quan trọng về đơn hàng của mình bao gồm mã đơn hàng, trạng thái, ngày tạo và tổng số tiền. Hãy chắc chắn kiểm tra kỹ các thông tin này để đảm bảo mọi thứ đều chính xác.",
-    "productDetailTitle": "Chi tiết sản phẩm",
-    "productDetails": "Phần chi tiết sản phẩm cung cấp thông tin về các mặt hàng bạn đã đặt mua, bao gồm tên sản phẩm, số lượng, giá cả và mô tả ngắn gọn. Điều này giúp bạn dễ dàng theo dõi những gì bạn đã mua."
+  "proxyGuide": {
+    "title": "Hướng dẫn Proxy NPX",
+    "usernameStructure": "Cấu trúc Username",
+    "selectCountry": "Chọn quốc gia",
+    "selectCountryDescription": "Không có = quốc gia ngẫu nhiên.",
+    "keepIP": "Giữ IP cố định",
+    "isRandom": "là chuỗi bất kỳ",
+    "onceDontHavePlan": "Không có = tự xoay theo thời gian gói",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "Hướng dẫn xử lý lỗi Proxy",
+      "intro": "Khi proxy gặp lỗi, vui lòng thực hiện các bước sau:",
+      "steps.getProxy": "Nhấn nút {{getProxy}} để lấy proxy mới",
+      "steps.contactSupport": "Nếu vẫn gặp lỗi sau khi lấy proxy mới, vui lòng liên hệ bộ phận hỗ trợ (Support)."
+    }
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Mỗi",

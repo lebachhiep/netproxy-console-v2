@@ -382,11 +382,18 @@ export const DedicatedPlanFilter: React.FC<DedicatedPlanFilterProps> = ({ plans,
   }, [cart.itemsByTab, tabKey, selectedPlan?.id, selectedPeriod]);
 
   // Build server options
-  const serverOptions = availableServers.map((server) => ({
-    key: server,
-    label: server,
-    value: server
-  }));
+  const serverOptions = availableServers
+    .slice()
+    .sort((a, b) => {
+      if (a.toLowerCase() === 'dawn server') return 1;
+      if (b.toLowerCase() === 'dawn server') return -1;
+      return a.localeCompare(b);
+    })
+    .map((server) => ({
+      key: server,
+      label: server,
+      value: server
+    }));
 
   // Build period options
   const periodOptions = availablePeriods.map((period) => ({

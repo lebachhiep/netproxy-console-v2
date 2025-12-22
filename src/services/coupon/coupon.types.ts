@@ -3,7 +3,6 @@ export interface ValidateCouponRequest {
   code: string; // Required: Coupon code
   order_amount: number; // Required: Min 0
   plan_id?: string; // Optional: UUID4 format
-  reseller_id?: string; // Optional: UUID4 format
 }
 
 // Coupon data from backend

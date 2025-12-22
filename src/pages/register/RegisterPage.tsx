@@ -6,7 +6,7 @@ import { RegisterFormData, registerSchema } from '@/services/auth/auth.schemas';
 import { AUTH_ROUTES } from '@/utils/constants';
 import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -14,6 +14,7 @@ import { usePageTitle } from '@/hooks/usePageTitle';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
+import { SupportedLanguages } from '@/config/constants';
 export const RegisterPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Đăng ký' });
   const navigate = useNavigate();
@@ -36,28 +37,6 @@ export const RegisterPage: React.FC = () => {
       confirmPassword: ''
     }
   });
-  const options = [
-    { label: t('english'), value: 'en' },
-    { label: t('vnese'), value: 'vi' }
-  ];
-  const getInitialLanguage = (): 'vi' | 'en' => {
-    try {
-      const savedLang = localStorage.getItem('i18nextLng');
-      if (savedLang) {
-        const langLower = savedLang.toLowerCase();
-        if (langLower.includes('vi')) return 'vi';
-        if (langLower.includes('en')) return 'en';
-      }
-    } catch (error) {
-      console.log('lỗi: ' + error);
-    }
-
-    return 'vi';
-  };
-
-  const [selectLanguage, setSelectedLanguage] = useState<'vi' | 'en'>(getInitialLanguage());
-  // Watch password for strength indicator (if needed in future)
-  // const password = watch('password');
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -198,16 +177,10 @@ export const RegisterPage: React.FC = () => {
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-text-lo dark:text-text-lo-dark font-medium text-sm w-full max-w-xs px-4 flex justify-center gap-3 flex-col">
           <div className="bottom-50 text-center w-[130px] mx-auto">
             <Select
-              options={options}
-              value={selectLanguage}
+              options={SupportedLanguages.map((l) => ({ label: l.displayName, value: l.code }))}
+              value={i18n.language}
               onChange={(val) => {
-                const language = val === 'vi' ? 'vi' : 'en';
-                setSelectedLanguage(language);
-                if (val == 'vi') {
-                  i18n.changeLanguage('vi');
-                } else {
-                  i18n.changeLanguage('en');
-                }
+                i18n.changeLanguage(String(val));
               }}
               placeholder={t('language') || 'Ngôn ngữ'}
               placement="bottom"

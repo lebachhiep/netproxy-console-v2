@@ -392,13 +392,24 @@
     "tw": "Taiwan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {
-    "title": "Order Usage Guide",
-    "welcome": "Welcome to our order details page. Below is a user guide to help you fully utilize the available features and information.",
-    "orderInformation": "Order Information",
-    "orderInformationDetail": "At the top of the page, you will find important information about your order including order ID, status, creation date, and total amount. Please make sure to check these details carefully to ensure everything is correct.",
-    "productDetailTitle": "Product Details",
-    "productDetails": "The product details section provides information about the items you have purchased, including product name, quantity, price, and a brief description. This helps you easily keep track of what you have bought."
+  "proxyGuide": {
+    "title": "NPX Proxy Guide",
+    "usernameStructure": "Username Structure",
+    "selectCountry": "Select country",
+    "selectCountryDescription": "If omitted = random country.",
+    "keepIP": "Keep IP fixed",
+    "isRandom": "is any string",
+    "onceDontHavePlan": "If omitted = automatically rotates based on the plan duration",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "Proxy Error Handling Guide",
+      "intro": "When the proxy encounters an error, please follow these steps:",
+      "steps.getProxy": "Click the {{getProxy}} button to get a new proxy",
+      "steps.contactSupport": "If the issue persists after getting a new proxy, please contact Support."
+    }
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "Every",

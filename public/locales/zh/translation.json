@@ -392,13 +392,24 @@
     "tw": "台湾",
     "pk": "巴基斯坦"
   },
-  "orderInfoModal": {
-    "title": "订单使用指南",
-    "welcome": "欢迎来到订单详情页面。以下指南将帮助您充分使用可用的功能和信息。",
-    "orderInformation": "订单信息",
-    "orderInformationDetail": "在页面顶部，您可以看到订单ID、状态、创建日期和总金额等重要信息。请仔细核对以确保准确无误。",
-    "productDetailTitle": "产品详情",
-    "productDetails": "产品详情部分提供您已购买项目的信息，包括产品名称、数量、价格和简要描述，方便您进行管理。"
+  "proxyGuide": {
+    "title": "NPX 代理使用指南",
+    "usernameStructure": "用户名结构",
+    "selectCountry": "选择国家",
+    "selectCountryDescription": "未指定 = 随机国家。",
+    "keepIP": "保持 IP 固定",
+    "isRandom": "可以是任意字符串",
+    "onceDontHavePlan": "未指定 = 根据套餐时长自动轮换",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "代理错误处理指南",
+      "intro": "当代理出现错误时，请按照以下步骤操作：",
+      "steps.getProxy": "点击 {{getProxy}} 按钮获取新的代理",
+      "steps.contactSupport": "如果获取新代理后问题仍然存在，请联系 Support。"
+    }
   },
   "refreshRot": "{{every}} {{number}} {{time}}",
   "every": "每",

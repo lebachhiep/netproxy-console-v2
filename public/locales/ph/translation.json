@@ -392,13 +392,24 @@
     "tw": "Taiwan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {
-    "title": "Gabay sa Paggamit ng Order",
-    "welcome": "Maligayang pagdating sa aming pahina ng detalye ng order. Narito ang gabay upang matulungan ka.",
-    "orderInformation": "Impormasyon ng Order",
-    "orderInformationDetail": "Sa itaas ng pahina, makikita mo ang mahalagang impormasyon tulad ng Order ID, status, at kabuuang halaga.",
-    "productDetailTitle": "Detalye ng Produkto",
-    "productDetails": "Ang seksyong ito ay nagbibigay ng impormasyon tungkol sa mga item na iyong binili."
+  "proxyGuide": {
+    "title": "Gabay sa Proxy ng NPX",
+    "usernameStructure": "Istruktura ng Username",
+    "selectCountry": "Pumili ng bansa",
+    "selectCountryDescription": "Kung hindi tinukoy = random na bansa.",
+    "keepIP": "Panatilihing pareho ang IP",
+    "isRandom": "maaaring anumang string",
+    "onceDontHavePlan": "Kung hindi tinukoy = awtomatikong magro-rotate batay sa tagal ng package",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "Gabay sa Pag-ayos ng Proxy Error",
+      "intro": "Kapag nagkaroon ng error ang proxy, pakisunod ang mga hakbang na ito:",
+      "steps.getProxy": "I-click ang {{getProxy}} button para kumuha ng bagong proxy",
+      "steps.contactSupport": "Kung magpapatuloy pa rin ang problema matapos kumuha ng bagong proxy, mangyaring makipag-ugnayan sa Support."
+    }
   },
   "refreshRot": "Tuwing {{number}} {{time}}",
   "every": "Tuwing",

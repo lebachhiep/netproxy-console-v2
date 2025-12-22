@@ -775,7 +775,7 @@ const OrderDetailPage = () => {
               />
 
               {/* Thông tin */}
-              <OrderInfoModal />
+              <OrderInfoModal type={isBelongRotatingProxy ? 'rotating' : 'provider'} />
 
               {/* Refresh */}
               <IconButton

@@ -392,13 +392,24 @@
     "tw": "Tayvan",
     "pk": "Pakistan"
   },
-  "orderInfoModal": {
-    "title": "Sipariş Kullanım Kılavuzu",
-    "welcome": "Sipariş detayları sayfamıza hoş geldiniz. Aşağıda, özellikleri kullanmanıza yardımcı olacak bir kılavuz bulunmaktadır.",
-    "orderInformation": "Sipariş Bilgileri",
-    "orderInformationDetail": "Sayfanın üst kısmında sipariş kimliği, durum, tarih ve toplam tutar gibi önemli bilgileri bulabilirsiniz.",
-    "productDetailTitle": "Ürün Detayları",
-    "productDetails": "Bu bölüm satın aldığınız ürünler hakkında bilgi verir: isim, miktar, fiyat ve kısa açıklama."
+  "proxyGuide": {
+    "title": "NPX Proxy Rehberi",
+    "usernameStructure": "Kullanıcı Adı Yapısı",
+    "selectCountry": "Ülke seçin",
+    "selectCountryDescription": "Belirtilmezse = rastgele ülke.",
+    "keepIP": "IP’yi sabit tut",
+    "isRandom": "herhangi bir dize olabilir",
+    "onceDontHavePlan": "Belirtilmezse = paket süresine göre otomatik döndürülür",
+    "params": {
+      "country.key": "country-XX",
+      "session.key": "session-YYY"
+    },
+    "rotating": {
+      "title": "Proxy Hata Giderme Rehberi",
+      "intro": "Proxy hata verirse lütfen aşağıdaki adımları izleyin:",
+      "steps.getProxy": "{{getProxy}} düğmesine tıklayarak yeni bir proxy alın",
+      "steps.contactSupport": "Yeni bir proxy aldıktan sonra sorun devam ederse lütfen Support ile iletişime geçin."
+    }
   },
   "refreshRot": "Her {{number}} {{time}}",
   "every": "Her",

@@ -1,4 +1,5 @@
 import { Select } from '@/components/select/Select';
+import { SupportedLanguages } from '@/config/constants';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 interface AuthLayoutProps {
@@ -20,17 +21,10 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right }) => {
         >
           <div className="mb-3 min-w-[130px]">
             <Select
-              options={[
-                { label: t('english'), value: 'en' },
-                { label: t('vnese'), value: 'vi' }
-              ]}
+              options={SupportedLanguages.map((l) => ({ label: l.displayName, value: l.code }))}
               value={i18n.language}
               onChange={(val) => {
-                if (val == 'vi') {
-                  i18n.changeLanguage('vi');
-                } else {
-                  i18n.changeLanguage('en');
-                }
+                i18n.changeLanguage(String(val));
               }}
               placeholder={t('language') || 'Ngôn ngữ'}
               placement="bottom"

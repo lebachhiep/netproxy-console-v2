@@ -98,7 +98,7 @@ const PurchasePage: React.FC = () => {
   const dedicatedTabs = [
     { label: t('purchase.premiumIsp'), key: 'premium_isp' },
     { label: t('purchase.privateIpv4'), key: 'private_ipv4' },
-    { label: t('purchase.sharedIpv4'), key: 'shared_ipv4' },
+    // { label: t('purchase.sharedIpv4'), key: 'shared_ipv4' },
     { label: t('purchase.ipv6'), key: 'ipv6' }
   ];
 
@@ -485,7 +485,7 @@ const PurchasePage: React.FC = () => {
         </div>
 
         {/* Shared IPv4 Tab - index 3, key: 'shared_ipv4' */}
-        <div className="flex-1 h-full flex flex-col" key="shared_ipv4">
+        {/* <div className="flex-1 h-full flex flex-col" key="shared_ipv4">
           {loading ? (
             <LoadingSkeleton />
           ) : error ? (
@@ -499,7 +499,7 @@ const PurchasePage: React.FC = () => {
               />
             </motion.div>
           )}
-        </div>
+        </div> */}
 
         {/* IPv6 Tab - index 4, key: 'ipv6' */}
         <div className="flex-1 h-full flex flex-col" key="ipv6">

@@ -12,6 +12,7 @@ import { LoginPage } from '@/pages/login/LoginPage';
 import OrderDetailPage from '@/pages/order/OrderDetailPage';
 import PurchasePage from '@/pages/purchase/PurchasePage';
 import { RegisterPage } from '@/pages/register/RegisterPage';
+import { ResellerPage } from '@/pages/reseller/ResellerPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
 import SupportSoftwarePage from '@/pages/support-software/SupportSoftwarePage';
 import WalletPage from '@/pages/wallet/WalletPage';
@@ -65,6 +66,9 @@ const mapRoutesToComponents = (navRoutes: NavigationRoute[]): Route[] => {
         break;
       case '/api-docs':
         element = <APIDocsPage />;
+        break;
+      case '/reseller':
+        element = <ResellerPage />;
         break;
       default:
         element = <></>;

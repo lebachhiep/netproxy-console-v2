@@ -10,6 +10,9 @@ import { adminSections, Route } from '@/router';
 import { twMerge } from 'tailwind-merge';
 import { useTranslation } from 'react-i18next';
 
+// Declare $crisp as a global variable
+declare const $crisp: any;
+
 interface SidebarProps {
   collapsed: boolean;
   toggle: (collapse: boolean) => void;
@@ -185,9 +188,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
         <div className="mt-auto pt-3">
           <ul className="flex flex-col gap-1">
             {footerSection.routes.map((route: Route) => (
-              <li key={route.path}>
+              <li
+                key={route.path}
+                onClick={() => {
+                  if (route.path === '/help') {
+                    $crisp.push(['do', 'chat:toggle']);
+                  }
+                }}
+              >
                 <Link
-                  to={route.path || ''}
+                  to={route.path === '/help' ? '#' : route.path || ''}
                   className={`flex h-10 items-center gap-2 px-2 py-1 text-[14px] font-medium rounded-lg transition
                         ${isActive(route.path || '') ? 'bg-primary shadow-menuItem text-white !font-bold' : 'text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray hover:!font-bold'} 
                       `}

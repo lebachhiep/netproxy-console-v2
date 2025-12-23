@@ -30,7 +30,7 @@
     "copyOrderIDSuccess": "Đã sao chép mã đơn hàng vào clipboard",
     "totalTopUp": "Tổng tiền đã nạp",
     "totalPlans": "Tổng gói",
-    "totalPurchasedPlans": "Tổng gói đã mua",
+    "totalPurchasedPlans": "Tổng sản phẩm đã mua",
     "totalOrders": "Tổng đơn hàng",
     "totalOrdersSold": "Tổng đơn hàng đã bán",
     "operating": "hoạt động",
@@ -48,7 +48,7 @@
   "ipAddress": "Địa chỉ IP",
   "purchaseDate": "Ngày mua",
   "orderNumber": "Mã đơn hàng",
-  "plan": "Gói",
+  "plan": "Sản phẩm",
   "quantity": "Số lượng",
   "quantityShort": "SL",
   "price": "Giá",
@@ -405,7 +405,7 @@
       "session.key": "session-YYY"
     },
     "rotating": {
-      "title": "Hướng dẫn xử lý lỗi Proxy",
+      "title": "Hướng dẫn sử dụng Format Proxy",
       "intro": "Khi proxy gặp lỗi, vui lòng thực hiện các bước sau:",
       "steps.getProxy": "Nhấn nút {{getProxy}} để lấy proxy mới",
       "steps.contactSupport": "Nếu vẫn gặp lỗi sau khi lấy proxy mới, vui lòng liên hệ bộ phận hỗ trợ (Support)."

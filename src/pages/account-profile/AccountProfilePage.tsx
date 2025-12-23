@@ -1,6 +1,4 @@
 import { Button } from '@/components/button/Button';
-import { AddCircle, Eye, EyeOff, FileCopy } from '@/components/icons';
-import { ApiInput } from '@/components/input/ApiInput';
 import { InputField } from '@/components/input/InputField';
 import { Tabs } from '@/components/tabs/Tabs';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,7 +7,7 @@ import { UserProfile, UpdateProfileRequest } from '@/services/user/user.types';
 import { userService } from '@/services/user/user.service';
 import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { SuccessModal } from './components/modal/SuccessModal';
@@ -23,13 +21,12 @@ export const AccountProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const pageTitle = usePageTitle({ pageName: 'Tài khoản' });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
-  const apiValue = 'https://api.netproxy.io/api/bandwidthProxy/getProxies?apiKey=823321...';
-  const [isHideApiValue, setIsHideApiValue] = useState(true);
+
   const { user, userProfile, fetchUserProfile } = useAuth();
   const accountTabs = [
     { key: 'info', label: t('GeneralInformation') || 'Thông tin chung' },
-    { key: 'change-password', label: t('changePassword') || 'Đổi mật khẩu' },
-    { key: 'api-key', label: 'API Key' }
+    { key: 'change-password', label: t('changePassword') || 'Đổi mật khẩu' }
+    // { key: 'api-key', label: 'API Key' }
   ];
 
   // Form 1: Profile Info
@@ -196,7 +193,7 @@ export const AccountProfilePage: React.FC = () => {
           </motion.div>
 
           {/* Tab 3: API Key */}
-          <motion.div variants={containerVariants} className="p-5 flex flex-col gap-4">
+          {/* <motion.div variants={containerVariants} className="p-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1 text-sm">
               <motion.div variants={itemVariants} className="flex items-center gap-1">
                 <span className="font-semibold text-text-hi dark:text-text-hi-dark">API Key</span>
@@ -232,7 +229,7 @@ export const AccountProfilePage: React.FC = () => {
                 </Button>
               </motion.div>
             </div>
-          </motion.div>
+          </motion.div> */}
         </Tabs>
       </motion.div>
       <SuccessModal

@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Matagumpay na naka-login!",
-    "REGISTER_SUCCESS": "Matagumpay na naka-register! Pakisuri ang email para sa verification",
+    "REGISTER_SUCCESS": "Matagumpay na naka-register!",
     "LOGOUT_SUCCESS": "Matagumpay na naka-logout!",
     "PASSWORD_RESET_SENT": "Naipadala na ang password reset email!",
     "EMAIL_VERIFICATION_SENT": "Naipadala na ang verification email!",

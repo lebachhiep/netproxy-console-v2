@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "साइन इन हो गया!",
-    "REGISTER_SUCCESS": "रजिस्टर हो गया! कृपया अपने खाते की पुष्टि के लिए ईमेल जाँचें",
+    "REGISTER_SUCCESS": "रजिस्टर हो गया!",
     "LOGOUT_SUCCESS": "साइन आउट हो गया!",
     "PASSWORD_RESET_SENT": "पासवर्ड रीसेट के लिए ईमेल भेजा गया है!",
     "EMAIL_VERIFICATION_SENT": "सत्यापन ईमेल भेजा गया है!",

@@ -423,7 +423,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Login realizado com sucesso!",
-    "REGISTER_SUCCESS": "Cadastro realizado! Verifique seu e-mail para validar a conta",
+    "REGISTER_SUCCESS": "Cadastro realizado!",
     "LOGOUT_SUCCESS": "Sair realizado com sucesso!",
     "PASSWORD_RESET_SENT": "E-mail de redefinição de senha enviado!",
     "EMAIL_VERIFICATION_SENT": "E-mail de verificação enviado!",

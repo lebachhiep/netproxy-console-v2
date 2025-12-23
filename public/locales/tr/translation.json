@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Giriş başarılı!",
-    "REGISTER_SUCCESS": "Kayıt başarılı! Hesabınızı doğrulamak için lütfen e-postanızı kontrol edin",
+    "REGISTER_SUCCESS": "Kayıt başarılı!",
     "LOGOUT_SUCCESS": "Çıkış başarılı!",
     "PASSWORD_RESET_SENT": "Şifre sıfırlama e-postası gönderildi!",
     "EMAIL_VERIFICATION_SENT": "Doğrulama e-postası gönderildi!",

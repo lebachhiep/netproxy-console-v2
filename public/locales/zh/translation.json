@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "登录成功！",
-    "REGISTER_SUCCESS": "注册成功！请检查邮箱以验证您的账户",
+    "REGISTER_SUCCESS": "注册成功！",
     "LOGOUT_SUCCESS": "已退出登录！",
     "PASSWORD_RESET_SENT": "重置密码的邮件已发送！",
     "EMAIL_VERIFICATION_SENT": "验证邮件已发送！",

@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Berhasil masuk!",
-    "REGISTER_SUCCESS": "Berhasil daftar! Silakan cek email Anda untuk verifikasi akun",
+    "REGISTER_SUCCESS": "Berhasil daftar!",
     "LOGOUT_SUCCESS": "Berhasil keluar!",
     "PASSWORD_RESET_SENT": "Email untuk mengatur ulang kata sandi telah dikirim!",
     "EMAIL_VERIFICATION_SENT": "Email verifikasi telah dikirim!",

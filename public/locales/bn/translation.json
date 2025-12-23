@@ -423,7 +423,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "সাইন ইন সফল!",
-    "REGISTER_SUCCESS": "নিবন্ধন সফল! আপনার অ্যাকাউন্ট যাচাই করতে ইমেইল চেক করুন",
+    "REGISTER_SUCCESS": "নিবন্ধন সফল!",
     "LOGOUT_SUCCESS": "সাইন আউট সফল!",
     "PASSWORD_RESET_SENT": "পাসওয়ার্ড রিসেট করার জন্য একটি ইমেইল পাঠানো হয়েছে!",
     "EMAIL_VERIFICATION_SENT": "যাচাইকরণ ইমেইল পাঠানো হয়েছে!",

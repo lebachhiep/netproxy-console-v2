@@ -423,7 +423,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "تم تسجيل الدخول!",
-    "REGISTER_SUCCESS": "تم التسجيل بنجاح! يرجى مراجعة بريدك الإلكتروني لتفعيل الحساب",
+    "REGISTER_SUCCESS": "تم التسجيل بنجاح!",
     "LOGOUT_SUCCESS": "تم تسجيل الخروج!",
     "PASSWORD_RESET_SENT": "تم إرسال بريد إلكتروني لإعادة تعيين كلمة المرور!",
     "EMAIL_VERIFICATION_SENT": "تم إرسال بريد التحقق!",

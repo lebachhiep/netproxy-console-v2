@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Đăng nhập thành công!",
-    "REGISTER_SUCCESS": "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+    "REGISTER_SUCCESS": "Đăng ký thành công!",
     "LOGOUT_SUCCESS": "Đăng xuất thành công!",
     "PASSWORD_RESET_SENT": "Email đặt lại mật khẩu đã được gửi!",
     "EMAIL_VERIFICATION_SENT": "Email xác thực đã được gửi!",

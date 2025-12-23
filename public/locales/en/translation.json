@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Signed in!",
-    "REGISTER_SUCCESS": "Registered ! Please check your email to verify your account",
+    "REGISTER_SUCCESS": "Registered successfully!",
     "LOGOUT_SUCCESS": "Signed out!",
     "PASSWORD_RESET_SENT": "An Email has sent to you to reset your password!",
     "EMAIL_VERIFICATION_SENT": "Verifing Email has been sent!",

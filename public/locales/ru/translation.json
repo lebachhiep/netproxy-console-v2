@@ -434,7 +434,7 @@
   },
   "auth": {
     "LOGIN_SUCCESS": "Вы вошли в систему!",
-    "REGISTER_SUCCESS": "Регистрация завершена! Проверьте email для подтверждения аккаунта",
+    "REGISTER_SUCCESS": "Регистрация завершена!",
     "LOGOUT_SUCCESS": "Вы вышли из системы!",
     "PASSWORD_RESET_SENT": "Письмо для сброса пароля отправлено на ваш email!",
     "EMAIL_VERIFICATION_SENT": "Письмо для подтверждения отправлено!",

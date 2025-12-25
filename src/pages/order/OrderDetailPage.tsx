@@ -421,14 +421,14 @@ const OrderDetailPage = () => {
           key: 'id',
           title: t('STT'),
           width: 50,
-          align: 'center',
+          align: 'center' as const,
           render: (_, __, index) => index + 1
         },
         {
           width: 100,
           key: 'subscription_id',
           title: 'ID',
-          align: 'left',
+          align: 'left' as const,
           render: (_, record) => (
             <div className="group flex items-center justify-between">
               <p className="flex-1 truncate line-clamp-1 font-mono">{record.id}</p>
@@ -447,7 +447,7 @@ const OrderDetailPage = () => {
           width: 100,
           key: 'ip',
           title: t('ipAddress'),
-          align: 'left',
+          align: 'left' as const,
           render: (_, record) => {
             const ipAddress = getIpAddressByProxyType(record);
             return (
@@ -469,7 +469,7 @@ const OrderDetailPage = () => {
           width: 100,
           key: 'port',
           title: 'Port',
-          align: 'left',
+          align: 'left' as const,
           render: (_, record) => {
             const port = getPortByProxyType(record);
             return (
@@ -491,7 +491,7 @@ const OrderDetailPage = () => {
           width: 100,
           key: 'username',
           title: t('Username'),
-          align: 'left',
+          align: 'left' as const,
           render: (_, record) => {
             const username = getUsernameByProxyType(record);
             return (
@@ -513,7 +513,7 @@ const OrderDetailPage = () => {
           width: 100,
           key: 'password',
           title: t('password'),
-          align: 'left',
+          align: 'left' as const,
           render: (_, record) => {
             const { plainPassword } = getPasswordByProxyType(record);
             return (
@@ -537,7 +537,7 @@ const OrderDetailPage = () => {
                 width: 100,
                 key: 'tableData.hasSticky',
                 title: t('stickyIp'),
-                align: 'center',
+                align: 'center' as const,
                 render: (_: any, record: Subscription) => {
                   return (
                     <Switch
@@ -569,7 +569,7 @@ const OrderDetailPage = () => {
           width: 180,
           key: 'country_code',
           title: t('country'),
-          align: 'center',
+          align: 'center' as const,
           render: (_: any, record: Subscription) => {
             const isRotating = isRotatingProxy(record);
             if (isRotating) {
@@ -586,7 +586,7 @@ const OrderDetailPage = () => {
           width: 100,
           key: 'connection_type',
           title: 'Type',
-          align: 'center',
+          align: 'center' as const,
           render: (_, record) => {
             const credentials = record.provider_credentials as any;
             const connectionType = credentials?.http_port > 0 ? 'HTTPS' : credentials?.socks5_port > 0 ? 'SOCKS5' : '-';
@@ -599,7 +599,7 @@ const OrderDetailPage = () => {
           width: 130,
           key: 'auto_renew',
           title: t('autoRenew'),
-          align: 'center',
+          align: 'center' as const,
           render: (_, record) => (
             <Switch
               size="md"
@@ -626,7 +626,7 @@ const OrderDetailPage = () => {
           fixed: isMobile || isTablet ? undefined : 'right',
           key: 'actions',
           title: t('action'),
-          align: 'center',
+          align: 'center' as const,
           render: (_, record: Subscription, rowIndex) => {
             const isRotating = isRotatingProxy(record);
             return (

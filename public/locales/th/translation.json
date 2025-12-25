@@ -327,6 +327,7 @@
       "ipAddressClipboard": "คัดลอกที่อยู่ IP แล้ว",
       "usernameClipboard": "คัดลอกชื่อผู้ใช้งานแล้ว",
       "passwordClipboard": "คัดลอกรหัสผ่านแล้ว",
+      "port": "คัดลอกพอร์ตไปยังคลิปบอร์ดแล้ว",
       "transactionIdClipboard": "คัดลอกเลขที่ธุรกรรมแล้ว",
       "cpuClipboard": "คัดลอกแล้ว",
       "proxyExport": "ส่งออกข้อมูลพร็อกซีสำเร็จแล้ว",
@@ -370,7 +371,9 @@
       "pickCountry": "กรุณาเลือกประเทศของคุณ"
     }
   },
+  "stickyIp": "IP แบบคงที่",
   "countryList": {
+    "random": "สุ่ม",
     "vn": "เวียดนาม",
     "us": "สหรัฐอเมริกา",
     "jp": "ญี่ปุ่น",

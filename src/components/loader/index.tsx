@@ -22,7 +22,7 @@ export const Loader = ({ isLoading, children, className, id }: LoaderProps) => {
     <div className={twMerge(clsx('relative rounded-xl', className))} id={id}>
       {children}
       {isLoading && (
-        <div className="absolute inset-0 z-[102] flex justify-center items-center bg-bg-secondary dark:bg-bg-secondary-dark opacity-60 pointer-events-none">
+        <div className="absolute inset-0 z-[102] flex justify-center items-center bg-bg-secondary dark:bg-bg-secondary-dark opacity-60 ">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary dark:border-primary-dark"></div>
         </div>
       )}

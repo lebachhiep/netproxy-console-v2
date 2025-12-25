@@ -327,6 +327,7 @@
       "ipAddressClipboard": "تم نسخ عنوان IP إلى الحافظة",
       "usernameClipboard": "تم نسخ اسم المستخدم إلى الحافظة",
       "passwordClipboard": "تم نسخ كلمة المرور إلى الحافظة",
+      "port": "تم نسخ المنفذ إلى الحافظة",
       "transactionIdClipboard": "تم نسخ رقم المعاملة إلى الحافظة",
       "cpuClipboard": "تم النسخ إلى الحافظة",
       "proxyExport": "تم تصدير البروكسي بنجاح",
@@ -370,7 +371,9 @@
       "pickCountry": "يرجى اختيار دولتك"
     }
   },
+  "stickyIp": "عنوان IP ثابت",
   "countryList": {
+    "random": "عشوائي",
     "vn": "فيتنام",
     "us": "أمريكا",
     "jp": "اليابان",

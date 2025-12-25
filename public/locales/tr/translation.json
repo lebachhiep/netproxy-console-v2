@@ -327,6 +327,7 @@
       "ipAddressClipboard": "IP adresi kopyalandı",
       "usernameClipboard": "Kullanıcı adı kopyalandı",
       "passwordClipboard": "Şifre kopyalandı",
+      "port": "Port panoya kopyalandı",
       "transactionIdClipboard": "İşlem kimliği kopyalandı",
       "cpuClipboard": "Panoya kopyalandı",
       "proxyExport": "Proxy'ler başarıyla dışa aktarıldı",
@@ -370,7 +371,9 @@
       "pickCountry": "Lütfen ülkenizi seçin"
     }
   },
+  "stickyIp": "Sabit IP",
   "countryList": {
+    "random": "Rastgele",
     "vn": "Vietnam",
     "us": "ABD",
     "jp": "Japonya",

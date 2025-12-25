@@ -327,6 +327,7 @@
       "ipAddressClipboard": "Alamat IP disalin ke Papan Klip",
       "usernameClipboard": "Nama pengguna disalin ke Papan Klip",
       "passwordClipboard": "Kata sandi disalin ke Papan Klip",
+      "port": "Port disalin ke papan klip",
       "transactionIdClipboard": "ID Transaksi disalin ke Papan Klip",
       "cpuClipboard": "Disalin ke Papan Klip",
       "proxyExport": "Proksi berhasil diekspor",
@@ -370,7 +371,9 @@
       "pickCountry": "Silakan pilih Negara Anda"
     }
   },
+  "stickyIp": "IP Tetap",
   "countryList": {
+    "random": "Acak",
     "vn": "Vietnam",
     "us": "Amerika Serikat",
     "jp": "Jepang",

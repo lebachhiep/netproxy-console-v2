@@ -1,8 +1,7 @@
 import IconButton from '@/components/button/IconButton';
 import { Chevron } from '@/components/icons';
 import { useResponsive } from '@/hooks/useResponsive';
-import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
-import { ReactComponent as Logo } from '@/assets/images/logo.svg';
+import { LOGO_URL, LOGO_ICON_URL } from '@/config/api';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -60,11 +59,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
 
       {collapsed ? (
         <div className="h-[52px] hidden lg:flex items-center justify-center cursor-pointer" onClick={() => navigate('/home')}>
-          <Logo className="h-8 object-contain cursor-pointer dark:invert" />
+          <img src={LOGO_ICON_URL} alt="Logo" className="h-8 object-contain cursor-pointer dark:invert" />
         </div>
       ) : (
-        <div className="h-[52px] hidden lg:flex items-center">
-          <LogoText className="h-8 object-contain text-center cursor-pointer dark:invert" onClick={() => navigate('/home')} />
+        <div className="h-[52px] hidden lg:flex items-center cursor-pointer" onClick={() => navigate('/home')}>
+          <img src={LOGO_URL} alt="Logo" className="h-8 object-contain text-center dark:invert" />
         </div>
       )}
 

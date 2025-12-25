@@ -9,7 +9,7 @@ import { Route, adminSections } from '@/router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import UserDropdown from '@/components/UserDropdown';
-import { ReactComponent as LogoText } from '@/assets/images/logo-text.svg';
+import { LOGO_URL } from '@/config/api';
 import { motion } from 'framer-motion';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { useTranslation } from 'react-i18next';
@@ -177,7 +177,12 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
     >
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="h-12 flex items-center justify-between">
-          <LogoText className="h-8 object-contain text-center cursor-pointer dark:invert" onClick={() => navigate('/home')} />
+          <img
+            src={LOGO_URL}
+            alt="Logo"
+            className="h-8 object-contain text-center cursor-pointer dark:invert"
+            onClick={() => navigate('/home')}
+          />
           <UserDropdown user={user} userProfile={userProfile} settings={settings} handleLogout={handleLogout} setModalOpen={() => {}} />
         </div>
       </div>

@@ -327,6 +327,7 @@
       "ipAddressClipboard": "Nakopya na ang IP address",
       "usernameClipboard": "Nakopya na ang username",
       "passwordClipboard": "Nakopya na ang password",
+      "port": "Nakopya ang port sa clipboard",
       "transactionIdClipboard": "Nakopya na ang transaction ID",
       "cpuClipboard": "Nakopya na sa clipboard",
       "proxyExport": "Matagumpay na na-export ang mga proxy",
@@ -370,7 +371,9 @@
       "pickCountry": "Mangyaring piliin ang iyong Bansa"
     }
   },
+  "stickyIp": "Sticky IP",
   "countryList": {
+    "random": "Random",
     "vn": "Vietnam",
     "us": "Amerika",
     "jp": "Japan",

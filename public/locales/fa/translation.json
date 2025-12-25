@@ -327,6 +327,7 @@
       "ipAddressClipboard": "آدرس IP کپی شد",
       "usernameClipboard": "نام کاربری کپی شد",
       "passwordClipboard": "رمز عبور کپی شد",
+      "port": "پورت در کلیپ‌بورد کپی شد",
       "transactionIdClipboard": "شناسه تراکنش کپی شد",
       "cpuClipboard": "در حافظه کپی شد",
       "proxyExport": "پروکسی‌ها با موفقیت خروجی گرفته شدند",
@@ -370,7 +371,9 @@
       "pickCountry": "لطفاً کشور خود را انتخاب کنید"
     }
   },
+  "stickyIp": "آی‌پی ثابت",
   "countryList": {
+    "random": "تصادفی",
     "vn": "ویتنام",
     "us": "آمریکا",
     "jp": "ژاپن",

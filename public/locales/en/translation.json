@@ -325,6 +325,7 @@
       "rotateProxyCopy": "Rotating proxy copied to Clipboard",
       "proxyCopy": "Proxy copied to Clipboard",
       "ipAddressClipboard": "IPAddress copied to Clipboard",
+      "port": "Port copied to Clipboard",
       "usernameClipboard": "Username copied to Clipboard",
       "passwordClipboard": "Password copied to Clipboard",
       "transactionIdClipboard": "Transaction ID copied to Clipboard",
@@ -370,7 +371,9 @@
       "pickCountry": "Please choose Your Country"
     }
   },
+  "stickyIp": "Sticky IP",
   "countryList": {
+    "random": "Random",
     "vn": "Vietnam",
     "us": "America",
     "jp": "Japan",

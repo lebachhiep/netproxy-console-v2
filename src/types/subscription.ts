@@ -54,6 +54,11 @@ export interface Subscription {
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
   plan?: Plan; // Embedded plan data
+
+  // Using for table mapping
+  tableData?: {
+    hasSticky?: boolean;
+  };
 }
 
 // Alias since API returns subscription with plan embedded directly

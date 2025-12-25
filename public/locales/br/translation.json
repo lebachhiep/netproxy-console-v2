@@ -327,6 +327,7 @@
       "ipAddressClipboard": "Endereço IP copiado",
       "usernameClipboard": "Nome de usuário copiado",
       "passwordClipboard": "Senha copiada",
+      "port": "Porta copiada para a área de transferência",
       "transactionIdClipboard": "ID da transação copiado",
       "cpuClipboard": "Copiado para a área de transferência",
       "proxyExport": "Proxies exportados com sucesso",
@@ -370,7 +371,9 @@
       "pickCountry": "Por favor, escolha seu País"
     }
   },
+  "stickyIp": "IP fixo",
   "countryList": {
+    "random": "Aleatório",
     "vn": "Vietnã",
     "us": "Estados Unidos",
     "jp": "Japão",

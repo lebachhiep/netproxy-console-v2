@@ -26,7 +26,6 @@ import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants } from '@/utils/animation';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useSubscriptionStore } from '@/stores/subscription.store';
-import { useAuthStore } from '@/stores/auth.store';
 import { Input } from '@/components/input/Input';
 import { OrderInfoModal } from './OrderInfoModal';
 import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
@@ -39,6 +38,7 @@ import { useNavbar } from '@/contexts/NavbarContext';
 
 // ISO alpha-2 country codes
 export const getCountryOptions = (t: any) => [
+  { label: t('countryList.random'), value: 'random' },
   { label: t('countryList.vn'), value: 'VN' },
   { label: t('countryList.us'), value: 'US' },
   { label: t('countryList.uk'), value: 'GB' },
@@ -68,34 +68,6 @@ interface CountrySelectCellProps {
   className?: string;
 }
 
-const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
-  const { t } = useTranslation();
-  const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
-  const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'US');
-
-  const handleCountryChange = (value: string | number | undefined, label: ReactNode) => {
-    const countryCode = String(value);
-    setSelectedCountry(countryCode);
-    useSubscriptionStore.getState().setSubscriptionData(subscriptionId, { country: countryCode });
-    toast.success(
-      t('toast.success.changeCountry', {
-        country: label
-      })
-    );
-  };
-
-  return (
-    <Select
-      value={selectedCountry}
-      onChange={handleCountryChange}
-      options={getCountryOptions(t)}
-      placeholder="Select country"
-      className={clsx('h-8 min-w-[140px]', className)}
-      optionClassName="max-h-60 overflow-y-auto"
-    />
-  );
-};
-
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -109,8 +81,48 @@ const OrderDetailPage = () => {
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
   const { t } = useTranslation();
   const [loadingRowIndexes, setLoadingRowIndexes] = useState<number[]>([]);
-
+  const [total, setTotal] = useState(0);
   const { setNavbarItems } = useNavbar();
+
+  const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
+    const { t } = useTranslation();
+    const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
+    const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'random');
+
+    const handleCountryChange = (value: string | number | undefined, label: ReactNode) => {
+      const countryCode = String(value);
+      setSelectedCountry(countryCode);
+      useSubscriptionStore.getState().setSubscriptionData(subscriptionId, { country: countryCode });
+      toast.success(
+        t('toast.success.changeCountry', {
+          country: label
+        })
+      );
+      // update table country
+      queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+        return oldSubs.map((s) => {
+          if (s.id === subscriptionId) {
+            return {
+              ...s,
+              country: value
+            };
+          }
+          return s;
+        });
+      });
+    };
+
+    return (
+      <Select
+        value={selectedCountry}
+        onChange={handleCountryChange}
+        options={getCountryOptions(t)}
+        placeholder="Select country"
+        className={clsx('h-8 min-w-[140px]', className)}
+        optionClassName="max-h-60 overflow-y-auto"
+      />
+    );
+  };
 
   useEffect(() => {
     return () => {
@@ -140,6 +152,9 @@ const OrderDetailPage = () => {
               icon: <DashboardFilled width={32} height={32} className="text-primary" />
             }
           ]);
+          setPageSize(response.per_page);
+          setCurrentPage(response.page);
+          setTotal(response.total);
           return response.subscriptions;
         } else {
           console.error('API response is not valid:', response);
@@ -289,29 +304,9 @@ const OrderDetailPage = () => {
     const isRotating = isRotatingProxy(record);
 
     if (isRotating) {
-      // For rotating proxy: relay.prx.network:80:username:password
-      // Format: npx-customer-{authUsername}-country-{country}-session-{sessionId}
-      const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
-      const authUser = useAuthStore.getState().user;
-      const authUsername = authUser?.username || 'user';
-
-      // Build username with auth username, default country (US), and sessionId
-      const country = subscriptionData?.country || 'us';
-      let sessionId = subscriptionData?.sessionId;
-
-      // Generate session ID if it doesn't exist
-      if (!sessionId) {
-        sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
-      }
-
-      let username = `npx-customer-${authUsername}-country-${country}`;
-      if (sessionId) {
-        username += `-session-${sessionId}`;
-      }
-
+      const username = getUsernameByProxyType(record);
       const proxyString = `relay.prx.network:80:${username}:${record.api_key}`;
 
-      console.log('Copying rotating proxy string:', proxyString);
       await copyToClipboard(proxyString);
 
       setCopiedId(record.id);
@@ -419,251 +414,292 @@ const OrderDetailPage = () => {
     [currentPage, id, pageSize, subscriptions, t]
   );
 
-  const columns: TableColumn<Subscription>[] = useMemo(() => {
-    return [
-      {
-        key: 'id',
-        title: t('STT'),
-        width: 50,
-        align: 'center',
-        render: (_, __, index) => index + 1
-      },
-      {
-        width: 100,
-        key: 'subscription_id',
-        title: 'ID',
-        align: 'left',
-        render: (_, record) => (
-          <div className="group flex items-center justify-between">
-            <p className="flex-1 truncate line-clamp-1 font-mono">{record.id}</p>
-            <ContentCopy
-              className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                copyToClipboard(record.id);
-                toast.success(t('toast.success.copyOrderId'));
+  const columns: (isRotating: boolean) => TableColumn<Subscription>[] = useCallback(
+    (isRotating: boolean) => {
+      return [
+        {
+          key: 'id',
+          title: t('STT'),
+          width: 50,
+          align: 'center',
+          render: (_, __, index) => index + 1
+        },
+        {
+          width: 100,
+          key: 'subscription_id',
+          title: 'ID',
+          align: 'left',
+          render: (_, record) => (
+            <div className="group flex items-center justify-between">
+              <p className="flex-1 truncate line-clamp-1 font-mono">{record.id}</p>
+              <ContentCopy
+                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                onClick={async (e) => {
+                  e.stopPropagation();
+                  await copyToClipboard(record.id);
+                  toast.success(t('dashboard.copyOrderIDSuccess'));
+                }}
+              />
+            </div>
+          )
+        },
+        {
+          width: 100,
+          key: 'ip',
+          title: t('ipAddress'),
+          align: 'left',
+          render: (_, record) => {
+            const ipAddress = getIpAddressByProxyType(record);
+            return (
+              <div className="group flex items-center justify-between">
+                <p className="flex-1 truncate line-clamp-1 font-mono">{ipAddress}</p>
+                <ContentCopy
+                  className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await copyToClipboard(ipAddress);
+                    toast.success(t('toast.success.ipAddressClipboard'));
+                  }}
+                />
+              </div>
+            );
+          }
+        },
+        {
+          width: 100,
+          key: 'port',
+          title: 'Port',
+          align: 'left',
+          render: (_, record) => {
+            const port = getPortByProxyType(record);
+            return (
+              <div className="group flex items-center justify-between">
+                <p className="flex-1 truncate line-clamp-1 font-mono">{port}</p>
+                <ContentCopy
+                  className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    copyToClipboard(port);
+                    toast.success(t('toast.success.port'));
+                  }}
+                />
+              </div>
+            );
+          }
+        },
+        {
+          width: 100,
+          key: 'username',
+          title: t('Username'),
+          align: 'left',
+          render: (_, record) => {
+            const username = getUsernameByProxyType(record);
+            return (
+              <div className="group flex items-center justify-between">
+                <p className="flex-1 truncate line-clamp-1 font-mono">{username}</p>
+                <ContentCopy
+                  className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await copyToClipboard(username);
+                    toast.success(t('toast.success.usernameClipboard'));
+                  }}
+                />
+              </div>
+            );
+          }
+        },
+        {
+          width: 100,
+          key: 'password',
+          title: t('password'),
+          align: 'left',
+          render: (_, record) => {
+            const { plainPassword } = getPasswordByProxyType(record);
+            return (
+              <div className="group flex items-center justify-between">
+                <p className="flex-1 truncate line-clamp-1 font-mono">{plainPassword}</p>
+                <ContentCopy
+                  className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await copyToClipboard(plainPassword);
+                    toast.success(t('toast.success.passwordClipboard'));
+                  }}
+                />
+              </div>
+            );
+          }
+        },
+        ...(isRotating
+          ? [
+              {
+                width: 100,
+                key: 'tableData.hasSticky',
+                title: t('stickyIp'),
+                align: 'center',
+                render: (_: any, record: Subscription) => {
+                  return (
+                    <Switch
+                      size="md"
+                      checked={record?.tableData?.hasSticky || false}
+                      onChange={async () => {
+                        queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+                          return oldSubs.map((s) => {
+                            if (s.id === record.id) {
+                              return {
+                                ...s,
+                                tableData: {
+                                  ...s.tableData,
+                                  hasSticky: !record?.tableData?.hasSticky
+                                }
+                              };
+                            }
+                            return s;
+                          });
+                        });
+                      }}
+                    />
+                  );
+                }
+              }
+            ]
+          : []),
+        {
+          width: 180,
+          key: 'country_code',
+          title: t('country'),
+          align: 'center',
+          render: (_: any, record: Subscription) => {
+            const isRotating = isRotatingProxy(record);
+            if (isRotating) {
+              console.log(record.country);
+              return (
+                <CountrySelectCell subscriptionId={record.id} currentCountry={record.country || 'random'} className="max-w-40 mx-auto" />
+              );
+            }
+            // For non-rotating proxies, show as plain text
+            return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
+          }
+        },
+        {
+          width: 100,
+          key: 'connection_type',
+          title: 'Type',
+          align: 'center',
+          render: (_, record) => {
+            const credentials = record.provider_credentials as any;
+            const connectionType = credentials?.http_port > 0 ? 'HTTPS' : credentials?.socks5_port > 0 ? 'SOCKS5' : '-';
+            const isRotating = isRotatingProxy(record);
+
+            return <div className="px-2 py-1 rounded text-xs font-semibold">{isRotating ? 'HTTP/ HTTPS' : connectionType}</div>;
+          }
+        },
+        {
+          width: 130,
+          key: 'auto_renew',
+          title: t('autoRenew'),
+          align: 'center',
+          render: (_, record) => (
+            <Switch
+              size="md"
+              checked={record.auto_renew}
+              onChange={async () => {
+                const result = await handleToggleAutoRenew([record]);
+                if (result.successfullyCount) {
+                  toast.success(t('toast.success.autoRenew'));
+                } else {
+                  toast.error(t('toast.error.autoRenew'));
+                }
               }}
             />
-          </div>
-        )
-      },
-      {
-        width: 100,
-        key: 'ip',
-        title: t('ipAddress'),
-        align: 'left',
-        render: (_, record) => {
-          const ipAddress = getIpAddressByProxyType(record);
-          return (
-            <div className="group flex items-center justify-between">
-              <p className="flex-1 truncate line-clamp-1 font-mono">{ipAddress}</p>
-              <ContentCopy
-                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyToClipboard(ipAddress);
-                  toast.success(t('toast.success.ipAddressClipboard'));
-                }}
-              />
-            </div>
-          );
-        }
-      },
-      {
-        width: 100,
-        key: 'port',
-        title: 'Port',
-        align: 'left',
-        render: (_, record) => {
-          const port = getPortByProxyType(record);
-          return (
-            <div className="group flex items-center justify-between">
-              <p className="flex-1 truncate line-clamp-1 font-mono">{port}</p>
-              <ContentCopy
-                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyToClipboard(port);
-                  toast.success(t('toast.success.ipAddressClipBoard'));
-                }}
-              />
-            </div>
-          );
-        }
-      },
-      {
-        width: 100,
-        key: 'username',
-        title: t('Username'),
-        align: 'left',
-        render: (_, record) => {
-          const username = getUsernameByProxyType(record);
-          return (
-            <div className="group flex items-center justify-between">
-              <p className="flex-1 truncate line-clamp-1 font-mono">{username}</p>
-              <ContentCopy
-                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyToClipboard(username);
-                  toast.success(t('toast.success.usernameClipboard'));
-                }}
-              />
-            </div>
-          );
-        }
-      },
-      {
-        width: 100,
-        key: 'password',
-        title: t('password'),
-        align: 'left',
-        render: (_, record) => {
-          const { plainPassword } = getPasswordByProxyType(record);
-          return (
-            <div className="group flex items-center justify-between">
-              <p className="flex-1 truncate line-clamp-1 font-mono">{plainPassword}</p>
-              <ContentCopy
-                className="text-blue ml-2 hidden group-hover:inline-block w-fit cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  copyToClipboard(plainPassword);
-                  toast.success(t('toast.success.passwordClipboard'));
-                }}
-              />
-            </div>
-          );
-        }
-      },
-      {
-        width: 180,
-        key: 'country_code',
-        title: t('country'),
-        align: 'center',
-        render: (_: any, record: Subscription) => {
-          const isRotating = isRotatingProxy(record);
-          if (isRotating) {
-            return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country} className="max-w-40 mx-auto" />;
+          )
+        },
+        {
+          width: 150,
+          key: 'expires_at',
+          title: t('expired'),
+          render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
+        },
+        {
+          width: 200,
+          fixed: isMobile || isTablet ? undefined : 'right',
+          key: 'actions',
+          title: t('action'),
+          align: 'center',
+          render: (_, record: Subscription, rowIndex) => {
+            const isRotating = isRotatingProxy(record);
+            return (
+              <div className="flex items-center justify-center gap-2">
+                {!isRotating && (
+                  <>
+                    <IconButton
+                      icon={<CloudSwap />}
+                      className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                      onClick={async () => {
+                        setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
+                        const result = await handleSwitchProtocol({ subs: [record] });
+                        if (result?.successCount && result.successCount > 0) {
+                          toast.success(t('toast.success.changeProxySub'));
+                        } else {
+                          toast.error(t('toast.error.changeProxySub'));
+                        }
+                        setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
+                      }}
+                      title="Change Protocol"
+                    />
+                    <IconButton
+                      icon={<Reload />}
+                      iconClassName="text-[#FDBE02] hover:!text-[#FDBE02] dark:text-[#FDBE02]"
+                      className="rounded-lg w-8 h-8"
+                      onClick={async () => {
+                        const rowIndex = subscriptions?.findIndex((sub) => sub.id === record.id) || 0;
+                        setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
+                        await handleGetProxy(record);
+                        setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
+                      }}
+                      title="Get Proxy"
+                    />
+                  </>
+                )}
+                <IconButton
+                  className={`rounded-lg w-8 h-8`}
+                  iconClassName="text-[#27BE2A] hover:text-[#27BE2A] dark:!text-[#27BE2A]"
+                  icon={<ArrowDownload />}
+                  onClick={() => {
+                    const ip = getIpAddressByProxyType(record);
+                    const port = getPortByProxyType(record);
+                    const username = getUsernameByProxyType(record).toLocaleLowerCase();
+                    const { plainPassword } = getPasswordByProxyType(record);
+
+                    const proxyString = `${ip}:${port}:${username}:${plainPassword}`;
+                    const blob = new Blob([['ip:port:user:password', proxyString].join('\n')], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `proxy_${moment().format('YYYYMMDD_HHmmss')}.txt`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                    toast.success(t('toast.success.proxyExport'));
+                  }}
+                  title="Export Proxy"
+                />
+                <IconButton
+                  icon={<CopySelect />}
+                  className={`rounded-lg w-8 h-8`}
+                  onClick={() => handleCopyProxy(record)}
+                  title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
+                />
+              </div>
+            );
           }
-          // For non-rotating proxies, show as plain text
-          return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;
         }
-      },
-      {
-        width: 100,
-        key: 'connection_type',
-        title: 'Type',
-        align: 'center',
-        render: (_, record) => {
-          const credentials = record.provider_credentials as any;
-          const connectionType = credentials?.http_port > 0 ? 'HTTPS' : credentials?.socks5_port > 0 ? 'SOCKS5' : '-';
-
-          return <div className="px-2 py-1 rounded text-xs font-semibold">{connectionType}</div>;
-        }
-      },
-      {
-        width: 130,
-        key: 'auto_renew',
-        title: t('autoRenew'),
-        align: 'center',
-        render: (_, record) => (
-          <Switch
-            size="md"
-            checked={record.auto_renew}
-            onChange={async () => {
-              const result = await handleToggleAutoRenew([record]);
-              if (result.successfullyCount) {
-                toast.success(t('toast.success.autoRenew'));
-              } else {
-                toast.error(t('toast.error.autoRenew'));
-              }
-            }}
-          />
-        )
-      },
-      {
-        width: 150,
-        key: 'expires_at',
-        title: t('expired'),
-        render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
-      },
-      {
-        width: 200,
-        fixed: isMobile || isTablet ? undefined : 'right',
-        key: 'actions',
-        title: t('action'),
-        align: 'center',
-        render: (_, record: Subscription, rowIndex) => {
-          const isRotating = isRotatingProxy(record);
-          return (
-            <div className="flex items-center justify-center gap-2">
-              {!isRotating && (
-                <>
-                  <IconButton
-                    icon={<CloudSwap />}
-                    className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
-                    onClick={async () => {
-                      setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
-                      const result = await handleSwitchProtocol({ subs: [record] });
-                      if (result?.successCount && result.successCount > 0) {
-                        toast.success(t('toast.success.changeProxySub'));
-                      } else {
-                        toast.error(t('toast.error.changeProxySub'));
-                      }
-                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
-                    }}
-                    title="Change Protocol"
-                  />
-                  <IconButton
-                    icon={<Reload />}
-                    iconClassName="text-[#FDBE02] hover:!text-[#FDBE02] dark:text-[#FDBE02]"
-                    className="rounded-lg w-8 h-8"
-                    onClick={async () => {
-                      const rowIndex = subscriptions?.findIndex((sub) => sub.id === record.id) || 0;
-                      setLoadingRowIndexes((prev) => [...prev, rowIndex + 1]);
-                      await handleGetProxy(record);
-                      setLoadingRowIndexes((prev) => prev.filter((index) => index !== rowIndex + 1));
-                    }}
-                    title="Get Proxy"
-                  />
-                </>
-              )}
-              <IconButton
-                className={`rounded-lg w-8 h-8`}
-                iconClassName="text-[#27BE2A] hover:text-[#27BE2A] dark:!text-[#27BE2A]"
-                icon={<ArrowDownload />}
-                onClick={() => {
-                  const ip = getIpAddressByProxyType(record);
-                  const port = getPortByProxyType(record);
-                  const username = getUsernameByProxyType(record).toLocaleLowerCase();
-                  const { plainPassword } = getPasswordByProxyType(record);
-
-                  const proxyString = `${ip}:${port}:${username}:${plainPassword}`;
-                  const blob = new Blob([['ip:port:user:password', proxyString].join('\n')], { type: 'text/plain' });
-                  const url = URL.createObjectURL(blob);
-                  const link = document.createElement('a');
-                  link.href = url;
-                  link.download = `proxy_${moment().format('YYYYMMDD_HHmmss')}.txt`;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(url);
-                  toast.success(t('toast.success.proxyExport'));
-                }}
-                title="Export Proxy"
-              />
-              <IconButton
-                icon={<CopySelect />}
-                className={`rounded-lg w-8 h-8`}
-                onClick={() => handleCopyProxy(record)}
-                title={copiedId === record.id ? 'Copied!' : 'Copy Proxy'}
-              />
-            </div>
-          );
-        }
-      }
-    ];
-  }, [t, isMobile, isTablet, handleToggleAutoRenew, copiedId, handleSwitchProtocol, subscriptions]);
+      ];
+    },
+    [t, isMobile, isTablet, handleToggleAutoRenew, copiedId, handleSwitchProtocol, subscriptions]
+  );
 
   if (error || subscriptions?.length === 0) {
     return (
@@ -803,11 +839,11 @@ const OrderDetailPage = () => {
             className="h-full pr-2"
             scroll={{ x: 800, y: isMobile ? '' : 'calc(100dvh - 450px)' }}
             data={subscriptions || []}
-            columns={columns}
+            columns={columns(subscriptions?.[0]?.plan?.type === 'rotating' || subscriptions?.[0]?.plan?.category === 'rotating')}
             pagination={{
               current: currentPage,
               pageSize,
-              total: subscriptions?.length || 0,
+              total,
               pageSizeOptions: [10, 20, 50],
               className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
               onChange: (page, size) => {

@@ -24,6 +24,10 @@ export interface TableColumn<T> {
   filterable?: boolean;
   fixed?: 'left' | 'right';
   minWidth?: string | number;
+  /**
+   * If true, the column will be hidden from the table (default: false)
+   */
+  hidden?: boolean;
 }
 
 export interface TableProps<T> {
@@ -180,17 +184,19 @@ export function Table<T extends Record<string, any>>({
     return 'auto';
   };
 
-  const leftFixedColumns = columns.filter((col) => col.fixed === 'left');
-  const rightFixedColumns = columns.filter((col) => col.fixed === 'right');
+  // Only show columns that are not hidden
+  const visibleColumns = columns.filter((col) => !col.hidden);
+  const leftFixedColumns = visibleColumns.filter((col) => col.fixed === 'left');
+  const rightFixedColumns = visibleColumns.filter((col) => col.fixed === 'right');
 
   const getLeftOffset = (columnIndex: number) => {
-    const column = columns[columnIndex];
+    const column = visibleColumns[columnIndex];
     if (column.fixed !== 'left') return 0;
 
     let offset = rowSelection ? 48 : 0;
     for (let i = 0; i < columnIndex; i++) {
-      if (columns[i].fixed === 'left') {
-        const width = getColumnWidth(columns[i]);
+      if (visibleColumns[i].fixed === 'left') {
+        const width = getColumnWidth(visibleColumns[i]);
         offset += parseInt(width.replace('px', ''));
       }
     }
@@ -198,13 +204,13 @@ export function Table<T extends Record<string, any>>({
   };
 
   const getRightOffset = (columnIndex: number) => {
-    const column = columns[columnIndex];
+    const column = visibleColumns[columnIndex];
     if (column.fixed !== 'right') return 0;
 
     let offset = 0;
-    for (let i = columnIndex + 1; i < columns.length; i++) {
-      if (columns[i].fixed === 'right') {
-        const width = getColumnWidth(columns[i]);
+    for (let i = columnIndex + 1; i < visibleColumns.length; i++) {
+      if (visibleColumns[i].fixed === 'right') {
+        const width = getColumnWidth(visibleColumns[i]);
         offset += parseInt(width.replace('px', ''));
       }
     }
@@ -213,7 +219,7 @@ export function Table<T extends Record<string, any>>({
 
   const getTotalWidth = () => {
     let totalWidth = rowSelection ? 48 : 0;
-    columns.forEach((col) => {
+    visibleColumns.forEach((col) => {
       const width = getColumnWidth(col);
       totalWidth += parseInt(width.replace('px', ''));
     });
@@ -256,12 +262,12 @@ export function Table<T extends Record<string, any>>({
               </th>
             )}
 
-            {columns.map((col, colIndex) => {
+            {visibleColumns.map((col, colIndex) => {
               const leftOffset = getLeftOffset(colIndex);
               const rightOffset = getRightOffset(colIndex);
               const isLeftFixed = col.fixed === 'left';
               const isRightFixed = col.fixed === 'right';
-              const isLastCol = colIndex === columns.length - 1;
+              const isLastCol = colIndex === visibleColumns.length - 1;
               const isSorted = sortField === col.key;
 
               let alignClass = 'text-left';
@@ -313,8 +319,8 @@ export function Table<T extends Record<string, any>>({
               if (isRightFixed) style.right = rightOffset;
 
               let borderClassName = '';
-              const isSecondLastCol = colIndex === columns.length - 2;
-              const isLastColSticky = columns[columns.length - 1].fixed === 'right';
+              const isSecondLastCol = colIndex === visibleColumns.length - 2;
+              const isLastColSticky = visibleColumns[visibleColumns.length - 1]?.fixed === 'right';
 
               if (!isLastCol && !isSecondLastCol && !isLeftFixed && !isRightFixed) {
                 borderClassName += 'border-r-[1.25px] border-border-element dark:border-border-element-dark ';
@@ -409,14 +415,14 @@ export function Table<T extends Record<string, any>>({
                   </td>
                 )}
 
-                {columns.map((col, colIndex) => {
+                {visibleColumns.map((col, colIndex) => {
                   const leftOffset = getLeftOffset(colIndex);
                   const rightOffset = getRightOffset(colIndex);
                   const isLeftFixed = col.fixed === 'left';
                   const isRightFixed = col.fixed === 'right';
                   const isSorted = sortField === col.key;
                   const isFirstCell = colIndex === 0 && !rowSelection;
-                  const isLastCell = colIndex === columns.length - 1;
+                  const isLastCell = colIndex === visibleColumns.length - 1;
 
                   let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
@@ -468,13 +474,13 @@ export function Table<T extends Record<string, any>>({
               return (
                 <tr key={`empty-${idx}`} className={rowClass} style={{ height: `${ROW_HEIGHT}px` }}>
                   {rowSelection && <td className={`rounded-l-lg w-12 px-2 py-1 sticky left-0 z-10 ${rowClass}`} />}
-                  {columns.map((col, colIndex) => {
+                  {visibleColumns.map((col, colIndex) => {
                     const leftOffset = getLeftOffset(colIndex);
                     const rightOffset = getRightOffset(colIndex);
                     const isLeftFixed = col.fixed === 'left';
                     const isRightFixed = col.fixed === 'right';
                     const isFirstCell = colIndex === 0 && !rowSelection;
-                    const isLastCell = colIndex === columns.length - 1;
+                    const isLastCell = colIndex === visibleColumns.length - 1;
 
                     let className = `${rowClass} text-sm px-2 py-2 h-12 text-text-hi dark:text-text-hi-dark text-${col.align || 'left'} ${bordered ? 'border-r border-border-element dark:border-border-element-dark' : ''}`;
 
@@ -485,14 +491,14 @@ export function Table<T extends Record<string, any>>({
                       className += ' sticky z-10';
                       const isLastLeftFixed = leftFixedColumns[leftFixedColumns.length - 1] === col;
                       if (isLastLeftFixed) {
-                        className += ` fixed-left-shadow ${emptyRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                        className += ` fixed-left-shadow ${emptyRowIndex % 2 === 0 ? 'dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-mute-dark'}`;
                       }
                     }
                     if (isRightFixed) {
                       className += ' sticky z-10';
                       const isFirstRightFixed = rightFixedColumns[0] === col;
                       if (isFirstRightFixed) {
-                        className += ` h-full fixed-right-shadow border-l border-border-element dark:border-border-element-dark ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-bg-mute-dark'}`;
+                        className += ` h-full fixed-right-shadow border-l border-border-element dark:border-border-element-dark ${emptyRowIndex % 2 === 0 ? 'bg-white dark:bg-bg-canvas-dark' : 'bg-bg-mute dark:bg-mute-dark'}`;
                       }
                     }
 

@@ -327,6 +327,7 @@
       "ipAddressClipboard": "IP 地址已复制到剪贴板",
       "usernameClipboard": "用户名已复制到剪贴板",
       "passwordClipboard": "密码已复制到剪贴板",
+      "port": "端口已复制到剪贴板",
       "transactionIdClipboard": "交易ID已复制到剪贴板",
       "cpuClipboard": "已复制到剪贴板",
       "proxyExport": "代理导出成功",
@@ -370,7 +371,9 @@
       "pickCountry": "请选择国家"
     }
   },
+  "stickyIp": "固定 IP",
   "countryList": {
+    "random": "随机",
     "vn": "越南",
     "us": "美国",
     "jp": "日本",

@@ -27,12 +27,14 @@ export const getPortByProxyType = (record: Subscription): string => {
 };
 
 export const getUsernameByProxyType = (record: Subscription): string => {
+  // For rotating proxy: relay.prx.network:80:username:password
+  // Format: npx-customer-{authUsername}-country-{country}-session-{sessionId}
   const isRotating = isRotatingProxy(record);
   if (isRotating) {
     const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
     const authUser = useAuthStore.getState().user;
     const authUsername = authUser?.username || 'user';
-    const country = subscriptionData?.country || 'us';
+    const country = subscriptionData?.country || 'random';
     let sessionId = subscriptionData?.sessionId;
 
     // Generate session ID if it doesn't exist
@@ -40,8 +42,10 @@ export const getUsernameByProxyType = (record: Subscription): string => {
       sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
     }
 
-    let username = `npx-customer-${authUsername}-country-${country}`;
-    if (sessionId) {
+    let username = `npx-customer-${authUsername}`;
+    const isRandomCountry = country === 'random' ? '' : `-country-${country.toLowerCase()}`;
+    username += isRandomCountry;
+    if (sessionId && record?.tableData?.hasSticky) {
       username += `-session-${sessionId}`;
     }
     return username;

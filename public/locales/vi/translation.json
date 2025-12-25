@@ -327,6 +327,7 @@
       "ipAddressClipboard": "Đã sao chép IPAddress vào Clipboard",
       "usernameClipboard": "Đã sao chép Username vào Clipboard",
       "passwordClipboard": "Đã sao chép Password vào Clipboard",
+      "port": "Đã sao chép Port vào Clipboard",
       "transactionIdClipboard": "Đã sao chép mã giao dịch vào Clipboard",
       "copyClipboard": "Đã sao chép vào Clipboard",
       "proxyExport": "Xuất proxy thành công",
@@ -370,7 +371,9 @@
       "pickCountry": "Vui lòng chọn Quốc Gia"
     }
   },
+  "stickyIp": "Giữ phiên IP",
   "countryList": {
+    "random": "Random",
     "vn": "Việt Nam",
     "us": "Mỹ",
     "jp": "Nhật Bản",

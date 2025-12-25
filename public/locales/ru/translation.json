@@ -327,6 +327,7 @@
       "ipAddressClipboard": "IP-адрес скопирован",
       "usernameClipboard": "Имя пользователя скопировано",
       "passwordClipboard": "Пароль скопирован",
+      "port": "Порт скопирован в буфер обмена",
       "transactionIdClipboard": "ID транзакции скопирован",
       "cpuClipboard": "Скопировано в буфер",
       "proxyExport": "Прокси успешно экспортированы",
@@ -370,7 +371,9 @@
       "pickCountry": "Пожалуйста, выберите страну"
     }
   },
+  "stickyIp": "Постоянный IP",
   "countryList": {
+    "random": "Случайный",
     "vn": "Вьетнам",
     "us": "США",
     "jp": "Япония",

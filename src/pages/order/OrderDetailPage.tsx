@@ -10,7 +10,8 @@ import {
   CloudSwap,
   CloudSwapOutlined,
   ArrowSync,
-  DashboardFilled
+  DashboardFilled,
+  LockMultiple
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -35,6 +36,7 @@ import clsx from 'clsx';
 import { queryClient } from '@/components/auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useNavbar } from '@/contexts/NavbarContext';
+import { OrderCountryModal } from './OrderCountryModal';
 
 // ISO alpha-2 country codes
 export const getCountryOptions = (t: any) => [
@@ -414,6 +416,28 @@ const OrderDetailPage = () => {
     [currentPage, id, pageSize, subscriptions, t]
   );
 
+  const handleToggleSticky = () => {
+    queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+      const selectedRowMap = new Map<string, Subscription>();
+      selectedRows.forEach((sub) => {
+        selectedRowMap.set(sub.id, sub);
+      });
+      return oldSubs.map((s) => {
+        const isExist = selectedRowMap.has(s.id);
+        if (isExist) {
+          return {
+            ...s,
+            tableData: {
+              ...s.tableData,
+              hasSticky: !s?.tableData?.hasSticky
+            }
+          };
+        }
+        return s;
+      });
+    });
+  };
+
   const columns: (isRotating: boolean) => TableColumn<Subscription>[] = useCallback(
     (isRotating: boolean) => {
       return [
@@ -782,8 +806,8 @@ const OrderDetailPage = () => {
               {/* Download */}
               <IconButton
                 disabled={selectedRows.length === 0}
-                className={`w-10 h-10`}
-                icon={<ArrowDownload className="w-5 h-5" />}
+                className={`w-10 h-10 hover:bg-blue-50 dark:hover:bg-blue-900/30`}
+                icon={<ArrowDownload className="w-5 h-5 " />}
                 onClick={() => {
                   const selectedProxies = [
                     'ip:port:user:password',
@@ -811,6 +835,18 @@ const OrderDetailPage = () => {
                 }}
                 title="Export Selected Proxies"
               />
+
+              {/* Toggle sticky IP */}
+              <IconButton
+                className={`w-10 h-10`}
+                disabled={selectedRows.length === 0}
+                icon={<LockMultiple className="w-5 h-5" />}
+                onClick={handleToggleSticky}
+                title={t('stickyIp')}
+              />
+
+              {/* Country change */}
+              <OrderCountryModal selectedRows={selectedRows} queryKey={['order-subscriptions', id, currentPage, pageSize]} />
 
               {/* Thông tin */}
               <OrderInfoModal type={isBelongRotatingProxy ? 'rotating' : 'provider'} />

@@ -619,7 +619,9 @@ const OrderDetailPage = () => {
           width: 150,
           key: 'expires_at',
           title: t('expired'),
-          render: (value) => <div className="font-semibold">{moment(value).format('DD/MM/YYYY HH:mm')}</div>
+          render: (value, record) => (
+            <div className="font-semibold">{moment(value || record.current_period_end).format('DD/MM/YYYY HH:mm')}</div>
+          )
         },
         {
           width: 200,

@@ -100,7 +100,7 @@ export interface ListSubscriptionsRequest {
 export interface ListOrderSubscriptionsRequest {
   orderId: string;
   Page?: number;
-  PerPage?: number;
+  per_page?: number;
   Status?: 'active' | 'paused' | 'cancelled' | 'expired';
 }
 

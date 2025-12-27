@@ -897,6 +897,7 @@ const OrderDetailPage = () => {
             rowSelection={{
               selectedRowKeys: selectedIds,
               onChange: (selectedRowIds, selectedRows) => {
+                console.log('selectedRows:', selectedRows);
                 setSelectedIds(selectedRowIds.map((id) => id as string));
                 setSelectedRows(selectedRows);
               }

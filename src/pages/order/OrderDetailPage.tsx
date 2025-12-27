@@ -77,7 +77,7 @@ const OrderDetailPage = () => {
   const { isMobile, isTablet } = useResponsive();
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(50);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedRows, setSelectedRows] = useState<Subscription[]>([]);
@@ -143,7 +143,7 @@ const OrderDetailPage = () => {
         const response = await subscriptionService.getOrderSubscriptions({
           orderId: id!,
           Page: currentPage,
-          PerPage: pageSize
+          per_page: pageSize
         });
 
         // Extract subscriptions array from response
@@ -154,8 +154,6 @@ const OrderDetailPage = () => {
               icon: <DashboardFilled width={32} height={32} className="text-primary" />
             }
           ]);
-          setPageSize(response.per_page);
-          setCurrentPage(response.page);
           setTotal(response.total);
           return response.subscriptions;
         } else {
@@ -856,9 +854,9 @@ const OrderDetailPage = () => {
                 className="w-10 h-10"
                 icon={<ArrowCounter className="w-5 h-5" />}
                 onClick={async () => {
-                  await queryClient.invalidateQueries({ queryKey: ['order-subscriptions'] });
                   setCurrentPage(1);
-                  setPageSize(20);
+                  setPageSize(100);
+                  await queryClient.invalidateQueries({ queryKey: ['order-subscriptions'] });
                   const params = new URLSearchParams(window.location.search);
                   params.delete('page');
                   params.delete('pageSize');
@@ -883,7 +881,7 @@ const OrderDetailPage = () => {
               current: currentPage,
               pageSize,
               total,
-              pageSizeOptions: [10, 20, 50],
+              pageSizeOptions: [100],
               className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
               onChange: (page, size) => {
                 setCurrentPage(page);
@@ -897,7 +895,6 @@ const OrderDetailPage = () => {
             rowSelection={{
               selectedRowKeys: selectedIds,
               onChange: (selectedRowIds, selectedRows) => {
-                console.log('selectedRows:', selectedRows);
                 setSelectedIds(selectedRowIds.map((id) => id as string));
                 setSelectedRows(selectedRows);
               }

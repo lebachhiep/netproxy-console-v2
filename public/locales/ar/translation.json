@@ -462,5 +462,10 @@
     "settingUp": "جاري الإعداد...",
     "alertResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
     "alertReset-ed": "تمت إعادة تعيين كلمة المرور الخاصة بك"
-  }
+  },
+  "refresh": "ينعش",
+  "tutorials": "دروس",
+  "countryApplyFor": "سيتم تطبيق الإجراء الخاص بك على {{count}} عنصر",
+  "selectCountry": "اختر البلد",
+  "confirm": "يتأكد"
 }

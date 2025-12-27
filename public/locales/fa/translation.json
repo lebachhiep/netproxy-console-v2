@@ -473,5 +473,10 @@
     "settingUp": "در حال تنظیم...",
     "alertResetSuccess": "رمز عبور با موفقیت تغییر کرد",
     "alertReset-ed": "شما قبلاً رمز عبور خود را بازیابی کرده‌اید"
-  }
+  },
+  "refresh": "تازه کردن",
+  "tutorials": "آموزش ها",
+  "countryApplyFor": "اقدام شما برای {{count}} مورد اعمال خواهد شد",
+  "selectCountry": "کشور را انتخاب کنید",
+  "confirm": "تایید کنید"
 }

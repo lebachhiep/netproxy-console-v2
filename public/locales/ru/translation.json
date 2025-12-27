@@ -473,5 +473,10 @@
     "settingUp": "Настройка...",
     "alertResetSuccess": "Пароль успешно сброшен",
     "alertReset-ed": "Ваш пароль был изменен"
-  }
+  },
+  "refresh": "Обновить",
+  "tutorials": "Учебники",
+  "countryApplyFor": "Ваше действие будет применено к {{count}} элементу",
+  "selectCountry": "Выберите страну",
+  "confirm": "Подтверждать"
 }

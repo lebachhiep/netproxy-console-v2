@@ -491,7 +491,7 @@ const DashboardPage = () => {
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
-                  className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-5 p-5 items-stretch"
+                  className="overflow-y-auto h-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 min-[2400px]:grid-cols-6 place-content-start gap-5 p-5 items-stretch"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center h-full w-full col-span-12">
@@ -501,7 +501,7 @@ const DashboardPage = () => {
                   ) : (
                     tableData.map((item) => (
                       <motion.div key={item.id} variants={itemVariants}>
-                        <Card>
+                        <Card className="max-h-[260px]">
                           <Card.Header>
                             <Card.Title
                               status={{

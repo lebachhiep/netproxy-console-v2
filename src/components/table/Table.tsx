@@ -91,6 +91,7 @@ export function Table<T extends Record<string, any>>({
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const [emptyRowsCount, setEmptyRowsCount] = useState(0);
+  const [selectedRows, setSelectedRows] = useState<T[]>([]);
 
   const sizeClasses = {
     small: 'text-xs',
@@ -142,15 +143,26 @@ export function Table<T extends Record<string, any>>({
 
   const handleSelectAll = (checked: boolean) => {
     if (!rowSelection) return;
-    const allKeys = data.map((_, index) => index);
+    const allKeys = data.map((_, index) => {
+      const pageIndex = pagination ? (pagination.current - 1) * pagination.pageSize + index : index;
+      return pageIndex;
+    });
     rowSelection.onChange(checked ? allKeys : [], checked ? data : []);
   };
 
   const handleSelectRow = (key: string | number, record: T, checked: boolean) => {
     if (!rowSelection) return;
     const newSelectedKeys = checked ? [...rowSelection.selectedRowKeys, key] : rowSelection.selectedRowKeys.filter((k) => k !== key);
-    const newSelectedRows = data.filter((_, index) => newSelectedKeys.includes(index));
-    rowSelection.onChange(newSelectedKeys, newSelectedRows);
+
+    if (checked) {
+      const newSelectedRows = [...selectedRows, record];
+      setSelectedRows(newSelectedRows);
+      rowSelection.onChange(newSelectedKeys, newSelectedRows);
+    } else {
+      const newSelectedRows = selectedRows.filter((r) => r.id !== record.id);
+      setSelectedRows(newSelectedRows);
+      rowSelection.onChange(newSelectedKeys, newSelectedRows);
+    }
   };
 
   const handleBodyScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -525,8 +537,6 @@ export function Table<T extends Record<string, any>>({
     </div>
   );
 
-  const selectedRows = rowSelection ? data.filter((_, index) => rowSelection.selectedRowKeys.includes(index)) : [];
-
   return (
     <TableSelectedContext.Provider value={selectedRows}>
       <Loader isLoading={loading} className={`bg-transparent rounded-lg flex flex-col gap-1 relative ${className}`}>
@@ -540,9 +550,29 @@ export function Table<T extends Record<string, any>>({
         {renderBodyTable()}
 
         {pagination && paginationType === 'loadmore' && (
-          <Pagination className="absolute -translate-x-1/2 bottom-5 left-1/2" type={'loadmore'} {...pagination} />
+          <Pagination
+            className="absolute -translate-x-1/2 bottom-5 left-1/2"
+            type={'loadmore'}
+            {...pagination}
+            onChange={(page, pageSize) => {
+              setSelectedRows([]);
+              pagination.onChange?.(page, pageSize);
+              rowSelection?.onChange?.([], []);
+            }}
+          />
         )}
-        {pagination && paginationType === 'pagination' && <Pagination className="" type={'pagination'} {...pagination} />}
+        {pagination && paginationType === 'pagination' && (
+          <Pagination
+            className=""
+            type={'pagination'}
+            {...pagination}
+            onChange={(page, pageSize) => {
+              setSelectedRows([]);
+              pagination.onChange?.(page, pageSize);
+              rowSelection?.onChange?.([], []);
+            }}
+          />
+        )}
       </Loader>
     </TableSelectedContext.Provider>
   );

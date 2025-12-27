@@ -473,5 +473,10 @@
     "settingUp": "Sini-set up...",
     "alertResetSuccess": "Matagumpay na na-reset ang password",
     "alertReset-ed": "Na-reset mo na ang iyong password"
-  }
+  },
+  "refresh": "Refresh",
+  "tutorials": "Tutorials",
+  "countryApplyFor": "Your action will apply for {{count}} item",
+  "selectCountry": "Select country",
+  "confirm": "Confirm"
 }

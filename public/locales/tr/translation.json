@@ -473,5 +473,10 @@
     "settingUp": "Kuruluyor...",
     "alertResetSuccess": "Şifre başarıyla sıfırlandı",
     "alertReset-ed": "Şifrenizi zaten sıfırladınız"
-  }
+  },
+  "refresh": "Yenile",
+  "tutorials": "Öğreticiler",
+  "countryApplyFor": "İşleminiz {{count}} öğe için geçerli olacak",
+  "selectCountry": "Ülke seçin",
+  "confirm": "Onaylamak"
 }

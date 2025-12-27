@@ -863,6 +863,7 @@ const OrderDetailPage = () => {
                   window.history.replaceState({}, '', `${window.location.pathname}${params.toString() ? '?' + params.toString() : ''}`);
                   toast.success(t('toast.success.newData'));
                 }}
+                title={t('refresh')}
               />
             </div>
           </div>

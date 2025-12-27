@@ -462,5 +462,10 @@
     "settingUp": "Configurando...",
     "alertResetSuccess": "Senha redefinida com sucesso",
     "alertReset-ed": "Você já redefiniu sua senha"
-  }
+  },
+  "refresh": "Freskaat",
+  "tutorials": "Titouroù",
+  "countryApplyFor": "Hoc'h ober a dalvezo evit an elfenn {{kont}}",
+  "selectCountry": "Diuzañ bro",
+  "confirm": "Kadarnaat"
 }

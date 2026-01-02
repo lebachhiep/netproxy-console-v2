@@ -35,8 +35,8 @@ export const useBrandingStore = create<BrandingState>()((set, get) => ({
 
       set({
         businessName: branding.business_name || domain,
-        logoUrl: branding.logos?.logo || '',
-        logoIconUrl: branding.logos?.logo_icon || '',
+        logoUrl: branding.logos?.logo?.original || '',
+        logoIconUrl: branding.logos?.logo_icon?.original || '',
         isLoading: false,
         isInitialized: true,
         error: null

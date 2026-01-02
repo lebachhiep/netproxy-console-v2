@@ -1,7 +1,12 @@
+export interface LogoURLs {
+  original: string;
+  variants?: Record<string, string>;
+}
+
 export interface BrandingLogos {
-  logo: string;
-  logo_icon: string;
-  og_image: string;
+  logo: LogoURLs | null;
+  logo_icon: LogoURLs | null;
+  og_image: LogoURLs | null;
 }
 
 export interface OgMetadata {

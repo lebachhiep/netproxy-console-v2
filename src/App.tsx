@@ -8,11 +8,12 @@ import './styles/custom.scss';
 import { useEffect } from 'react';
 import { CartProvider } from './contexts/CartContext';
 import { useTranslation } from 'react-i18next';
-import { LOGO_ICON_URL } from '@/config/api';
+import { useBranding } from '@/hooks/useBranding';
 
 const App = () => {
   const location = useLocation();
   const { t } = useTranslation();
+  const { logoIconUrl } = useBranding();
   const element = useRoutes(routes(t), location);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const App = () => {
 
   return (
     <CartProvider>
-      <link rel="icon" href={LOGO_ICON_URL} />
+      {logoIconUrl && <link rel="icon" href={logoIconUrl} />}
       {element}
       <Toaster
         position="top-right"

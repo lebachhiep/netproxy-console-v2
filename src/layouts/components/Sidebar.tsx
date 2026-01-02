@@ -1,7 +1,7 @@
 import IconButton from '@/components/button/IconButton';
 import { Chevron } from '@/components/icons';
 import { useResponsive } from '@/hooks/useResponsive';
-import { LOGO_URL, LOGO_ICON_URL } from '@/config/api';
+import { useBranding } from '@/hooks/useBranding';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
   const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
   const navigate = useNavigate();
   const { isAbsoluteSidebar } = useResponsive();
+  const { logoUrl, logoIconUrl } = useBranding();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   };
@@ -59,11 +60,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
 
       {collapsed ? (
         <div className="h-[52px] hidden lg:flex items-center justify-center cursor-pointer" onClick={() => navigate('/home')}>
-          <img src={LOGO_ICON_URL} alt="Logo" className="h-8 object-contain cursor-pointer dark:invert" />
+          {logoIconUrl && <img src={logoIconUrl} alt="Logo" className="h-8 object-contain cursor-pointer dark:invert" />}
         </div>
       ) : (
         <div className="h-[52px] hidden lg:flex items-center cursor-pointer" onClick={() => navigate('/home')}>
-          <img src={LOGO_URL} alt="Logo" className="h-8 object-contain text-center dark:invert" />
+          {logoUrl && <img src={logoUrl} alt="Logo" className="h-8 object-contain text-center dark:invert" />}
         </div>
       )}
 

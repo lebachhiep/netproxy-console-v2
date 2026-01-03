@@ -88,7 +88,7 @@ class SubscriptionService {
   async getOrderSubscriptions(params: ListOrderSubscriptionsRequest): Promise<OrderSubscriptionsResponse> {
     const queryParams = {
       page: params?.Page,
-      perPage: params?.PerPage,
+      per_page: params?.per_page,
       Status: params?.Status
     };
 

@@ -473,5 +473,12 @@
     "settingUp": "Setting up...",
     "alertResetSuccess": "Password has been reset successfully",
     "alertReset-ed": "Your password has been reset"
-  }
+  },
+  "refresh": "Refresh",
+  "tutorial": "Tutorials",
+  "tutorials": "Tutorials",
+  "countryApplyFor": "Your action will apply for {{count}} item",
+  "countryApplyFor_plural": "Your action will apply for {{count}} items",
+  "selectCountry": "Select country",
+  "confirm": "Confirm"
 }

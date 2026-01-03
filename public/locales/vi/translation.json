@@ -473,5 +473,10 @@
     "settingUp": "Đang đặt lại...",
     "alertResetSuccess": "Đổi mật khẩu thành công",
     "alertReset-ed": "Mật khẩu của bạn đã được đặt lại"
-  }
+  },
+  "refresh": "Tải lại",
+  "tutorials": "Hướng dẫn",
+  "countryApplyFor": "Hành động của bạn sẽ áp dụng cho {{count}} mặt hàng",
+  "selectCountry": "Chọn quốc gia",
+  "confirm": "Xác nhận"
 }

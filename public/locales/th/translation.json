@@ -473,5 +473,10 @@
     "settingUp": "กำลังตั้งค่า...",
     "alertResetSuccess": "รีเซ็ตรหัสผ่านสำเร็จแล้ว",
     "alertReset-ed": "เปลี่ยนรหัสผ่านของคุณเรียบร้อยแล้ว"
-  }
+  },
+  "refresh": "รีเฟรช",
+  "tutorials": "บทช่วยสอน",
+  "countryApplyFor": "การกระทำของคุณจะมีผลกับ {{count}} รายการ",
+  "selectCountry": "เลือกประเทศ",
+  "confirm": "ยืนยัน"
 }

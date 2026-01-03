@@ -166,6 +166,11 @@ export default {
         'yellow-gradient': 'linear-gradient(180deg, #FFD812 0%, #FF8900 100%)',
         'green-gradient': 'linear-gradient(168deg, #1BCE74 40.83%, #00BFA1 91.21%)',
         'purple-gradient': 'linear-gradient(168deg, #58B3F1 -1.52%, #3B55F0 48.86%)'
+      },
+      breakpoints: {
+        '2xl': '1440px',
+        '3xl': '1920px',
+        '4xl': '2560px'
       }
     }
   },

@@ -5,6 +5,7 @@ import { ChatWarning } from '@/components/icons';
 import { useTranslation } from 'react-i18next';
 import { ProviderInfoContent } from './ProviderInfoContent';
 import { RotatingInfoContent } from './RotatingInfoContent';
+import Tooltip from '@/components/tooltip/Tooltip';
 
 export const OrderInfoModal = ({ type }: { type: 'provider' | 'rotating' }) => {
   const [open, setOpen] = useState(false);
@@ -12,13 +13,15 @@ export const OrderInfoModal = ({ type }: { type: 'provider' | 'rotating' }) => {
 
   return (
     <>
-      <IconButton
-        onClick={() => {
-          setOpen(true);
-        }}
-        className="w-10 h-10"
-        icon={<ChatWarning className="w-5 h-5" />}
-      />
+      <Tooltip content={t('tutorials')}>
+        <IconButton
+          onClick={() => {
+            setOpen(true);
+          }}
+          className="w-10 h-10"
+          icon={<ChatWarning className="w-5 h-5" />}
+        />
+      </Tooltip>
       <Modal
         open={open}
         onClose={() => setOpen(false)}

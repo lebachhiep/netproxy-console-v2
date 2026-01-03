@@ -57,28 +57,26 @@ export const OrderCountryModal = ({ selectedRows, queryKey }: { selectedRows: Su
         open={open}
         className="text-text-hi dark:text-text-hi-dark"
         onClose={() => setOpen(false)}
-        title={'Country change'}
+        title={t('pickCountry')}
         actions={[]}
       >
         <div className="flex flex-col gap-2">
           <div className="p-4 flex flex-col gap-2">
-            <p>
-              Your action will apply for {selectedRows.length} item{selectedRows.length ? 's' : ''}
-            </p>
+            <p>{t('countryApplyFor', { count: selectedRows.length })}</p>
             <Select
               value={selectedCountry}
               onChange={(value) => {
                 setSelectedCountry(String(value));
               }}
               options={getCountryOptions(t)}
-              placeholder="Select country"
+              placeholder={t('selectCountry')}
               className={clsx('h-10 min-w-[140px]')}
               optionClassName="max-h-60 overflow-y-auto"
             />
           </div>
           <div className="flex items-center justify-center border-t p-4 dark:border-border-element-dark border-border-element">
             <Button onClick={handleCountryChange} className="mx-auto px-8" size="sm">
-              Confirm
+              {t('confirm')}
             </Button>
           </div>
         </div>

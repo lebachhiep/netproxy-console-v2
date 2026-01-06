@@ -89,7 +89,7 @@ const OrderDetailPage = () => {
   const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
     const { t } = useTranslation();
     const storedData = useSubscriptionStore((state) => state.getSubscriptionData(subscriptionId));
-    const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'random');
+    const [selectedCountry, setSelectedCountry] = useState<string>(storedData?.country || currentCountry || 'VN');
 
     const handleCountryChange = (value: string | number | undefined, label: ReactNode) => {
       const countryCode = String(value);
@@ -305,7 +305,8 @@ const OrderDetailPage = () => {
 
     if (isRotating) {
       const username = getUsernameByProxyType(record);
-      const proxyString = `relay.prx.network:80:${username}:${record.api_key}`;
+      const host = !record?.country || record.country === 'VN' ? 'vn.relay.prx.network' : 'relay.prx.network';
+      const proxyString = `${host}:80:${username}:${record.api_key}`;
 
       await copyToClipboard(proxyString);
 
@@ -596,9 +597,7 @@ const OrderDetailPage = () => {
             const isRotating = isRotatingProxy(record);
             if (isRotating) {
               console.log(record.country);
-              return (
-                <CountrySelectCell subscriptionId={record.id} currentCountry={record.country || 'random'} className="max-w-40 mx-auto" />
-              );
+              return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country || 'VN'} className="max-w-40 mx-auto" />;
             }
             // For non-rotating proxies, show as plain text
             return <div className="line-clamp-1 font-semibold text-xs">{record.country || '-'}</div>;

@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useCallback, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { SidebarMobile } from './components/SidebarMobile';
 import { NavbarMobile } from './components/NavbarMobile';
 import { Sidebar } from './components/Sidebar';
 import clsx from 'clsx';

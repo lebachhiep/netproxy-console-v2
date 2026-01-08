@@ -690,7 +690,7 @@ const OrderDetailPage = () => {
                   onClick={() => {
                     const ip = getIpAddressByProxyType(record);
                     const port = getPortByProxyType(record);
-                    const username = getUsernameByProxyType(record).toLocaleLowerCase();
+                    const username = getUsernameByProxyType(record);
                     const { plainPassword } = getPasswordByProxyType(record);
 
                     const proxyString = `${ip}:${port}:${username}:${plainPassword}`;
@@ -811,7 +811,7 @@ const OrderDetailPage = () => {
                       .map((record) => {
                         const ip = getIpAddressByProxyType(record);
                         const port = getPortByProxyType(record);
-                        const username = getUsernameByProxyType(record).toLocaleLowerCase();
+                        const username = getUsernameByProxyType(record);
                         const { plainPassword } = getPasswordByProxyType(record);
                         return `${ip}:${port}:${username}:${plainPassword}`;
                       })

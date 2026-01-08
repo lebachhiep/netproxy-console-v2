@@ -23,7 +23,7 @@ const hasValidCredentials = (creds: any): creds is ProxyCredentials => {
 export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscription, username: propUsername }) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState<string>('us'); // Default US
+  const [selectedCountry, setSelectedCountry] = useState<string>('VN'); // Default US
   const [sessionId, setSessionId] = useState('');
 
   // Load subscription data from store
@@ -237,7 +237,7 @@ export const ProxyConnectionInfo: React.FC<ProxyConnectionInfoProps> = ({ subscr
   }
 
   // Render internal plan (no provider_credentials - use API key)
-  const host = 'relay.prx.network:80';
+  const host = countryOptions ? 'vn.prx.network:80' : 'relay.prx.network:80';
   const password = subscription.api_key;
 
   return (

@@ -10,7 +10,7 @@ export const isRotatingProxy = (record: Subscription) => {
 export const getIpAddressByProxyType = (record: Subscription): string => {
   const isRotating = isRotatingProxy(record);
   if (isRotating) {
-    return 'relay.prx.network';
+    return !record?.country || record.country === 'VN' ? 'vn.relay.prx.network' : 'relay.prx.network';
   }
   const credentials = record.provider_credentials as any;
   return credentials?.proxy_ip || '-';

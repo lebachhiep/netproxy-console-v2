@@ -13,7 +13,7 @@ import { useSubscriptionStore } from '@/stores/subscription.store';
 import { Button } from '@/components/button/Button';
 
 export const OrderCountryModal = ({ selectedRows, queryKey }: { selectedRows: Subscription[]; queryKey: unknown[] }) => {
-  const [selectedCountry, setSelectedCountry] = useState<string>('random');
+  const [selectedCountry, setSelectedCountry] = useState<string>('VN');
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
 
@@ -39,7 +39,7 @@ export const OrderCountryModal = ({ selectedRows, queryKey }: { selectedRows: Su
         };
       });
     });
-    setSelectedCountry('random');
+    setSelectedCountry('VN');
     setOpen(false);
   };
 

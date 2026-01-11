@@ -20,18 +20,26 @@ const App = () => {
   useEffect(() => {
     if (!logoIconUrl) return;
 
-    let link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    // Find existing favicon (exclude apple-touch-icon)
+    let link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
 
     if (!link) {
+      // Also check for shortcut icon (legacy)
+      link = document.querySelector("link[rel='shortcut icon']") as HTMLLinkElement;
+    }
+
+    if (!link) {
+      // Create new favicon link
       link = document.createElement('link');
       link.rel = 'icon';
+      // Don't set type - browser will auto-detect from URL/content
       document.head.appendChild(link);
     }
 
     link.href = logoIconUrl;
 
-    // Note: Favicon invert is not supported via CSS in all browsers
-    // If needed, consider generating inverted favicon server-side
+    // Note: Favicon doesn't support CSS invert
+    // Browser will detect image format automatically from URL/content-type
   }, [logoIconUrl, shouldInvertIcon]);
 
   return (

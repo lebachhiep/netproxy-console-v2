@@ -7,6 +7,7 @@ import { MdDashboard } from 'react-icons/md';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { Route, adminSections } from '@/router';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { toast } from 'sonner';
 import UserDropdown from '@/components/UserDropdown';
 import { useBranding } from '@/hooks/useBranding';
@@ -27,13 +28,10 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const { logoUrl } = useBranding();
+  const { logoUrl, shouldInvertLogo } = useBranding();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [code, setCode] = useState('');
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('theme');
-    return saved === 'dark';
-  });
+  const { isDark, toggleTheme } = useTheme();
 
   const isBuyPage = location.pathname === '/buy';
   const isProxyDetail = matchPath('/proxy/detail/:id', location.pathname);
@@ -68,26 +66,6 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-
-    // Tạm tắt transition toàn trang
-    root.classList.add('disable-transitions');
-
-    if (darkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-
-    // Gỡ class sau 1 frame (để theme đổi tức thì)
-    setTimeout(() => {
-      root.classList.remove('disable-transitions');
-    }, 0);
-  }, [darkMode]);
 
   // useEffect(() => {
   //   // Kiểm tra nếu history có hơn 1 entry thì mới cho back
@@ -155,7 +133,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
         }
       });
     });
-  }, [location.pathname]);
+  }, [location.pathname, t]);
 
   // Focus input khi nhấn "/"
   useEffect(() => {
@@ -182,7 +160,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
             <img
               src={logoUrl}
               alt="Logo"
-              className="h-8 object-contain text-center cursor-pointer dark:invert"
+              className={`h-8 object-contain text-center cursor-pointer ${shouldInvertLogo ? 'dark:invert' : ''}`}
               onClick={() => navigate('/home')}
             />
           )}
@@ -235,8 +213,8 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
           </Dropdown>
           <IconButton
             className="w-10 h-10"
-            icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
-            onClick={() => setDarkMode((prev) => !prev)}
+            icon={isDark ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
+            onClick={toggleTheme}
           />
           <IconButton
             className="w-10 h-10 md:hidden"

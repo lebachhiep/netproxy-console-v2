@@ -13,21 +13,37 @@ import { useBranding } from '@/hooks/useBranding';
 const App = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  const { logoIconUrl } = useBranding();
+  const { logoIconUrl, shouldInvertIcon } = useBranding();
   const element = useRoutes(routes(t), location);
 
+  // Update favicon dynamically when theme or branding changes
   useEffect(() => {
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (!logoIconUrl) return;
+
+    // Find existing favicon (exclude apple-touch-icon)
+    let link = document.querySelector("link[rel='icon']") as HTMLLinkElement;
+
+    if (!link) {
+      // Also check for shortcut icon (legacy)
+      link = document.querySelector("link[rel='shortcut icon']") as HTMLLinkElement;
     }
-  }, []);
+
+    if (!link) {
+      // Create new favicon link
+      link = document.createElement('link');
+      link.rel = 'icon';
+      // Don't set type - browser will auto-detect from URL/content
+      document.head.appendChild(link);
+    }
+
+    link.href = logoIconUrl;
+
+    // Note: Favicon doesn't support CSS invert
+    // Browser will detect image format automatically from URL/content-type
+  }, [logoIconUrl, shouldInvertIcon]);
 
   return (
     <CartProvider>
-      {logoIconUrl && <link rel="icon" href={logoIconUrl} />}
       {element}
       <Toaster
         position="top-right"

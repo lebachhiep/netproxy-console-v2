@@ -6,7 +6,7 @@ export interface AppLogoProps {
 }
 
 export const AppLogo = ({ width = 150, height }: AppLogoProps) => {
-  const { logoUrl } = useBranding();
+  const { logoUrl, shouldInvertLogo } = useBranding();
 
   return (
     <div
@@ -17,7 +17,7 @@ export const AppLogo = ({ width = 150, height }: AppLogoProps) => {
       }}
       className="text-center animate-pulse"
     >
-      {logoUrl && <img src={logoUrl} alt="Logo" className="h-full w-full object-contain dark:invert" />}
+      {logoUrl && <img src={logoUrl} alt="Logo" className={`h-full w-full object-contain ${shouldInvertLogo ? 'dark:invert' : ''}`} />}
     </div>
   );
 };

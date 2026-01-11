@@ -4,6 +4,7 @@ import { HeaderSearchInput } from '@/components/input/HeaderSearchInput';
 import Tooltip from '@/components/tooltip/Tooltip';
 import UserDropdown from '@/components/UserDropdown';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
 import { AccountProfileModal } from '@/pages/account-profile/components/modal/AccountProfileModal';
 import { settings } from '@/settings';
 import React, { useEffect, useRef, useState } from 'react';
@@ -29,10 +30,7 @@ export const Navbar: React.FC = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [code, setCode] = useState('');
   const [canGoBack, setCanGoBack] = useState(false);
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('theme');
-    return saved === 'dark';
-  });
+  const { isDark, toggleTheme } = useTheme();
 
   const overrideNavbarItems = useNavbar().navbarItems;
 
@@ -67,26 +65,6 @@ export const Navbar: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    const root = document.documentElement;
-
-    // Tắt tạm transition để tránh flicker khi đổi theme
-    root.classList.add('disable-transitions');
-
-    if (darkMode) {
-      root.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-
-    // Gỡ sau 1 frame để transition hoạt động đồng bộ
-    setTimeout(() => {
-      root.classList.remove('disable-transitions');
-    }, 0);
-  }, [darkMode]);
 
   useEffect(() => {
     // Kiểm tra nếu history có hơn 1 entry thì mới cho back
@@ -157,7 +135,7 @@ export const Navbar: React.FC = () => {
         }
       });
     });
-  }, [location.pathname]);
+  }, [location.pathname, t]);
 
   // Focus input khi nhấn "/"
   useEffect(() => {
@@ -245,11 +223,11 @@ export const Navbar: React.FC = () => {
               })}
             </Dropdown.Menu>
           </Dropdown>
-          <Tooltip content={darkMode ? 'Light mode' : 'Dark mode'} trigger="hover" position="bottom">
+          <Tooltip content={isDark ? 'Light mode' : 'Dark mode'} trigger="hover" position="bottom">
             <IconButton
               className="w-10 h-10"
-              icon={darkMode ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
-              onClick={() => setDarkMode((prev) => !prev)}
+              icon={isDark ? <WeatherMoon className="w-5 h-5" /> : <WeatherSunny className="w-5 h-5" />}
+              onClick={toggleTheme}
             />
           </Tooltip>
           {/* User info */}

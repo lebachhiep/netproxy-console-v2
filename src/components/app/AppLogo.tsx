@@ -1,4 +1,4 @@
-import { LOGO_URL } from '@/config/api';
+import { useBranding } from '@/hooks/useBranding';
 
 export interface AppLogoProps {
   width?: number;
@@ -6,6 +6,8 @@ export interface AppLogoProps {
 }
 
 export const AppLogo = ({ width = 150, height }: AppLogoProps) => {
+  const { logoUrl } = useBranding();
+
   return (
     <div
       style={{
@@ -15,7 +17,7 @@ export const AppLogo = ({ width = 150, height }: AppLogoProps) => {
       }}
       className="text-center animate-pulse"
     >
-      <img src={LOGO_URL} alt="Logo" className="h-full w-full object-contain dark:invert" />
+      {logoUrl && <img src={logoUrl} alt="Logo" className="h-full w-full object-contain dark:invert" />}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-import { Helmet } from 'react-helmet-async';
 import { useAuth } from './useAuth';
 
 interface UsePageTitleOptions {
@@ -9,7 +8,7 @@ interface UsePageTitleOptions {
 }
 
 /**
- * Hook to set page title:
+ * Hook to set page title using React 19 native document metadata hoisting.
  * - When authenticated: "User: {username} - Site: {domain} - Page: {pageName}"
  * - When not authenticated: "Site: {domain} - Page: {pageName}"
  */
@@ -34,11 +33,6 @@ export const usePageTitle = ({ pageName, tabName, plan, orderId }: UsePageTitleO
     title = `Site: ${domain} - Page: ${pageName}`;
   }
 
-  console.log('Setting page title to:', title);
-
-  return (
-    <Helmet>
-      <title>{title}</title>
-    </Helmet>
-  );
+  // React 19 automatically hoists <title> to document head
+  return <title>{title}</title>;
 };

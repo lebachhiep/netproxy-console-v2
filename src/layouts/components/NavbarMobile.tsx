@@ -9,7 +9,7 @@ import { Route, adminSections } from '@/router';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import UserDropdown from '@/components/UserDropdown';
-import { LOGO_URL } from '@/config/api';
+import { useBranding } from '@/hooks/useBranding';
 import { motion } from 'framer-motion';
 import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,7 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logoUrl } = useBranding();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [code, setCode] = useState('');
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -177,12 +178,14 @@ export const NavbarMobile = ({ toggleSidebar, sidebarOpen }: { toggleSidebar: ()
     >
       <div className="px-5 py-3 border-b border-border dark:border-border-dark">
         <div className="h-12 flex items-center justify-between">
-          <img
-            src={LOGO_URL}
-            alt="Logo"
-            className="h-8 object-contain text-center cursor-pointer dark:invert"
-            onClick={() => navigate('/home')}
-          />
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="h-8 object-contain text-center cursor-pointer dark:invert"
+              onClick={() => navigate('/home')}
+            />
+          )}
           <UserDropdown user={user} userProfile={userProfile} settings={settings} handleLogout={handleLogout} setModalOpen={() => {}} />
         </div>
       </div>

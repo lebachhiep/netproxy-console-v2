@@ -13,21 +13,29 @@ import { useBranding } from '@/hooks/useBranding';
 const App = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  const { logoIconUrl } = useBranding();
+  const { logoIconUrl, shouldInvertIcon } = useBranding();
   const element = useRoutes(routes(t), location);
 
+  // Update favicon dynamically when theme or branding changes
   useEffect(() => {
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
+    if (!logoIconUrl) return;
+
+    let link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
     }
-  }, []);
+
+    link.href = logoIconUrl;
+
+    // Note: Favicon invert is not supported via CSS in all browsers
+    // If needed, consider generating inverted favicon server-side
+  }, [logoIconUrl, shouldInvertIcon]);
 
   return (
     <CartProvider>
-      {logoIconUrl && <link rel="icon" href={logoIconUrl} />}
       {element}
       <Toaster
         position="top-right"

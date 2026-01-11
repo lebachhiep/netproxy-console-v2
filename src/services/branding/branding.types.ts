@@ -4,9 +4,10 @@ export interface LogoURLs {
 }
 
 export interface BrandingLogos {
-  logo: LogoURLs | null;
-  logo_icon: LogoURLs | null;
-  og_image: LogoURLs | null;
+  logo_light: LogoURLs | null;
+  logo_dark: LogoURLs | null;
+  icon_light: LogoURLs | null;
+  icon_dark: LogoURLs | null;
 }
 
 export interface OgMetadata {

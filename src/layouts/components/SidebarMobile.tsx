@@ -4,6 +4,7 @@ import { adminSections, Route } from '@/router';
 import { Chevron } from '@/components/icons';
 import { twMerge } from 'tailwind-merge';
 import { useTranslation } from 'react-i18next';
+import { useBranding } from '@/hooks/useBranding';
 
 interface SidebarMobileProps {
   onItemClick: () => void;
@@ -14,6 +15,7 @@ export const SidebarMobile = ({ onItemClick }: SidebarMobileProps) => {
   const [openKeys, setOpenKeys] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const { businessName } = useBranding();
 
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -155,7 +157,9 @@ export const SidebarMobile = ({ onItemClick }: SidebarMobileProps) => {
             ))}
           </ul>
 
-          <div className="mt-1 px-2 py-1 text-sm text-text-muted dark:text-text-muted-dark font-medium">© 2025 Net Proxy.</div>
+          <div className="mt-1 px-2 py-1 text-sm text-text-muted dark:text-text-muted-dark font-medium">
+            © {new Date().getFullYear()} {businessName}.
+          </div>
         </div>
       )}
     </aside>

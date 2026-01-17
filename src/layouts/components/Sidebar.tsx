@@ -24,7 +24,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
   const { isDesktop, isLargeDesktop, isMobile, isTablet } = useResponsive();
   const navigate = useNavigate();
   const { isAbsoluteSidebar } = useResponsive();
-  const { logoUrl, logoIconUrl, shouldInvertLogo, shouldInvertIcon } = useBranding();
+  const { logoUrl, logoIconUrl, shouldInvertLogo, shouldInvertIcon, businessName } = useBranding();
   const toggleSubmenu = (key: string) => {
     setOpenKeys((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   };
@@ -237,7 +237,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
               collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
             }`}
           >
-            © 2025 Net Proxy.
+            © {new Date().getFullYear()} {businessName}.
           </div>
         </div>
       )}

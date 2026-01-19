@@ -15,12 +15,14 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
 import { SupportedLanguages } from '@/config/constants';
+import { useBranding } from '@/hooks/useBranding';
 export const RegisterPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Đăng ký' });
   const navigate = useNavigate();
   const { register, isAuthenticated, clearError } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const { t, i18n } = useTranslation();
+  const { businessName } = useBranding();
 
   const {
     control,
@@ -187,7 +189,7 @@ export const RegisterPage: React.FC = () => {
               className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
             />
           </div>
-          <span className="align-center mx-auto">© Netproxy</span>
+          <span className="align-center mx-auto">© {businessName}</span>
         </div>
       </div>
     </>

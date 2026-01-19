@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
+import { useBranding } from '@/hooks/useBranding';
 
 export const ResetPasswordPage: React.FC = () => {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { confirmResetPassword, isAuthenticated, clearError } = useAuth();
+  const { businessName } = useBranding();
   const [step, setStep] = useState<1 | 2>(1);
 
   // Get email from query params if passed from forgot password page
@@ -199,7 +201,7 @@ export const ResetPasswordPage: React.FC = () => {
           </div>
         )}
 
-        <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© Netproxy</div>
+        <div className="absolute bottom-10 text-text-lo dark:text-text-lo-dark font-medium text-sm">© {businessName}</div>
       </div>
     </>
   );

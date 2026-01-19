@@ -463,7 +463,7 @@
     "noAcc": "Bạn chưa có tài khoản?",
     "register": "Đăng ký ",
     "sent": "Đã gửi email",
-    "alreadySentEmailMessage": "Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và bấm vào đường dẫn để đặt lại mật khẩu. Hoặc ",
+    "alreadySentEmailMessage": "Chúng tôi đã gởi mail cho bạn. Vui lòng kiểm tra email và nhập mã xác thực 6 số để đặt lại mật khẩu. Hoặc ",
     "resendEmail": "gởi lại email"
   },
   "sending": "Đang Gửi ...",

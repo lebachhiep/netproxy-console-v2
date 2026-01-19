@@ -463,7 +463,7 @@
     "noAcc": "Belum punya akun?",
     "register": "Daftar",
     "sent": "Email telah dikirim",
-    "alreadySentEmailMessage": "Kami telah mengirimkan email kepada Anda. Silakan ikuti tautan di email untuk mengatur ulang kata sandi Anda. Atau ",
+    "alreadySentEmailMessage": "Kami telah mengirimkan email kepada Anda. Silakan periksa email Anda dan masukkan kode verifikasi 6 digit untuk mengatur ulang kata sandi Anda. Atau ",
     "resendEmail": "kirim ulang email"
   },
   "sending": "Mengirim...",

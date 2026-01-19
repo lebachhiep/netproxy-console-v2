@@ -463,7 +463,7 @@
     "noAcc": "Wala pang account?",
     "register": "Mag-sign up",
     "sent": "Naipadala na ang Email",
-    "alreadySentEmailMessage": "Nagpadala kami sa iyo ng email. Pakisunod ang link sa email para i-reset ang password. O ",
+    "alreadySentEmailMessage": "Nagpadala kami sa iyo ng email. Suriin ang iyong email at ilagay ang 6-digit na verification code para i-reset ang password. O ",
     "resendEmail": "i-resend ang email"
   },
   "sending": "Ipinapadala...",

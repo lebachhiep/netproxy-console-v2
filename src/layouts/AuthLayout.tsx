@@ -1,5 +1,6 @@
 import { Select } from '@/components/select/Select';
 import { SupportedLanguages } from '@/config/constants';
+import { useBranding } from '@/hooks/useBranding';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 interface AuthLayoutProps {
@@ -9,6 +10,7 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right }) => {
   const { t, i18n } = useTranslation();
+  const { businessName } = useBranding();
   return (
     <div className="max-w-[1200px] mx-auto relative md:flex min-h-[100dvh] ">
       {/* Left */}
@@ -31,7 +33,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right }) => {
               className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
             />
           </div>
-          <div className="items-center text-center md:center">© Netproxy</div>
+          <div className="items-center text-center md:center">© {businessName}</div>
         </div>
       </div>
 

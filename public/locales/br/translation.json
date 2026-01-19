@@ -452,7 +452,7 @@
     "noAcc": "Não tem uma conta?",
     "register": "Cadastrar",
     "sent": "E-mail enviado",
-    "alreadySentEmailMessage": "Enviamos um e-mail para você. Siga o link no e-mail para redefinir a senha. Ou ",
+    "alreadySentEmailMessage": "Enviamos um e-mail para você. Verifique seu e-mail e insira o código de verificação de 6 dígitos para redefinir sua senha. Ou ",
     "resendEmail": "reenviar e-mail"
   },
   "sending": "Enviando...",

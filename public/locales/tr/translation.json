@@ -463,7 +463,7 @@
     "noAcc": "Hesabınız yok mu?",
     "register": "Kaydol",
     "sent": "E-posta gönderildi",
-    "alreadySentEmailMessage": "Size bir e-posta gönderdik. Şifrenizi sıfırlamak için bağlantıyı takip edin. Veya ",
+    "alreadySentEmailMessage": "Size bir e-posta gönderdik. E-postanızı kontrol edin ve şifrenizi sıfırlamak için 6 haneli doğrulama kodunu girin. Veya ",
     "resendEmail": "tekrar gönder"
   },
   "sending": "Gönderiliyor...",

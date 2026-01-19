@@ -463,7 +463,7 @@
     "noAcc": "还没有账户？",
     "register": "注册",
     "sent": "邮件已发送",
-    "alreadySentEmailMessage": "我们已向您发送邮件。请点击邮件中的链接重置密码。或",
+    "alreadySentEmailMessage": "我们已向您发送邮件。请查看邮件并输入6位验证码来重置密码。或",
     "resendEmail": "重新发送邮件"
   },
   "sending": "发送中...",

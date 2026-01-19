@@ -463,7 +463,7 @@
     "noAcc": "Don't have an account?",
     "register": "Register",
     "sent": "Email has been sent",
-    "alreadySentEmailMessage": "We sent you an email. Please follow the link in the email to reset your password. Or ",
+    "alreadySentEmailMessage": "We sent you an email. Please check your email and enter the 6-digit verification code to reset your password. Or ",
     "resendEmail": "resent mail"
   },
   "sending": "Sending...",

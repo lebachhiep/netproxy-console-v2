@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { usePageTitle } from '@/hooks/usePageTitle';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
+import { useBranding } from '@/hooks/useBranding';
 import { Select } from '@/components/select/Select';
 import { SupportedLanguages } from '@/config/constants';
 
@@ -21,6 +22,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: t('loginPage.forgot') });
   const navigate = useNavigate();
   const { resetPassword, isAuthenticated, clearError } = useAuth();
+  const { businessName } = useBranding();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [emailSent, setEmailSent] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
@@ -159,7 +161,7 @@ export const ForgotPasswordPage: React.FC = () => {
               className="w-full h-10 dark:pseudo-border-top dark:border-transparent dark:bg-[#2B405A] font-inter"
             />
           </div>
-          <div className="text-center">© Netproxy</div>
+          <div className="text-center">© {businessName}</div>
         </div>
       </div>
     </>

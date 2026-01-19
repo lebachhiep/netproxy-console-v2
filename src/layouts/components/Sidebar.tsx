@@ -139,6 +139,36 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggle }: SidebarPr
                     );
                   }
 
+                  // External link
+                  if (route.externalUrl) {
+                    return (
+                      <li key={route.name || route.externalUrl}>
+                        <a
+                          href={route.externalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center h-10 gap-2 px-2 py-1 text-[14px] font-medium rounded-lg transition-smooth text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:!font-bold"
+                        >
+                          <div
+                            className={twMerge(
+                              'w-6 h-6 flex items-center justify-center',
+                              collapsed ? 'text-text-hi dark:text-text-hi-dark' : route.iconClass
+                            )}
+                          >
+                            {collapsed && route.collapsedIcon ? route.collapsedIcon : route.icon}
+                          </div>
+                          <div
+                            className={`transition-smooth overflow-hidden whitespace-nowrap flex-1 ${
+                              collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
+                            }`}
+                          >
+                            {route.title}
+                          </div>
+                        </a>
+                      </li>
+                    );
+                  }
+
                   return (
                     <li key={route.path}>
                       <Link

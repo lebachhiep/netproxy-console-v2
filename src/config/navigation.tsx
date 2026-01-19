@@ -32,6 +32,7 @@ export interface NavigationRoute {
   name?: string;
   path?: string;
   aliasPath?: string;
+  externalUrl?: string;
 }
 
 export interface NavigationSection {
@@ -131,7 +132,7 @@ export const navigationSections = (t: (key: string) => string): NavigationSectio
         {
           title: (
             <div className="flex items-center flex-1 justify-between w-full">
-              <span>{t('affiliateProgram')}</span>
+              <span>{t('resellerProgram')}</span>
               <Open className="text-blue dark:text-blue-dark" />
             </div>
           ),
@@ -139,9 +140,9 @@ export const navigationSections = (t: (key: string) => string): NavigationSectio
           collapsedIcon: <CloudSwapOutlined />,
           iconClass: 'text-pink',
           breadcrumbIcon: <CloudSwapFilled width={32} height={32} className="text-pink" />,
-          path: '/reseller',
+          externalUrl: 'https://seller.prx.network',
           name: '/reseller',
-          breadcrumb: t('affiliateProgram')
+          breadcrumb: t('resellerProgram')
         },
         {
           title: (

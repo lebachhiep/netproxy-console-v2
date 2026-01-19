@@ -98,6 +98,29 @@ export const SidebarMobile = ({ onItemClick }: SidebarMobileProps) => {
                     );
                   }
 
+                  // External link
+                  if (route.externalUrl) {
+                    return (
+                      <li key={route.name || route.externalUrl}>
+                        <a
+                          href={route.externalUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={onItemClick}
+                          className={twMerge(
+                            `flex items-center h-10 gap-2 px-2 py-1 text-[14px] font-medium rounded-lg w-full text-left transition-smooth`,
+                            'text-text-hi dark:text-text-hi-dark hover:bg-bg-hover-gray dark:hover:bg-bg-hover-gray-dark hover:!font-bold'
+                          )}
+                        >
+                          <div className={twMerge('w-6 h-6 flex items-center justify-center', route.iconClass)}>
+                            {route.collapsedIcon ? route.collapsedIcon : route.icon}
+                          </div>
+                          <div className="flex-1 whitespace-nowrap">{route.title}</div>
+                        </a>
+                      </li>
+                    );
+                  }
+
                   // Không có submenu
                   return (
                     <li key={route.path}>

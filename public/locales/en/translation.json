@@ -472,7 +472,17 @@
     "askingForEnterPassword": "Please enter your new password",
     "settingUp": "Setting up...",
     "alertResetSuccess": "Password has been reset successfully",
-    "alertReset-ed": "Your password has been reset"
+    "alertReset-ed": "Your password has been reset",
+    "alertResetMessage": "Your password has been reset successfully. Please log in with your new password.",
+    "enterOTP": "Enter verification code (6 digits)",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "invalidToken": "Invalid verification code",
+    "invalidEmail": "Email not found in system",
+    "tokenExpired": "Verification code has expired",
+    "tooManyAttempts": "Too many attempts. Please request a new code",
+    "requestNewCode": "Request new code",
+    "rememberPassword": "Remember password?"
   },
   "refresh": "Refresh",
   "tutorial": "Tutorials",

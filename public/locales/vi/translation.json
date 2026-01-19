@@ -472,7 +472,17 @@
     "askingForEnterPassword": "Vui lòng nhập mật khẩu mới",
     "settingUp": "Đang đặt lại...",
     "alertResetSuccess": "Đổi mật khẩu thành công",
-    "alertReset-ed": "Mật khẩu của bạn đã được đặt lại"
+    "alertReset-ed": "Mật khẩu của bạn đã được đặt lại",
+    "alertResetMessage": "Mật khẩu của bạn đã được đặt lại thành công. Vui lòng đăng nhập bằng mật khẩu mới.",
+    "enterOTP": "Nhập mã xác thực (6 số)",
+    "newPassword": "Mật khẩu mới",
+    "confirmNewPassword": "Xác nhận mật khẩu mới",
+    "invalidToken": "Mã xác thực không hợp lệ",
+    "invalidEmail": "Email không tồn tại trong hệ thống",
+    "tokenExpired": "Mã xác thực đã hết hạn",
+    "tooManyAttempts": "Quá nhiều lần thử. Vui lòng yêu cầu mã mới",
+    "requestNewCode": "Yêu cầu mã mới",
+    "rememberPassword": "Nhớ mật khẩu?"
   },
   "refresh": "Tải lại",
   "tutorials": "Hướng dẫn",

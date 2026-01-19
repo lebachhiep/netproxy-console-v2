@@ -10,10 +10,7 @@ export const loginSchema = z.object({
 // Register form schema
 export const registerSchema = z
   .object({
-    fullName: z
-      .string()
-      .min(1, 'Họ tên là bắt buộc')
-      .max(255, 'Họ tên không được vượt quá 255 ký tự'),
+    fullName: z.string().min(1, 'Họ tên là bắt buộc').max(255, 'Họ tên không được vượt quá 255 ký tự'),
     email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase(),
     username: z
       .string()
@@ -42,9 +39,33 @@ export const forgotPasswordSchema = z.object({
   email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase()
 });
 
-// Password reset schema
+// Password reset schema (basic - used when token is in URL)
 export const resetPasswordSchema = z
   .object({
+    password: z
+      .string()
+      .min(1, 'Mật khẩu là bắt buộc')
+      .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+      .regex(/[A-Z]/, 'Phải có ít nhất 1 chữ hoa')
+      .regex(/[a-z]/, 'Phải có ít nhất 1 chữ thường')
+      .regex(/[0-9]/, 'Phải có ít nhất 1 số')
+      .regex(/[^A-Za-z0-9]/, 'Phải có ít nhất 1 ký tự đặc biệt'),
+    confirmPassword: z.string().min(1, 'Xác nhận mật khẩu là bắt buộc')
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword']
+  });
+
+// Confirm password reset schema (with OTP token - used for forgot password flow)
+export const confirmResetPasswordSchema = z
+  .object({
+    email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ').toLowerCase(),
+    token: z
+      .string()
+      .min(1, 'Mã xác thực là bắt buộc')
+      .length(6, 'Mã xác thực phải có 6 chữ số')
+      .regex(/^\d{6}$/, 'Mã xác thực chỉ được chứa số'),
     password: z
       .string()
       .min(1, 'Mật khẩu là bắt buộc')
@@ -85,4 +106,5 @@ export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export type ConfirmResetPasswordFormData = z.infer<typeof confirmResetPasswordSchema>;
 export type UserProfile = z.infer<typeof userProfileSchema>;

@@ -117,12 +117,13 @@ class AuthService {
   }
 
   /**
-   * Reset password with token
+   * Reset password with OTP token
    * POST /auth/reset-password
    */
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  async resetPassword(email: string, token: string, newPassword: string): Promise<void> {
     try {
       await apiService.post('/auth/reset-password', {
+        email,
         token,
         new_password: newPassword
       });

@@ -14,6 +14,7 @@ export const useAuth = () => {
     register,
     logout,
     resetPassword,
+    confirmResetPassword,
     clearError,
     fetchUserProfile,
     setUserProfile,
@@ -32,16 +33,17 @@ export const useAuth = () => {
     register,
     logout,
     resetPassword,
+    confirmResetPassword,
     clearError,
     fetchUserProfile,
     setUserProfile,
     clearUserProfile,
     // Helper methods from userService
-    getDisplayName: () => userProfile ? userService.getDisplayName(userProfile) : null,
-    getUserInitials: () => userProfile ? userService.getUserInitials(userProfile) : null,
-    formatBalance: () => userProfile ? userService.formatBalance(userProfile.balance) : null,
-    isProfileComplete: () => userProfile ? userService.isProfileComplete(userProfile) : false,
-    isAdmin: () => userProfile ? userService.isAdmin(userProfile) : false,
-    isModerator: () => userProfile ? userService.isModerator(userProfile) : false
+    getDisplayName: () => (userProfile ? userService.getDisplayName(userProfile) : null),
+    getUserInitials: () => (userProfile ? userService.getUserInitials(userProfile) : null),
+    formatBalance: () => (userProfile ? userService.formatBalance(userProfile.balance) : null),
+    isProfileComplete: () => (userProfile ? userService.isProfileComplete(userProfile) : false),
+    isAdmin: () => (userProfile ? userService.isAdmin(userProfile) : false),
+    isModerator: () => (userProfile ? userService.isModerator(userProfile) : false)
   };
 };

@@ -23,6 +23,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const { resetPassword, isAuthenticated, clearError } = useAuth();
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [emailSent, setEmailSent] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState('');
 
   const {
     control,
@@ -60,6 +61,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
       await resetPassword(data.email, captchaToken);
       toast.success(t('auth.PASSWORD_RESET_SENT'));
+      setSubmittedEmail(data.email); // Store email before resetting form
       setEmailSent(true);
       reset(); // Clear the form
     } catch (error) {
@@ -123,13 +125,20 @@ export const ForgotPasswordPage: React.FC = () => {
             <div className="flex flex-col gap-3 max-w-[512px]">
               <h3>{t('forgotPasswordPage.sent')}</h3>
               <p className="text-base text-text-hi dark:text-text-hi-dark">
-                {t('forgotPasswordPage.alreadySentEmailMessage')}
+                {t('forgotPasswordPage.alreadySentEmailMessage')}{' '}
                 <a href="#" className="text-blue underline font-medium" onClick={() => setEmailSent(false)}>
                   {t('forgotPasswordPage.resendEmail')}
                 </a>
               </p>
-              <div>
-                <Button variant="default" className="px-8 uppercase" onClick={() => navigate(AUTH_ROUTES.LOGIN)}>
+              <div className="flex flex-col gap-3">
+                <Button
+                  variant="default"
+                  className="px-8 uppercase"
+                  onClick={() => navigate(`${AUTH_ROUTES.RESET_PASSWORD}?email=${encodeURIComponent(submittedEmail)}`)}
+                >
+                  {t('resetPasswordPage.resetPassword')}
+                </Button>
+                <Button variant="outlined" className="px-8 uppercase" onClick={() => navigate(AUTH_ROUTES.LOGIN)}>
                   {t('forgotPasswordPage.login')}
                 </Button>
               </div>

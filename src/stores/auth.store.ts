@@ -19,6 +19,7 @@ interface AuthState {
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
   resetPassword: (email: string, captchaToken: string) => Promise<void>;
+  confirmResetPassword: (email: string, token: string, newPassword: string) => Promise<void>;
   clearError: () => void;
   setLoading: (loading: boolean) => void;
   setUser: (user: AuthUser | null) => void;
@@ -167,6 +168,18 @@ export const useAuthStore = create<AuthState>()(
           set({ loading: false });
         } catch (error: any) {
           const errorMessage = error.response?.data?.message || error.message || 'Gửi email đặt lại mật khẩu thất bại';
+          set({ error: errorMessage, loading: false });
+          throw error;
+        }
+      },
+
+      confirmResetPassword: async (email: string, token: string, newPassword: string) => {
+        set({ loading: true, error: null });
+        try {
+          await authService.resetPassword(email, token, newPassword);
+          set({ loading: false });
+        } catch (error: any) {
+          const errorMessage = error.response?.data?.message || error.message || 'Đặt lại mật khẩu thất bại';
           set({ error: errorMessage, loading: false });
           throw error;
         }

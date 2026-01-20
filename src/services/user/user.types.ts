@@ -37,3 +37,8 @@ export interface PlatformStat {
   total_orders: number;
   total_relay_nodes: number;
 }
+
+// API Key rotation response
+export interface RotateApiKeyResponse {
+  api_key: string;
+}

@@ -1,5 +1,5 @@
 import { apiService } from '@/services/api/api.service';
-import { UserProfile, UpdateProfileRequest, UpdateProfileResponse, PlatformStat } from './user.types';
+import { UserProfile, UpdateProfileRequest, UpdateProfileResponse, PlatformStat, RotateApiKeyResponse } from './user.types';
 
 class UserService {
   /**
@@ -88,6 +88,21 @@ class UserService {
    */
   isModerator(profile: UserProfile): boolean {
     return profile.role === 'moderator' || profile.role === 'admin';
+  }
+
+  /**
+   * Rotate (generate new) API key
+   * POST /user/api-key/rotate
+   * Note: The API key can only be viewed once after rotation
+   */
+  async rotateApiKey(): Promise<RotateApiKeyResponse> {
+    try {
+      const response = await apiService.post<RotateApiKeyResponse>('/user/api-key/rotate', {});
+      return response;
+    } catch (error) {
+      console.error('Failed to rotate API key:', error);
+      throw error;
+    }
   }
 }
 

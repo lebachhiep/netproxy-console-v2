@@ -1,16 +1,19 @@
 import { Button } from '@/components/button/Button';
+import { ApiInput } from '@/components/input/ApiInput';
 import { InputField } from '@/components/input/InputField';
 import { Tabs } from '@/components/tabs/Tabs';
+import { Eye, EyeOff, FileCopy, AddCircle } from '@/components/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
 import { UserProfile, UpdateProfileRequest } from '@/services/user/user.types';
 import { userService } from '@/services/user/user.service';
 import { mapApiError } from '@/utils/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { SuccessModal } from './components/modal/SuccessModal';
+import { ApiKeyConfirmModal } from './components/modal/ApiKeyConfirmModal';
 import ProfileForm from './components/ProfileForm';
 import { motion } from 'framer-motion';
 import { containerVariants, itemVariants, pageVariants } from '@/utils/animation';
@@ -23,10 +26,17 @@ export const AccountProfilePage: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
   const { user, userProfile, fetchUserProfile } = useAuth();
+
+  // API Key state
+  const [generatedApiKey, setGeneratedApiKey] = useState<string | null>(null);
+  const [isHideApiKey, setIsHideApiKey] = useState(true);
+  const [showApiKeyConfirmModal, setShowApiKeyConfirmModal] = useState(false);
+  const [isRotatingApiKey, setIsRotatingApiKey] = useState(false);
+
   const accountTabs = [
     { key: 'info', label: t('GeneralInformation') || 'Thông tin chung' },
-    { key: 'change-password', label: t('changePassword') || 'Đổi mật khẩu' }
-    // { key: 'api-key', label: 'API Key' }
+    { key: 'change-password', label: t('changePassword') || 'Đổi mật khẩu' },
+    { key: 'api-key', label: 'API Key' }
   ];
 
   // Form 1: Profile Info
@@ -120,6 +130,29 @@ export const AccountProfilePage: React.FC = () => {
     }
   };
 
+  const handleRotateApiKey = async () => {
+    setIsRotatingApiKey(true);
+    try {
+      const response = await userService.rotateApiKey();
+      setGeneratedApiKey(response.api_key);
+      setIsHideApiKey(false); // Show the key immediately after generation
+      setShowApiKeyConfirmModal(false);
+      toast.success(t('toast.success.apiKeyGenerated') || 'API Key đã được tạo thành công');
+    } catch (error) {
+      const errorMessage = mapApiError(error);
+      toast.error(errorMessage);
+    } finally {
+      setIsRotatingApiKey(false);
+    }
+  };
+
+  const handleCopyApiKey = () => {
+    if (generatedApiKey) {
+      navigator.clipboard.writeText(generatedApiKey);
+      toast.success(t('toast.success.copyAPIKey') || 'Đã sao chép API Key');
+    }
+  };
+
   return (
     <>
       <motion.div
@@ -193,43 +226,56 @@ export const AccountProfilePage: React.FC = () => {
           </motion.div>
 
           {/* Tab 3: API Key */}
-          {/* <motion.div variants={containerVariants} className="p-5 flex flex-col gap-4">
+          <motion.div variants={containerVariants} className="p-5 flex flex-col gap-4">
             <div className="flex flex-col gap-1 text-sm">
               <motion.div variants={itemVariants} className="flex items-center gap-1">
                 <span className="font-semibold text-text-hi dark:text-text-hi-dark">API Key</span>
-                <div className="bg-blue rounded-[2px] text-white px-1">1 / 5</div>
               </motion.div>
               <motion.div variants={itemVariants} className="text-text-me dark:text-text-me-dark mb-4">
-                {t('warnAPI')}
+                {t('apiKey.warning') || 'API Key được sử dụng để xác thực các yêu cầu API. Hãy giữ bí mật API Key của bạn.'}
               </motion.div>
 
-              <motion.div variants={itemVariants} className="flex flex-row justify-center items-center gap-5">
-                <ApiInput
-                  value={isHideApiValue ? '*'.repeat(apiValue.length) : apiValue}
-                  actions={[
-                    {
-                      icon: isHideApiValue ? (
-                        <EyeOff className="text-primary dark:text-primary-dark w-6 h-6" />
-                      ) : (
-                        <Eye className="text-primary dark:text-primary-dark w-6 h-6" />
-                      ),
-                      onClick: () => setIsHideApiValue(!isHideApiValue)
-                    },
-                    {
-                      icon: <FileCopy className="text-blue dark:text-blue-dark w-6 h-6" />,
-                      onClick: () => {
-                        navigator.clipboard.writeText(apiValue);
-                        toast.success(t('toast.success.copyAPIEndpoint'));
-                      }
-                    }
-                  ]}
-                />
-                <Button variant="default" className="w-fit h-10 px-4 rounded-md" icon={<AddCircle />}>
-                  {t('createAPIKey')}
+              {generatedApiKey && (
+                <>
+                  <motion.div variants={itemVariants} className="flex flex-row items-center gap-3">
+                    <ApiInput
+                      label=""
+                      className="flex-1"
+                      value={isHideApiKey ? '*'.repeat(generatedApiKey.length) : generatedApiKey}
+                      actions={[
+                        {
+                          icon: isHideApiKey ? (
+                            <Eye className="text-primary dark:text-primary-dark w-5 h-5" />
+                          ) : (
+                            <EyeOff className="text-primary dark:text-primary-dark w-5 h-5" />
+                          ),
+                          onClick: () => setIsHideApiKey(!isHideApiKey)
+                        },
+                        {
+                          icon: <FileCopy className="text-blue dark:text-blue-dark w-5 h-5" />,
+                          onClick: handleCopyApiKey
+                        }
+                      ]}
+                    />
+                  </motion.div>
+                  <motion.div variants={itemVariants} className="text-yellow-hi dark:text-yellow-hi-dark text-sm mt-2">
+                    {t('apiKey.saveNow') || 'Hãy lưu API Key này ngay bây giờ. Bạn sẽ không thể xem lại key này sau khi rời khỏi trang.'}
+                  </motion.div>
+                </>
+              )}
+
+              <motion.div variants={itemVariants} className="mt-4">
+                <Button
+                  variant="default"
+                  className="w-fit h-10 px-4 rounded-md"
+                  icon={<AddCircle />}
+                  onClick={() => setShowApiKeyConfirmModal(true)}
+                >
+                  {generatedApiKey ? t('apiKey.rotate') || 'Tạo API Key mới' : t('apiKey.generate') || 'Tạo API Key'}
                 </Button>
               </motion.div>
             </div>
-          </motion.div> */}
+          </motion.div>
         </Tabs>
       </motion.div>
       <SuccessModal
@@ -239,6 +285,12 @@ export const AccountProfilePage: React.FC = () => {
           setShowSuccessModal(false);
           //TODO
         }}
+      />
+      <ApiKeyConfirmModal
+        open={showApiKeyConfirmModal}
+        onClose={() => setShowApiKeyConfirmModal(false)}
+        onConfirm={handleRotateApiKey}
+        isLoading={isRotatingApiKey}
       />
     </>
   );

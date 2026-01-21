@@ -81,7 +81,7 @@ export const RegisterPage: React.FC = () => {
     <>
       {pageTitle}
       <div className="relative flex p-6 items-center justify-center min-h-[100dvh] bg-bg-canvas dark:bg-bg-canvas-dark">
-        <AuthFormWrapper title={t('signIn')} subtitle={t('registerPage.subtitle')}>
+        <AuthFormWrapper title={t('signup')} subtitle={t('registerPage.subtitle')}>
           <div className="p-5 shadow-lg rounded-[20px] border border-border-element dark:border-border-element-dark">
             <div className="flex flex-col gap-5">
               <form onSubmit={handleSubmit(onSubmit)}>

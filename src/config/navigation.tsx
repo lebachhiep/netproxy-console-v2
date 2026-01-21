@@ -155,7 +155,7 @@ export const navigationSections = (t: (key: string) => string): NavigationSectio
           collapsedIcon: <DocumentSync />,
           iconClass: 'text-primary',
           breadcrumbIcon: <DocumentSyncFilled width={32} height={32} className="text-primary" />,
-          path: '/api-docs',
+          externalUrl: 'https://www.postman.com/prx111/prx-network/documentation/40157332-a90bf316-d932-4f36-8dc0-c6278a47f486',
           name: '/api-docs',
           breadcrumb: t('apiDocumentation')
         }

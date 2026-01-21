@@ -104,6 +104,23 @@ class UserService {
       throw error;
     }
   }
+
+  /**
+   * Change user password
+   * POST /user/account/change-password
+   * Note: This will revoke all refresh tokens (forces re-login on all devices)
+   */
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    try {
+      await apiService.post('/user/account/change-password', {
+        current_password: currentPassword,
+        new_password: newPassword
+      });
+    } catch (error) {
+      console.error('Failed to change password:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance

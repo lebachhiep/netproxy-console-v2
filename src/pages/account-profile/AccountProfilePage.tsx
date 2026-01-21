@@ -4,7 +4,7 @@ import { InputField } from '@/components/input/InputField';
 import { Tabs } from '@/components/tabs/Tabs';
 import { Eye, EyeOff, FileCopy, AddCircle } from '@/components/icons';
 import { useAuth } from '@/hooks/useAuth';
-import { ResetPasswordFormData, resetPasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
+import { ChangePasswordFormData, changePasswordSchema, userProfileSchema } from '@/services/auth/auth.schemas';
 import { UserProfile, UpdateProfileRequest } from '@/services/user/user.types';
 import { userService } from '@/services/user/user.service';
 import { mapApiError } from '@/utils/errors';
@@ -22,10 +22,10 @@ import { useTranslation } from 'react-i18next';
 
 export const AccountProfilePage: React.FC = () => {
   const { t } = useTranslation();
-  const pageTitle = usePageTitle({ pageName: 'Tài khoản' });
+  const pageTitle = usePageTitle({ pageName: t('accountProfile') || 'Tài khoản' });
   const [showSuccessModal, setShowSuccessModal] = React.useState(false);
 
-  const { user, userProfile, fetchUserProfile } = useAuth();
+  const { user, userProfile, fetchUserProfile, logout } = useAuth();
 
   // API Key state
   const [generatedApiKey, setGeneratedApiKey] = useState<string | null>(null);
@@ -62,17 +62,19 @@ export const AccountProfilePage: React.FC = () => {
     }
   });
 
-  // Form 2: Reset Password
+  // Form 2: Change Password
   const {
     control: passwordControl,
     handleSubmit: handlePasswordSubmit,
     formState: { errors: passwordErrors, isSubmitting: isPasswordSubmitting },
-    setError: setPasswordError
-  } = useForm<ResetPasswordFormData>({
-    resolver: zodResolver(resetPasswordSchema),
+    setError: setPasswordError,
+    reset: resetPasswordForm
+  } = useForm<ChangePasswordFormData>({
+    resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      password: '',
-      confirmPassword: ''
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: ''
     }
   });
 
@@ -118,14 +120,14 @@ export const AccountProfilePage: React.FC = () => {
     }
   };
 
-  const onSubmitPassword = async (data: ResetPasswordFormData) => {
+  const onSubmitPassword = async (data: ChangePasswordFormData) => {
     try {
-      console.log('Password reset data:', data);
-      // TODO: call API reset password
-      setShowSuccessModal(true); //
+      await userService.changePassword(data.currentPassword, data.newPassword);
+      resetPasswordForm();
+      setShowSuccessModal(true);
     } catch (error) {
       const errorMessage = mapApiError(error);
-      toast.error(errorMessage);
+      toast.error(t('toast.error.passwordChange') || errorMessage);
       setPasswordError('root', { message: errorMessage });
     }
   };
@@ -178,7 +180,28 @@ export const AccountProfilePage: React.FC = () => {
               <form onSubmit={handlePasswordSubmit(onSubmitPassword)}>
                 <motion.div variants={itemVariants} className="space-y-4">
                   <Controller
-                    name="password"
+                    name="currentPassword"
+                    control={passwordControl}
+                    render={({ field }) => (
+                      <div>
+                        <InputField
+                          wrapperClassName="h-10"
+                          {...field}
+                          type="password"
+                          inputClassName="w-full"
+                          label={t('form.currentPassword') || 'Mật khẩu hiện tại'}
+                          showPasswordToggle
+                          disabled={isPasswordSubmitting}
+                        />
+                        {passwordErrors.currentPassword && (
+                          <span className="text-red text-sm mt-1">{passwordErrors.currentPassword.message}</span>
+                        )}
+                      </div>
+                    )}
+                  />
+
+                  <Controller
+                    name="newPassword"
                     control={passwordControl}
                     render={({ field }) => (
                       <div>
@@ -191,13 +214,13 @@ export const AccountProfilePage: React.FC = () => {
                           showPasswordToggle
                           disabled={isPasswordSubmitting}
                         />
-                        {passwordErrors.password && <span className="text-red text-sm mt-1">{passwordErrors.password.message}</span>}
+                        {passwordErrors.newPassword && <span className="text-red text-sm mt-1">{passwordErrors.newPassword.message}</span>}
                       </div>
                     )}
                   />
 
                   <Controller
-                    name="confirmPassword"
+                    name="confirmNewPassword"
                     control={passwordControl}
                     render={({ field }) => (
                       <div>
@@ -210,8 +233,8 @@ export const AccountProfilePage: React.FC = () => {
                           disabled={isPasswordSubmitting}
                           inputClassName="w-full"
                         />
-                        {passwordErrors.confirmPassword && (
-                          <span className="text-red text-sm mt-1">{passwordErrors.confirmPassword.message}</span>
+                        {passwordErrors.confirmNewPassword && (
+                          <span className="text-red text-sm mt-1">{passwordErrors.confirmNewPassword.message}</span>
                         )}
                       </div>
                     )}
@@ -283,7 +306,7 @@ export const AccountProfilePage: React.FC = () => {
         onClose={() => setShowSuccessModal(false)}
         onConfirm={() => {
           setShowSuccessModal(false);
-          //TODO
+          logout();
         }}
       />
       <ApiKeyConfirmModal

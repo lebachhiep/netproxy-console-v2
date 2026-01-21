@@ -81,6 +81,29 @@ export const confirmResetPasswordSchema = z
     path: ['confirmPassword']
   });
 
+// Change password schema (for authenticated users changing their own password)
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Mật khẩu hiện tại là bắt buộc').min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
+    newPassword: z
+      .string()
+      .min(1, 'Mật khẩu mới là bắt buộc')
+      .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+      .regex(/[A-Z]/, 'Phải có ít nhất 1 chữ hoa')
+      .regex(/[a-z]/, 'Phải có ít nhất 1 chữ thường')
+      .regex(/[0-9]/, 'Phải có ít nhất 1 số')
+      .regex(/[^A-Za-z0-9]/, 'Phải có ít nhất 1 ký tự đặc biệt'),
+    confirmNewPassword: z.string().min(1, 'Xác nhận mật khẩu là bắt buộc')
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmNewPassword']
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'Mật khẩu mới phải khác mật khẩu hiện tại',
+    path: ['newPassword']
+  });
+
 // User profile schema - matches backend GetMeResponse
 export const userProfileSchema = z.object({
   id: z.string().uuid('ID không hợp lệ'),
@@ -107,4 +130,5 @@ export type RegisterFormData = z.infer<typeof registerSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export type ConfirmResetPasswordFormData = z.infer<typeof confirmResetPasswordSchema>;
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;
 export type UserProfile = z.infer<typeof userProfileSchema>;

@@ -17,6 +17,8 @@
   "clickToEdit": "Click để chỉnh sửa",
   "comingSoon": "Sắp ra mắt",
   "signInAgain": "Đăng nhập lại",
+  "loginAgain": "Đăng nhập lại",
+  "accountProfile": "Tài khoản",
   "resetPasswordComplete": "Mật khẩu của bạn đã được đặt lại! Vui lòng đăng nhập lại",
   "dashboard": {
     "balance": "Số dư",
@@ -282,8 +284,10 @@
     "avaUrl": "URL Ảnh Đại Diện",
     "saving": "Đang lưu...",
     "buttonSave": "LƯU THÔNG TIN",
+    "currentPassword": "Mật khẩu hiện tại",
     "newPassword": "Mật khẩu mới",
-    "confirmNewPassword": "Nhập lại mật khẩu mới"
+    "confirmNewPassword": "Nhập lại mật khẩu mới",
+    "loading": "Đang xử lý..."
   },
   "support": {
     "chrome": {
@@ -338,6 +342,7 @@
       "ipAddressClipboard": "Đã sao chép IPAddress vào Clipboard",
       "usernameClipboard": "Đã sao chép Username vào Clipboard",
       "passwordClipboard": "Đã sao chép Password vào Clipboard",
+      "passwordChanged": "Đổi mật khẩu thành công",
       "port": "Đã sao chép Port vào Clipboard",
       "transactionIdClipboard": "Đã sao chép mã giao dịch vào Clipboard",
       "copyClipboard": "Đã sao chép vào Clipboard",
@@ -368,7 +373,9 @@
       "invalidDiscount": "Mã giảm giá không hợp hoặc đã hết hạn",
       "cantVeriDiscount": "Không thể xác thực mã giảm giá",
       "countryList": "Không thể tải danh sách quốc gia",
-      "autoRenew": "Thay đổi trạng thái tự động gia hạn thất bại"
+      "autoRenew": "Thay đổi trạng thái tự động gia hạn thất bại",
+      "passwordChange": "Đổi mật khẩu thất bại",
+      "incorrectPassword": "Mật khẩu hiện tại không đúng"
     },
     "warn": {
       "enterValidCoupon": "Mã giảm giá không tồn tại hoặc đã được sử dụng trước đó",
@@ -452,7 +459,7 @@
     "LOGOUT_SUCCESS": "Đăng xuất thành công!",
     "PASSWORD_RESET_SENT": "Email đặt lại mật khẩu đã được gửi!",
     "EMAIL_VERIFICATION_SENT": "Email xác thực đã được gửi!",
-    "PROFILE_UPDATED": "Cập nhật ,thông tin thành công!"
+    "PROFILE_UPDATED": "Cập nhật thông tin thành công!"
   },
   "registerPage": {
     "subtitle": "Vui lòng nhập thông tin đăng ký",

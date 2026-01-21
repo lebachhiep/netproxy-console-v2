@@ -17,6 +17,8 @@
   "clickToEdit": "Click to edit",
   "comingSoon": "Coming soon",
   "signInAgain": "Sign in again",
+  "loginAgain": "Sign in again",
+  "accountProfile": "Account",
   "resetPasswordComplete": "Your password has been reset successfully. Please sign in again",
   "dashboard": {
     "balance": "Balance",
@@ -282,8 +284,10 @@
     "avaUrl": "Avatar URL",
     "saving": "Saving...",
     "buttonSave": "Save Changes",
+    "currentPassword": "Current Password",
     "newPassword": "New Password",
-    "confirmNewPassword": "Confirm New Password"
+    "confirmNewPassword": "Confirm New Password",
+    "loading": "Processing..."
   },
   "support": {
     "chrome": {
@@ -339,6 +343,7 @@
       "port": "Port copied to Clipboard",
       "usernameClipboard": "Username copied to Clipboard",
       "passwordClipboard": "Password copied to Clipboard",
+      "passwordChanged": "Password changed successfully",
       "transactionIdClipboard": "Transaction ID copied to Clipboard",
       "cpuClipboard": "Copied to Clipboard",
       "proxyExport": "Proxy exported successfully",
@@ -368,7 +373,9 @@
       "invalidDiscount": "Invalid Discount Code or it has been expired",
       "cantVeriDiscount": "Can't verify Discount Code",
       "countryList": "Can retrieved Country List",
-      "autoRenew": "Failed to toggle auto-renew status"
+      "autoRenew": "Failed to toggle auto-renew status",
+      "passwordChange": "Failed to change password",
+      "incorrectPassword": "Current password is incorrect"
     },
     "warn": {
       "enterValidCoupon": "Coupon can't not be found or out of use",

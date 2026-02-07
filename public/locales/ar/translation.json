@@ -467,5 +467,6 @@
   "tutorials": "دروس",
   "countryApplyFor": "سيتم تطبيق الإجراء الخاص بك على {{count}} عنصر",
   "selectCountry": "اختر البلد",
-  "confirm": "يتأكد"
+  "confirm": "يتأكد",
+  "Username": "اسم المستخدم"
 }

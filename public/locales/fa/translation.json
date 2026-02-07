@@ -478,5 +478,6 @@
   "tutorials": "آموزش ها",
   "countryApplyFor": "اقدام شما برای {{count}} مورد اعمال خواهد شد",
   "selectCountry": "کشور را انتخاب کنید",
-  "confirm": "تایید کنید"
+  "confirm": "تایید کنید",
+  "Username": "نام کاربری"
 }

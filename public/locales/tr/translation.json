@@ -478,5 +478,6 @@
   "tutorials": "Öğreticiler",
   "countryApplyFor": "İşleminiz {{count}} öğe için geçerli olacak",
   "selectCountry": "Ülke seçin",
-  "confirm": "Onaylamak"
+  "confirm": "Onaylamak",
+  "Username": "Kullanıcı adı"
 }

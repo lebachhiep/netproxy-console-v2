@@ -508,5 +508,6 @@
   "countryApplyFor": "Your action will apply for {{count}} item",
   "countryApplyFor_plural": "Your action will apply for {{count}} items",
   "selectCountry": "Select country",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "Username": "User name"
 }

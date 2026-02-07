@@ -478,5 +478,6 @@
   "tutorials": "บทช่วยสอน",
   "countryApplyFor": "การกระทำของคุณจะมีผลกับ {{count}} รายการ",
   "selectCountry": "เลือกประเทศ",
-  "confirm": "ยืนยัน"
+  "confirm": "ยืนยัน",
+  "Username": "ชื่อผู้ใช้"
 }

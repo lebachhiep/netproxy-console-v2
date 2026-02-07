@@ -478,5 +478,6 @@
   "tutorials": "教程",
   "countryApplyFor": "您的操作将应用于 {{count}} 件商品",
   "selectCountry": "选择国家",
-  "confirm": "确认"
+  "confirm": "确认",
+  "Username": "用户名"
 }

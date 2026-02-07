@@ -1,5 +1,6 @@
 import React, { useState, createContext, useContext, useRef, useEffect, ReactNode, MouseEventHandler } from 'react';
-import { useFloating, autoUpdate, offset, flip, shift, UseFloatingReturn } from '@floating-ui/react-dom';
+import { createPortal } from 'react-dom';
+import { useFloating, autoUpdate, offset, flip, shift, UseFloatingReturn, Placement } from '@floating-ui/react-dom';
 import { FiChevronDown } from 'react-icons/fi';
 import { twMerge } from 'tailwind-merge';
 import clsx from 'clsx';
@@ -8,11 +9,8 @@ interface DropdownContextType {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   trigger: 'click' | 'hover' | 'both';
-  refs: UseFloatingReturn['refs'] & { setReference?: (node: HTMLElement | null) => void; setFloating?: (node: HTMLElement | null) => void };
+  refs: UseFloatingReturn['refs'];
   floatingStyles: React.CSSProperties;
-  placement: string;
-  autoPlacement: 'top' | 'bottom';
-  positionClasses: string;
   handleMouseEnter: () => void;
   handleMouseLeave: (e: React.MouseEvent) => void;
 }
@@ -30,16 +28,39 @@ function Dropdown({ children, defaultOpen = false, trigger = 'click', placement 
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
-  const [autoPlacement, setAutoPlacement] = useState<'top' | 'bottom'>(placement === 'top' ? 'top' : 'bottom');
+
+  const floatingPlacement: Placement = (() => {
+    switch (placement) {
+      case 'top':
+        return 'top-start';
+      case 'top-left':
+        return 'top-end';
+      case 'top-right':
+        return 'top-start';
+      case 'bottom-left':
+        return 'bottom-end';
+      case 'bottom-right':
+        return 'bottom-start';
+      case 'bottom':
+      default:
+        return 'bottom-start';
+    }
+  })();
+
   const { refs, floatingStyles } = useFloating({
     middleware: [offset(4), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
-    placement: 'bottom-start'
+    placement: floatingPlacement
   });
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent | TouchEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target) &&
+        (!refs.floating.current || !refs.floating.current.contains(target))
+      ) {
         setIsOpen(false);
       }
     }
@@ -60,20 +81,7 @@ function Dropdown({ children, defaultOpen = false, trigger = 'click', placement 
         document.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen || !dropdownRef.current) return;
-    const rect = dropdownRef.current.getBoundingClientRect();
-    const spaceAbove = rect.top;
-    const spaceBelow = window.innerHeight - rect.bottom;
-    const dropdownHeight = 240; // max-h-60 ~ 240px
-    if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-      setAutoPlacement('top');
-    } else {
-      setAutoPlacement('bottom');
-    }
-  }, [isOpen]);
+  }, [isOpen, refs.floating]);
 
   const handleMouseEnter = () => {
     if (trigger === 'hover' || trigger === 'both') {
@@ -93,45 +101,22 @@ function Dropdown({ children, defaultOpen = false, trigger = 'click', placement 
     if (dropdownRef.current && to && dropdownRef.current.contains(to)) {
       return;
     }
+    if (refs.floating.current && to && refs.floating.current.contains(to)) {
+      return;
+    }
 
-    const x = (e as React.MouseEvent).clientX;
-    const y = (e as React.MouseEvent).clientY;
+    const x = e.clientX;
+    const y = e.clientY;
     const el = document.elementFromPoint(x, y);
     if (dropdownRef.current && el && dropdownRef.current.contains(el)) {
+      return;
+    }
+    if (refs.floating.current && el && refs.floating.current.contains(el)) {
       return;
     }
 
     hoverTimeout.current = setTimeout(() => setIsOpen(false), 120);
   };
-
-  // Get position classes based on placement (like Select.tsx)
-  const getPositionClasses = () => {
-    // Only use autoPlacement for 'top'/'bottom', fallback to original for others
-    if (placement === 'top' || placement === 'bottom') {
-      switch (autoPlacement) {
-        case 'top':
-          return 'bottom-full mb-1 left-0 right-0';
-        case 'bottom':
-        default:
-          return 'top-full mt-1 left-0 right-0';
-      }
-    }
-    // Fallback for left/right placements
-    switch (placement) {
-      case 'top-left':
-        return 'bottom-full mb-1 right-0';
-      case 'top-right':
-        return 'bottom-full mb-1 left-0';
-      case 'bottom-left':
-        return 'top-full mt-1 right-0';
-      case 'bottom-right':
-        return 'top-full mt-1 left-0';
-      default:
-        return 'top-full mt-1 left-0 right-0';
-    }
-  };
-
-  const positionClasses = getPositionClasses();
 
   return (
     <DropdownContext.Provider
@@ -142,9 +127,6 @@ function Dropdown({ children, defaultOpen = false, trigger = 'click', placement 
           trigger,
           refs,
           floatingStyles,
-          placement,
-          autoPlacement,
-          positionClasses,
           handleMouseEnter,
           handleMouseLeave
         } as any
@@ -223,7 +205,7 @@ interface MenuProps {
 function Menu({ children, className = '' }: MenuProps) {
   const context = useContext(DropdownContext);
   if (!context) throw new Error('Dropdown.Menu must be used within Dropdown');
-  const { isOpen, positionClasses, handleMouseEnter, handleMouseLeave } = context as any;
+  const { isOpen, refs, floatingStyles, handleMouseEnter, handleMouseLeave } = context as any;
 
   if (!isOpen) return null;
 
@@ -231,11 +213,12 @@ function Menu({ children, className = '' }: MenuProps) {
     e.stopPropagation();
   };
 
-  return (
+  return createPortal(
     <div
+      ref={refs.setFloating as (node: HTMLDivElement | null) => void}
+      style={floatingStyles}
       className={twMerge(
-        'p-1 absolute bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-50 transition-all duration-300 ease-out overflow-y-auto flex flex-col gap-1 max-h-60',
-        positionClasses,
+        'p-1 bg-bg-secondary dark:bg-bg-secondary-dark border border-border-element dark:border-border-element-dark rounded-lg shadow-md z-[9999] overflow-y-auto flex flex-col gap-1 max-h-60',
         className
       )}
       onMouseEnter={handleMouseEnter}
@@ -243,7 +226,8 @@ function Menu({ children, className = '' }: MenuProps) {
       onTouchStart={handleTouchStart}
     >
       {children}
-    </div>
+    </div>,
+    document.body
   );
 }
 

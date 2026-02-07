@@ -478,5 +478,6 @@
   "tutorials": "Tutorials",
   "countryApplyFor": "Your action will apply for {{count}} item",
   "selectCountry": "Select country",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "Username": "User name"
 }

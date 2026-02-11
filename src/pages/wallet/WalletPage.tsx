@@ -2,7 +2,7 @@ import { Badge } from '@/components/badge/Badge';
 import { Button } from '@/components/button/Button';
 import IconButton from '@/components/button/IconButton';
 import { BalanceCard } from '@/components/card/BalanceCard';
-import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
+import { ArrowCounter, ContentCopy, DatabaseStackOutlined, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -31,6 +31,8 @@ import { BANK_INFO_MAPPING, BankInfo } from '@/utils/constants';
 import TopUpModalV2 from './components/TopUpModalV2';
 import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
 
+type TopUpMethod = 'tazapay' | 'cryptomus' | 'web2m';
+
 const WalletPage: React.FC = () => {
   const { data: paymentMethods } = usePaymentMethods();
   const { t } = useTranslation();
@@ -38,13 +40,13 @@ const WalletPage: React.FC = () => {
   const { isMobile, isTablet, isDesktop, isLargeDesktop } = useResponsive();
   const { userProfile, getDisplayName } = useAuth();
   const [priceValue, setPriceValue] = useState(10);
-  const [selectedMethod, setSelectedMethod] = useState<string | number>('ACB');
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
   const { mutate: generateTazapayPayment, isPending: isTazapayPending } = useTazapayPayment();
   const { mutate: generateCryptomusPayment, isPending: isCryptomusPending } = useCryptomusPayment();
 
   // Top-up modal state
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
-  const [topUpMethod, setTopUpMethod] = useState<'tazapay' | 'cryptomus' | 'web2m' | null>(null);
+  const [topUpMethod, setTopUpMethod] = useState<TopUpMethod | null>(null);
   const [tazapayCountry, setTazapayCountry] = useState<string>('');
 
   // Balance state
@@ -63,37 +65,49 @@ const WalletPage: React.FC = () => {
 
   // payment method options
 
-  const isTazapayAvailable = paymentMethods?.methods.find((m) => m.type === 'tazapay')?.available;
-  const tazapayCountryOptions = isTazapayAvailable
-    ? paymentMethods?.methods.find((m) => m.type === 'tazapay')?.supported_countries || []
-    : [];
-  const web2mMethod = paymentMethods?.methods.find((m) => m.type === 'web2m')?.bank_info || {
-    bank_name: 'mbbank'
-  };
+  const tazapayMethod = paymentMethods?.methods.find((method) => method.type === 'tazapay');
+  const cryptomusMethod = paymentMethods?.methods.find((method) => method.type === 'cryptomus');
+  const web2mMethod = paymentMethods?.methods.find((method) => method.type === 'web2m');
 
-  const web2mAvailable: BankInfo | undefined = Object.values(BANK_INFO_MAPPING).find(
-    (bank) => bank.shortName.toLowerCase() === web2mMethod.bank_name.toLowerCase()
-  );
-  const options = [];
-  if (web2mAvailable) {
-    options.push({
-      value: 'web2m',
-      label: (
-        <div className="flex items-center justify-between">
-          <div className="flex gap-2 items-center w-full">
-            <div className="w-8 h-6 flex justify-center items-center">
-              <img src={web2mAvailable?.bankLogoUrl} alt={`${web2mAvailable?.shortName} logo`} />
+  const web2mAvailableBank: BankInfo | undefined = useMemo(() => {
+    const bankName = web2mMethod?.bank_info?.bank_name;
+
+    if (!bankName) {
+      return undefined;
+    }
+
+    return Object.values(BANK_INFO_MAPPING).find((bank) => bank.shortName.toLowerCase() === bankName.toLowerCase());
+  }, [web2mMethod?.bank_info?.bank_name]);
+
+  const options = useMemo(() => {
+    const nextOptions: Array<{ value: string; label: React.ReactNode }> = [];
+
+    if (web2mMethod?.available) {
+      const bankName = web2mMethod.bank_info?.bank_name?.toUpperCase() || 'Web2M Banking';
+      nextOptions.push({
+        value: 'web2m',
+        label: (
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2 items-center w-full">
+              <div className="w-8 h-6 flex justify-center items-center">
+                {web2mAvailableBank ? (
+                  <img src={web2mAvailableBank.bankLogoUrl} alt={`${web2mAvailableBank.shortName} logo`} />
+                ) : (
+                  <div className="w-6 h-6 rounded bg-bg-mute dark:bg-bg-mute-dark flex items-center justify-center">
+                    <DatabaseStackOutlined className="w-4 h-4 text-text-hi dark:text-text-hi-dark" />
+                  </div>
+                )}
+              </div>
+              <span className="font-medium">{web2mAvailableBank?.name || bankName}</span>
             </div>
-            <span className="font-medium">{web2mAvailable?.name}</span>
+            <div>Banking</div>
           </div>
-          <div>Banking</div>
-        </div>
-      )
-    });
-  }
-  options.push(
-    ...[
-      {
+        )
+      });
+    }
+
+    if (cryptomusMethod?.available) {
+      nextOptions.push({
         value: 'cryptomus',
         label: (
           <div className="flex items-center justify-between">
@@ -142,10 +156,14 @@ const WalletPage: React.FC = () => {
             </div>
           </div>
         )
-      },
-      ...(Object.entries(tazapayCountryOptions) ? Object.entries(tazapayCountryOptions) : []).map(([country, value]) => {
-        return {
-          value: 'tazapay-' + value,
+      });
+    }
+
+    if (tazapayMethod?.available) {
+      const countryOptions = tazapayMethod.supported_countries || {};
+      nextOptions.push(
+        ...Object.entries(countryOptions).map(([country, value]) => ({
+          value: `tazapay-${value}`,
           label: (
             <div className="flex items-center justify-between">
               <div className="flex gap-2 items-center">
@@ -155,10 +173,39 @@ const WalletPage: React.FC = () => {
               <div>{country} - Tazapay</div>
             </div>
           )
-        };
-      })
-    ]
-  );
+        }))
+      );
+    }
+
+    return nextOptions;
+  }, [web2mMethod, web2mAvailableBank, cryptomusMethod?.available, tazapayMethod]);
+
+  const resolveTopUpMethod = useCallback((value: string): { method: TopUpMethod | null; country: string } => {
+    if (value === 'web2m') {
+      return { method: 'web2m', country: '' };
+    }
+    if (value === 'cryptomus') {
+      return { method: 'cryptomus', country: '' };
+    }
+    if (value.startsWith('tazapay-')) {
+      const selectedCountry = value.split('-')[1]?.toUpperCase() || '';
+      return { method: 'tazapay', country: selectedCountry };
+    }
+    return { method: null, country: '' };
+  }, []);
+
+  useEffect(() => {
+    const hasValidSelection = options.some((option) => option.value === selectedMethod);
+    const nextSelection = hasValidSelection ? selectedMethod : options[0]?.value || '';
+
+    if (nextSelection !== selectedMethod) {
+      setSelectedMethod(nextSelection);
+    }
+
+    const { method, country } = resolveTopUpMethod(nextSelection);
+    setTopUpMethod(method);
+    setTazapayCountry(country);
+  }, [options, selectedMethod, resolveTopUpMethod]);
 
   // Fetch balance
   const fetchBalance = useCallback(async () => {
@@ -320,9 +367,12 @@ const WalletPage: React.FC = () => {
   const handleTopup = () => {
     if (!topUpMethod) {
       toast.info(t('wallet.selectMethodPrompt') || 'Vui lòng chọn phương thức nạp tiền');
+      return;
     }
+
     if (topUpMethod === 'web2m') {
       setTopUpModalOpen(true);
+      return;
     }
 
     if (topUpMethod === 'tazapay') {
@@ -346,6 +396,7 @@ const WalletPage: React.FC = () => {
           }
         }
       );
+      return;
     }
 
     if (topUpMethod === 'cryptomus') {
@@ -415,15 +466,7 @@ const WalletPage: React.FC = () => {
                 options={options}
                 value={selectedMethod}
                 onChange={(val) => {
-                  setSelectedMethod(val);
-                  if (val === 'web2m') {
-                    setTopUpMethod('web2m');
-                  } else if (val === 'cryptomus') {
-                    setTopUpMethod('cryptomus');
-                  } else if (typeof val === 'string' && val.startsWith('tazapay-')) {
-                    setTopUpMethod('tazapay');
-                    setTazapayCountry(val.split('-')[1].toUpperCase());
-                  }
+                  setSelectedMethod(String(val));
                 }}
                 placeholder={t('wallet.SelectMethod') || 'Select a top-up method'}
                 placement="bottom"

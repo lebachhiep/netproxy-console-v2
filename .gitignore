@@ -27,3 +27,7 @@ tsconfig.tsbuildinfo
 *.map
 .env
 .claude/*
+
+# Yarn
+.yarn/*
+!.yarn/releases

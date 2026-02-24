@@ -40,7 +40,8 @@
     "user": "User",
     "customer": "Customer",
     "checking": "Checking",
-    "search": "Search"
+    "search": "Search",
+    "noActivePlans": "No active plans"
   },
   "detail-order": "Order {{orderId}} {{adj}} {{action}} {{result}}",
   "STT": "No.",

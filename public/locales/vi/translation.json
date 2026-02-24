@@ -40,7 +40,8 @@
     "user": "Người dùng",
     "customer": "Khách hàng",
     "checking": "Kiểm tra",
-    "search": "Tìm kiếm"
+    "search": "Tìm kiếm",
+    "noActivePlans": "Không có gói nào đang hoạt động"
   },
   "detail-order": "Đơn hàng {{orderId}} {{adj}} {{action}} {{result}}",
   "STT": "STT",

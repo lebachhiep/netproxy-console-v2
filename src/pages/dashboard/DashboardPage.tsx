@@ -83,7 +83,6 @@ const DashboardPage = () => {
     return storageMode === 'list' ? 'list' : 'grid';
   });
   const [tableData, setTableData] = useState<OrderTableData[]>([]);
-  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
@@ -103,45 +102,36 @@ const DashboardPage = () => {
     queryFn: () => userService.getPlatformStat()
   });
 
-  useQuery({
+  const { isLoading: loading } = useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize, debouncedSearch],
     queryFn: async () => {
-      setLoading(true);
-      try {
-        const ordersResponse = await subscriptionService.getSubscriptions({
-          Status: 'active',
-          Page: currentPage,
-          PerPage: pageSize,
-          search: debouncedSearch
-        });
+      const ordersResponse = await subscriptionService.getSubscriptions({
+        Status: 'active',
+        Page: currentPage,
+        PerPage: pageSize,
+        search: debouncedSearch
+      });
 
-        setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
-        setActiveSubscriptions(ordersResponse.total_orders || 0);
+      setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
+      setActiveSubscriptions(ordersResponse.total_orders || 0);
 
-        const transformedData: OrderTableData[] = (ordersResponse.orders || []).map((order) => {
-          const firstSubscription = order.subscriptions?.[0];
-          return {
-            id: order.id,
-            order_number: order.order_number,
-            plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
-            subscription_count: order.subscriptions?.length || 0,
-            fulfilled_at: order.fulfilled_at || order.created_at,
-            duration: firstSubscription?.plan?.duration ? tableDashboardDate(firstSubscription?.plan.duration, t) : 'N/A'
-          };
-        });
+      const transformedData: OrderTableData[] = (ordersResponse.orders || []).map((order) => {
+        const firstSubscription = order.subscriptions?.[0];
+        return {
+          id: order.id,
+          order_number: order.order_number,
+          plan_name: firstSubscription?.plan?.name || 'Unknown Plan',
+          subscription_count: order.subscriptions?.length || 0,
+          fulfilled_at: order.fulfilled_at || order.created_at,
+          duration: firstSubscription?.plan?.duration ? tableDashboardDate(firstSubscription?.plan.duration, t) : 'N/A'
+        };
+      });
 
-        setTableData(transformedData);
-        setTotal(ordersResponse.total_orders);
-        return transformedData;
-      } catch (err) {
-        console.error('Failed to fetch data:', err);
-        toast.error('Failed to load order data. Please try again later.');
-        setTableData([]);
-        return [];
-      } finally {
-        setLoading(false);
-      }
-    }
+      setTableData(transformedData);
+      setTotal(ordersResponse.total_orders);
+      return transformedData;
+    },
+    retry: false
   });
 
   const handleItemClick = (id: string) => {
@@ -497,6 +487,10 @@ const DashboardPage = () => {
                     <div className="flex items-center justify-center h-full w-full col-span-12">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                       <span className="ml-2 text-gray-600">{t('loading')}</span>
+                    </div>
+                  ) : tableData.length === 0 ? (
+                    <div className="flex items-center justify-center h-full w-full col-span-12">
+                      <span className="text-text-lo dark:text-text-lo-dark text-sm">{t('dashboard.noActivePlans')}</span>
                     </div>
                   ) : (
                     tableData.map((item) => (

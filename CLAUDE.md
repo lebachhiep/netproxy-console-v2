@@ -14,7 +14,7 @@ NetProxy Console V3 — a React SPA serving as the admin/user dashboard for a pr
 - **Format:** `yarn format` (Prettier)
 - **Preview prod build:** `yarn preview`
 
-Commits use conventional commit format (enforced by commitlint via `@commitlint/config-conventional`). Lint-staged runs ESLint with auto-fix + Prettier on staged `.ts`/`.tsx`/`.js`/`.jsx` files via Husky pre-commit hook. Package manager is Yarn 4 (`yarn@4.12.0`).
+No test framework is configured. Commits use conventional commit format (enforced by commitlint via `@commitlint/config-conventional`). Lint-staged runs ESLint with auto-fix + Prettier on staged `.ts`/`.tsx`/`.js`/`.jsx` files via Husky pre-commit hook. Package manager is Yarn 4 (`yarn@4.12.0`). Deployed on Vercel (SPA rewrite in `vercel.json`).
 
 ## Architecture
 
@@ -43,8 +43,33 @@ React Router v6 in `src/router/index.tsx`. Protected routes wrap `ResponsiveLayo
 - Auto-attaches Bearer token; handles 401 with automatic token refresh (deduped via shared promise)
 - **`apiService`** singleton in `src/services/api/api.service.ts` wraps the Axios client with typed `get`, `post`, `put`, `patch`, `delete`, `uploadFile`, `downloadFile`, `getPaginated` methods
 - Domain services in `src/services/{domain}/` follow the pattern: `{domain}.service.ts` (class with methods using `apiService`), `{domain}.types.ts` (interfaces), optional `{domain}.schemas.ts` (Zod validation). Each service exports a singleton instance (e.g., `export const orderService = new OrderService()`)
-- Token management (JWT, dual localStorage/sessionStorage for "remember me") in `src/utils/token.ts`
-- Toast notifications for API errors via **Sonner** (`toast.error()` in response interceptor)
+- Token management in `src/utils/token.ts`
+- Toast notifications for API errors via **Sonner** (`toast.error()` in response interceptor — currently hardcoded in Vietnamese)
+
+### Authentication & Remember Me Flow
+
+JWT with access + refresh tokens. Token utilities in `src/utils/token.ts`, auth service in `src/services/auth/auth.service.ts`, store in `src/stores/auth.store.ts`.
+
+**Remember Me behavior:**
+- Checked → tokens + expiry stored in **localStorage** (survives browser close)
+- Unchecked → tokens + expiry stored in **sessionStorage** (cleared on browser close)
+- `RememberMeTicked` preference always in localStorage; checkbox defaults to **checked** for first-time users
+- Register always uses sessionStorage (rememberMe=false)
+
+**Login flow** (`LoginPage.tsx` → `auth.store.ts` → `auth.service.ts` → `token.ts`):
+1. `authService.login()` calls API, then `saveTokens(response, rememberMe)` routes to correct storage
+2. Store extracts user from JWT via `getUserFromToken()`, then fetches full profile via `userService.getProfile()`
+
+**Init flow** (triggered at module load via `useAuthStore.getState().initializeAuth()`):
+1. `hasTokens()` → checks both storages
+2. `isAccessTokenValid()` → valid: load user from JWT
+3. Expired access + `isRefreshTokenValid()` → call `authService.refreshAccessToken()` which preserves storage type via `getTokenStorageType()`
+4. Both expired → `clearTokens()` + redirect to `/login`
+
+**Token refresh** (two paths):
+1. `authService.refreshAccessToken()` — called by `initAuth()`, goes through `apiClient` interceptor (interceptor skips `/auth/refresh`)
+2. `refreshAccessToken()` in `config/api.ts` — called by Axios 401 interceptor, uses raw `axios.post()` (bypasses interceptor), deduped via module-level `refreshTokenPromise`
+3. Both paths use `getTokenStorageType()` to preserve localStorage vs sessionStorage
 
 ### App Bootstrap
 
@@ -53,6 +78,10 @@ React Router v6 in `src/router/index.tsx`. Protected routes wrap `ResponsiveLayo
 ### Forms & Validation
 
 React Hook Form with Zod schemas via `@hookform/resolvers`. Validation schemas co-located with services (e.g., `auth.schemas.ts`).
+
+### Code Style
+
+Prettier: 140 char line width, single quotes, no trailing commas, 2-space indent. ESLint flat config (v9) with `react`, `react-hooks`, `prettier`, `typescript-eslint` plugins. `@typescript-eslint/no-explicit-any` is disabled.
 
 ### Styling
 

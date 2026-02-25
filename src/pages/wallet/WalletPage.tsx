@@ -365,6 +365,11 @@ const WalletPage: React.FC = () => {
   }, [currentPage, pageSize, isMobile, isTablet, walletCols]);
 
   const handleTopup = () => {
+    if (priceValue < 10) {
+      toast.error(t('wallet.minimumAmount') || 'Minimum top-up amount is $10.00');
+      return;
+    }
+
     if (!topUpMethod) {
       toast.info(t('wallet.selectMethodPrompt') || 'Vui lòng chọn phương thức nạp tiền');
       return;
@@ -436,9 +441,12 @@ const WalletPage: React.FC = () => {
                 <div className="relative text-text-hi dark:text-text-hi-dark">
                   <span className="absolute z-10 top-1/2 left-3 -translate-y-1/2 text-sm flex justify-center items-center h-5">$</span>
                   <InputField
-                    wrapperClassName="pl-3 h-10"
+                    wrapperClassName={clsx('pl-3 h-10', priceValue < 10 && 'border-red dark:border-red')}
                     value={priceValue}
-                    onChange={(e) => setPriceValue(Math.min(+e.target.value, 1000))}
+                    onChange={(e) => {
+                      const val = +e.target.value;
+                      if (!isNaN(val)) setPriceValue(Math.min(val, 1000));
+                    }}
                   />
                 </div>
 
@@ -503,6 +511,7 @@ const WalletPage: React.FC = () => {
                 className="h-10 px-6 dark:pseudo-border-top-orange dark:border-transparent"
                 onClick={handleTopup}
                 loading={isTazapayPending || isCryptomusPending}
+                disabled={priceValue < 10}
               >
                 {t('wallet.topUp')}
               </Button>

@@ -42,7 +42,10 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
     const [internalValue, setInternalValue] = React.useState(defaultValue);
     const sliderRef = React.useRef<HTMLDivElement>(null);
     const thumbRef = React.useRef<HTMLDivElement>(null);
+    const labelsRef = React.useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = React.useState(false);
+    // Tick offsets as fractions of the full track width (0-1)
+    const [tickOffset, setTickOffset] = React.useState({ left: 0, right: 0 });
 
     const currentValue = value !== undefined ? value : internalValue;
 
@@ -68,14 +71,52 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       return { defaultLabels: generatedLabels, defaultLabelValues: generatedLabelValues };
     }, [min, max, labels, labelValues, formatValue]);
 
+    // Measure label tick positions relative to the track
+    React.useLayoutEffect(() => {
+      if (!labelsRef.current || !sliderRef.current || !showLabels) return;
+
+      const trackRect = sliderRef.current.getBoundingClientRect();
+      const ticks = labelsRef.current.querySelectorAll<HTMLElement>('[data-slider-tick]');
+      if (ticks.length < 2) return;
+
+      const firstTickCenter = ticks[0].getBoundingClientRect().left + ticks[0].getBoundingClientRect().width / 2;
+      const lastTickCenter =
+        ticks[ticks.length - 1].getBoundingClientRect().left + ticks[ticks.length - 1].getBoundingClientRect().width / 2;
+
+      const left = (firstTickCenter - trackRect.left) / trackRect.width;
+      const right = (trackRect.right - lastTickCenter) / trackRect.width;
+
+      setTickOffset({ left, right });
+    }, [defaultLabels, showLabels]);
+
+    // Convert a value to a track percentage (0-100), where min→leftTick%, max→rightTick%
+    const valueToPercentage = React.useCallback(
+      (val: number) => {
+        const usableRange = 1 - tickOffset.left - tickOffset.right;
+        if (usableRange <= 0) return ((val - min) / (max - min)) * 100;
+        return (tickOffset.left + ((val - min) / (max - min)) * usableRange) * 100;
+      },
+      [min, max, tickOffset]
+    );
+
+    // Convert a track fraction (0-1) to a value
+    const fractionToValue = React.useCallback(
+      (fraction: number) => {
+        const usableRange = 1 - tickOffset.left - tickOffset.right;
+        if (usableRange <= 0) return min + fraction * (max - min);
+        return min + ((fraction - tickOffset.left) / usableRange) * (max - min);
+      },
+      [min, max, tickOffset]
+    );
+
     const updateValue = React.useCallback(
       (clientX: number) => {
         if (!sliderRef.current || disabled) return;
 
         const rect = sliderRef.current.getBoundingClientRect();
-        const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        const newValue = min + percentage * (max - min);
-        const steppedValue = Math.round(newValue / step) * step;
+        const fraction = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        const rawValue = fractionToValue(fraction);
+        const steppedValue = Math.round(rawValue / step) * step;
         const clampedValue = Math.max(min, Math.min(max, steppedValue));
 
         if (value === undefined) {
@@ -83,7 +124,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
         }
         onValueChange?.(clampedValue);
       },
-      [min, max, step, disabled, value, onValueChange]
+      [max, step, disabled, value, onValueChange, fractionToValue]
     );
 
     // --- Mouse handlers ---
@@ -131,11 +172,8 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
     // --- Register global listeners when dragging ---
     React.useEffect(() => {
       if (isDragging) {
-        // Mouse events
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-
-        // Touch events
         document.addEventListener('touchmove', handleTouchMove);
         document.addEventListener('touchend', handleTouchEnd);
 
@@ -148,7 +186,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
       }
     }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
-    const percentage = ((currentValue - min) / (max - min)) * 100;
+    const percentage = Math.max(0, Math.min(100, valueToPercentage(currentValue)));
 
     return (
       <div ref={ref} className={clsx('w-full select-none', className)} {...props}>
@@ -158,7 +196,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
           </div>
         )}
 
-        {/* Slider Track */}
+        {/* Slider Track — full width, thumb aligned to milestone ticks */}
         <div
           ref={sliderRef}
           className={clsx(
@@ -185,7 +223,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 
         {/* Labels */}
         {showLabels && (
-          <div className="relative flex justify-between text-sm">
+          <div ref={labelsRef} className="relative flex justify-between text-sm">
             {defaultLabels.map((label, index) => {
               const labelValue = defaultLabelValues[index];
               const isActive = Math.abs(currentValue - labelValue) <= step / 2;
@@ -198,7 +236,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
 
               return (
                 <div key={index} className="relative flex flex-col items-center">
-                  <div className="w-[2px] bg-gray-300 h-3" />
+                  <div data-slider-tick className="w-[2px] bg-gray-300 h-3" />
                   <div
                     onClick={handleLabelClick}
                     className={clsx(

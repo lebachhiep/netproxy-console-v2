@@ -2631,8 +2631,8 @@ __metadata:
     react: "npm:^19.2.1"
     react-dom: "npm:^19.2.1"
     react-google-recaptcha-v3: "npm:^1.11.0"
-    react-hook-form: "npm:^7.63.0"
-    react-i18next: "npm:^16.4.0"
+    react-hook-form: "npm:^7.71.2"
+    react-i18next: "npm:^16.5.4"
     react-icons: "npm:^4.12.0"
     react-is: "npm:^19.2.4"
     react-responsive: "npm:^10.0.1"
@@ -6008,7 +6008,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.63.0":
+"react-hook-form@npm:^7.71.2":
   version: 7.71.2
   resolution: "react-hook-form@npm:7.71.2"
   peerDependencies:
@@ -6017,7 +6017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^16.4.0":
+"react-i18next@npm:^16.5.4":
   version: 16.5.4
   resolution: "react-i18next@npm:16.5.4"
   dependencies:

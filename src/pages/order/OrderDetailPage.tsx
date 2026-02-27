@@ -448,14 +448,14 @@ const OrderDetailPage = () => {
           title: t('STT'),
           width: 50,
           align: 'center' as const,
-          render: (_, __, index) => index + 1
+          render: (_: any, __: any, index: number) => index + 1
         },
         {
           width: 100,
           key: 'subscription_id',
           title: 'ID',
           align: 'left' as const,
-          render: (_, record) => (
+          render: (_: any, record: Subscription) => (
             <div className="group flex items-center justify-between">
               <p className="flex-1 truncate line-clamp-1 font-mono">{record.id}</p>
               <ContentCopy
@@ -474,7 +474,7 @@ const OrderDetailPage = () => {
           key: 'ip',
           title: t('ipAddress'),
           align: 'left' as const,
-          render: (_, record) => {
+          render: (_: any, record: Subscription) => {
             const ipAddress = getIpAddressByProxyType(record);
             return (
               <div className="group flex items-center justify-between">
@@ -496,7 +496,7 @@ const OrderDetailPage = () => {
           key: 'port',
           title: 'Port',
           align: 'left' as const,
-          render: (_, record) => {
+          render: (_: any, record: Subscription) => {
             const port = getPortByProxyType(record);
             return (
               <div className="group flex items-center justify-between">
@@ -518,7 +518,7 @@ const OrderDetailPage = () => {
           key: 'username',
           title: t('Username'),
           align: 'left' as const,
-          render: (_, record) => {
+          render: (_: any, record: Subscription) => {
             const username = getUsernameByProxyType(record);
             return (
               <div className="group flex items-center justify-between">
@@ -540,7 +540,7 @@ const OrderDetailPage = () => {
           key: 'password',
           title: t('password'),
           align: 'left' as const,
-          render: (_, record) => {
+          render: (_: any, record: Subscription) => {
             const { plainPassword } = getPasswordByProxyType(record);
             return (
               <div className="group flex items-center justify-between">
@@ -611,7 +611,7 @@ const OrderDetailPage = () => {
           key: 'connection_type',
           title: 'Type',
           align: 'center' as const,
-          render: (_, record) => {
+          render: (_: any, record: Subscription) => {
             const credentials = record.provider_credentials as any;
             const connectionType = credentials?.http_port > 0 ? 'HTTPS' : credentials?.socks5_port > 0 ? 'SOCKS5' : '-';
             const isRotating = isRotatingProxy(record);
@@ -624,7 +624,7 @@ const OrderDetailPage = () => {
           key: 'auto_renew',
           title: t('autoRenew'),
           align: 'center' as const,
-          render: (_, record) => (
+          render: (_: any, record: Subscription) => (
             <Switch
               size="md"
               checked={record.auto_renew}
@@ -643,28 +643,32 @@ const OrderDetailPage = () => {
           width: 150,
           key: 'expires_at',
           title: t('expired'),
-          render: (value, record) => (
+          render: (value: any, record: Subscription) => (
             <div className="font-semibold">{moment(value || record.current_period_end).format('DD/MM/YYYY HH:mm')}</div>
           )
         },
-        !isRotating && {
-          width: 150,
-          key: 'notes',
-          title: t('note'),
-          align: 'left' as const,
-          render: (_, record) => (
-            <div className="truncate text-xs text-text-lo dark:text-text-lo-dark" title={record.notes || ''}>
-              {record.notes || '-'}
-            </div>
-          )
-        },
+        ...(isRotating
+          ? []
+          : [
+              {
+                width: 150,
+                key: 'notes',
+                title: t('note'),
+                align: 'left' as const,
+                render: (_: any, record: Subscription) => (
+                  <div className="truncate text-xs text-text-lo dark:text-text-lo-dark" title={record.notes || ''}>
+                    {record.notes || '-'}
+                  </div>
+                )
+              }
+            ]),
         {
           width: 230,
-          fixed: isMobile || isTablet ? undefined : 'right',
+          fixed: (isMobile || isTablet ? undefined : 'right') as 'right' | undefined,
           key: 'actions',
           title: t('action'),
           align: 'center' as const,
-          render: (_, record: Subscription, rowIndex) => {
+          render: (_: any, record: Subscription, rowIndex: number) => {
             const isRotating = isRotatingProxy(record);
             return (
               <div className="flex items-center justify-center gap-2">
@@ -742,7 +746,7 @@ const OrderDetailPage = () => {
             );
           }
         }
-      ];
+      ].filter(Boolean);
     },
     [t, isMobile, isTablet, handleToggleAutoRenew, copiedId, handleSwitchProtocol, subscriptions]
   );

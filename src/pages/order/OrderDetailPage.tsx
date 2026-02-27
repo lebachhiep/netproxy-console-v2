@@ -11,7 +11,8 @@ import {
   CloudSwapOutlined,
   ArrowSync,
   DashboardFilled,
-  LockMultiple
+  LockMultiple,
+  Eye
 } from '@/components/icons';
 import { Switch } from '@/components/switch/Switch';
 import { Table, TableColumn } from '@/components/table/Table';
@@ -37,6 +38,7 @@ import { queryClient } from '@/components/auth/ProtectedRoute';
 import { useTranslation } from 'react-i18next';
 import { useNavbar } from '@/contexts/NavbarContext';
 import { OrderCountryModal } from './OrderCountryModal';
+import { ProxyDetailModal } from './ProxyDetailModal';
 
 // ISO alpha-2 country codes
 export const getCountryOptions = (t: any) => [
@@ -85,6 +87,7 @@ const OrderDetailPage = () => {
   const [loadingRowIndexes, setLoadingRowIndexes] = useState<number[]>([]);
   const [total, setTotal] = useState(0);
   const { setNavbarItems } = useNavbar();
+  const [proxyDetailSub, setProxyDetailSub] = useState<Subscription | null>(null);
 
   const CountrySelectCell: React.FC<CountrySelectCellProps> = ({ subscriptionId, currentCountry, className }: CountrySelectCellProps) => {
     const { t } = useTranslation();
@@ -644,8 +647,19 @@ const OrderDetailPage = () => {
             <div className="font-semibold">{moment(value || record.current_period_end).format('DD/MM/YYYY HH:mm')}</div>
           )
         },
+        !isRotating && {
+          width: 150,
+          key: 'notes',
+          title: t('note'),
+          align: 'left' as const,
+          render: (_, record) => (
+            <div className="truncate text-xs text-text-lo dark:text-text-lo-dark" title={record.notes || ''}>
+              {record.notes || '-'}
+            </div>
+          )
+        },
         {
-          width: 200,
+          width: 230,
           fixed: isMobile || isTablet ? undefined : 'right',
           key: 'actions',
           title: t('action'),
@@ -654,6 +668,15 @@ const OrderDetailPage = () => {
             const isRotating = isRotatingProxy(record);
             return (
               <div className="flex items-center justify-center gap-2">
+                {!isRotating && (
+                  <IconButton
+                    icon={<Eye />}
+                    className="rounded-lg w-8 h-8 hover:bg-blue-50 dark:hover:bg-blue-900/30"
+                    iconClassName="text-primary dark:text-primary-dark group-hover:text-text-hi dark:group-hover:text-text-hi-dark"
+                    onClick={() => setProxyDetailSub(record)}
+                    title={t('proxyDetail')}
+                  />
+                )}
                 {!isRotating && (
                   <>
                     <IconButton
@@ -906,6 +929,17 @@ const OrderDetailPage = () => {
           />
         </div>
       </motion.div>
+
+      <ProxyDetailModal
+        subscription={proxyDetailSub}
+        open={!!proxyDetailSub}
+        onClose={() => setProxyDetailSub(null)}
+        onNoteSaved={(subId, notes) => {
+          queryClient.setQueryData(['order-subscriptions', id, currentPage, pageSize], (oldSubs: Subscription[]) => {
+            return oldSubs.map((s) => (s.id === subId ? { ...s, notes } : s));
+          });
+        }}
+      />
     </div>
   );
 };

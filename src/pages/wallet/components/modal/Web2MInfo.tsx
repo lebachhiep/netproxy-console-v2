@@ -98,7 +98,7 @@ export const Web2MInfo: React.FC<Web2MInfoProps> = ({ bankInfo, amount: amountPr
               <input
                 type="number"
                 min={10}
-                placeholder={`Tối thiểu: $10`}
+                placeholder={t('minimumAmount', { amount: 10 })}
                 value={amount}
                 onChange={(e) => {
                   const val = Math.max(10, Number(e.target.value));

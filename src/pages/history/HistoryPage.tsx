@@ -5,6 +5,7 @@ import { ArrowCounter, ContentCopy, MagnifyingGlass } from '@/components/icons';
 import { Input } from '@/components/input/Input';
 import { Select } from '@/components/select/Select';
 import { Table, TableColumn } from '@/components/table/Table';
+import { Pagination } from '@/components/pagination/Pagination';
 import { useResponsive } from '@/hooks/useResponsive';
 import { copyToClipboard } from '@/utils/copyToClipboard';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
@@ -330,32 +331,34 @@ const HistoryPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] pb-5">
-        <Table
-          showEmptyRows
-          className="h-full [&_tbody_tr]:cursor-pointer [&_tbody_tr:hover]:bg-bg-mute dark:[&_tbody_tr:hover]:bg-bg-mute-dark"
-          scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 270px)' }}
-          data={orders}
-          onRowClick={(record) => handleRowClick(record)}
-          columns={columns.map((col) => ({
-            ...col,
-            onCell: (record: OrderDisplay) => ({
-              onClick: () => handleRowClick(record)
-            })
-          }))}
-          loading={loading}
-          pagination={{
-            current: currentPage,
-            pageSize: pageSize,
-            total: total,
-            className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
-            pageSizeOptions: [5, 10, 20, 50],
-            onChange: handlePageChange
-          }}
-          paginationType="pagination"
-          rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-          size="large"
-          bordered={false}
+      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] flex flex-col">
+        <div className="flex-1 overflow-hidden">
+          <Table
+            showEmptyRows
+            className="h-full [&_tbody_tr]:cursor-pointer [&_tbody_tr:hover]:bg-bg-mute dark:[&_tbody_tr:hover]:bg-bg-mute-dark"
+            scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 350px)' }}
+            data={orders}
+            onRowClick={(record) => handleRowClick(record)}
+            columns={columns.map((col) => ({
+              ...col,
+              onCell: (record: OrderDisplay) => ({
+                onClick: () => handleRowClick(record)
+              })
+            }))}
+            loading={loading}
+            rowClassName={(_record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+            size="large"
+            bordered={false}
+          />
+        </div>
+        <Pagination
+          type="pagination"
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          pageSizeOptions={[5, 10, 20, 50]}
+          className="!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark"
+          onChange={handlePageChange}
         />
       </motion.div>
 

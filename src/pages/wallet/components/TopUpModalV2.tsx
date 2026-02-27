@@ -25,8 +25,8 @@ const LoadingSkeleton: React.FC = () => (
   </div>
 );
 
-const UnavailableMethod: React.FC = () => (
-  <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">Phương thức thanh toán này hiện không khả dụng</div>
+const UnavailableMethod: React.FC<{ message: string }> = ({ message }) => (
+  <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">{message}</div>
 );
 
 export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, paymentMethod, amount, country }) => {
@@ -81,28 +81,35 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
       return tazapay?.available ? (
         <TazapayForm key="tazapay" countries={tazapay.supported_countries} onSuccess={onClose} amount={amount} country={country} />
       ) : (
-        <UnavailableMethod key="tazapay-unavailable" />
+        <UnavailableMethod key="tazapay-unavailable" message={t('paymentUnavailable')} />
       );
     }
     if (method === 'cryptomus') {
       return cryptomus?.available ? (
         <CryptomusForm key="cryptomus" services={cryptomus.crypto_services} onSuccess={onClose} amount={amount || 10} />
       ) : (
-        <UnavailableMethod key="cryptomus-unavailable" />
+        <UnavailableMethod key="cryptomus-unavailable" message={t('paymentUnavailable')} />
       );
     }
     if (method === 'web2m') {
       return web2m?.available && web2m.bank_info ? (
         <Web2MInfo key="web2m" bankInfo={web2m.bank_info} amount={amount || 10} />
       ) : (
-        <UnavailableMethod key="web2m-unavailable" />
+        <UnavailableMethod key="web2m-unavailable" message={t('paymentUnavailable')} />
       );
     }
     return null;
   };
 
   return (
-    <Modal open={open} title="Nạp tiền" onClose={onClose} className="max-w-[500px] max-h-[90dvh] overflow-auto" bodyClassName="p-0">
+    <Modal
+      open={open}
+      title={t('topUp')}
+      onClose={onClose}
+      className="max-w-[500px] max-h-[90dvh] flex flex-col overflow-hidden"
+      headerClassName="shrink-0"
+      bodyClassName="p-0 overflow-y-auto flex-1 min-h-0"
+    >
       {paymentMethod ? (
         renderMethodContent(paymentMethod)
       ) : (

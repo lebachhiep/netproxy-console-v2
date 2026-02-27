@@ -352,7 +352,8 @@
       "changeProxySubCount": "Đã chuyển giao thức: {{successfullyCount}} thành công, {{failedCount}} thất bại",
       "windowPaymentPop": "Đã mở cửa sổ thanh toán",
       "toggleAutoRenew": "Thay đổi trạng thái tự động gia hạn: {{successfullyCount}} thành công, {{failedCount}} thất bại",
-      "autoRenew": "Thay đổi trạng thái tự động gia hạn thành công"
+      "autoRenew": "Thay đổi trạng thái tự động gia hạn thành công",
+      "noteSaved": "Đã lưu ghi chú"
     },
     "error": {
       "logout": "Đăng xuất thất bại",
@@ -375,6 +376,7 @@
       "cantVeriDiscount": "Không thể xác thực mã giảm giá",
       "countryList": "Không thể tải danh sách quốc gia",
       "autoRenew": "Thay đổi trạng thái tự động gia hạn thất bại",
+      "noteSave": "Lưu ghi chú thất bại",
       "passwordChange": "Đổi mật khẩu thất bại",
       "incorrectPassword": "Mật khẩu hiện tại không đúng"
     },
@@ -508,5 +510,14 @@
   "countryApplyFor": "Hành động của bạn sẽ áp dụng cho {{count}} mặt hàng",
   "selectCountry": "Chọn quốc gia",
   "confirm": "Xác nhận",
-  "Username": "Tên người dùng"
+  "Username": "Tên người dùng",
+  "proxyDetail": "Chi tiết Proxy",
+  "enterNote": "Nhập ghi chú cho proxy này...",
+  "optional": "tùy chọn",
+  "close": "Đóng",
+  "save": "Lưu",
+  "topUp": "Nạp tiền",
+  "paymentUnavailable": "Phương thức thanh toán này hiện không khả dụng",
+  "amountUSD": "Số tiền (USD)",
+  "minimumAmount": "Tối thiểu: ${{amount}}"
 }

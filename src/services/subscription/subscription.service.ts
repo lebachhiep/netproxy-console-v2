@@ -7,7 +7,9 @@ import {
   OrderSubscriptionsResponse,
   SwitchProtocolRequest,
   SwitchProtocolResponse,
-  ListOrderSubscriptionsRequest
+  ListOrderSubscriptionsRequest,
+  UpdateNotesRequest,
+  UpdateNotesResponse
 } from '@/types/subscription';
 
 class SubscriptionService {
@@ -105,6 +107,18 @@ class SubscriptionService {
    */
   async getProxy(id: string): Promise<SwitchProtocolResponse> {
     const response = await apiService.get<SwitchProtocolResponse>(`${this.BASE_PATH}/${id}/proxy`);
+    return response;
+  }
+
+  /**
+   * Update notes for a subscription
+   * @param id - Subscription ID
+   * @param notes - Notes text (null to clear)
+   * @returns Promise with success status
+   */
+  async updateNotes(id: string, notes: string | null): Promise<UpdateNotesResponse> {
+    const data: UpdateNotesRequest = { notes };
+    const response = await apiService.put<UpdateNotesResponse>(`${this.BASE_PATH}/${id}/notes`, data);
     return response;
   }
 }

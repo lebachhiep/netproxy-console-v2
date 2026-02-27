@@ -115,6 +115,15 @@ export interface UpdateAutoRenewRequest {
   auto_renew: boolean;
 }
 
+export interface UpdateNotesRequest {
+  notes: string | null;
+}
+
+export interface UpdateNotesResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface SwitchProtocolRequest {
   protocol: 'http' | 'socks5';
 }

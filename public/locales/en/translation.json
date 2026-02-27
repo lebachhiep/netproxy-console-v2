@@ -352,7 +352,8 @@
       "changeProxySubCount": "Protocol switched: {{successfullyCount}} successful, {{failedCount}} failed",
       "windowPaymentPop": "Payment window opened successfully",
       "toggleAutoRenew": "Auto-renew toggled: {{successfullyCount}} successful, {{failedCount}} failed",
-      "autoRenew": "Auto-renew status changed successfully"
+      "autoRenew": "Auto-renew status changed successfully",
+      "noteSaved": "Note saved successfully"
     },
     "error": {
       "logout": "Fail to Log out",
@@ -375,6 +376,7 @@
       "cantVeriDiscount": "Can't verify Discount Code",
       "countryList": "Can retrieved Country List",
       "autoRenew": "Failed to toggle auto-renew status",
+      "noteSave": "Failed to save note",
       "passwordChange": "Failed to change password",
       "incorrectPassword": "Current password is incorrect"
     },
@@ -510,5 +512,14 @@
   "countryApplyFor_plural": "Your action will apply for {{count}} items",
   "selectCountry": "Select country",
   "confirm": "Confirm",
-  "Username": "User name"
+  "Username": "User name",
+  "proxyDetail": "Proxy Detail",
+  "enterNote": "Enter note for this proxy...",
+  "optional": "optional",
+  "close": "Close",
+  "save": "Save",
+  "topUp": "Top Up",
+  "paymentUnavailable": "This payment method is currently unavailable",
+  "amountUSD": "Amount (USD)",
+  "minimumAmount": "Minimum: ${{amount}}"
 }

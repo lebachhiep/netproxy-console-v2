@@ -91,7 +91,7 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="p-5 space-y-4">
       <div>
-        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">Số tiền (USD)</label>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">{t('amountUSD')}</label>
         <InputField
           type="number"
           min={MIN_AMOUNT}

@@ -6,6 +6,7 @@ import { ArrowCounter, ContentCopy, DatabaseStackOutlined, MagnifyingGlass } fro
 import { Input } from '@/components/input/Input';
 import { SectionTitle } from '@/components/SectionTitle';
 import { Table, TableColumn } from '@/components/table/Table';
+import { Pagination } from '@/components/pagination/Pagination';
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { useResponsive } from '@/hooks/useResponsive';
@@ -571,26 +572,28 @@ const WalletPage: React.FC = () => {
         </div>
       </motion.div>
 
-      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] pb-5">
-        <Table
-          className="h-full"
-          scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}
-          data={transactions}
-          columns={columns}
-          loading={loading}
-          showEmptyRows
-          pagination={{
-            current: currentPage,
-            pageSize,
-            total: total,
-            pageSizeOptions: [5, 10, 20, 50],
-            className: '!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark',
-            onChange: handlePageChange
-          }}
-          paginationType="pagination"
-          rowClassName={(record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
-          size="large"
-          bordered={false}
+      <motion.div variants={itemVariants} className="flex-1 overflow-hidden min-h-[350px] flex flex-col">
+        <div className="flex-1 overflow-hidden">
+          <Table
+            className="h-full"
+            scroll={{ x: 300, y: isMobile || isTablet ? '' : 'calc(100dvh - 615px)' }}
+            data={transactions}
+            columns={columns}
+            loading={loading}
+            showEmptyRows
+            rowClassName={(_record, index) => (index % 2 === 0 ? '' : 'bg-bg-mute')}
+            size="large"
+            bordered={false}
+          />
+        </div>
+        <Pagination
+          type="pagination"
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          pageSizeOptions={[5, 10, 20, 50]}
+          className="!pt-2 px-5 border-t-2 border-border-element dark:border-border-element-dark"
+          onChange={handlePageChange}
         />
       </motion.div>
 

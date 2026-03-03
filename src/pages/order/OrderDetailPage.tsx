@@ -599,7 +599,6 @@ const OrderDetailPage = () => {
           render: (_: any, record: Subscription) => {
             const isRotating = isRotatingProxy(record);
             if (isRotating) {
-              console.log(record.country);
               return <CountrySelectCell subscriptionId={record.id} currentCountry={record.country || 'VN'} className="max-w-40 mx-auto" />;
             }
             // For non-rotating proxies, show as plain text

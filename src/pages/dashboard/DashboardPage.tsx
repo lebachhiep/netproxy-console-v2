@@ -77,20 +77,16 @@ const DashboardPage = () => {
     const sizeQuery = new URLSearchParams(window.location.search).get('pageSize');
     return sizeQuery ? parseInt(sizeQuery, 10) : 20;
   });
-  const [total, setTotal] = useState(0);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
     const storageMode = localStorage.getItem('dashboardViewMode');
     return storageMode === 'list' ? 'list' : 'grid';
   });
-  const [tableData, setTableData] = useState<OrderTableData[]>([]);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const { isMobile, isTablet } = useResponsive();
   const userProfile = useAuthStore((state) => state.userProfile);
-  const [totalSubscriptions, setTotalSubscriptions] = useState(0);
-  const [activeSubscriptions, setActiveSubscriptions] = useState(0);
   // Checking modal state
   const [openCheckingModal, setOpenCheckingModal] = useState(false);
   // Searching
@@ -102,7 +98,7 @@ const DashboardPage = () => {
     queryFn: () => userService.getPlatformStat()
   });
 
-  const { isLoading: loading } = useQuery({
+  const { data: dashboardData, isLoading: loading } = useQuery({
     queryKey: ['dashboard-get-subscriptions', currentPage, pageSize, debouncedSearch],
     queryFn: async () => {
       const ordersResponse = await subscriptionService.getSubscriptions({
@@ -111,9 +107,6 @@ const DashboardPage = () => {
         PerPage: pageSize,
         search: debouncedSearch
       });
-
-      setTotalSubscriptions(ordersResponse.total_subscriptions || 0);
-      setActiveSubscriptions(ordersResponse.total_orders || 0);
 
       const transformedData: OrderTableData[] = (ordersResponse.orders || []).map((order) => {
         const firstSubscription = order.subscriptions?.[0];
@@ -127,12 +120,20 @@ const DashboardPage = () => {
         };
       });
 
-      setTableData(transformedData);
-      setTotal(ordersResponse.total_orders);
-      return transformedData;
+      return {
+        tableData: transformedData,
+        total: ordersResponse.total_orders,
+        totalSubscriptions: ordersResponse.total_subscriptions || 0,
+        activeSubscriptions: ordersResponse.total_orders || 0
+      };
     },
     retry: false
   });
+
+  const tableData = dashboardData?.tableData || [];
+  const total = dashboardData?.total || 0;
+  const totalSubscriptions = dashboardData?.totalSubscriptions || 0;
+  const activeSubscriptions = dashboardData?.activeSubscriptions || 0;
 
   const handleItemClick = (id: string) => {
     navigate(`/order/${id}`);

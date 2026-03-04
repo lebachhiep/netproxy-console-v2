@@ -308,7 +308,7 @@ const OrderDetailPage = () => {
 
     if (isRotating) {
       const username = getUsernameByProxyType(record);
-      const host = !record?.country || record.country === 'VN' ? 'vn.relay.prx.network' : 'relay.prx.network';
+      const host = getIpAddressByProxyType(record);
       const proxyString = `${host}:80:${username}:${record.api_key}`;
 
       await copyToClipboard(proxyString);

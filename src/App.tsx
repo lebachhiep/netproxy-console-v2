@@ -13,8 +13,15 @@ import { useBranding } from '@/hooks/useBranding';
 const App = () => {
   const location = useLocation();
   const { t } = useTranslation();
-  const { logoIconUrl, shouldInvertIcon } = useBranding();
+  const { logoIconUrl, shouldInvertIcon, businessName } = useBranding();
   const element = useRoutes(routes(t), location);
+
+  // Update document title from branding business_name
+  useEffect(() => {
+    if (businessName) {
+      document.title = businessName;
+    }
+  }, [businessName]);
 
   // Update favicon dynamically when theme or branding changes
   useEffect(() => {

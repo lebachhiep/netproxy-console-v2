@@ -60,7 +60,7 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
   const tabs = useMemo(() => {
     if (!paymentMethods?.methods) return [];
     return paymentMethods.methods
-      .filter((m) => allTabConfigs[m.type] && m.available)
+      .filter((m) => allTabConfigs[m.type])
       .map((m) => ({
         key: m.type,
         label: allTabConfigs[m.type].label,
@@ -131,7 +131,7 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
         renderMethodContent(paymentMethod)
       ) : (
         <Tabs tabs={tabs} type="card" activeKey={activeTab} onChange={setActiveTab} cardWrapperClass="">
-          {[renderMethodContent(activeTab as string)]}
+          {tabs.map((tab) => renderMethodContent(tab.key))}
         </Tabs>
       )}
     </Modal>

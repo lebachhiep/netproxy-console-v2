@@ -60,7 +60,7 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
   const tabs = useMemo(() => {
     if (!paymentMethods?.methods) return [];
     return paymentMethods.methods
-      .filter((m) => allTabConfigs[m.type])
+      .filter((m) => allTabConfigs[m.type] && m.available)
       .map((m) => ({
         key: m.type,
         label: allTabConfigs[m.type].label,

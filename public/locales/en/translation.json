@@ -521,5 +521,8 @@
   "topUp": "Top Up",
   "paymentUnavailable": "This payment method is currently unavailable",
   "amountUSD": "Amount (USD)",
-  "minimumAmount": "Minimum: ${{amount}}"
+  "minimumAmount": "Minimum: ${{amount}}",
+  "paypal": "PayPal",
+  "payWithPaypal": "Pay with PayPal",
+  "paypalRedirectInfo": "You will be redirected to PayPal to complete payment"
 }

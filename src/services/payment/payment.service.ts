@@ -5,6 +5,8 @@ import type {
   TazapayGenerateResponse,
   CryptomusGenerateRequest,
   CryptomusGenerateResponse,
+  PaypalGenerateRequest,
+  PaypalGenerateResponse
 } from './payment.types';
 
 class PaymentService {
@@ -27,6 +29,13 @@ class PaymentService {
    */
   async generateCryptomusPayment(data: CryptomusGenerateRequest): Promise<CryptomusGenerateResponse> {
     return apiService.post<CryptomusGenerateResponse>('/user/payments/cryptomus/generate', data);
+  }
+
+  /**
+   * Generate a PayPal payment URL
+   */
+  async generatePaypalPayment(data: PaypalGenerateRequest): Promise<PaypalGenerateResponse> {
+    return apiService.post<PaypalGenerateResponse>('/user/payments/paypal/generate', data);
   }
 }
 

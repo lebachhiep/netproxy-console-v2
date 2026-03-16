@@ -519,5 +519,10 @@
   "topUp": "Nạp tiền",
   "paymentUnavailable": "Phương thức thanh toán này hiện không khả dụng",
   "amountUSD": "Số tiền (USD)",
-  "minimumAmount": "Tối thiểu: ${{amount}}"
+  "minimumAmount": "Tối thiểu: ${{amount}}",
+  "notifications": {
+    "title": "Thông báo",
+    "empty": "Không có thông báo",
+    "dontShowAgain": "Không hiển thị lại"
+  }
 }

@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { useResponsive } from '@/hooks/useResponsive';
+import { NotificationLoginModal } from '@/components/notifications/NotificationLoginModal';
 
 export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -56,6 +57,8 @@ export const AdminLayout: React.FC = () => {
           <Outlet />
         </main>
       </div>
+
+      <NotificationLoginModal />
     </div>
   );
 };

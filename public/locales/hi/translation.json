@@ -479,5 +479,10 @@
   "countryApplyFor": "आपकी कार्रवाई {{गिनती}} आइटम के लिए लागू होगी",
   "selectCountry": "देश चुनें",
   "confirm": "पुष्टि करना",
-  "Username": "उपयोगकर्ता नाम"
+  "Username": "उपयोगकर्ता नाम",
+  "notifications": {
+    "title": "सूचनाएं",
+    "empty": "कोई सूचना नहीं",
+    "dontShowAgain": "यह दोबारा न दिखाएं"
+  }
 }

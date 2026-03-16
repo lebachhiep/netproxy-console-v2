@@ -479,5 +479,10 @@
   "countryApplyFor": "Your action will apply for {{count}} item",
   "selectCountry": "Select country",
   "confirm": "Confirm",
-  "Username": "User name"
+  "Username": "User name",
+  "notifications": {
+    "title": "Mga Abiso",
+    "empty": "Walang abiso",
+    "dontShowAgain": "Huwag nang ipakita ito"
+  }
 }

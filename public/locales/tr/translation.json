@@ -479,5 +479,10 @@
   "countryApplyFor": "İşleminiz {{count}} öğe için geçerli olacak",
   "selectCountry": "Ülke seçin",
   "confirm": "Onaylamak",
-  "Username": "Kullanıcı adı"
+  "Username": "Kullanıcı adı",
+  "notifications": {
+    "title": "Bildirimler",
+    "empty": "Bildirim yok",
+    "dontShowAgain": "Bunu bir daha gösterme"
+  }
 }

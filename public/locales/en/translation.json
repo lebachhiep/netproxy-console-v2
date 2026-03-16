@@ -524,5 +524,10 @@
   "minimumAmount": "Minimum: ${{amount}}",
   "paypal": "PayPal",
   "payWithPaypal": "Pay with PayPal",
-  "paypalRedirectInfo": "You will be redirected to PayPal to complete payment"
+  "paypalRedirectInfo": "You will be redirected to PayPal to complete payment",
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "dontShowAgain": "Don't show this again"
+  }
 }

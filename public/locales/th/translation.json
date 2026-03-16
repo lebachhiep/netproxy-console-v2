@@ -479,5 +479,10 @@
   "countryApplyFor": "การกระทำของคุณจะมีผลกับ {{count}} รายการ",
   "selectCountry": "เลือกประเทศ",
   "confirm": "ยืนยัน",
-  "Username": "ชื่อผู้ใช้"
+  "Username": "ชื่อผู้ใช้",
+  "notifications": {
+    "title": "การแจ้งเตือน",
+    "empty": "ไม่มีการแจ้งเตือน",
+    "dontShowAgain": "ไม่ต้องแสดงอีก"
+  }
 }

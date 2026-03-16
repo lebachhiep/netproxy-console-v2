@@ -468,5 +468,10 @@
   "countryApplyFor": "Hoc'h ober a dalvezo evit an elfenn {{kont}}",
   "selectCountry": "Diuzañ bro",
   "confirm": "Kadarnaat",
-  "Username": "Anv implijer"
+  "Username": "Anv implijer",
+  "notifications": {
+    "title": "Notificações",
+    "empty": "Sem notificações",
+    "dontShowAgain": "Não mostrar novamente"
+  }
 }

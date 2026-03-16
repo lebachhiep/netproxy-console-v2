@@ -479,5 +479,10 @@
   "countryApplyFor": "Tindakan Anda akan berlaku untuk {{count}} item",
   "selectCountry": "Pilih negara",
   "confirm": "Mengonfirmasi",
-  "Username": "Nama belakang"
+  "Username": "Nama belakang",
+  "notifications": {
+    "title": "Notifikasi",
+    "empty": "Tidak ada notifikasi",
+    "dontShowAgain": "Jangan tampilkan lagi"
+  }
 }

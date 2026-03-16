@@ -49,8 +49,8 @@ export function useMarkAnnouncementRead() {
 
 export function useMarkAllAnnouncementsRead() {
   const queryClient = useQueryClient();
-  return useMutation<void, Error, string[]>({
-    mutationFn: (ids) => announcementService.markAllRead(ids),
+  return useMutation<void, Error, void>({
+    mutationFn: () => announcementService.markAllRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: announcementKeys.list() });
       queryClient.invalidateQueries({ queryKey: announcementKeys.unreadCount() });
@@ -62,6 +62,16 @@ export function useDismissAnnouncement() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
     mutationFn: (id) => announcementService.dismiss(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: announcementKeys.all });
+    }
+  });
+}
+
+export function useDismissAllAnnouncements() {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, void>({
+    mutationFn: () => announcementService.dismissAll(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: announcementKeys.all });
     }

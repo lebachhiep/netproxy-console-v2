@@ -18,8 +18,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onSelect }
   const markRead = useMarkAnnouncementRead();
 
   const notifications = data?.items || [];
-  const unreadIds = notifications.filter((n) => !n.read_at).map((n) => n.id);
-  const hasUnread = unreadIds.length > 0;
+  const hasUnread = notifications.some((n) => !n.read_at);
 
   const handleSelect = (notification: Announcement) => {
     if (!notification.read_at) {
@@ -35,7 +34,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({ onSelect }
         <h3 className="text-base font-semibold text-text-hi dark:text-text-hi-dark font-averta">{t('notifications.title')}</h3>
         {hasUnread && (
           <button
-            onClick={() => markAllRead.mutate(unreadIds)}
+            onClick={() => markAllRead.mutate()}
             disabled={markAllRead.isPending}
             className="flex items-center gap-1 text-xs text-text-me dark:text-text-me-dark hover:text-primary dark:hover:text-primary-dark transition-colors disabled:opacity-50"
           >

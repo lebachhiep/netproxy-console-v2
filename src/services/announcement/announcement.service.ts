@@ -2,30 +2,32 @@ import { apiService } from '@/services/api/api.service';
 import type { AnnouncementListResponse, AnnouncementModalResponse, AnnouncementUnreadCountResponse } from './announcement.types';
 
 class AnnouncementService {
-  private readonly BASE_PATH = '/user/announcements';
-
   async getList(): Promise<AnnouncementListResponse> {
-    return apiService.get<AnnouncementListResponse>(this.BASE_PATH);
+    return apiService.get<AnnouncementListResponse>('/user/announcements');
   }
 
   async getModal(): Promise<AnnouncementModalResponse> {
-    return apiService.get<AnnouncementModalResponse>(`${this.BASE_PATH}/modal`);
+    return apiService.get<AnnouncementModalResponse>('/user/announcements/modal');
   }
 
   async getUnreadCount(): Promise<AnnouncementUnreadCountResponse> {
-    return apiService.get<AnnouncementUnreadCountResponse>(`${this.BASE_PATH}/unread-count`);
+    return apiService.get<AnnouncementUnreadCountResponse>('/user/announcements/unread-count');
   }
 
   async markRead(id: string): Promise<void> {
-    return apiService.post<void>(`${this.BASE_PATH}/${id}/read`);
+    return apiService.post<void>(`/user/announcement-read/${id}`);
   }
 
-  async markAllRead(ids: string[]): Promise<void> {
-    await Promise.all(ids.map((id) => this.markRead(id)));
+  async markAllRead(): Promise<void> {
+    return apiService.post<void>('/user/announcements-read-all');
   }
 
   async dismiss(id: string): Promise<void> {
-    return apiService.post<void>(`${this.BASE_PATH}/${id}/dismiss`);
+    return apiService.post<void>(`/user/announcement-dismiss/${id}`);
+  }
+
+  async dismissAll(): Promise<void> {
+    return apiService.post<void>('/user/announcements-dismiss-all');
   }
 }
 

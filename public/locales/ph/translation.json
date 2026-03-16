@@ -483,6 +483,7 @@
   "notifications": {
     "title": "Mga Abiso",
     "empty": "Walang abiso",
-    "dontShowAgain": "Huwag nang ipakita ito"
+    "dontShowAgain": "Huwag nang ipakita ito",
+    "markAllRead": "Markahan lahat bilang nabasa"
   }
 }

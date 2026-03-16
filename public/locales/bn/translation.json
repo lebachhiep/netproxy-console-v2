@@ -472,6 +472,7 @@
   "notifications": {
     "title": "বিজ্ঞপ্তি",
     "empty": "কোনো বিজ্ঞপ্তি নেই",
-    "dontShowAgain": "আর দেখাবেন না"
+    "dontShowAgain": "আর দেখাবেন না",
+    "markAllRead": "সব পঠিত হিসেবে চিহ্নিত করুন"
   }
 }

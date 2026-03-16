@@ -483,6 +483,7 @@
   "notifications": {
     "title": "通知",
     "empty": "没有通知",
-    "dontShowAgain": "不再显示"
+    "dontShowAgain": "不再显示",
+    "markAllRead": "全部标记为已读"
   }
 }

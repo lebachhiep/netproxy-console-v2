@@ -523,6 +523,7 @@
   "notifications": {
     "title": "Thông báo",
     "empty": "Không có thông báo",
-    "dontShowAgain": "Không hiển thị lại"
+    "dontShowAgain": "Không hiển thị lại",
+    "markAllRead": "Đánh dấu đã đọc tất cả"
   }
 }

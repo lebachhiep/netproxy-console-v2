@@ -528,6 +528,7 @@
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications",
-    "dontShowAgain": "Don't show this again"
+    "dontShowAgain": "Don't show this again",
+    "markAllRead": "Mark all as read"
   }
 }

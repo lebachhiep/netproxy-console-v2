@@ -483,6 +483,7 @@
   "notifications": {
     "title": "Bildirimler",
     "empty": "Bildirim yok",
-    "dontShowAgain": "Bunu bir daha gösterme"
+    "dontShowAgain": "Bunu bir daha gösterme",
+    "markAllRead": "Tümünü okundu olarak işaretle"
   }
 }

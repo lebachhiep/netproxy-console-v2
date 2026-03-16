@@ -483,6 +483,7 @@
   "notifications": {
     "title": "اعلان‌ها",
     "empty": "اعلانی وجود ندارد",
-    "dontShowAgain": "دیگر نمایش نده"
+    "dontShowAgain": "دیگر نمایش نده",
+    "markAllRead": "علامت‌گذاری همه به‌عنوان خوانده‌شده"
   }
 }

@@ -47,6 +47,17 @@ export function useMarkAnnouncementRead() {
   });
 }
 
+export function useMarkAllAnnouncementsRead() {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, string[]>({
+    mutationFn: (ids) => announcementService.markAllRead(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: announcementKeys.list() });
+      queryClient.invalidateQueries({ queryKey: announcementKeys.unreadCount() });
+    }
+  });
+}
+
 export function useDismissAnnouncement() {
   const queryClient = useQueryClient();
   return useMutation<void, Error, string>({

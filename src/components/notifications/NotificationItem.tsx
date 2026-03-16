@@ -1,28 +1,21 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useMarkAnnouncementRead } from '@/hooks/useAnnouncements';
 import type { Announcement } from '@/services/announcement/announcement.types';
 
 dayjs.extend(relativeTime);
 
 interface NotificationItemProps {
   notification: Announcement;
+  onSelect: (notification: Announcement) => void;
 }
 
-export const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => {
-  const markRead = useMarkAnnouncementRead();
+export const NotificationItem: React.FC<NotificationItemProps> = ({ notification, onSelect }) => {
   const isUnread = !notification.read_at;
-
-  const handleClick = () => {
-    if (isUnread) {
-      markRead.mutate(notification.id);
-    }
-  };
 
   return (
     <div
-      onClick={handleClick}
+      onClick={() => onSelect(notification)}
       className={`px-4 py-3 border-b border-border-element dark:border-border-element-dark cursor-pointer transition-colors hover:bg-bg-secondary/50 dark:hover:bg-bg-secondary-dark/50 ${
         isUnread ? 'bg-primary-bg dark:bg-primary-bg-dark' : ''
       }`}

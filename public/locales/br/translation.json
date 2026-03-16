@@ -472,6 +472,7 @@
   "notifications": {
     "title": "Notificações",
     "empty": "Sem notificações",
-    "dontShowAgain": "Não mostrar novamente"
+    "dontShowAgain": "Não mostrar novamente",
+    "markAllRead": "Marcar tudo como lido"
   }
 }

@@ -483,6 +483,7 @@
   "notifications": {
     "title": "सूचनाएं",
     "empty": "कोई सूचना नहीं",
-    "dontShowAgain": "यह दोबारा न दिखाएं"
+    "dontShowAgain": "यह दोबारा न दिखाएं",
+    "markAllRead": "सभी को पढ़ा हुआ चिह्नित करें"
   }
 }

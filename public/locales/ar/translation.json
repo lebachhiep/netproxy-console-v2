@@ -472,6 +472,7 @@
   "notifications": {
     "title": "الإشعارات",
     "empty": "لا توجد إشعارات",
-    "dontShowAgain": "لا تعرض هذا مرة أخرى"
+    "dontShowAgain": "لا تعرض هذا مرة أخرى",
+    "markAllRead": "تحديد الكل كمقروء"
   }
 }

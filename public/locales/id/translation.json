@@ -483,6 +483,7 @@
   "notifications": {
     "title": "Notifikasi",
     "empty": "Tidak ada notifikasi",
-    "dontShowAgain": "Jangan tampilkan lagi"
+    "dontShowAgain": "Jangan tampilkan lagi",
+    "markAllRead": "Tandai semua sudah dibaca"
   }
 }

@@ -20,6 +20,10 @@ class AnnouncementService {
     return apiService.post<void>(`${this.BASE_PATH}/${id}/read`);
   }
 
+  async markAllRead(ids: string[]): Promise<void> {
+    await Promise.all(ids.map((id) => this.markRead(id)));
+  }
+
   async dismiss(id: string): Promise<void> {
     return apiService.post<void>(`${this.BASE_PATH}/${id}/dismiss`);
   }

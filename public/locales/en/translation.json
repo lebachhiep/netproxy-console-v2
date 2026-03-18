@@ -525,6 +525,9 @@
   "paypal": "PayPal",
   "payWithPaypal": "Pay with PayPal",
   "paypalRedirectInfo": "You will be redirected to PayPal to complete payment",
+  "stripe": "Stripe",
+  "payWithStripe": "Pay with Stripe",
+  "stripeRedirectInfo": "You will be redirected to Stripe to complete payment",
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications",

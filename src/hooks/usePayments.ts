@@ -7,7 +7,9 @@ import type {
   CryptomusGenerateRequest,
   CryptomusGenerateResponse,
   PaypalGenerateRequest,
-  PaypalGenerateResponse
+  PaypalGenerateResponse,
+  StripeGenerateRequest,
+  StripeGenerateResponse
 } from '@/services/payment/payment.types';
 
 // Query keys factory
@@ -51,5 +53,14 @@ export function useCryptomusPayment() {
 export function usePaypalPayment() {
   return useMutation<PaypalGenerateResponse, Error, PaypalGenerateRequest>({
     mutationFn: (data) => paymentService.generatePaypalPayment(data)
+  });
+}
+
+/**
+ * Hook to generate a Stripe payment
+ */
+export function useStripePayment() {
+  return useMutation<StripeGenerateResponse, Error, StripeGenerateRequest>({
+    mutationFn: (data) => paymentService.generateStripePayment(data)
   });
 }

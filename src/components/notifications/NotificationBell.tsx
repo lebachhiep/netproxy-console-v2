@@ -32,7 +32,7 @@ export const NotificationBell: React.FC = () => {
         >
           <IoNotificationsOutline className="w-5 h-5 text-text-me dark:text-text-lo-dark group-hover:text-text-hi dark:group-hover:text-text-hi-dark transition-colors" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 h-5 min-w-5 flex items-center justify-center rounded-full bg-red dark:bg-red-dark text-white text-[10px] font-semibold px-1">
+            <span className="absolute -top-1 -right-1 z-20 h-5 min-w-5 flex items-center justify-center rounded-full bg-red dark:bg-red-dark text-white text-[10px] font-semibold px-1">
               {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}

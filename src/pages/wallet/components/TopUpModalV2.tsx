@@ -28,10 +28,6 @@ const LoadingSkeleton: React.FC = () => (
   </div>
 );
 
-const UnavailableMethod: React.FC<{ message: string }> = ({ message }) => (
-  <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">{message}</div>
-);
-
 export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, paymentMethod, amount, country }) => {
   const { t } = useTranslation();
   const { data: paymentMethods, isLoading } = usePaymentMethods();
@@ -58,11 +54,11 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
     [t]
   );
 
-  // Build tabs dynamically from API response
+  // Build tabs dynamically from API response — only show available methods
   const tabs = useMemo(() => {
     if (!paymentMethods?.methods) return [];
     return paymentMethods.methods
-      .filter((m) => allTabConfigs[m.type])
+      .filter((m) => allTabConfigs[m.type] && m.available)
       .map((m) => ({
         key: m.type,
         label: allTabConfigs[m.type].label,
@@ -90,42 +86,24 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
     }
     const info = methodMap[method];
     if (method === 'tazapay') {
-      return info?.available ? (
-        <TazapayForm key="tazapay" countries={info.supported_countries} onSuccess={onClose} amount={amount} country={country} />
-      ) : (
-        <UnavailableMethod key="tazapay-unavailable" message={t('paymentUnavailable')} />
-      );
+      return <TazapayForm key="tazapay" countries={info?.supported_countries} onSuccess={onClose} amount={amount} country={country} />;
     }
     if (method === 'cryptomus') {
-      return info?.available ? (
-        <CryptomusForm key="cryptomus" services={info.crypto_services} onSuccess={onClose} amount={amount || 10} />
-      ) : (
-        <UnavailableMethod key="cryptomus-unavailable" message={t('paymentUnavailable')} />
-      );
+      return <CryptomusForm key="cryptomus" services={info?.crypto_services} onSuccess={onClose} amount={amount || 10} />;
     }
-    if (method === 'web2m') {
-      return info?.available && info.bank_info ? (
-        <Web2MInfo key="web2m" bankInfo={info.bank_info} amount={amount || 10} />
-      ) : (
-        <UnavailableMethod key="web2m-unavailable" message={t('paymentUnavailable')} />
-      );
+    if (method === 'web2m' && info?.bank_info) {
+      return <Web2MInfo key="web2m" bankInfo={info.bank_info} amount={amount || 10} />;
     }
     if (method === 'paypal') {
-      return info?.available ? (
-        <PaypalForm key="paypal" onSuccess={onClose} amount={amount} />
-      ) : (
-        <UnavailableMethod key="paypal-unavailable" message={t('paymentUnavailable')} />
-      );
+      return <PaypalForm key="paypal" onSuccess={onClose} amount={amount} />;
     }
     if (method === 'stripe') {
-      return info?.available ? (
-        <StripeForm key="stripe" onSuccess={onClose} amount={amount} />
-      ) : (
-        <UnavailableMethod key="stripe-unavailable" message={t('paymentUnavailable')} />
-      );
+      return <StripeForm key="stripe" onSuccess={onClose} amount={amount} />;
     }
     return null;
   };
+
+  const noMethodsAvailable = !isLoading && tabs.length === 0;
 
   return (
     <Modal
@@ -136,7 +114,9 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
       headerClassName="shrink-0"
       bodyClassName="p-0 overflow-y-auto flex-1 min-h-0"
     >
-      {paymentMethod ? (
+      {noMethodsAvailable ? (
+        <div className="p-8 text-center text-text-lo dark:text-text-lo-dark">{t('paymentUnavailable')}</div>
+      ) : paymentMethod ? (
         renderMethodContent(paymentMethod)
       ) : (
         <Tabs tabs={tabs} type="card" activeKey={activeTab} onChange={setActiveTab} cardWrapperClass="">

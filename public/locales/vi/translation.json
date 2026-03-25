@@ -525,5 +525,12 @@
     "empty": "Không có thông báo",
     "dontShowAgain": "Không hiển thị lại",
     "markAllRead": "Đánh dấu đã đọc tất cả"
+  },
+  "paymentCallback": {
+    "success": "Thanh toán thành công",
+    "failed": "Thanh toán thất bại",
+    "amountVnd": "{{amount}} VND",
+    "autoClose": "Cửa sổ này sẽ tự động đóng...",
+    "balanceUpdated": "Đã nhận thanh toán! Số dư của bạn đã được cập nhật."
   }
 }

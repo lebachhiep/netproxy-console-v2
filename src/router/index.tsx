@@ -15,6 +15,7 @@ import { ResellerPage } from '@/pages/reseller/ResellerPage';
 import { ResetPasswordPage } from '@/pages/reset-password/ResetPasswordPage';
 import SupportSoftwarePage from '@/pages/support-software/SupportSoftwarePage';
 import WalletPage from '@/pages/wallet/WalletPage';
+import PaymentCallbackPage from '@/pages/payment-callback/PaymentCallbackPage';
 import React from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 
@@ -106,6 +107,11 @@ const routes = (t: any): Route[] => {
           element: <OrderDetailPage />
         }
       ]
+    },
+    {
+      name: '/payment/callback',
+      element: <PaymentCallbackPage />,
+      path: '/payment/callback'
     },
     {
       name: '/login',

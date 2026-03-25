@@ -30,8 +30,8 @@ export const StripeForm: React.FC<StripeFormProps> = ({ onSuccess, amount: propA
     generatePayment(
       {
         amount: numAmount,
-        success_url: `${baseUrl}/wallet`,
-        cancel_url: `${baseUrl}/wallet`
+        success_url: `${baseUrl}/payment/callback`,
+        cancel_url: `${baseUrl}/payment/callback`
       },
       {
         onSuccess: (data) => {

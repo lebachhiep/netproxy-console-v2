@@ -71,8 +71,8 @@ export const TazapayForm: React.FC<TazapayFormProps> = ({
       {
         amount: numAmount,
         country: String(country),
-        success_url: `${baseUrl}/wallet`,
-        cancel_url: `${baseUrl}/wallet`
+        success_url: `${baseUrl}/payment/callback`,
+        cancel_url: `${baseUrl}/payment/callback`
       },
       {
         onSuccess: (data) => {

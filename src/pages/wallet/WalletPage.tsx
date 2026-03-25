@@ -30,6 +30,7 @@ import { InputField } from '@/components/input/InputField';
 import { useCryptomusPayment, usePaymentMethods, usePaypalPayment, useStripePayment, useTazapayPayment } from '@/hooks/usePayments';
 import { BANK_INFO_MAPPING, BankInfo } from '@/utils/constants';
 import TopUpModalV2 from './components/TopUpModalV2';
+import { PAYMENT_CHANNEL_NAME, type PaymentMessage } from '@/lib/payment-channel';
 import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
 
 type TopUpMethod = 'tazapay' | 'cryptomus' | 'web2m' | 'paypal' | 'stripe';
@@ -304,6 +305,29 @@ const WalletPage: React.FC = () => {
     fetchTransactions();
   }, [fetchBalance, fetchTransactions]);
 
+  // Listen for payment completion from callback tab
+  useEffect(() => {
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel(PAYMENT_CHANNEL_NAME);
+      channel.onmessage = (event: MessageEvent<PaymentMessage>) => {
+        if (event.data.type === 'PAYMENT_SUCCESS') {
+          toast.success(t('paymentCallback.balanceUpdated'));
+          fetchBalance();
+          fetchTransactions();
+          setTopUpModalOpen(false);
+        } else if (event.data.type === 'PAYMENT_FAILED') {
+          toast.error(t('paymentCallback.failed'));
+        }
+      };
+    } catch {
+      // BroadcastChannel not supported
+    }
+    return () => {
+      channel?.close();
+    };
+  }, [fetchBalance, fetchTransactions, t]);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -431,8 +455,8 @@ const WalletPage: React.FC = () => {
         {
           amount: priceValue,
           country: String(tazapayCountry),
-          success_url: `${baseUrl}/wallet`,
-          cancel_url: `${baseUrl}/wallet`
+          success_url: `${baseUrl}/payment/callback`,
+          cancel_url: `${baseUrl}/payment/callback`
         },
         {
           onSuccess: (data) => {
@@ -472,8 +496,8 @@ const WalletPage: React.FC = () => {
       generatePaypalPayment(
         {
           amount: priceValue,
-          success_url: `${baseUrl}/wallet`,
-          cancel_url: `${baseUrl}/wallet`
+          success_url: `${baseUrl}/payment/callback`,
+          cancel_url: `${baseUrl}/payment/callback`
         },
         {
           onSuccess: (data) => {
@@ -495,8 +519,8 @@ const WalletPage: React.FC = () => {
       generateStripePayment(
         {
           amount: priceValue,
-          success_url: `${baseUrl}/wallet`,
-          cancel_url: `${baseUrl}/wallet`
+          success_url: `${baseUrl}/payment/callback`,
+          cancel_url: `${baseUrl}/payment/callback`
         },
         {
           onSuccess: (data) => {

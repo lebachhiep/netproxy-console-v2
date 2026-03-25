@@ -533,5 +533,12 @@
     "empty": "No notifications",
     "dontShowAgain": "Don't show this again",
     "markAllRead": "Mark all as read"
+  },
+  "paymentCallback": {
+    "success": "Payment Successful",
+    "failed": "Payment Failed",
+    "amountVnd": "{{amount}} VND",
+    "autoClose": "This window will close automatically...",
+    "balanceUpdated": "Payment received! Your balance has been updated."
   }
 }

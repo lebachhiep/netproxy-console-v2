@@ -469,6 +469,9 @@
   "selectCountry": "اختر البلد",
   "confirm": "يتأكد",
   "Username": "اسم المستخدم",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "الدفع عبر Pay2s",
+  "pay2sRedirectInfo": "سيتم إعادة توجيهك إلى Pay2s لإتمام الدفع",
   "notifications": {
     "title": "الإشعارات",
     "empty": "لا توجد إشعارات",

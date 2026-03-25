@@ -528,6 +528,9 @@
   "stripe": "Stripe",
   "payWithStripe": "Pay with Stripe",
   "stripeRedirectInfo": "You will be redirected to Stripe to complete payment",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pay with Pay2s",
+  "pay2sRedirectInfo": "You will be redirected to Pay2s to complete payment",
   "notifications": {
     "title": "Notifications",
     "empty": "No notifications",

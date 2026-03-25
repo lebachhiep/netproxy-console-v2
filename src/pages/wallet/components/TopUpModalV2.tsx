@@ -9,12 +9,13 @@ import CryptomusForm from './modal/CryptomusForm';
 import Web2MInfo from './modal/Web2MInfo';
 import PaypalForm from './modal/PaypalForm';
 import StripeForm from './modal/StripeForm';
+import Pay2sForm from './modal/Pay2sForm';
 import { useTranslation } from 'react-i18next';
 
 interface TopUpModalProps {
   open: boolean;
   onClose: () => void;
-  paymentMethod?: 'tazapay' | 'cryptomus' | 'web2m' | 'paypal' | 'stripe';
+  paymentMethod?: 'tazapay' | 'cryptomus' | 'web2m' | 'paypal' | 'stripe' | 'pay2s';
   amount?: number;
   country?: string;
   bankInfo?: any;
@@ -49,7 +50,8 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
       cryptomus: { label: t('crypto'), icon: <Globe className="w-5 h-5" /> },
       web2m: { label: t('bank'), icon: <DatabaseStackOutlined className="w-5 h-5" /> },
       paypal: { label: t('paypal'), icon: <WalletCreditCardOutlined className="w-5 h-5" /> },
-      stripe: { label: t('stripe'), icon: <WalletCreditCardOutlined className="w-5 h-5" /> }
+      stripe: { label: t('stripe'), icon: <WalletCreditCardOutlined className="w-5 h-5" /> },
+      pay2s: { label: t('pay2s'), icon: <WalletCreditCardOutlined className="w-5 h-5" /> }
     }),
     [t]
   );
@@ -99,6 +101,9 @@ export const TopUpModalV2: React.FC<TopUpModalProps> = ({ open, onClose, payment
     }
     if (method === 'stripe') {
       return <StripeForm key="stripe" onSuccess={onClose} amount={amount} />;
+    }
+    if (method === 'pay2s') {
+      return <Pay2sForm key="pay2s" onSuccess={onClose} amount={amount} />;
     }
     return null;
   };

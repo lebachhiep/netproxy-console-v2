@@ -8,7 +8,9 @@ import type {
   PaypalGenerateRequest,
   PaypalGenerateResponse,
   StripeGenerateRequest,
-  StripeGenerateResponse
+  StripeGenerateResponse,
+  Pay2sGenerateRequest,
+  Pay2sGenerateResponse
 } from './payment.types';
 
 class PaymentService {
@@ -45,6 +47,13 @@ class PaymentService {
    */
   async generateStripePayment(data: StripeGenerateRequest): Promise<StripeGenerateResponse> {
     return apiService.post<StripeGenerateResponse>('/user/payments/stripe/generate', data);
+  }
+
+  /**
+   * Generate a Pay2s payment URL
+   */
+  async generatePay2sPayment(data: Pay2sGenerateRequest): Promise<Pay2sGenerateResponse> {
+    return apiService.post<Pay2sGenerateResponse>('/user/payments/pay2s/generate', data);
   }
 }
 

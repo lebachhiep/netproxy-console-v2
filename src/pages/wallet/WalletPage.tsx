@@ -27,13 +27,20 @@ import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
 import { Slider } from '@/components/slider/Slider';
 import { InputField } from '@/components/input/InputField';
-import { useCryptomusPayment, usePaymentMethods, usePaypalPayment, useStripePayment, useTazapayPayment } from '@/hooks/usePayments';
+import {
+  useCryptomusPayment,
+  usePay2sPayment,
+  usePaymentMethods,
+  usePaypalPayment,
+  useStripePayment,
+  useTazapayPayment
+} from '@/hooks/usePayments';
 import { BANK_INFO_MAPPING, BankInfo } from '@/utils/constants';
 import TopUpModalV2 from './components/TopUpModalV2';
 import { PAYMENT_CHANNEL_NAME, type PaymentMessage } from '@/lib/payment-channel';
 import CryptocurrencyIcon from '@/assets/images/crypto-currency.png';
 
-type TopUpMethod = 'tazapay' | 'cryptomus' | 'web2m' | 'paypal' | 'stripe';
+type TopUpMethod = 'tazapay' | 'cryptomus' | 'web2m' | 'paypal' | 'stripe' | 'pay2s';
 
 const WalletPage: React.FC = () => {
   const { data: paymentMethods } = usePaymentMethods();
@@ -47,6 +54,7 @@ const WalletPage: React.FC = () => {
   const { mutate: generateCryptomusPayment, isPending: isCryptomusPending } = useCryptomusPayment();
   const { mutate: generateStripePayment, isPending: isStripePending } = useStripePayment();
   const { mutate: generatePaypalPayment, isPending: isPaypalPending } = usePaypalPayment();
+  const { mutate: generatePay2sPayment, isPending: isPay2sPending } = usePay2sPayment();
 
   // Top-up modal state
   const [topUpModalOpen, setTopUpModalOpen] = useState(false);
@@ -74,6 +82,7 @@ const WalletPage: React.FC = () => {
   const web2mMethod = paymentMethods?.methods.find((method) => method.type === 'web2m');
   const stripeMethod = paymentMethods?.methods.find((method) => method.type === 'stripe');
   const paypalMethod = paymentMethods?.methods.find((method) => method.type === 'paypal');
+  const pay2sMethod = paymentMethods?.methods.find((method) => method.type === 'pay2s');
 
   const web2mAvailableBank: BankInfo | undefined = useMemo(() => {
     const bankName = web2mMethod?.bank_info?.bank_name;
@@ -199,6 +208,23 @@ const WalletPage: React.FC = () => {
       });
     }
 
+    if (pay2sMethod?.available) {
+      nextOptions.push({
+        value: 'pay2s',
+        label: (
+          <div className="flex items-center justify-between">
+            <div className="flex gap-2 items-center">
+              <div className="w-8 h-6 flex items-center justify-center">
+                <WalletCreditCardOutlined className="w-5 h-5 text-[#2563eb]" />
+              </div>
+              <span className="font-medium">{t('pay2s')}</span>
+            </div>
+            <div>Pay2s</div>
+          </div>
+        )
+      });
+    }
+
     if (tazapayMethod?.available) {
       const countryOptions = tazapayMethod.supported_countries || {};
       nextOptions.push(
@@ -218,7 +244,15 @@ const WalletPage: React.FC = () => {
     }
 
     return nextOptions;
-  }, [web2mMethod, web2mAvailableBank, cryptomusMethod?.available, stripeMethod?.available, paypalMethod?.available, tazapayMethod]);
+  }, [
+    web2mMethod,
+    web2mAvailableBank,
+    cryptomusMethod?.available,
+    stripeMethod?.available,
+    paypalMethod?.available,
+    pay2sMethod?.available,
+    tazapayMethod
+  ]);
 
   const resolveTopUpMethod = useCallback((value: string): { method: TopUpMethod | null; country: string } => {
     if (value === 'web2m') {
@@ -232,6 +266,9 @@ const WalletPage: React.FC = () => {
     }
     if (value === 'paypal') {
       return { method: 'paypal', country: '' };
+    }
+    if (value === 'pay2s') {
+      return { method: 'pay2s', country: '' };
     }
     if (value.startsWith('tazapay-')) {
       const selectedCountry = value.split('-')[1]?.toUpperCase() || '';
@@ -534,6 +571,29 @@ const WalletPage: React.FC = () => {
           }
         }
       );
+      return;
+    }
+
+    if (topUpMethod === 'pay2s') {
+      const baseUrl = window.location.origin;
+      generatePay2sPayment(
+        {
+          amount: priceValue,
+          success_url: `${baseUrl}/payment/callback`,
+          cancel_url: `${baseUrl}/payment/callback`
+        },
+        {
+          onSuccess: (data) => {
+            window.open(data.payment_url, '_blank');
+            toast.success(t('toast.success.windowPaymentPop'));
+            setTopUpModalOpen(false);
+          },
+          onError: (error) => {
+            toast.error(t('toast.error.cantCreatePay'));
+            console.log('Wallet Pay2s payment error:', error);
+          }
+        }
+      );
     }
   };
 
@@ -625,7 +685,7 @@ const WalletPage: React.FC = () => {
                 variant="primary"
                 className="h-10 px-6 dark:pseudo-border-top-orange dark:border-transparent"
                 onClick={handleTopup}
-                loading={isTazapayPending || isCryptomusPending || isStripePending || isPaypalPending}
+                loading={isTazapayPending || isCryptomusPending || isStripePending || isPaypalPending || isPay2sPending}
                 disabled={priceValue < 10}
               >
                 {t('wallet.topUp')}

@@ -480,6 +480,9 @@
   "selectCountry": "देश चुनें",
   "confirm": "पुष्टि करना",
   "Username": "उपयोगकर्ता नाम",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pay2s से भुगतान करें",
+  "pay2sRedirectInfo": "भुगतान पूरा करने के लिए आपको Pay2s पर रीडायरेक्ट किया जाएगा",
   "notifications": {
     "title": "सूचनाएं",
     "empty": "कोई सूचना नहीं",

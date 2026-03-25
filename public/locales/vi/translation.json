@@ -520,6 +520,9 @@
   "paymentUnavailable": "Phương thức thanh toán này hiện không khả dụng",
   "amountUSD": "Số tiền (USD)",
   "minimumAmount": "Tối thiểu: ${{amount}}",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Thanh toán với Pay2s",
+  "pay2sRedirectInfo": "Bạn sẽ được chuyển hướng đến Pay2s để hoàn tất thanh toán",
   "notifications": {
     "title": "Thông báo",
     "empty": "Không có thông báo",

@@ -480,6 +480,9 @@
   "selectCountry": "کشور را انتخاب کنید",
   "confirm": "تایید کنید",
   "Username": "نام کاربری",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "پرداخت با Pay2s",
+  "pay2sRedirectInfo": "برای تکمیل پرداخت به Pay2s هدایت خواهید شد",
   "notifications": {
     "title": "اعلان‌ها",
     "empty": "اعلانی وجود ندارد",

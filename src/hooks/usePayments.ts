@@ -9,7 +9,9 @@ import type {
   PaypalGenerateRequest,
   PaypalGenerateResponse,
   StripeGenerateRequest,
-  StripeGenerateResponse
+  StripeGenerateResponse,
+  Pay2sGenerateRequest,
+  Pay2sGenerateResponse
 } from '@/services/payment/payment.types';
 
 // Query keys factory
@@ -62,5 +64,14 @@ export function usePaypalPayment() {
 export function useStripePayment() {
   return useMutation<StripeGenerateResponse, Error, StripeGenerateRequest>({
     mutationFn: (data) => paymentService.generateStripePayment(data)
+  });
+}
+
+/**
+ * Hook to generate a Pay2s payment
+ */
+export function usePay2sPayment() {
+  return useMutation<Pay2sGenerateResponse, Error, Pay2sGenerateRequest>({
+    mutationFn: (data) => paymentService.generatePay2sPayment(data)
   });
 }

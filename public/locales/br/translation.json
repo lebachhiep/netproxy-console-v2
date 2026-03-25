@@ -469,6 +469,9 @@
   "selectCountry": "Diuzañ bro",
   "confirm": "Kadarnaat",
   "Username": "Anv implijer",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pagar com Pay2s",
+  "pay2sRedirectInfo": "Você será redirecionado para o Pay2s para concluir o pagamento",
   "notifications": {
     "title": "Notificações",
     "empty": "Sem notificações",

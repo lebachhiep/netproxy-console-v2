@@ -56,6 +56,46 @@ export const getUsernameByProxyType = (record: Subscription): string => {
   return credentials?.username || '-';
 };
 
+// getConnectionString returns the canonical proxy connection string for a
+// subscription. Prefers the BE-computed `connection_string` (single source of
+// truth) and falls back to composing from the legacy discrete-field helpers
+// during rollout. For sticky rotating subs, injects `-session-{sessionId}`
+// into the username portion using the client-managed session store.
+export const getConnectionString = (record: Subscription): string => {
+  const isRotating = isRotatingProxy(record);
+  const beString = record.connection_string;
+
+  if (beString) {
+    if (!isRotating) return beString;
+
+    // Rotating: optionally append -session-{id} to the username portion.
+    // BE format: `host:80:npx-customer-{user}[-country-{cc}]:{api_key}`
+    if (!record?.tableData?.hasSticky) return beString;
+
+    let sessionId = useSubscriptionStore.getState().getSubscriptionData(record.id)?.sessionId;
+    if (!sessionId) sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
+    if (!sessionId) return beString;
+
+    const parts = beString.split(':');
+    if (parts.length !== 4) return beString;
+    parts[2] = `${parts[2]}-session-${sessionId}`;
+    return parts.join(':');
+  }
+
+  // Fallback: compose from legacy helpers (rollout safety for subs that
+  // predate the BE field or for BE errors that leave it empty).
+  const ip = getIpAddressByProxyType(record);
+  const port = getPortByProxyType(record);
+  const username = getUsernameByProxyType(record);
+  const { plainPassword } = getPasswordByProxyType(record);
+
+  if (isRotating) return `${ip}:${port}:${username}:${plainPassword}`;
+
+  const credentials = record.provider_credentials as any;
+  const protocol = credentials?.http_port > 0 ? 'http' : 'socks5';
+  return `${protocol}://${username}:${plainPassword}@${ip}:${port}`;
+};
+
 export const getPasswordByProxyType = (record: Subscription): { displayPassword: string; plainPassword: string } => {
   const isRotating = isRotatingProxy(record);
   if (isRotating) {

@@ -30,7 +30,14 @@ import { copyToClipboard } from '@/utils/copyToClipboard';
 import { useSubscriptionStore } from '@/stores/subscription.store';
 import { Input } from '@/components/input/Input';
 import { OrderInfoModal } from './OrderInfoModal';
-import { getIpAddressByProxyType, getPasswordByProxyType, getPortByProxyType, getUsernameByProxyType, isRotatingProxy } from './utils';
+import {
+  getConnectionString,
+  getIpAddressByProxyType,
+  getPasswordByProxyType,
+  getPortByProxyType,
+  getUsernameByProxyType,
+  isRotatingProxy
+} from './utils';
 import moment from 'moment';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -305,38 +312,16 @@ const OrderDetailPage = () => {
 
   const handleCopyProxy = async (record: Subscription) => {
     const isRotating = isRotatingProxy(record);
+    const proxyString = getConnectionString(record);
 
-    if (isRotating) {
-      const username = getUsernameByProxyType(record);
-      const host = getIpAddressByProxyType(record);
-      const proxyString = `${host}:80:${username}:${record.api_key}`;
-
-      await copyToClipboard(proxyString);
-
-      setCopiedId(record.id);
-      toast.success(t('toast.success.rotateProxyCopy'));
-    } else {
-      // For fixed proxy: protocol://username:password@ip:port
-      const credentials = record.provider_credentials as any;
-      if (!credentials || !credentials.proxy_ip) {
-        toast.error('toast.error.credentialFail');
-        return;
-      }
-
-      const protocol = credentials.http_port > 0 ? 'http' : 'socks5';
-      const username = credentials.username || '';
-      const password = credentials.password || '';
-      const ip = credentials.proxy_ip || '';
-      const port = credentials.http_port > 0 ? credentials.http_port : credentials.socks5_port;
-
-      const proxyString = `${protocol}://${username}:${password}@${ip}:${port}`;
-
-      console.log('Copying proxy string:', proxyString);
-      await copyToClipboard(proxyString);
-
-      setCopiedId(record.id);
-      toast.success(t('toast.success.proxyCopy'));
+    if (!proxyString) {
+      toast.error('toast.error.credentialFail');
+      return;
     }
+
+    await copyToClipboard(proxyString);
+    setCopiedId(record.id);
+    toast.success(isRotating ? t('toast.success.rotateProxyCopy') : t('toast.success.proxyCopy'));
 
     // Reset after 2 seconds
     setTimeout(() => {

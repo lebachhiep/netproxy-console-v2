@@ -53,6 +53,8 @@ export interface Subscription {
   notes?: string;
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
+  connection_string?: string; // BE-computed non-sticky proxy connection string
+  sticky_session_id?: string; // Reserved; session ID remains client-managed
   plan?: Plan; // Embedded plan data
 
   // Using for table mapping

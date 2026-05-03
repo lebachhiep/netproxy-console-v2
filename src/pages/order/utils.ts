@@ -11,8 +11,8 @@ export const getIpAddressByProxyType = (record: Subscription): string => {
   const isRotating = isRotatingProxy(record);
   if (isRotating) {
     const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
-    const country = subscriptionData?.country || record?.country;
-    return !country || country === 'VN' ? 'vn.relay.prx.network' : 'relay.prx.network';
+    const country = (subscriptionData?.country || record?.country || '').toLowerCase();
+    return !country || country === 'vn' ? 'vn.relay.prx.network' : 'relay.prx.network';
   }
   const credentials = record.provider_credentials as any;
   return credentials?.proxy_ip || '-';
@@ -68,17 +68,40 @@ export const getConnectionString = (record: Subscription): string => {
   if (beString) {
     if (!isRotating) return beString;
 
-    // Rotating: optionally append -session-{id} to the username portion.
+    // Rotating: inject client-side country and session overrides.
     // BE format: `host:80:npx-customer-{user}[-country-{cc}]:{api_key}`
-    if (!record?.tableData?.hasSticky) return beString;
-
-    let sessionId = useSubscriptionStore.getState().getSubscriptionData(record.id)?.sessionId;
-    if (!sessionId) sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
-    if (!sessionId) return beString;
-
+    const subscriptionData = useSubscriptionStore.getState().getSubscriptionData(record.id);
     const parts = beString.split(':');
     if (parts.length !== 4) return beString;
-    parts[2] = `${parts[2]}-session-${sessionId}`;
+
+    // Replace country in username if user changed it client-side
+    const clientCountry = subscriptionData?.country;
+    if (clientCountry) {
+      const username = parts[2];
+      const countryLower = clientCountry.toLowerCase();
+      if (clientCountry === 'random') {
+        // Remove country segment entirely
+        parts[2] = username.replace(/-country-[a-z]{2}/i, '');
+        parts[0] = 'relay.prx.network';
+      } else {
+        if (/-country-[a-z]{2}/i.test(username)) {
+          parts[2] = username.replace(/-country-[a-z]{2}/i, `-country-${countryLower}`);
+        } else {
+          parts[2] = `${username}-country-${countryLower}`;
+        }
+        parts[0] = countryLower === 'vn' ? 'vn.relay.prx.network' : 'relay.prx.network';
+      }
+    }
+
+    // Inject session ID for sticky proxies
+    if (record?.tableData?.hasSticky) {
+      let sessionId = subscriptionData?.sessionId;
+      if (!sessionId) sessionId = useSubscriptionStore.getState().generateNewSessionId(record.id);
+      if (sessionId) {
+        parts[2] = `${parts[2]}-session-${sessionId}`;
+      }
+    }
+
     return parts.join(':');
   }
 

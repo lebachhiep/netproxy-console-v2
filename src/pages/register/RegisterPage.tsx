@@ -11,7 +11,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { usePageTitle } from '@/hooks/usePageTitle';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+// import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
 import { Select } from '@/components/select/Select';
 import { SupportedLanguages } from '@/config/constants';
@@ -20,7 +20,7 @@ export const RegisterPage: React.FC = () => {
   const pageTitle = usePageTitle({ pageName: 'Đăng ký' });
   const navigate = useNavigate();
   const { register, isAuthenticated, clearError } = useAuth();
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  // const { executeRecaptcha } = useGoogleReCaptcha();
   const { t, i18n } = useTranslation();
   const { businessName } = useBranding();
 
@@ -54,19 +54,18 @@ export const RegisterPage: React.FC = () => {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      if (!executeRecaptcha) {
-        toast.error(t('recaptchaNotReady'));
-        return;
-      }
-
-      const captchaToken = await executeRecaptcha('register');
+      // if (!executeRecaptcha) {
+      //   toast.error(t('recaptchaNotReady'));
+      //   return;
+      // }
+      // const captchaToken = await executeRecaptcha('register');
 
       await register({
         email: data.email,
         username: data.username,
         password: data.password,
         fullName: data.fullName,
-        captchaToken
+        captchaToken: ''
       });
       toast.success(t('auth.REGISTER_SUCCESS'));
       navigate('/', { replace: true });

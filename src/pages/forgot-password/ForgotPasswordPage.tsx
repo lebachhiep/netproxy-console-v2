@@ -11,7 +11,7 @@ import { mapApiError } from '@/utils/errors';
 import { AUTH_ROUTES } from '@/utils/constants';
 import { toast } from 'sonner';
 import { usePageTitle } from '@/hooks/usePageTitle';
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+// import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { useTranslation } from 'react-i18next';
 import { useBranding } from '@/hooks/useBranding';
 import { Select } from '@/components/select/Select';
@@ -23,7 +23,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const { resetPassword, isAuthenticated, clearError } = useAuth();
   const { businessName } = useBranding();
-  const { executeRecaptcha } = useGoogleReCaptcha();
+  // const { executeRecaptcha } = useGoogleReCaptcha();
   const [emailSent, setEmailSent] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState('');
 
@@ -54,14 +54,13 @@ export const ForgotPasswordPage: React.FC = () => {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      if (!executeRecaptcha) {
-        toast.error(t('recaptchaNotReady'));
-        return;
-      }
+      // if (!executeRecaptcha) {
+      //   toast.error(t('recaptchaNotReady'));
+      //   return;
+      // }
+      // const captchaToken = await executeRecaptcha('password_reset');
 
-      const captchaToken = await executeRecaptcha('password_reset');
-
-      await resetPassword(data.email, captchaToken);
+      await resetPassword(data.email, '');
       toast.success(t('auth.PASSWORD_RESET_SENT'));
       setSubmittedEmail(data.email); // Store email before resetting form
       setEmailSent(true);

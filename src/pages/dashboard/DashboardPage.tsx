@@ -21,7 +21,7 @@ import { Input } from '@/components/input/Input';
 import { Table, TableColumn } from '@/components/table/Table';
 import { useMemo, useState } from 'react';
 import { motion, Variants } from 'framer-motion';
-import TopUpModal from '../wallet/components/TopUpModal';
+import { TopUpModalV2 } from '../wallet/components/TopUpModalV2';
 import { Link, useNavigate } from 'react-router-dom';
 import { useResponsive } from '@/hooks/useResponsive';
 import { sectionVariants, itemVariants, containerVariants } from '@/utils/animation';
@@ -575,7 +575,7 @@ const DashboardPage = () => {
         </motion.div>
 
         {/* ====== MODALS ====== */}
-        <TopUpModal open={open} onClose={() => setOpen(false)} allowCloseByBackdrop={false} />
+        <TopUpModalV2 open={open} onClose={() => setOpen(false)} />
         <CheckingModal isOpen={openCheckingModal} onClose={() => setOpenCheckingModal(false)} />
       </motion.div>
     </div>

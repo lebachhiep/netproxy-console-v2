@@ -521,5 +521,27 @@
   "topUp": "Top Up",
   "paymentUnavailable": "This payment method is currently unavailable",
   "amountUSD": "Amount (USD)",
-  "minimumAmount": "Minimum: ${{amount}}"
+  "minimumAmount": "Minimum: ${{amount}}",
+  "paypal": "PayPal",
+  "payWithPaypal": "Pay with PayPal",
+  "paypalRedirectInfo": "You will be redirected to PayPal to complete payment",
+  "stripe": "Stripe",
+  "payWithStripe": "Pay with Stripe",
+  "stripeRedirectInfo": "You will be redirected to Stripe to complete payment",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pay with Pay2s",
+  "pay2sRedirectInfo": "You will be redirected to Pay2s to complete payment",
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications",
+    "dontShowAgain": "Don't show this again",
+    "markAllRead": "Mark all as read"
+  },
+  "paymentCallback": {
+    "success": "Payment Successful",
+    "failed": "Payment Failed",
+    "amountVnd": "{{amount}} VND",
+    "autoClose": "This window will close automatically...",
+    "balanceUpdated": "Payment received! Your balance has been updated."
+  }
 }

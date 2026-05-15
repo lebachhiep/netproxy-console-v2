@@ -479,5 +479,14 @@
   "countryApplyFor": "Tindakan Anda akan berlaku untuk {{count}} item",
   "selectCountry": "Pilih negara",
   "confirm": "Mengonfirmasi",
-  "Username": "Nama belakang"
+  "Username": "Nama belakang",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Bayar dengan Pay2s",
+  "pay2sRedirectInfo": "Anda akan dialihkan ke Pay2s untuk menyelesaikan pembayaran",
+  "notifications": {
+    "title": "Notifikasi",
+    "empty": "Tidak ada notifikasi",
+    "dontShowAgain": "Jangan tampilkan lagi",
+    "markAllRead": "Tandai semua sudah dibaca"
+  }
 }

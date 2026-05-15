@@ -1,0 +1,81 @@
+import React, { useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/button/Button';
+import { InputField } from '@/components/input/InputField';
+import { useStripePayment } from '@/hooks/usePayments';
+import { useTranslation } from 'react-i18next';
+
+const MIN_AMOUNT = 10;
+
+interface StripeFormProps {
+  onSuccess: () => void;
+  amount?: number;
+}
+
+export const StripeForm: React.FC<StripeFormProps> = ({ onSuccess, amount: propAmount }) => {
+  const [amount, setAmount] = useState(propAmount ? propAmount.toString() : '');
+  const { mutate: generatePayment, isPending } = useStripePayment();
+  const { t } = useTranslation();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const numAmount = parseFloat(amount);
+
+    if (isNaN(numAmount) || numAmount < MIN_AMOUNT) {
+      toast.error(t('toast.warn.minMoney') + MIN_AMOUNT);
+      return;
+    }
+
+    const baseUrl = window.location.origin;
+    generatePayment(
+      {
+        amount: numAmount,
+        success_url: `${baseUrl}/payment/callback`,
+        cancel_url: `${baseUrl}/payment/callback`
+      },
+      {
+        onSuccess: (data) => {
+          window.open(data.payment_url, '_blank');
+          toast.success(t('toast.success.windowPaymentPop'));
+          onSuccess();
+        },
+        onError: (error) => {
+          toast.error(t('toast.error.cantCreatePay'));
+          console.log('Stripe payment error:', error);
+        }
+      }
+    );
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="p-5 space-y-4">
+      <div>
+        <label className="text-sm font-semibold text-text-hi dark:text-text-hi-dark mb-1 block">
+          {t('money')} {`(USD)`}
+        </label>
+        <InputField
+          type="number"
+          min={MIN_AMOUNT}
+          step="0.01"
+          placeholder={t('minMoney') + `$${MIN_AMOUNT}`}
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          wrapperClassName="h-10"
+        />
+      </div>
+
+      <Button
+        type="submit"
+        variant="primary"
+        loading={isPending}
+        className="w-full h-10 !bg-[#635BFF] !border-[#5851DB] hover:!bg-[#4B45C6]"
+      >
+        {t('payWithStripe')}
+      </Button>
+
+      <p className="text-xs text-text-lo dark:text-text-lo-dark text-center">{t('stripeRedirectInfo')}</p>
+    </form>
+  );
+};
+
+export default StripeForm;

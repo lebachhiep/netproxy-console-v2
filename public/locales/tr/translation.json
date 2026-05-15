@@ -479,5 +479,14 @@
   "countryApplyFor": "İşleminiz {{count}} öğe için geçerli olacak",
   "selectCountry": "Ülke seçin",
   "confirm": "Onaylamak",
-  "Username": "Kullanıcı adı"
+  "Username": "Kullanıcı adı",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pay2s ile öde",
+  "pay2sRedirectInfo": "Ödemeyi tamamlamak için Pay2s'ye yönlendirileceksiniz",
+  "notifications": {
+    "title": "Bildirimler",
+    "empty": "Bildirim yok",
+    "dontShowAgain": "Bunu bir daha gösterme",
+    "markAllRead": "Tümünü okundu olarak işaretle"
+  }
 }

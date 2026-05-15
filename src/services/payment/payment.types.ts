@@ -1,4 +1,4 @@
-export type PaymentMethodType = 'web2m' | 'cryptomus' | 'tazapay';
+export type PaymentMethodType = 'web2m' | 'cryptomus' | 'tazapay' | 'paypal' | 'stripe' | 'pay2s';
 
 export interface BankInfo {
   bank_name: string;
@@ -45,5 +45,35 @@ export interface CryptomusGenerateRequest {
 }
 
 export interface CryptomusGenerateResponse {
+  payment_url: string;
+}
+
+export interface PaypalGenerateRequest {
+  amount: number;
+  success_url: string;
+  cancel_url: string;
+}
+
+export interface PaypalGenerateResponse {
+  payment_url: string;
+}
+
+export interface StripeGenerateRequest {
+  amount: number;
+  success_url: string;
+  cancel_url: string;
+}
+
+export interface StripeGenerateResponse {
+  payment_url: string;
+}
+
+export interface Pay2sGenerateRequest {
+  amount: number;
+  success_url: string;
+  cancel_url: string;
+}
+
+export interface Pay2sGenerateResponse {
   payment_url: string;
 }

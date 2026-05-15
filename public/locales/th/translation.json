@@ -479,5 +479,14 @@
   "countryApplyFor": "การกระทำของคุณจะมีผลกับ {{count}} รายการ",
   "selectCountry": "เลือกประเทศ",
   "confirm": "ยืนยัน",
-  "Username": "ชื่อผู้ใช้"
+  "Username": "ชื่อผู้ใช้",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "ชำระเงินด้วย Pay2s",
+  "pay2sRedirectInfo": "คุณจะถูกเปลี่ยนเส้นทางไปยัง Pay2s เพื่อชำระเงิน",
+  "notifications": {
+    "title": "การแจ้งเตือน",
+    "empty": "ไม่มีการแจ้งเตือน",
+    "dontShowAgain": "ไม่ต้องแสดงอีก",
+    "markAllRead": "ทำเครื่องหมายอ่านทั้งหมด"
+  }
 }

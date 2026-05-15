@@ -468,5 +468,14 @@
   "countryApplyFor": "আপনার কাজ {{count}} আইটেমের জন্য প্রযোজ্য হবে৷",
   "selectCountry": "দেশ নির্বাচন করুন",
   "confirm": "নিশ্চিত করুন",
-  "Username": "ব্যবহারকারীর নাম"
+  "Username": "ব্যবহারকারীর নাম",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Pay2s দিয়ে পেমেন্ট করুন",
+  "pay2sRedirectInfo": "পেমেন্ট সম্পন্ন করতে আপনাকে Pay2s-এ পুনঃনির্দেশিত করা হবে",
+  "notifications": {
+    "title": "বিজ্ঞপ্তি",
+    "empty": "কোনো বিজ্ঞপ্তি নেই",
+    "dontShowAgain": "আর দেখাবেন না",
+    "markAllRead": "সব পঠিত হিসেবে চিহ্নিত করুন"
+  }
 }

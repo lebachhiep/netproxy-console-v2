@@ -519,5 +519,21 @@
   "topUp": "Nạp tiền",
   "paymentUnavailable": "Phương thức thanh toán này hiện không khả dụng",
   "amountUSD": "Số tiền (USD)",
-  "minimumAmount": "Tối thiểu: ${{amount}}"
+  "minimumAmount": "Tối thiểu: ${{amount}}",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Thanh toán với Pay2s",
+  "pay2sRedirectInfo": "Bạn sẽ được chuyển hướng đến Pay2s để hoàn tất thanh toán",
+  "notifications": {
+    "title": "Thông báo",
+    "empty": "Không có thông báo",
+    "dontShowAgain": "Không hiển thị lại",
+    "markAllRead": "Đánh dấu đã đọc tất cả"
+  },
+  "paymentCallback": {
+    "success": "Thanh toán thành công",
+    "failed": "Thanh toán thất bại",
+    "amountVnd": "{{amount}} VND",
+    "autoClose": "Cửa sổ này sẽ tự động đóng...",
+    "balanceUpdated": "Đã nhận thanh toán! Số dư của bạn đã được cập nhật."
+  }
 }

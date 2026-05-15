@@ -479,5 +479,14 @@
   "countryApplyFor": "您的操作将应用于 {{count}} 件商品",
   "selectCountry": "选择国家",
   "confirm": "确认",
-  "Username": "用户名"
+  "Username": "用户名",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "使用 Pay2s 支付",
+  "pay2sRedirectInfo": "您将被重定向到 Pay2s 完成支付",
+  "notifications": {
+    "title": "通知",
+    "empty": "没有通知",
+    "dontShowAgain": "不再显示",
+    "markAllRead": "全部标记为已读"
+  }
 }

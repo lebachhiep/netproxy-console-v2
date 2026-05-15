@@ -479,5 +479,14 @@
   "countryApplyFor": "Your action will apply for {{count}} item",
   "selectCountry": "Select country",
   "confirm": "Confirm",
-  "Username": "User name"
+  "Username": "User name",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Magbayad gamit ang Pay2s",
+  "pay2sRedirectInfo": "Ire-redirect ka sa Pay2s para makumpleto ang bayad",
+  "notifications": {
+    "title": "Mga Abiso",
+    "empty": "Walang abiso",
+    "dontShowAgain": "Huwag nang ipakita ito",
+    "markAllRead": "Markahan lahat bilang nabasa"
+  }
 }

@@ -5,7 +5,13 @@ import type {
   TazapayGenerateRequest,
   TazapayGenerateResponse,
   CryptomusGenerateRequest,
-  CryptomusGenerateResponse
+  CryptomusGenerateResponse,
+  PaypalGenerateRequest,
+  PaypalGenerateResponse,
+  StripeGenerateRequest,
+  StripeGenerateResponse,
+  Pay2sGenerateRequest,
+  Pay2sGenerateResponse
 } from '@/services/payment/payment.types';
 
 // Query keys factory
@@ -40,5 +46,32 @@ export function useTazapayPayment() {
 export function useCryptomusPayment() {
   return useMutation<CryptomusGenerateResponse, Error, CryptomusGenerateRequest>({
     mutationFn: (data) => paymentService.generateCryptomusPayment(data)
+  });
+}
+
+/**
+ * Hook to generate a PayPal payment
+ */
+export function usePaypalPayment() {
+  return useMutation<PaypalGenerateResponse, Error, PaypalGenerateRequest>({
+    mutationFn: (data) => paymentService.generatePaypalPayment(data)
+  });
+}
+
+/**
+ * Hook to generate a Stripe payment
+ */
+export function useStripePayment() {
+  return useMutation<StripeGenerateResponse, Error, StripeGenerateRequest>({
+    mutationFn: (data) => paymentService.generateStripePayment(data)
+  });
+}
+
+/**
+ * Hook to generate a Pay2s payment
+ */
+export function usePay2sPayment() {
+  return useMutation<Pay2sGenerateResponse, Error, Pay2sGenerateRequest>({
+    mutationFn: (data) => paymentService.generatePay2sPayment(data)
   });
 }

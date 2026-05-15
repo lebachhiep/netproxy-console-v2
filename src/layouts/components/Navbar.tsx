@@ -17,6 +17,7 @@ import { giftCodeService } from '@/services/giftcode/giftcode.service';
 import { Dropdown } from '@/components/dropdown';
 import { useNavbar } from '@/contexts/NavbarContext';
 import { SupportedLanguages } from '@/config/constants';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 interface Breadcrumb {
   title: string;
   icon?: React.ReactNode;
@@ -193,6 +194,7 @@ export const Navbar: React.FC = () => {
             onEnter={handleEnter}
             disabled={isRedeeming}
           />
+          <NotificationBell />
           {/* Ngôn ngữ */}
           <Dropdown trigger={'both'} placement="bottom-right">
             <Dropdown.Trigger asIcon>

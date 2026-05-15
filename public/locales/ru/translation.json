@@ -479,5 +479,14 @@
   "countryApplyFor": "Ваше действие будет применено к {{count}} элементу",
   "selectCountry": "Выберите страну",
   "confirm": "Подтверждать",
-  "Username": "Имя пользователя"
+  "Username": "Имя пользователя",
+  "pay2s": "Pay2s",
+  "payWithPay2s": "Оплатить через Pay2s",
+  "pay2sRedirectInfo": "Вы будете перенаправлены на Pay2s для завершения оплаты",
+  "notifications": {
+    "title": "Уведомления",
+    "empty": "Нет уведомлений",
+    "dontShowAgain": "Больше не показывать",
+    "markAllRead": "Отметить все как прочитанные"
+  }
 }
